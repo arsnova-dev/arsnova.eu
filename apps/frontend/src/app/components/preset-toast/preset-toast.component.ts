@@ -27,7 +27,7 @@ export const PRESET_OPTION_IDS = [
   { id: 'enableRewardEffects', label: 'Effekte bei richtiger Antwort', icon: 'auto_awesome', categoryId: 'gamification' as CategoryId },
   { id: 'enableMotivationMessages', label: 'Anfeuerung nach jeder Antwort', icon: 'campaign', categoryId: 'gamification' as CategoryId },
   { id: 'enableEmojiReactions', label: 'Emoji-Reaktionen', icon: 'emoji_emotions', categoryId: 'gamification' as CategoryId },
-  { id: 'bonusTokenCount', label: 'Bonus-Token für Top-Plätze', icon: 'emoji_events', categoryId: 'gamification' as CategoryId },
+  { id: 'bonusTokenCount', label: 'Bonus-Code für Top-Plätze', icon: 'emoji_events', categoryId: 'gamification' as CategoryId },
   { id: 'defaultTimer', label: 'Zeitlimit pro Frage', icon: 'timer', categoryId: 'flow' as CategoryId },
   { id: 'readingPhaseEnabled', label: 'Zuerst lesen, dann antworten', icon: 'menu_book', categoryId: 'flow' as CategoryId },
   { id: 'teamMode', label: 'In Teams spielen', icon: 'groups', categoryId: 'team' as CategoryId },
@@ -150,7 +150,8 @@ export function getPresetDefaults(preset: 'serious' | 'spielerisch'): PresetOpti
                     class="preset-toast__chip"
                   >
                     <mat-icon class="preset-toast__chip-icon">{{ opt.icon }}</mat-icon>
-                    {{ opt.label }} {{ optionEffective(opt.id) ? 'an' : 'aus' }}
+                    {{ opt.label }}
+                    <span [class.preset-toast__chip-state--on]="optionEffective(opt.id)" [class.preset-toast__chip-state--off]="!optionEffective(opt.id)" class="preset-toast__chip-state">{{ optionEffective(opt.id) ? 'an' : 'aus' }}</span>
                   </mat-chip>
                   }
                 }
@@ -482,6 +483,17 @@ export function getPresetDefaults(preset: 'serious' | 'spielerisch'): PresetOpti
       margin-right: 0.35rem;
       font-size: 1.125rem;
       vertical-align: middle;
+    }
+
+    .preset-toast__chip-state {
+      margin-left: 0.25rem;
+      font-weight: 600;
+    }
+    .preset-toast__chip-state--on {
+      color: var(--app-status-healthy);
+    }
+    .preset-toast__chip-state--off {
+      color: var(--mat-sys-error);
     }
 
     .preset-toast__chips mat-chip.preset-toast__chip--disabled {
