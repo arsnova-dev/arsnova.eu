@@ -49,7 +49,7 @@ jobs:
         env:
           PUBLIC_GITHUB_REPO: ${{ github.repository }}
           BASE_PATH: /${{ github.event.repository.name }}/
-        run: npm run build -w @arsnova/landing
+        run: npm run build:landing
 
       - name: List artifact root (Debug)
         run: ls -la apps/landing/dist/
