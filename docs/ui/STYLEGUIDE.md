@@ -92,10 +92,10 @@ Tokenbasierte Card-Flaeche:
 
 ## Startseite: Hero und Onboarding
 - **Hero-Text:** Nutzenversprechen, kein Feature-Listing. Verben statt Nomen.
-- **Alleinstellungsmerkmal (USP):** Direkt unter dem Hero eine Zeile zur Zielgruppenauswahl – z. B. „Angepasst an deine Zielgruppe – von Kindergarten bis Oberstufe, serioes oder spielerisch.“ In Primary-Farbe, body-large, zentriert. Hebt das Differenzierungsmerkmal gegenueber One-size-fits-all-Tools hervor.
+- **Alleinstellungsmerkmale (USP):** Direkt unter dem Hero zwei Zeilen: (1) Zielgruppenauswahl – z. B. „Angepasst an deine Zielgruppe: von Kindergarten bis Oberstufe, serioes oder spielerisch.“ In Primary-Farbe, body-large. (2) Bonus-Option – z. B. „Bonus fuer die Besten: Code bei der Quizleitung einloesbar.“ Einzeilig auf Desktop (max-width 38rem ab 600px); „Code“ statt „Token“. Als zweite Zeile, body-medium, on-surface-variant (`.home-hero-usp--secondary`). Beide zentriert, max-width begrenzt.
 - **Icon-Cluster:** 3 Icons (quiz, forum, how_to_vote) in primary-getoenten Kreisen, verbunden durch Dots. `aria-hidden="true"` da dekorativ.
 - **Trust-Badges:** Staerkstes Argument zuerst (Kostenlos > DSGVO-konform > Open Source).
-- **Onboarding-Banner (Erstbesucher):** 3-Schritt-Visual (Quiz erstellen > Code teilen > Live spielen) mit Icons in Primary-Kreisen und Chevron-Pfeilen. Nur bei erstem Besuch (`localStorage: home-visited`), schliessbar. `grid-column: 1 / -1` auf Desktop.
+- **Kein Onboarding-Banner:** Nach den Hero-Erweiterungen (USPs, Bonus-Option, ggf. Preset-Toggle) wird kein zusaetzliches 3-Schritt-Banner mehr angezeigt. Die Karten (Mitmachen/Veranstalten) und die Hilfe-Seite erklaeren den Ablauf.
 
 ## Startseite: Status-Indikator
 - Der **Status-Dot** ist in das Brand-Icon (SVG) integriert: Ein Circle unten rechts faerbt sich dynamisch (rot = `--mat-sys-error`, gruen = `--app-status-healthy`). `role="status"` + dynamisches `aria-label` auf dem SVG.

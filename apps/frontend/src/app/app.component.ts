@@ -24,18 +24,20 @@ import { ThemePresetService } from './services/theme-preset.service';
       </main>
       <footer class="app-footer" role="contentinfo">
         <div class="app-footer__inner">
-          <span class="app-footer__copy">© {{ year }} arsnova.click</span>
-          <p class="app-footer__badges">Kostenlos · 100 % DSGVO-konform · Open Source</p>
-          <div class="app-footer__links">
-            <a matButton routerLink="/legal/imprint">
-              <mat-icon class="app-footer__icon">business</mat-icon>
-              Impressum
-            </a>
-            <a matButton routerLink="/legal/privacy">
-              <mat-icon class="app-footer__icon">privacy_tip</mat-icon>
-              Datenschutz
-            </a>
+          <div class="app-footer__row">
+            <span class="app-footer__copy">© {{ year }} arsnova.click</span>
+            <div class="app-footer__links">
+              <a matButton routerLink="/legal/imprint">
+                <mat-icon class="app-footer__icon">business</mat-icon>
+                Impressum
+              </a>
+              <a matButton routerLink="/legal/privacy">
+                <mat-icon class="app-footer__icon">privacy_tip</mat-icon>
+                Datenschutz
+              </a>
+            </div>
           </div>
+          <p class="app-footer__badges">Kostenlos · 100 % DSGVO-konform · Open Source</p>
         </div>
       </footer>
     </div>
@@ -109,26 +111,40 @@ import { ThemePresetService } from './services/theme-preset.service';
       max-width: 56rem;
       margin-inline: auto;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .app-footer__row {
+      display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+      justify-content: center;
+      gap: 0.5rem 0.75rem;
+    }
+
+    .app-footer__row .app-footer__links {
+      flex-shrink: 0;
     }
 
     .app-footer__badges {
-      order: 3;
-      width: 100%;
-      margin: 0.25rem 0 0;
       font: var(--mat-sys-body-small);
       color: var(--mat-sys-on-surface-variant);
       text-align: center;
+      margin: 0;
     }
 
     @media (min-width: 600px) {
-      .app-footer__badges {
-        order: 0;
-        width: auto;
-        margin: 0;
+      .app-footer__inner {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      .app-footer__row {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 1rem;
       }
     }
 

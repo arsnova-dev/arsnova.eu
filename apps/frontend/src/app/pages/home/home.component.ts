@@ -34,7 +34,7 @@ import { ThemePresetService } from '../../services/theme-preset.service';
   template: `
     <div class="l-page">
       @if (presetToastVisible()) {
-        <app-preset-toast (closed)="presetToastVisible.set(false)" />
+        <app-preset-toast (closed)="closePresetToast()" />
       }
 
       @if (presetSnackbarVisible()) {
@@ -185,6 +185,7 @@ import { ThemePresetService } from '../../services/theme-preset.service';
       <main class="home-main">
         <p class="home-hero">Fragen, quizzen, abstimmen, gemeinsam und live</p>
         <p class="home-hero-usp">Angepasst an deine Zielgruppe: von Kindergarten bis Oberstufe, seriös oder spielerisch.</p>
+        <p class="home-hero-usp home-hero-usp--secondary">Bonus für die Besten: Code bei der Quizleitung einlösbar.</p>
 
         <div class="home-hero-preset-mobile" aria-label="Stil wählen">
           <mat-button-toggle-group
@@ -213,28 +214,6 @@ import { ThemePresetService } from '../../services/theme-preset.service';
         </div>
 
         <p class="home-trust-badges">Kostenlos · DSGVO-konform · Open Source</p>
-
-        @if (showOnboarding()) {
-          <div class="home-onboarding">
-            <div class="home-onboarding__step">
-              <div class="home-onboarding__icon"><mat-icon>add_circle</mat-icon></div>
-              <span class="home-onboarding__label">Quiz erstellen</span>
-            </div>
-            <mat-icon class="home-onboarding__arrow">chevron_right</mat-icon>
-            <div class="home-onboarding__step">
-              <div class="home-onboarding__icon"><mat-icon>share</mat-icon></div>
-              <span class="home-onboarding__label">Code teilen</span>
-            </div>
-            <mat-icon class="home-onboarding__arrow">chevron_right</mat-icon>
-            <div class="home-onboarding__step">
-              <div class="home-onboarding__icon"><mat-icon>play_circle</mat-icon></div>
-              <span class="home-onboarding__label">Live spielen</span>
-            </div>
-            <button matIconButton class="home-onboarding__close" (click)="dismissOnboarding()" aria-label="Hinweis schließen">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-        }
 
         <mat-card appearance="raised" id="participant-entry" class="home-card">
           <mat-card-header>
@@ -520,13 +499,27 @@ import { ThemePresetService } from '../../services/theme-preset.service';
     }
 
     .home-hero-usp {
-      margin: 0 0 0.75rem;
+      margin: 0 0 0.25rem;
       font: var(--mat-sys-body-large);
       color: var(--mat-sys-primary);
       text-align: center;
       font-weight: 500;
       max-width: 28rem;
       margin-inline: auto;
+    }
+
+    .home-hero-usp--secondary {
+      font: var(--mat-sys-body-medium);
+      color: var(--mat-sys-on-surface-variant);
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+      max-width: 26rem;
+    }
+
+    @media (min-width: 600px) {
+      .home-hero-usp--secondary {
+        max-width: 38rem;
+      }
     }
 
     .home-hero-preset-mobile {
@@ -609,68 +602,6 @@ import { ThemePresetService } from '../../services/theme-preset.service';
       font: var(--mat-sys-label-medium);
       color: var(--mat-sys-on-surface-variant);
       text-align: center;
-    }
-
-    .home-onboarding {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      padding: 1rem 2.5rem 1rem 1rem;
-      border-radius: var(--mat-sys-corner-large);
-      background: color-mix(in srgb, var(--mat-sys-primary) 6%, var(--mat-sys-surface));
-      border: 1px solid var(--mat-sys-outline-variant);
-    }
-
-    .home-onboarding__step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.35rem;
-      text-align: center;
-    }
-
-    .home-onboarding__icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: var(--mat-sys-corner-full);
-      background: var(--mat-sys-primary);
-      color: var(--mat-sys-on-primary);
-    }
-
-    .home-onboarding__icon mat-icon {
-      font-size: 1.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-
-    .home-onboarding__label {
-      font: var(--mat-sys-label-medium);
-      color: var(--mat-sys-on-surface);
-    }
-
-    .home-onboarding__arrow {
-      color: var(--mat-sys-outline);
-      font-size: 1.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-
-    .home-onboarding__close {
-      position: absolute;
-      top: 0.25rem;
-      right: 0.25rem;
-    }
-
-    @media (max-width: 599px) {
-      .home-onboarding { gap: 0.5rem; padding: 0.75rem 2rem 0.75rem 0.75rem; }
-      .home-onboarding__icon { width: 2rem; height: 2rem; }
-      .home-onboarding__icon mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
-      .home-onboarding__label { font: var(--mat-sys-label-small); }
     }
 
     .home-snackbar {
@@ -765,7 +696,7 @@ import { ThemePresetService } from '../../services/theme-preset.service';
 
     @media (min-width: 600px) {
       .home-main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .home-hero, .home-hero-usp, .home-hero-preset-mobile, .home-hero-icons, .home-trust-badges, .home-onboarding { grid-column: 1 / -1; }
+      .home-hero, .home-hero-usp, .home-hero-usp--secondary, .home-hero-preset-mobile, .home-hero-icons, .home-trust-badges { grid-column: 1 / -1; }
     }
 
     .home-card { padding: 0.25rem; box-shadow: var(--mat-sys-level2); }
@@ -963,7 +894,12 @@ import { ThemePresetService } from '../../services/theme-preset.service';
     .home-grid mat-card { box-shadow: var(--mat-sys-level2); }
     .home-grid { margin-top: 1rem; display: grid; gap: 0.75rem; }
     @media (min-width: 600px) { .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (min-width: 1200px) { .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 900px) {
+      .home-grid {
+        max-width: 42rem;
+        margin-inline: auto;
+      }
+    }
 
     .home-retry-btn { margin-top: 0.5rem; }
     .home-subcard__body { margin: 0; font: var(--mat-sys-body-small); color: var(--mat-sys-on-surface-variant); }
@@ -999,10 +935,6 @@ import { ThemePresetService } from '../../services/theme-preset.service';
       .home-card__icon { transform: scale(1.15); }
       .home-hero-icon {
         background: color-mix(in srgb, var(--mat-sys-primary) 15%, transparent);
-      }
-      .home-onboarding {
-        background: color-mix(in srgb, var(--mat-sys-tertiary-container) 30%, var(--mat-sys-surface));
-        border-color: color-mix(in srgb, var(--mat-sys-primary) 30%, transparent);
       }
       .home-code-segment {
         border-color: color-mix(in srgb, var(--mat-sys-primary) 30%, transparent);
@@ -1053,7 +985,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   controlsMenuOpen = signal(false);
   presetToastVisible = signal(false);
   presetSnackbarVisible = signal(false);
-  showOnboarding = signal(false);
 
   presetSnackbarIcon = computed(() => this.themePreset.preset() === 'serious' ? 'school' : 'celebration');
   presetSnackbarLabel = computed(() => this.themePreset.preset() === 'serious' ? 'Preset: Seriös' : 'Preset: Spielerisch');
@@ -1071,9 +1002,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const storedLang = localStorage.getItem('home-language');
     if (storedLang && ['de', 'en', 'fr', 'it', 'es'].includes(storedLang)) {
       this.language.set(storedLang as 'de' | 'en' | 'fr' | 'it' | 'es');
-    }
-    if (!localStorage.getItem('home-visited')) {
-      this.showOnboarding.set(true);
     }
     this.loadRecentSessionCodes();
     await this.checkApiConnection();
@@ -1144,6 +1072,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.themePreset.setPreset(nextPreset);
       }
       this.showPresetSnackbar();
+      // Fokus zurück auf die Mitmach-Karte (Code-Eingabe), damit der Fokus nach Umschaltung nicht verloren geht
+      setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
     }
     if (closeMenu) this.closeControlsMenu();
   }
@@ -1164,9 +1094,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.presetToastVisible.set(true);
   }
 
-  dismissOnboarding(): void {
-    this.showOnboarding.set(false);
-    localStorage.setItem('home-visited', '1');
+  closePresetToast(): void {
+    this.presetToastVisible.set(false);
+    setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
   }
 
   focusCodeInput(): void {

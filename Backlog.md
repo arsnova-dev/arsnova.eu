@@ -568,7 +568,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Bei ≥ 10 eindeutigen Antworten wird eine Wordcloud als alternative Darstellung angeboten.
     - Der Dozent kann einzelne Antworten auf dem Beamer hervorheben (Klick → vergrößerte Anzeige).
     - Datenschutz: Freitext-Antworten werden **nicht** mit Nicknames verknüpft dargestellt (anonyme Auswertung, konsistent mit DSGVO-Prinzip der Datensparsamkeit).
-- **Story 4.6 (Bonus-Token für Top-Platzierungen):** 🟡 Als Dozent möchte ich den besten Studenten im Leaderboard ein individuelles Bonus-Token ausstellen können, das diese per E-Mail zur Einlösung von Bonuspunkten (z. B. Klausurzulassung) einreichen, damit herausragende Leistungen belohnt werden — ohne die Anonymität der restlichen Teilnehmer zu gefährden.
+- **Story 4.6 (Bonus-Token für Top-Platzierungen):** 🟡 Als Dozent möchte ich den besten Studenten im Leaderboard ein individuelles Bonus-Token ausstellen können, das diese per E-Mail zur Einlösung von Bonuspunkten oder Anerkennung durch die Lehrperson einreichen, damit herausragende Leistungen belohnt werden — ohne die Anonymität der restlichen Teilnehmer zu gefährden.
   - **Akzeptanzkriterien:**
     - In der Quiz-Konfiguration (Story 1.4) gibt es ein neues optionales Feld `**bonusTokenCount`** (`Int?, 1–50, default: null`). Wenn gesetzt, erhalten die Top X im finalen Leaderboard automatisch ein Token.
     - **Token-Generierung (serverseitig):**
