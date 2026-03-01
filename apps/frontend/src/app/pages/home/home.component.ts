@@ -1058,11 +1058,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   setLanguage(code: 'de' | 'en' | 'fr' | 'it' | 'es'): void {
     this.language.set(code);
     localStorage.setItem('home-language', code);
+    setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
   }
 
   onThemeChange(value: 'system' | 'dark' | 'light'): void {
     this.themePreset.setTheme(value);
     this.closeControlsMenu();
+    setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
   }
 
   setPreset(value: string | null, closeMenu = false): void {
