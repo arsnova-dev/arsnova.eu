@@ -12,7 +12,7 @@ import { ThemePresetService } from './services/theme-preset.service';
       @if (!isOnline()) {
         <div class="app-offline-banner" role="alert">
           <mat-icon class="app-offline-banner__icon">cloud_off</mat-icon>
-          <span>Offline – Verbindung prüfen</span>
+          <span>Offline. Verbindung prüfen.</span>
           <button matButton class="app-offline-banner__retry" (click)="retryOnline()" aria-label="Verbindung erneut prüfen">
             Nochmal versuchen
           </button>

@@ -639,8 +639,8 @@ export class PresetToastComponent implements OnInit {
     this.toastIcon.set(preset === 'serious' ? 'school' : 'celebration');
     this.toastHint.set(
       preset === 'serious'
-        ? 'Anonym, ohne Wettbewerb – Fokus auf Inhalte.'
-        : 'Mit Rangliste, Sounds und Anfeuerung – für mehr Motivation.'
+        ? 'Anonym, ohne Wettbewerb, Fokus auf Inhalte.'
+        : 'Mit Rangliste, Sounds und Anfeuerung, für mehr Motivation.'
     );
 
     let state: PresetOptionState;

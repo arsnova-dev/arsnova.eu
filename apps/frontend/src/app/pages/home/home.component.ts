@@ -183,8 +183,26 @@ import { ThemePresetService } from '../../services/theme-preset.service';
       </header>
 
       <main class="home-main">
-        <p class="home-hero">Fragen, quizzen, abstimmen – gemeinsam und live</p>
-        <p class="home-hero-usp">Angepasst an deine Zielgruppe – von Kindergarten bis Oberstufe, seriös oder spielerisch.</p>
+        <p class="home-hero">Fragen, quizzen, abstimmen, gemeinsam und live</p>
+        <p class="home-hero-usp">Angepasst an deine Zielgruppe: von Kindergarten bis Oberstufe, seriös oder spielerisch.</p>
+
+        <div class="home-hero-preset-mobile" aria-label="Stil wählen">
+          <mat-button-toggle-group
+            [value]="themePreset.preset()"
+            appearance="standard"
+            aria-label="Stil auswählen"
+            class="home-hero-preset-toggle"
+          >
+            <mat-button-toggle value="serious" (click)="setPreset('serious')">
+              <mat-icon>school</mat-icon>
+              Seriös
+            </mat-button-toggle>
+            <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch')">
+              <mat-icon class="home-preset-icon--playful">celebration</mat-icon>
+              Spielerisch
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
 
         <div class="home-hero-icons" aria-hidden="true">
           <div class="home-hero-icon"><mat-icon>quiz</mat-icon></div>
@@ -511,6 +529,49 @@ import { ThemePresetService } from '../../services/theme-preset.service';
       margin-inline: auto;
     }
 
+    .home-hero-preset-mobile {
+      display: none;
+      justify-content: center;
+      margin: 0 0 0.75rem;
+    }
+
+    @media (max-width: 599px) {
+      .home-hero-preset-mobile {
+        display: flex;
+      }
+    }
+
+    .home-hero-preset-toggle {
+      width: 100%;
+      max-width: 20rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--mat-sys-corner-medium);
+      overflow: hidden;
+    }
+
+    .home-hero-preset-toggle .mat-button-toggle {
+      flex: 1;
+      border: none;
+    }
+
+    .home-hero-preset-toggle .mat-button-toggle + .mat-button-toggle {
+      border-left: 1px solid var(--mat-sys-outline-variant);
+    }
+
+    .home-hero-preset-toggle .mat-button-toggle-checked {
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+    }
+
+    .home-hero-preset-toggle .mat-button-toggle-checked .mat-icon {
+      color: var(--mat-sys-primary);
+    }
+
+    .home-hero-preset-toggle .mat-button-toggle-group {
+      border: none;
+      display: flex;
+    }
+
     .home-hero-icons {
       display: flex;
       align-items: center;
@@ -704,7 +765,7 @@ import { ThemePresetService } from '../../services/theme-preset.service';
 
     @media (min-width: 600px) {
       .home-main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .home-hero, .home-hero-usp, .home-hero-icons, .home-trust-badges, .home-onboarding { grid-column: 1 / -1; }
+      .home-hero, .home-hero-usp, .home-hero-preset-mobile, .home-hero-icons, .home-trust-badges, .home-onboarding { grid-column: 1 / -1; }
     }
 
     .home-card { padding: 0.25rem; box-shadow: var(--mat-sys-level2); }

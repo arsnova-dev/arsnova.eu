@@ -22,15 +22,15 @@ import { MatIcon } from '@angular/material/icon';
           Hilfe
         </h1>
         <p class="help-lead">
-          arsnova.click ist eine Plattform für Live-Quiz, Abstimmungen und Q&amp;A-Runden – ohne Anmeldung, direkt im Browser.
+          arsnova.click ist eine Plattform für Live-Quiz, Abstimmungen und Q&amp;A-Runden, ohne Anmeldung direkt im Browser.
         </p>
 
         <section class="help-section">
           <h2>Schnellstart</h2>
           <ol class="help-steps">
-            <li><strong>Quiz erstellen</strong> – Auf der Startseite „Neues Quiz starten“ oder ein Quiz aus der Bibliothek wählen.</li>
-            <li><strong>Code teilen</strong> – Der 6-stellige Code wird angezeigt; Teilnehmende geben ihn ein oder scannen den QR-Code.</li>
-            <li><strong>Live spielen</strong> – Fragen nacheinander freigeben, abstimmen lassen, Ergebnisse anzeigen.</li>
+            <li><strong>Quiz erstellen:</strong> Auf der Startseite „Neues Quiz starten“ oder ein Quiz aus der Bibliothek wählen.</li>
+            <li><strong>Code teilen:</strong> Der 6-stellige Code wird angezeigt; Teilnehmende geben ihn ein oder scannen den QR-Code.</li>
+            <li><strong>Live spielen:</strong> Fragen nacheinander freigeben, abstimmen lassen, Ergebnisse anzeigen.</li>
           </ol>
         </section>
 
@@ -38,20 +38,20 @@ import { MatIcon } from '@angular/material/icon';
           <h2>Veranstalten</h2>
           <p>Du startest eine Session, teilst den Code und steuerst den Ablauf.</p>
           <ul>
-            <li><strong>Session starten:</strong> Quiz auswählen und live schalten – es entsteht ein eindeutiger 6-stelliger Code.</li>
+            <li><strong>Session starten:</strong> Quiz auswählen und live schalten, es entsteht ein eindeutiger 6-stelliger Code.</li>
             <li><strong>Lobby:</strong> Du siehst, wer beigetreten ist; optional wird ein QR-Code zum Beitritt angezeigt.</li>
-            <li><strong>Beamer-Ansicht:</strong> Für die Projektion im Raum – große Darstellung von Frage, Antworten, Countdown und Ergebnissen.</li>
-            <li><strong>Steuerung:</strong> „Nächste Frage“ blendet die Frage ein. Optional zuerst nur den Text (Lesephase), dann „Antworten freigeben“ – danach können alle abstimmen. Anschließend „Ergebnis zeigen“.</li>
-            <li><strong>Einstellungen:</strong> Beim Start kannst du zwischen „Seriös“ und „Spielerisch“ wählen und Optionen anpassen (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer usw.).</li>
+            <li><strong>Beamer-Ansicht:</strong> Für die Projektion im Raum, große Darstellung von Frage, Antworten, Countdown und Ergebnissen.</li>
+            <li><strong>Steuerung:</strong> „Nächste Frage“ blendet die Frage ein. Optional zuerst nur den Text (Lesephase), dann „Antworten freigeben“, danach können alle abstimmen. Anschließend „Ergebnis zeigen“.</li>
+            <li><strong>Einstellungen:</strong> Beim Start legst du als Veranstaltende oder Veranstaltender den Stil („Seriös“ oder „Spielerisch“) und die Optionen fest (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer usw.). Diese Einstellungen gelten für die gesamte Session und können von Teilnehmenden nicht geändert werden.</li>
           </ul>
         </section>
 
         <section class="help-section">
           <h2>Mitmachen</h2>
-          <p>Ohne Anmeldung mit dem Code der Session beitreten.</p>
+          <p>Ohne Anmeldung mit dem Code der Session beitreten. Stil und Optionen (Seriös/Spielerisch, Rangliste, Sound usw.) werden von der Lehrperson vorgegeben und können beim Mitmachen nicht geändert werden.</p>
           <ul>
             <li><strong>Beitreten:</strong> 6-stelligen Code auf der Startseite eingeben und „Los geht’s“ wählen.</li>
-            <li><strong>Name:</strong> Vorgegebene Namen (z. B. nach Altersgruppe), eigener Name oder anonym – je nach Einstellung der Session.</li>
+            <li><strong>Name:</strong> Vorgegebene Namen (z. B. nach Altersgruppe), eigener Name oder anonym, je nach Einstellung der Session.</li>
             <li><strong>Abstimmung:</strong> Die aktuelle Frage erscheint auf deinem Gerät; du wählst eine oder mehrere Antworten und sendest ab. Bei Zeitlimit läuft ein Countdown.</li>
             <li><strong>Ergebnis:</strong> Nach der Auflösung siehst du, ob deine Antwort richtig war, erhältst Punkte und ggf. eine persönliche Scorecard sowie deinen Rang im Leaderboard.</li>
           </ul>
@@ -59,21 +59,21 @@ import { MatIcon } from '@angular/material/icon';
 
         <section class="help-section">
           <h2>Stile: Seriös und Spielerisch</h2>
-          <p>Zwei Voreinstellungen passen die Session an den Einsatz an:</p>
+          <p>Die Lehrperson (Veranstaltende) wählt beim Start der Session eine von zwei Voreinstellungen. Teilnehmende können den Stil nicht ändern.</p>
           <ul>
-            <li><strong>Seriös:</strong> Anonym, ohne Rangliste, Fokus auf Inhalt – z. B. für Abstimmungen oder Feedback.</li>
-            <li><strong>Spielerisch:</strong> Mit Rangliste, Sounds, Anfeuerung und Effekten – ideal für Quiz-Wettbewerbe.</li>
+            <li><strong>Seriös:</strong> Anonym, ohne Rangliste, Fokus auf Inhalt, z. B. für Abstimmungen oder Feedback.</li>
+            <li><strong>Spielerisch:</strong> Mit Rangliste, Sounds, Anfeuerung und Effekten, ideal für Quiz-Wettbewerbe.</li>
           </ul>
-          <p>Alle Optionen (Rangliste, Sound, Lesephase, Team, Ton usw.) kannst du einzeln an- und ausschalten.</p>
+          <p>Alle Optionen (Rangliste, Sound, Lesephase, Team, Ton usw.) legt die Lehrperson fest und kann sie einzeln an- und ausschalten.</p>
         </section>
 
         <section class="help-section">
           <h2>Weitere Funktionen</h2>
           <ul>
             <li><strong>Team-Modus:</strong> Teilnehmende können in Teams eingeteilt werden; es gibt ein Team-Leaderboard.</li>
-            <li><strong>Q&amp;A-Runde:</strong> Statt Quiz kannst du eine Fragerunde starten – Teilnehmende reichen Fragen ein und können sie hochvoten; du moderierst und beantwortest.</li>
+            <li><strong>Q&amp;A-Runde:</strong> Statt Quiz kannst du eine Fragerunde starten: Teilnehmende reichen Fragen ein und können sie hochvoten; du moderierst und beantwortest.</li>
             <li><strong>Gamification:</strong> Sound-Effekte, Belohnungseffekte für Top-Plätze, Motivationsmeldungen, Emoji-Reaktionen, optional Bonus-Token für beste Platzierungen.</li>
-            <li><strong>Fragentypen:</strong> Multiple Choice, Single Choice, Freitext, Umfrage, Bewertungsskala – mit optionalem Timer und Lesephase pro Frage.</li>
+            <li><strong>Fragentypen:</strong> Multiple Choice, Single Choice, Freitext, Umfrage, Bewertungsskala, mit optionalem Timer und Lesephase pro Frage.</li>
           </ul>
         </section>
 
