@@ -1,9 +1,11 @@
-import { Component, HostListener, OnInit, PLATFORM_ID, inject, signal } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { SwUpdate } from '@angular/service-worker';
 import { ThemePresetService } from './core/theme-preset.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +18,15 @@ import { ThemePresetService } from './core/theme-preset.service';
           <span>Offline. Verbindung prüfen.</span>
           <button matButton class="app-offline-banner__retry" (click)="retryOnline()" aria-label="Verbindung erneut prüfen">
             Nochmal versuchen
+          </button>
+        </div>
+      }
+      @if (updateAvailable()) {
+        <div class="app-update-banner" role="status">
+          <mat-icon class="app-update-banner__icon">system_update</mat-icon>
+          <span>Neue Version verfügbar.</span>
+          <button matButton class="app-update-banner__action" (click)="reloadWithUpdate()" aria-label="App neu laden">
+            Jetzt laden
           </button>
         </div>
       }
@@ -108,6 +119,29 @@ import { ThemePresetService } from './core/theme-preset.service';
       color: var(--mat-sys-on-error-container);
     }
 
+    .app-update-banner {
+      position: sticky;
+      top: 0;
+      z-index: 79;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+      font: var(--mat-sys-label-medium);
+    }
+    .app-update-banner__icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .app-update-banner__action {
+      margin-left: 0.5rem;
+      color: var(--mat-sys-on-primary-container);
+    }
+
     .app-footer__inner {
       max-width: 56rem;
       margin-inline: auto;
@@ -172,17 +206,40 @@ import { ThemePresetService } from './core/theme-preset.service';
     }
   `],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   readonly year = new Date().getFullYear();
   isOnline = signal(true);
+  updateAvailable = signal(false);
 
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly swUpdate = inject(SwUpdate, { optional: true });
+  private versionSub: Subscription | null = null;
 
   constructor(private readonly themePreset: ThemePresetService) {}
 
   ngOnInit(): void {
     void this.themePreset; // Nur injizieren, damit Theme/Preset beim App-Start aus localStorage angewendet werden
-    if (isPlatformBrowser(this.platformId)) this.isOnline.set(navigator.onLine);
+    if (isPlatformBrowser(this.platformId)) {
+      this.isOnline.set(navigator.onLine);
+      this.checkForUpdates();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.versionSub?.unsubscribe();
+  }
+
+  private checkForUpdates(): void {
+    if (!this.swUpdate?.isEnabled) return;
+    this.versionSub = this.swUpdate.versionUpdates.subscribe((evt) => {
+      if (evt.type === 'VERSION_READY') this.updateAvailable.set(true);
+    });
+  }
+
+  async reloadWithUpdate(): Promise<void> {
+    if (!this.swUpdate?.isEnabled) return;
+    await this.swUpdate.activateUpdate();
+    window.location.reload();
   }
 
   @HostListener('window:online')

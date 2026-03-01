@@ -24,7 +24,9 @@
                 "output": "/"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": [],
             "inlineStyleLanguage": "scss",
             "server": "src/main.server.ts",
@@ -67,6 +69,10 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "no-hmr": {
+              "buildTarget": "frontend:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"
