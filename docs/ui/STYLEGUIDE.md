@@ -109,6 +109,17 @@ Tokenbasierte Card-Flaeche:
 - **Hilfetext Session-Code:** "6 Zeichen, z. B. ABC123" -- kurz, konkret, kontextneutral.
 - **Server-Status:** "Verbunden" / "Keine Verbindung" (statt "Server erreichbar/nicht erreichbar"). "Nochmal versuchen" (statt "Erneut verbinden").
 
+## Preset-Toast: Wording
+- **Titel:** Nur "Seriös" / "Spielerisch" (ohne "Preset:").
+- **Hinweise:** Nutzenorientiert, keine reine Feature-Liste. Serioes: "Anonym, ohne Wettbewerb – Fokus auf Inhalte." Spielerisch: "Mit Rangliste, Sounds und Anfeuerung – fuer mehr Motivation."
+- **Stil wechseln:** Link-Text "Stil wechseln zu Serioes/Spielerisch".
+- **Subtitle:** "Tippen zum An- oder Ausschalten. Mit „Speichern“ uebernehmen." (kurz, handlungsorientiert).
+- **Kategorien:** "Spiel & Auswertung", "Teilnahme & Namen", "Ablauf & Zeit", "Team", "Ton & Musik". Kein Anglizismus "Nicknames".
+- **Optionen:** Aussagekraeftige Labels (z. B. "Teams automatisch oder manuell zuweisen", "Hintergrundmusik in der Lobby", "Zeitlimit pro Frage"). Kein redundanter Zusatz "(Countdown)".
+- **Namensmodus:** "Vorgegebene Namen", "Eigener Name", "Anonym" (statt "Nicks", "Eigen").
+- **Label fuer vorgegebene Namen:** "Altersgruppe:" (Select fuer Nobelpreistraeger, Kindergarten, Grundschule, etc.). Aria-Label: "Altersgruppe waehlen".
+- **Schliessen-Button:** aria-label "Einstellungen schliessen".
+
 ## Nicht erlaubt
 - Tailwind-Klassen im Repository.
 - Direkte Ueberschreibung interner Material-Klassen.

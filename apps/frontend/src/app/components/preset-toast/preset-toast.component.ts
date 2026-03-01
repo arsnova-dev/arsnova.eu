@@ -13,27 +13,27 @@ import { ThemePresetService } from '../../services/theme-preset.service';
 const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
 
 const PRESET_CATEGORIES = [
-  { id: 'gamification', label: 'Gamification & Auswertung', order: 0 },
-  { id: 'participation', label: 'Teilnahme & Nicknames', order: 1 },
+  { id: 'gamification', label: 'Spiel & Auswertung', order: 0 },
+  { id: 'participation', label: 'Teilnahme & Namen', order: 1 },
   { id: 'flow', label: 'Ablauf & Zeit', order: 2 },
   { id: 'team', label: 'Team', order: 3 },
-  { id: 'audio', label: 'Audio', order: 4 },
+  { id: 'audio', label: 'Ton & Musik', order: 4 },
 ] as const;
 
 type CategoryId = (typeof PRESET_CATEGORIES)[number]['id'];
 
 export const PRESET_OPTION_IDS = [
-  { id: 'showLeaderboard', label: 'Rangliste (Punkte & Platzierung)', icon: 'leaderboard', categoryId: 'gamification' as CategoryId },
+  { id: 'showLeaderboard', label: 'Rangliste mit Punkten und Plätzen', icon: 'leaderboard', categoryId: 'gamification' as CategoryId },
   { id: 'enableRewardEffects', label: 'Effekte bei richtiger Antwort', icon: 'auto_awesome', categoryId: 'gamification' as CategoryId },
-  { id: 'enableMotivationMessages', label: 'Anfeuerungstexte nach Antwort', icon: 'campaign', categoryId: 'gamification' as CategoryId },
-  { id: 'enableEmojiReactions', label: 'Emoji-Reaktionen zulassen', icon: 'emoji_emotions', categoryId: 'gamification' as CategoryId },
+  { id: 'enableMotivationMessages', label: 'Anfeuerung nach jeder Antwort', icon: 'campaign', categoryId: 'gamification' as CategoryId },
+  { id: 'enableEmojiReactions', label: 'Emoji-Reaktionen', icon: 'emoji_emotions', categoryId: 'gamification' as CategoryId },
   { id: 'bonusTokenCount', label: 'Bonus-Token für Top-Plätze', icon: 'emoji_events', categoryId: 'gamification' as CategoryId },
-  { id: 'defaultTimer', label: 'Zeitlimit pro Frage (Countdown)', icon: 'timer', categoryId: 'flow' as CategoryId },
+  { id: 'defaultTimer', label: 'Zeitlimit pro Frage', icon: 'timer', categoryId: 'flow' as CategoryId },
   { id: 'readingPhaseEnabled', label: 'Zuerst lesen, dann antworten', icon: 'menu_book', categoryId: 'flow' as CategoryId },
   { id: 'teamMode', label: 'In Teams spielen', icon: 'groups', categoryId: 'team' as CategoryId },
-  { id: 'teamAssignment', label: 'Teams auto/manuell zuweisen', icon: 'shuffle', categoryId: 'team' as CategoryId },
-  { id: 'enableSoundEffects', label: 'Sound bei Aktionen', icon: 'volume_up', categoryId: 'audio' as CategoryId },
-  { id: 'backgroundMusic', label: 'Hintergrundmusik in Lobby', icon: 'music_note', categoryId: 'audio' as CategoryId },
+  { id: 'teamAssignment', label: 'Teams automatisch oder manuell zuweisen', icon: 'shuffle', categoryId: 'team' as CategoryId },
+  { id: 'enableSoundEffects', label: 'Sounds bei Aktionen', icon: 'volume_up', categoryId: 'audio' as CategoryId },
+  { id: 'backgroundMusic', label: 'Hintergrundmusik in der Lobby', icon: 'music_note', categoryId: 'audio' as CategoryId },
 ] as const;
 
 export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon: string }[] = [
@@ -49,8 +49,8 @@ export const TEAM_COUNT_OPTIONS = [2, 3, 4, 5, 6, 7, 8].map((n) => ({ value: n, 
 export type NameMode = 'nicknameTheme' | 'allowCustomNicknames' | 'anonymousMode';
 
 export const NAME_MODE_OPTIONS: { value: NameMode; label: string; icon: string }[] = [
-  { value: 'nicknameTheme', label: 'Nicks', icon: 'theater_comedy' },
-  { value: 'allowCustomNicknames', label: 'Eigen', icon: 'edit' },
+  { value: 'nicknameTheme', label: 'Vorgegebene Namen', icon: 'theater_comedy' },
+  { value: 'allowCustomNicknames', label: 'Eigener Name', icon: 'edit' },
   { value: 'anonymousMode', label: 'Anonym', icon: 'visibility_off' },
 ];
 
@@ -104,14 +104,14 @@ export function getPresetDefaults(preset: 'serious' | 'spielerisch'): PresetOpti
             </p>
             <p class="preset-toast__preset-hint">{{ toastHint() }}</p>
             <button type="button" class="preset-toast__switch-preset" (click)="switchPreset()">
-              Zu {{ themePreset.preset() === 'serious' ? 'Spielerisch' : 'Seriös' }} wechseln
+              Stil wechseln zu {{ themePreset.preset() === 'serious' ? 'Spielerisch' : 'Seriös' }}
             </button>
           </div>
-          <button matIconButton type="button" class="preset-toast__close" aria-label="Hinweis schließen" (click)="closed.emit()">
+          <button matIconButton type="button" class="preset-toast__close" aria-label="Einstellungen schließen" (click)="closed.emit()">
             <mat-icon>close</mat-icon>
           </button>
         </div>
-        <p class="preset-toast__subtitle">Jede Option: <strong>an</strong> = aktiv, <strong>aus</strong> = deaktiviert. Klick wechselt, Speichern übernimmt.</p>
+        <p class="preset-toast__subtitle">Tippen zum An- oder Ausschalten. Mit „Speichern“ übernehmen.</p>
         <div class="preset-toast__categories">
           @for (group of optionsByCategory(); track group.categoryId) {
             <div class="preset-toast__category">
@@ -157,7 +157,7 @@ export function getPresetDefaults(preset: 'serious' | 'spielerisch'): PresetOpti
                   <mat-form-field appearance="outline" class="preset-toast__nickname-theme-select">
                     <mat-select
                       [(ngModel)]="nicknameThemeSelectValue"
-                      aria-label="Nickname-Altersgruppe wählen"
+                      aria-label="Altersgruppe wählen"
                     >
                       <mat-select-trigger>
                         <mat-icon class="preset-toast__option-icon">{{ selectedNicknameTheme().icon }}</mat-icon>
@@ -239,7 +239,7 @@ export function getPresetDefaults(preset: 'serious' | 'spielerisch'): PresetOpti
     .preset-toast__scroll {
       flex: 1;
       min-height: 0;
-      overflow-y: auto;
+      overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -547,12 +547,12 @@ export class PresetToastComponent implements OnInit {
   }
 
   private loadPreset(preset: 'serious' | 'spielerisch'): void {
-    this.toastTitle.set(preset === 'serious' ? 'Preset: Seriös' : 'Preset: Spielerisch');
+    this.toastTitle.set(preset === 'serious' ? 'Seriös' : 'Spielerisch');
     this.toastIcon.set(preset === 'serious' ? 'school' : 'celebration');
     this.toastHint.set(
       preset === 'serious'
-        ? 'Druckfrei, anonym, Fokus auf Inhalt.'
-        : 'Rangliste, Sound & Effekte, Motivation & Wettbewerb.'
+        ? 'Anonym, ohne Wettbewerb – Fokus auf Inhalte.'
+        : 'Mit Rangliste, Sounds und Anfeuerung – für mehr Motivation.'
     );
 
     let state: PresetOptionState;
