@@ -1,7 +1,7 @@
 # 🚀 arsnova.eu (Vibe Coding Edition)
 
 [![CI](https://github.com/kqc-real/arsnova.eu/actions/workflows/ci.yml/badge.svg)](https://github.com/kqc-real/arsnova.eu/actions/workflows/ci.yml)
-[![Tech Stack: Angular](https://img.shields.io/badge/Frontend-Angular%2017%2B-DD0031.svg?style=flat-square&logo=angular)](https://angular.dev/)
+[![Tech Stack: Angular](https://img.shields.io/badge/Frontend-Angular%2021-DD0031.svg?style=flat-square&logo=angular)](https://angular.dev/)
 [![Tech Stack: tRPC](https://img.shields.io/badge/API-tRPC-2596be.svg?style=flat-square&logo=trpc)](https://trpc.io/)
 [![Tech Stack: Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748.svg?style=flat-square&logo=prisma)](https://www.prisma.io/)
 [![Documentation: ADRs](https://img.shields.io/badge/Docs-ADRs%20(DaC)-007A8A.svg?style=flat-square)](./docs/architecture/)
@@ -25,7 +25,7 @@ Weitere Details zu Ablauf, Presets und Datenschutz stehen in der **Hilfe-Seite**
 
 Wir setzen auf einen stark typisierten, hochmodernen Full-Stack:
 
-* **Frontend:** Angular (Standalone Components, Signals, Angular Material 3)
+* **Frontend:** Angular 21 (Standalone Components, Signals, Angular Material 3; Style Guide: separate .html/.scss per component, `inject()` for DI, Vitest for unit tests)
 * **Backend:** Node.js API mit tRPC (End-to-End Typsicherheit & WebSockets)
 * **Datenbank:** PostgreSQL via Prisma ORM
 * **Echtzeit-Broker:** Redis (Pub/Sub)
@@ -43,7 +43,7 @@ arsnova.eu/
 ├── prisma/
 │   └── schema.prisma        # 🗄️ Die Single Source of Truth (Datenbank)
 ├── apps/
-│   ├── frontend/            # Angular (core/, shared/, features/ – Angular-Style-Struktur)
+│   ├── frontend/            # Angular 21 (core/, shared/, features/; .html/.scss/.spec.ts je Komponente)
 │   └── backend/             # Das Node.js-Projekt (Express, tRPC)
 └── libs/
     └── shared-types/        # Geteilte Typen (tRPC Router, DTOs)

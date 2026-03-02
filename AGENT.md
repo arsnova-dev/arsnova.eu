@@ -11,6 +11,12 @@ Für Pfade (`apps/backend`, `apps/frontend`, `libs/shared-types`), strikte Monor
 * Liefere Code, der **sofort kompiliert** und **gut kommentiert** ist.
 * Bevor du eine Story als fertig markierst: einen einfachen **tRPC-Integrationstest** generieren, der das DTO-Stripping (z.B. kein `isCorrect` an Studenten in ACTIVE) verifiziert.
 
+## 🧪 Unit-Tests (Angular Style Guide)
+* **Platzierung:** Unit-Test-Dateien liegen **im gleichen Ordner** wie die zu testende Datei (z.B. Komponente, Service, Pipe).
+* **Benennung:** Gleicher Basis-Dateiname + `.spec.ts` (z.B. `home.component.ts` → `home.component.spec.ts`, `preset-toast.component.ts` → `preset-toast.component.spec.ts`).
+* **Eine Spec pro Artefakt:** Jede Komponente/Service hat ihre eigene Spec-Datei; keine zentralen Test-Sammlungen. Tests für eine Komponente gehören in die Spec **neben** dieser Komponente.
+* **Stack:** Vitest + `@analogjs/vitest-angular`; Specs werden von `tsconfig.spec.json` (include: `src/**/*.spec.ts`) erfasst.
+
 ## 📐 Zusätzliche Angular-Details (zu .cursorrules)
 * **RxJS:** Nur für asynchrone Streams (WebSockets, tRPC-Subscriptions) oder z.B. Debouncing – **niemals** für einfachen UI-State (`BehaviorSubject` ist verboten).
 * **Styling:** Angular Material 3 + Design-Tokens und SCSS-Patterns (kein Tailwind in `apps/frontend`). Siehe ADR 0005 und `docs/ui/STYLEGUIDE.md`.

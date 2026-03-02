@@ -175,7 +175,7 @@ Dieses Dokument bewusst kompakt und stabil halten. Bei größeren Änderungen (n
 
 - Backend: Vitest oder Jest; pro Router/Procedure mindestens Happy Path und ein Fehlerfall; Prisma mit Test-DB oder Mock.
 - DTO-Stripping: Expliziter Test, der session.nextQuestion bzw. onQuestionRevealed im Status ACTIVE aufruft und prüft, dass die Antwortoptionen kein isCorrect enthalten; nach revealResults muss isCorrect in den Revealed-DTOs vorhanden sein.
-- Frontend: Komponenten-Tests mit TestBed; Signale und Async-Operationen berücksichtigen; keine unnötigen RxJS-Subscriptions für reinen UI-State.
+- Frontend: Komponenten-Tests mit TestBed; Signale und Async-Operationen berücksichtigen; keine unnötigen RxJS-Subscriptions für reinen UI-State. **Unit-Test-Dateien** liegen im gleichen Ordner wie die zu testende Datei, Name: `<dateiname>.spec.ts` (Angular Style Guide); eine Spec pro Komponente/Service; Stack: Vitest + @analogjs/vitest-angular.
 - E2E (optional): Playwright oder Cypress für kritische Flows (Beitritt, Abstimmung, Ergebnis-Anzeige); Session-Code und Nickname testweise fest.
 
 ---

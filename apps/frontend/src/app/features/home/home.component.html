@@ -1,0 +1,370 @@
+    <div class="l-page">
+      <ng-container presetToastHost></ng-container>
+
+      @if (presetSnackbarVisible()) {
+        <div class="home-snackbar" role="status">
+          <span class="home-snackbar__icon-wrap">
+            <mat-icon class="home-snackbar__icon">{{ presetSnackbarIcon() }}</mat-icon>
+          </span>
+          <span class="home-snackbar__text">{{ presetSnackbarLabel() }}</span>
+          <button type="button" class="home-snackbar__action" (click)="openPresetCustomize()">Anpassen</button>
+          <button type="button" class="home-snackbar__close" (click)="dismissSnackbar()" aria-label="Schließen">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      <header #homeHeader class="home-header" role="banner">
+        <div class="home-header__row">
+          <div class="home-brand">
+            <svg
+              class="home-brand__icon"
+              viewBox="0 0 32 32"
+              preserveAspectRatio="xMidYMid meet"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="brand-eu-bg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="var(--app-eu-blue)" />
+                  <stop offset="100%" stop-color="var(--app-eu-blue-dark)" />
+                </linearGradient>
+              </defs>
+              <rect width="32" height="32" rx="6" fill="url(#brand-eu-bg)" />
+              <rect x="2" y="2" width="28" height="28" rx="5" fill="var(--app-eu-blue)" />
+              <!-- EU-Stern (arsnova-stern-eu): sauber in der Ecke, etwas größer, 1 Spitze oben -->
+              <path
+                class="home-brand__star"
+                d="M23 18 L24.12 21.46 L27.76 21.45 L24.82 23.59 L25.94 27.05 L23 24.91 L20.06 27.05 L21.18 23.59 L18.24 21.45 L21.88 21.46 Z"
+                fill="var(--app-eu-yellow)"
+              />
+            </svg>
+            <h1 class="home-brand__title">arsnova.eu</h1>
+          </div>
+
+          <button
+            #controlsToggleBtn
+            matIconButton
+            class="mobile-only"
+            [attr.aria-expanded]="controlsMenuOpen() ? 'true' : 'false'"
+            aria-controls="home-controls-mobile"
+            aria-label="Einstellungen öffnen"
+            (click)="toggleControlsMenu()"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
+
+          <div class="home-controls desktop-only">
+            <mat-button-toggle-group
+              [value]="themePreset.preset()"
+              appearance="standard"
+              aria-label="Preset auswählen"
+              class="home-icon-toggles"
+            >
+              <mat-button-toggle value="serious" (click)="setPreset('serious')">
+                <mat-icon>school</mat-icon> Seriös
+              </mat-button-toggle>
+              <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch')">
+                <mat-icon class="home-preset-icon--playful">celebration</mat-icon> Spielerisch
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <mat-button-toggle-group
+              [value]="themePreset.theme()"
+              (change)="onThemeChange($event.value)"
+              appearance="standard"
+              aria-label="Theme"
+              class="home-icon-toggles"
+            >
+              <mat-button-toggle value="system" aria-label="System">
+                <mat-icon>contrast</mat-icon>
+              </mat-button-toggle>
+              <mat-button-toggle value="dark" aria-label="Dark">
+                <mat-icon>dark_mode</mat-icon>
+              </mat-button-toggle>
+              <mat-button-toggle value="light" aria-label="Light">
+                <mat-icon>light_mode</mat-icon>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <button matIconButton [matMenuTriggerFor]="langMenu" aria-label="Sprache" class="home-icon-btn">
+              <mat-icon>language</mat-icon>
+            </button>
+            <mat-menu #langMenu="matMenu">
+              @for (lang of supportedLanguages; track lang.code) {
+                <button mat-menu-item (click)="setLanguage(lang.code)">
+                  <mat-icon matMenuItemIcon>language</mat-icon>
+                  {{ lang.label }}
+                </button>
+              }
+            </mat-menu>
+          </div>
+        </div>
+
+        @if (controlsMenuOpen()) {
+          <div id="home-controls-mobile" class="home-controls-mobile l-stack l-stack--sm">
+            <mat-button-toggle-group
+              [value]="themePreset.preset()"
+              appearance="standard"
+              aria-label="Preset auswählen"
+              class="home-icon-toggles home-preset-toggle--full"
+            >
+              <mat-button-toggle value="serious" (click)="setPreset('serious', true)">
+                <mat-icon>school</mat-icon> Seriös
+              </mat-button-toggle>
+              <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch', true)">
+                <mat-icon class="home-preset-icon--playful">celebration</mat-icon> Spielerisch
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <mat-button-toggle-group
+              [value]="themePreset.theme()"
+              (change)="onThemeChange($event.value)"
+              appearance="standard"
+              aria-label="Theme"
+              class="home-icon-toggles home-icon-toggles--full"
+            >
+              <mat-button-toggle value="system" aria-label="System">
+                <mat-icon>contrast</mat-icon>
+              </mat-button-toggle>
+              <mat-button-toggle value="dark" aria-label="Dark">
+                <mat-icon>dark_mode</mat-icon>
+              </mat-button-toggle>
+              <mat-button-toggle value="light" aria-label="Light">
+                <mat-icon>light_mode</mat-icon>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <div class="home-controls-mobile__lang-row">
+              <button matIconButton [matMenuTriggerFor]="langMenuMobile" aria-label="Sprache" class="home-icon-btn">
+                <mat-icon>language</mat-icon>
+              </button>
+            </div>
+            <mat-menu #langMenuMobile="matMenu">
+              @for (lang of supportedLanguages; track lang.code) {
+                <button mat-menu-item (click)="setLanguage(lang.code); closeControlsMenu()">
+                  <mat-icon matMenuItemIcon>language</mat-icon>
+                  {{ lang.label }}
+                </button>
+              }
+            </mat-menu>
+          </div>
+        }
+      </header>
+
+      <main class="home-main">
+        <p class="home-hero">Quizzen, abstimmen, gemeinsam und live</p>
+        <p class="home-hero-usp">Kita bis Uni – Seriös bis Spielerisch</p>
+        @if (themePreset.preset() === 'spielerisch') {
+          <p class="home-hero-usp home-hero-usp--secondary">Bonus für die Besten</p>
+        }
+
+        <div class="home-hero-preset-mobile" aria-label="Stil wählen">
+          <mat-button-toggle-group
+            [value]="themePreset.preset()"
+            appearance="standard"
+            aria-label="Stil auswählen"
+            class="home-hero-preset-toggle"
+          >
+            <mat-button-toggle value="serious" (click)="setPreset('serious')">
+              <mat-icon>school</mat-icon>
+              Seriös
+            </mat-button-toggle>
+            <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch')">
+              <mat-icon class="home-preset-icon--playful">celebration</mat-icon>
+              Spielerisch
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <div class="home-hero-icons" aria-hidden="true">
+          <div class="home-hero-icon"><mat-icon>quiz</mat-icon></div>
+          <span class="home-hero-icon-dot"></span>
+          <div class="home-hero-icon"><mat-icon>forum</mat-icon></div>
+          <span class="home-hero-icon-dot"></span>
+          <div class="home-hero-icon"><mat-icon>how_to_vote</mat-icon></div>
+        </div>
+
+        <p class="home-trust-badges">Kostenlos · DSGVO-konform · Open Source</p>
+
+        <mat-card appearance="raised" id="participant-entry" class="home-card">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <mat-icon class="home-card__icon">group</mat-icon>
+              Mitmachen
+            </mat-card-subtitle>
+            <mat-card-title class="home-card__title">Dabei sein</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content class="l-stack l-stack--sm">
+            @if (recentSessionCodes().length > 0) {
+              <p class="home-recent-label">Letzte Sessions</p>
+              <div class="home-recent-codes">
+                @for (code of recentSessionCodes(); track code) {
+                  <button matButton="outlined" class="home-recent-code" (click)="joinSessionByCode(code)">
+                    {{ code }}
+                  </button>
+                }
+              </div>
+            }
+
+            <div
+              class="home-code-segments"
+              [class.home-code-segments--focused]="codeInputFocused()"
+              [class.home-code-segments--valid]="isValidSessionCode()"
+              [class.home-code-segments--shake]="codeShaking()"
+              (click)="focusCodeInput()"
+            >
+              @for (slot of codeSlots; track slot) {
+                <span
+                  class="home-code-segment"
+                  [class.home-code-segment--active]="codeInputFocused() && sessionCode().length === slot"
+                  [class.home-code-segment--filled]="sessionCode().length > slot"
+                >{{ sessionCode()[slot] }}</span>
+              }
+              <input
+                #sessionCodeInput
+                class="home-code-segments__input"
+                type="text"
+                maxlength="6"
+                [value]="sessionCode()"
+                (input)="onSessionCodeInput($event)"
+                (keydown.enter)="joinSession()"
+                (focus)="codeInputFocused.set(true)"
+                (blur)="codeInputFocused.set(false)"
+                autocapitalize="characters"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Session-Code, 6 Zeichen"
+              />
+            </div>
+            <div class="home-code-meta">
+              @if (sessionCode().length > 0) {
+                <span class="home-code-counter">{{ sessionCode().length }}/6</span>
+              }
+              <span class="home-code-help">6 Zeichen, z.B. ABC123</span>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions class="l-stack l-stack--sm">
+            @if (isJoining()) {
+              <button matButton="filled" class="home-cta" disabled aria-label="Session beitreten">
+                <mat-icon class="home-cta__icon home-spin">sync</mat-icon>
+                Verbinde…
+              </button>
+            } @else {
+              <button
+                matButton="filled"
+                class="home-cta"
+                [class.home-cta--ready]="ctaReady()"
+                (click)="joinSession()"
+                [disabled]="!isValidSessionCode()"
+                aria-label="Teilnehmen"
+              >
+                <mat-icon class="home-cta__icon">login</mat-icon>
+                Los geht's
+              </button>
+            }
+            @if (joinError()) {
+              <p class="home-error" role="alert">{{ joinError() }}</p>
+            }
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card appearance="raised" class="home-card home-card--create">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <mat-icon class="home-card__icon">school</mat-icon>
+              Veranstalten
+            </mat-card-subtitle>
+            <mat-card-title class="home-card__title">Quiz starten</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="home-card__meta">
+              <p class="home-card__copy">Quiz, Q&amp;A oder Umfrage in Sekunden</p>
+              <a
+                matButton
+                routerLink="/help"
+                class="home-help-btn"
+                aria-label="Hilfe öffnen"
+              >
+                <mat-icon>help</mat-icon>
+                Hilfe
+              </a>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions class="l-stack l-stack--sm">
+            <a matButton="filled" routerLink="/quiz" class="home-cta" (mouseenter)="preloadQuiz()">
+              <mat-icon class="home-cta__icon">add_circle</mat-icon>
+              Neues Quiz starten
+            </a>
+            <div class="home-cta-row">
+              <a matButton="tonal" routerLink="/quiz" class="home-cta home-cta--secondary" (mouseenter)="preloadQuiz()">
+                <mat-icon class="home-cta__icon">quiz</mat-icon>
+                Aus Bibliothek
+              </a>
+              <a matButton="tonal" routerLink="/quiz" class="home-cta home-cta--secondary" (mouseenter)="preloadQuiz()">
+                <mat-icon class="home-cta__icon">question_answer</mat-icon>
+                Fragerunde
+              </a>
+            </div>
+          </mat-card-actions>
+        </mat-card>
+      </main>
+
+      <section class="home-grid">
+        <mat-card appearance="raised">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="home-card__icon">library_books</mat-icon>
+              Quiz-Bibliothek
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="home-subcard__links l-stack l-stack--sm">
+              <a matButton routerLink="/quiz" class="home-subcard__link" (mouseenter)="preloadQuiz()">
+                <mat-icon class="home-subcard__link-icon">menu_book</mat-icon>
+                Quizzes entdecken
+              </a>
+              <div class="home-subcard__demo-row">
+                <a matButton routerLink="/quiz" class="home-subcard__demo-btn" (mouseenter)="preloadQuiz()">
+                  <mat-icon class="home-subcard__link-icon">play_circle</mat-icon>
+                  Demo starten
+                </a>
+                <span class="home-subcard__demo-sep">oder</span>
+                <a matButton [routerLink]="['/session', demoSessionCode]" class="home-subcard__demo-btn">
+                  <mat-icon class="home-subcard__link-icon">group_add</mat-icon>
+                  Demo beitreten
+                </a>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="raised" class="home-subcard--status">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="home-card__icon">sensors</mat-icon>
+              Status
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (apiStatus()) {
+              <p class="home-subcard__body">Verbunden</p>
+            } @else {
+              <p class="home-subcard__body">Keine Verbindung</p>
+              <button matButton="outlined" class="home-retry-btn" (click)="retryConnection()" [disabled]="apiRetrying()">
+                {{ apiRetrying() ? 'Verbinde…' : 'Nochmal versuchen' }}
+              </button>
+            }
+            @defer (on viewport) {
+              <app-server-status-widget />
+            } @placeholder {
+              <div class="home-status-placeholder" aria-hidden="true"><span></span></div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </section>
+    </div>

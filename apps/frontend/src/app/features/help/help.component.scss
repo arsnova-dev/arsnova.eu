@@ -1,0 +1,132 @@
+.help-page {
+  padding-bottom: 3rem;
+  padding-inline: 1.5rem;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+@media (min-width: 600px) {
+  .help-page {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 840px) {
+  .help-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+.help-back {
+  margin-bottom: 2rem;
+}
+
+.help-article {
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface);
+  line-height: 1.7;
+  max-inline-size: min(65ch, 100%);
+  margin-inline: auto;
+  overflow-wrap: break-word;
+}
+
+.help-title {
+  font: var(--mat-sys-headline-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.help-title-icon {
+  font-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--mat-sys-primary);
+}
+
+.help-lead {
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 2rem;
+}
+
+.help-section {
+  margin-bottom: 2rem;
+}
+
+.help-section h2 {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.5rem;
+}
+
+.help-section h2:not(:first-child) {
+  margin-top: 1.5rem;
+}
+
+.help-section p {
+  margin: 0 0 0.75rem;
+}
+
+.help-section ul,
+.help-section ol {
+  margin: 0 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.help-section li {
+  margin-bottom: 0.5rem;
+}
+
+.help-section li::marker {
+  color: var(--mat-sys-primary);
+}
+
+.help-steps {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: step;
+}
+
+.help-steps li {
+  counter-increment: step;
+  padding-left: 2rem;
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.help-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--mat-sys-corner-full);
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-label-large);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+
+.help-article a {
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+  border-radius: 2px;
+}
+
+.help-article a:hover {
+  text-decoration: underline;
+}
+
+.help-article a:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}

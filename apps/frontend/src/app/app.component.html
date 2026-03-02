@@ -1,0 +1,42 @@
+<div class="app-layout">
+  @if (!isOnline()) {
+    <div class="app-offline-banner" role="alert">
+      <mat-icon class="app-offline-banner__icon">cloud_off</mat-icon>
+      <span>Offline. Verbindung prüfen.</span>
+      <button matButton class="app-offline-banner__retry" (click)="retryOnline()" aria-label="Verbindung erneut prüfen">
+        Nochmal versuchen
+      </button>
+    </div>
+  }
+  @if (updateAvailable()) {
+    <div class="app-update-banner" role="status">
+      <mat-icon class="app-update-banner__icon">system_update</mat-icon>
+      <span>Neue Version verfügbar.</span>
+      <button matButton class="app-update-banner__action" (click)="reloadWithUpdate()" aria-label="App neu laden">
+        Jetzt laden
+      </button>
+    </div>
+  }
+  <a href="#main-content" class="app-skip-link">Zum Inhalt springen</a>
+  <main id="main-content" class="app-main" role="main">
+    <router-outlet />
+  </main>
+  <footer class="app-footer" role="contentinfo">
+    <div class="app-footer__inner">
+      <div class="app-footer__row">
+        <span class="app-footer__copy">© {{ year }} arsnova.eu</span>
+        <div class="app-footer__links">
+          <a matButton routerLink="/legal/imprint">
+            <mat-icon class="app-footer__icon">business</mat-icon>
+            Impressum
+          </a>
+          <a matButton routerLink="/legal/privacy">
+            <mat-icon class="app-footer__icon">privacy_tip</mat-icon>
+            Datenschutz
+          </a>
+        </div>
+      </div>
+      <p class="app-footer__badges">Kostenlos · 100 % DSGVO-konform · Open Source</p>
+    </div>
+  </footer>
+</div>

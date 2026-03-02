@@ -1,0 +1,37 @@
+<div
+  class="server-status"
+  role="status"
+  aria-live="polite"
+  [attr.aria-label]="ariaStatusLabel()"
+>
+  <div class="server-status__header">
+    <mat-icon
+      class="server-status__icon server-status__icon--status"
+      [class.server-status__icon--healthy]="statusColor() === 'green'"
+      [class.server-status__icon--busy]="statusColor() === 'yellow'"
+      [class.server-status__icon--overloaded]="statusColor() === 'red'"
+      [class.server-status__icon--unknown]="statusColor() === 'gray'"
+      aria-hidden="true"
+    >timeline</mat-icon>
+    <span
+      class="server-status__dot"
+      [class.server-status__dot--healthy]="statusColor() === 'green'"
+      [class.server-status__dot--busy]="statusColor() === 'yellow'"
+      [class.server-status__dot--overloaded]="statusColor() === 'red'"
+      [class.server-status__dot--unknown]="statusColor() === 'gray'"
+      aria-hidden="true"
+    ></span>
+    Server-Status
+  </div>
+  @if (stats(); as s) {
+    <p class="server-status__text">
+      <strong class="server-status__highlight">{{ s.activeSessions }} Quiz live</strong>
+      · {{ s.totalParticipants }} Teilnehmende · {{ s.completedSessions }} durchgeführt
+    </p>
+  } @else {
+    <div class="server-status__skeleton" aria-hidden="true">
+      <span class="server-status__skeleton-line"></span>
+    </div>
+    <p class="server-status__text server-status__text--muted" aria-live="polite">Wird geladen…</p>
+  }
+</div>

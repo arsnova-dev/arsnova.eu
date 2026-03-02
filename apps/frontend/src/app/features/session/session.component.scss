@@ -1,0 +1,59 @@
+.session-page__state {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.session-page__muted-text {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+.session-page__error-card {
+  margin-top: 2rem;
+  border: 1px solid var(--mat-sys-error);
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.session-page__error-icon {
+  vertical-align: middle;
+  margin-right: 0.25rem;
+  color: var(--mat-sys-error);
+}
+
+.session-page__error-text {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+}
+
+.session-card {
+  margin-top: 2rem;
+}
+
+.session-card__header {
+  text-align: center;
+}
+
+.session-card__code {
+  color: var(--mat-sys-primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.session-card__meta {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface);
+}
+
+.session-card__label {
+  font-weight: 600;
+}
+
+.session-card__hint {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}

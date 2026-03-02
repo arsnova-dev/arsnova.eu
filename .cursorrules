@@ -6,6 +6,7 @@ Du bist der Lead-Architekt. Wir arbeiten in einem **npm Workspaces Monorepo**.
 - **Backend:** `apps/backend/` (Node.js, tRPC Server, Prisma)
 - **Frontend:** `apps/frontend/` (Angular 17+, Signals). App unter `src/app/`: **core/** (ws-urls, trpc.client, theme-preset), **shared/** (wiederverwendbare UI), **features/** (home, quiz, session, legal, help).
 - **Shared Types:** `libs/shared-types/` (Zod Schemas, Interfaces)
+- **Unit-Tests:** Pro Komponente/Service eine Spec-Datei **im gleichen Ordner**, Name: `<dateiname>.spec.ts` (z.B. `home.component.spec.ts` neben `home.component.ts`). Siehe Angular Style Guide; Vitest in `apps/frontend`.
 
 ## 🛡️ Monorepo-Regeln (Strikt!)
 1. **Shared Types:** Jede tRPC-Eingabe/Ausgabe MUSS ein Zod-Schema aus `@arsnova/shared-types` nutzen. Erstelle/ändere IMMER erst das Schema dort, bevor du Code in Apps schreibst.
