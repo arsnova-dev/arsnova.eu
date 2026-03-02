@@ -173,7 +173,7 @@ enum SessionStatus {
 
 enum NicknameTheme {
   NOBEL_LAUREATES  // Nobelpreisträger (default, Hochschule)
-  KINDERGARTEN     // Tiere & Farben (z.B. "Blauer Elefant")
+  KINDERGARTEN     // Kita: Tiere & Farben (z.B. "Blauer Elefant")
   PRIMARY_SCHOOL   // Märchenfiguren (z.B. "Rotkäppchen")
   MIDDLE_SCHOOL    // Superhelden & Entdecker (z.B. "Kolumbus")
   HIGH_SCHOOL      // Wissenschaftler & Philosophen (z.B. "Kant")

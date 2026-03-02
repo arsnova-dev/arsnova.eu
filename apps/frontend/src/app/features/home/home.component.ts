@@ -202,9 +202,11 @@ class PresetToastHostDirective {
       </header>
 
       <main class="home-main">
-        <p class="home-hero">Fragen, quizzen, abstimmen, gemeinsam und live</p>
-        <p class="home-hero-usp">Angepasst an deine Zielgruppe: von Kindergarten bis Oberstufe, seriös oder spielerisch.</p>
-        <p class="home-hero-usp home-hero-usp--secondary">Bonus für die Besten: Code bei der Quizleitung einlösbar.</p>
+        <p class="home-hero">Quizzen, abstimmen – gemeinsam und live</p>
+        <p class="home-hero-usp">Von Kita bis Uni – seriös oder spielerisch</p>
+        @if (themePreset.preset() === 'spielerisch') {
+          <p class="home-hero-usp home-hero-usp--secondary">Bonus für die Besten</p>
+        }
 
         <div class="home-hero-preset-mobile" aria-label="Stil wählen">
           <mat-button-toggle-group
@@ -329,7 +331,7 @@ class PresetToastHostDirective {
 
           <mat-card-content>
             <div class="home-card__meta">
-              <p class="home-card__copy">Quiz, Q&amp;A oder Umfrage in Sekunden aufsetzen.</p>
+              <p class="home-card__copy">Quiz, Q&amp;A oder Umfrage in Sekunden</p>
               <a
                 matButton
                 routerLink="/help"

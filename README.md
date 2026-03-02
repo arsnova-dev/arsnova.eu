@@ -6,7 +6,7 @@
 [![Tech Stack: Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748.svg?style=flat-square&logo=prisma)](https://www.prisma.io/)
 [![Documentation: ADRs](https://img.shields.io/badge/Docs-ADRs%20(DaC)-007A8A.svg?style=flat-square)](./docs/architecture/)
 
-> **Fragen, quizzen, abstimmen – gemeinsam und live.**  
+> **Quizzen, abstimmen – gemeinsam und live.**  
 > Ein modernes, kostenloses und 100 % DSGVO-konformes Audience-Response-System – ohne Anmeldung, Open Source. Entwickelt im Rahmen des Hochschul-Moduls „Software Engineering & Vibe Coding“.
 
 ## 📖 Über das Projekt
@@ -15,7 +15,7 @@
 
 ### Alleinstellungsmerkmale
 
-* **Zielgruppenauswahl:** Die Lehrperson wählt beim Start der Session den Stil (**Seriös** oder **Spielerisch**) und kann Optionen anpassen (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer). So passt sich die Session der Zielgruppe an – von Kindergarten bis Oberstufe. Teilnehmende können den Stil nicht ändern. Im Preset **Spielerisch** pulsieren auf der Startseite Logo und Hero-Icons (nur bei normaler Bewegungspräferenz).
+* **Stil-Auswahl:** Die Lehrperson wählt beim Start der Session den Stil (**Seriös** oder **Spielerisch**) und kann Optionen anpassen (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer). So passt sich die Session an – von Kita bis Uni. Teilnehmende können den Stil nicht ändern. Im Preset **Spielerisch** pulsieren auf der Startseite Logo und Hero-Icons (nur bei normaler Bewegungspräferenz).
 * **Bonus-Option für die Besten:** Top-Platzierte erhalten einen **einlösbaren Code**, den sie bei der Quizleitung einlösen können (z. B. für Bonuspunkte oder Anerkennung). Die App dient nicht als autorisiertes Prüfungsinstrument; die Einlösung liegt bei der Lehrperson.
 * **Zero-Knowledge / Local-First:** Keine Accounts nötig. Quiz-Inhalte werden lokal im Browser des Erstellers gespeichert; beim Start einer Live-Session wird nur temporär eine Kopie an den Server übertragen. Nach Ende der Session werden die Daten bereinigt. Der Server ist reiner Relay für Echtzeit-Abstimmungen.
 

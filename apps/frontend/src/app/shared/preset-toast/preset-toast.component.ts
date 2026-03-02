@@ -38,7 +38,7 @@ export const PRESET_OPTION_IDS = [
 
 export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon: string }[] = [
   { value: 'NOBEL_LAUREATES', label: 'Nobelpreisträger', icon: 'military_tech' },
-  { value: 'KINDERGARTEN', label: 'Kindergarten', icon: 'child_care' },
+  { value: 'KINDERGARTEN', label: 'Kita', icon: 'child_care' },
   { value: 'PRIMARY_SCHOOL', label: 'Grundschule', icon: 'abc' },
   { value: 'MIDDLE_SCHOOL', label: 'Mittelstufe', icon: 'calculate' },
   { value: 'HIGH_SCHOOL', label: 'Oberstufe', icon: 'school' },

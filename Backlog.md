@@ -465,7 +465,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
   - **Akzeptanzkriterien:**
     - Der Dozent wählt in der Quiz-Konfiguration ein Nickname-Thema (`nicknameTheme`):
       - **Nobelpreisträger** (default) – z.B. "Marie Curie", "Albert Einstein", "Ada Yonath" (mind. 50 Namen).
-      - **Kindergarten** – Tiere & Farben, z.B. "Blauer Elefant", "Rotes Einhorn" (mind. 50 Kombinationen).
+      - **Kita** – Tiere & Farben, z.B. "Blauer Elefant", "Rotes Einhorn" (mind. 50 Kombinationen).
       - **Grundschule** – Märchenfiguren, z.B. "Rotkäppchen", "Rumpelstilzchen" (mind. 50 Namen).
       - **Mittelstufe** – Superhelden & Entdecker, z.B. "Kolumbus", "Amelia Earhart" (mind. 50 Namen).
       - **Oberstufe** – Wissenschaftler & Philosophen, z.B. "Kant", "Noether", "Hawking" (mind. 50 Namen).
