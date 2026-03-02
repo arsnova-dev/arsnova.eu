@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# arsnova.click V3 – Deploy-Skript (auf dem Server oder via CI per SSH)
+# arsnova.eu – Deploy-Skript (auf dem Server oder via CI per SSH)
 # Voraussetzung: Im Repo-Verzeichnis, .env.production vorhanden.
 # Nutzung: ./scripts/deploy.sh   oder   bash scripts/deploy.sh
 # =============================================================================

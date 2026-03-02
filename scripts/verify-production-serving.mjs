@@ -33,10 +33,10 @@ async function main() {
     const hasLcpShell =
       html.includes('app-shell') &&
       html.includes('LCP-Shell') &&
-      html.includes('arsnova.click');
+      html.includes('arsnova.eu');
     console.log('LCP-Shell im HTML:', hasLcpShell ? '✓' : '✗');
     if (!hasLcpShell) {
-      console.log('  Erwartet: <div class="app-shell" …> und "arsnova.click" im Body.');
+      console.log('  Erwartet: <div class="app-shell" …> und "arsnova.eu" im Body.');
     }
 
     const hasCriticalCss = html.includes('--mat-sys-surface-container');

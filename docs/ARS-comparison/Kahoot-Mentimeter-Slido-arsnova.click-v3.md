@@ -6,7 +6,7 @@
 ✅ = voll umgesetzt  
 🟡 = geplant / MVP-ready (Backlog)  
 ❌ = nicht verfügbar  
-**Fett** = klarer USP von arsnova.click
+**Fett** = klarer USP von arsnova.eu
 
 | Bereich                  | Feature                                      | Kahoot!     | Mentimeter   | Slido        | **arsnova.eu**                  |
 |--------------------------|----------------------------------------------|-------------|--------------|--------------|---------------------------------------|

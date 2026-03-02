@@ -1,5 +1,5 @@
 # =============================================================================
-# arsnova.click V3 – CI & Deploy (GitHub Actions)
+# arsnova.eu – CI & Deploy (GitHub Actions)
 # Story 0.6: Build, Lint, Validate, Audit, Docker
 # Deploy: Nur bei Push auf main, nach allen Tests; optional eigener Branch (s. unten).
 # =============================================================================

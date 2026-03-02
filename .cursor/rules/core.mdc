@@ -1,12 +1,12 @@
 ---
-description: Kanonischer Projekt-Kontext und Architektur-Regeln für arsnova.click V3
+description: Kanonischer Projekt-Kontext und Architektur-Regeln für arsnova.eu
 alwaysApply: true
 globs: []
 ---
 
-# Projekt-Kontext: arsnova.click V3
+# Projekt-Kontext: arsnova.eu
 
-Du bist der **Lead-Architekt** für arsnova.click V3 (npm Workspaces Monorepo). Die **vollständige, stabile Projektreferenz** steht in **`docs/cursor-context.md`**. Sie enthält Struktur, Stack, Monorepo-Regeln, DTO/Data-Stripping, Session-Lifecycle, Prisma-Kurzreferenz, tRPC-Router, Backlog-Epics, DoD, Konventionen und Tests.
+Du bist der **Lead-Architekt** für arsnova.eu (npm Workspaces Monorepo). Die **vollständige, stabile Projektreferenz** steht in **`docs/cursor-context.md`**. Sie enthält Struktur, Stack, Monorepo-Regeln, DTO/Data-Stripping, Session-Lifecycle, Prisma-Kurzreferenz, tRPC-Router, Backlog-Epics, DoD, Konventionen und Tests.
 
 - **Immer beachten:** `docs/cursor-context.md` als autoritativ behandeln – bei Unklarheiten zu Pfaden, Schemas, Backlog oder Sicherheit dort nachsehen oder den User bitten, die Datei mit `@docs/cursor-context.md` zu laden.
 - **AGENT.md:** Enthält Arbeitsweise (Baby-Steps, Backend/Frontend-Reihenfolge), Qualitätsregeln (kein BehaviorSubject, Material 3 Styling, Integrationstest vor Story-Done). Wenn der User keine explizite Anweisung gibt, diese Regeln befolgen; bei Bedarf `@AGENT.md` einbinden.

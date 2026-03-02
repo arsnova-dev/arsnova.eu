@@ -16,7 +16,7 @@ async function createScreenshot(width, height, label, filename) {
   const svgOverlay = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <rect x="${width * 0.1}" y="${height * 0.15}" width="${width * 0.8}" height="${height * 0.08}" rx="12" fill="rgb(${primary.r},${primary.g},${primary.b})" opacity="0.2"/>
-      <text x="${width / 2}" y="${height * 0.38}" text-anchor="middle" font-family="Roboto,system-ui,sans-serif" font-weight="700" font-size="${Math.round(width * 0.08)}" fill="white">arsnova.click</text>
+      <text x="${width / 2}" y="${height * 0.38}" text-anchor="middle" font-family="Roboto,system-ui,sans-serif" font-weight="700" font-size="${Math.round(width * 0.08)}" fill="white">arsnova.eu</text>
       <text x="${width / 2}" y="${height * 0.50}" text-anchor="middle" font-family="Roboto,system-ui,sans-serif" font-weight="400" font-size="${Math.round(width * 0.03)}" fill="rgb(163,159,171)">Live-Quiz &amp; Abstimmung für Hochschulen</text>
       <rect x="${width * 0.3}" y="${height * 0.58}" width="${width * 0.4}" height="${height * 0.07}" rx="20" fill="rgb(${primary.r},${primary.g},${primary.b})"/>
       <text x="${width / 2}" y="${height * 0.625}" text-anchor="middle" font-family="Roboto,system-ui,sans-serif" font-weight="600" font-size="${Math.round(width * 0.025)}" fill="white">Session erstellen</text>

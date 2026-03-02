@@ -1,6 +1,6 @@
 {
-  "name": "arsnova.click – Live-Quiz & Abstimmung",
-  "short_name": "arsnova.click",
+  "name": "arsnova.eu – Live-Quiz & Abstimmung",
+  "short_name": "arsnova.eu",
   "description": "Kostenlose, DSGVO-konforme Live-Quiz- und Abstimmungsplattform für Hochschulen.",
   "id": "/",
   "start_url": "/",
@@ -13,55 +13,55 @@
   "lang": "de",
   "icons": [
     {
-      "src": "/assets/icons/icon-72x72.png",
+      "src": "/assets/icons/icon-72x72.png?v=2",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-96x96.png",
+      "src": "/assets/icons/icon-96x96.png?v=2",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-128x128.png",
+      "src": "/assets/icons/icon-128x128.png?v=2",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-144x144.png",
+      "src": "/assets/icons/icon-144x144.png?v=2",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-152x152.png",
+      "src": "/assets/icons/icon-152x152.png?v=2",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-192x192.png",
+      "src": "/assets/icons/icon-192x192.png?v=2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-384x384.png",
+      "src": "/assets/icons/icon-384x384.png?v=2",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-512x512.png",
+      "src": "/assets/icons/icon-512x512.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-maskable-512x512.png",
+      "src": "/assets/icons/icon-maskable-512x512.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -69,18 +69,18 @@
   ],
   "screenshots": [
     {
-      "src": "/assets/icons/screenshot-wide.png?v=3",
+      "src": "/assets/icons/screenshot-wide.png?v=4",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "arsnova.click – Desktop Ansicht"
+      "label": "arsnova.eu – Desktop Ansicht"
     },
     {
-      "src": "/assets/icons/screenshot-narrow.png?v=3",
+      "src": "/assets/icons/screenshot-narrow.png?v=4",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "arsnova.click – Mobile Ansicht"
+      "label": "arsnova.eu – Mobile Ansicht"
     }
   ]
 }

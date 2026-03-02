@@ -123,9 +123,9 @@ Docker Compose V2 ist bei neueren Docker-Installationen enthalten (`docker compo
 sudo apt install -y nginx
 ```
 
-### 4.2 Konfiguration für arsnova.click
+### 4.2 Konfiguration für arsnova.eu
 
-Ersetze `arsnova.click` durch deine Domain. Nginx leitet HTTP/HTTPS und WebSockets an die Docker-Container weiter (localhost-Ports).
+Ersetze `arsnova.eu` durch deine Domain (falls abweichend). Nginx leitet HTTP/HTTPS und WebSockets an die Docker-Container weiter (localhost-Ports).
 
 **Datei:** `/etc/nginx/sites-available/arsnova-click`
 
@@ -145,7 +145,7 @@ upstream app_ws_yjs {
 server {
     listen 80;
     listen [::]:80;
-    server_name arsnova.click www.arsnova.click;
+    server_name arsnova.eu www.arsnova.eu;
     location / {
         return 301 https://$host$request_uri;
     }
@@ -160,11 +160,11 @@ server {
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name arsnova.click www.arsnova.click;
+    server_name arsnova.eu www.arsnova.eu;
 
     # Let's Encrypt (Certbot setzt diese Zeilen)
-    ssl_certificate     /etc/letsencrypt/live/arsnova.click/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/arsnova.click/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/arsnova.eu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/arsnova.eu/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
@@ -213,8 +213,8 @@ server {
 
 **Frontend-Anpassung:** Das Frontend muss in Produktion die WebSocket-URLs auf **Sub-Pfade** umstellen (nicht mehr `ws://host:3001` / `ws://host:3002`), z. B.:
 
-- tRPC-Subscriptions: `wss://arsnova.click/trpc-ws`
-- Yjs: `wss://arsnova.click/yjs-ws`
+- tRPC-Subscriptions: `wss://arsnova.eu/trpc-ws`
+- Yjs: `wss://arsnova.eu/yjs-ws`
 
 Dazu entweder Environment-basierte Konfiguration (z. B. `environment.ts` oder Build-Env) oder eine zentrale API-URL-Konfiguration nutzen.
 
@@ -243,7 +243,7 @@ Domain muss per DNS (A/AAAA) bereits auf die Server-IP zeigen. Dann:
 
 ```bash
 sudo mkdir -p /var/www/certbot
-sudo certbot --nginx -d arsnova.click -d www.arsnova.click
+sudo certbot --nginx -d arsnova.eu -d www.arsnova.eu
 ```
 
 Certbot passt die Nginx-Konfiguration an und setzt die `ssl_certificate`-Zeilen.
@@ -388,7 +388,7 @@ Lokale Entwicklung (localhost) verwendet weiterhin die Ports 3001 und 3002. Kein
 5. **Health prüfen:**
 
    ```bash
-   curl -s https://arsnova.click/trpc/health.check
+   curl -s https://arsnova.eu/trpc/health.check
    ```
 
 ---
@@ -446,7 +446,7 @@ Deployments laufen automatisch, **nur wenn alle CI-Jobs erfolgreich sind** (Buil
 |-----|------|--------|--------------|
 | **Variable** | `DEPLOY_ENABLED` | Ja (für Deploy) | Auf `true` setzen, sobald der Server steht und deployt werden soll. Ohne diese Variable: kein Deploy, kein Fehlschlag. |
 | Secret | `DEPLOY_SSH_KEY` | Ja (wenn Deploy) | Privater SSH-Schlüssel des Deploy-Users (kompletter Inhalt von z. B. `~/.ssh/id_ed25519`). |
-| Secret | `DEPLOY_HOST` | Ja (wenn Deploy) | Hostname oder IP des Servers (z. B. `arsnova.click` oder `123.45.67.89`). |
+| Secret | `DEPLOY_HOST` | Ja (wenn Deploy) | Hostname oder IP des Servers (z. B. `arsnova.eu` oder `123.45.67.89`). |
 | Secret | `DEPLOY_USER` | Ja (wenn Deploy) | SSH-User (z. B. `deploy`). |
 | Secret | `DEPLOY_SSH_PORT` | Nein | SSH-Port, falls nicht 22 (z. B. `2222`). |
 | **Variable** | `DEPLOY_DIR` | Nein | Pfad zum Repo auf dem Server. Standard: `/home/deploy/arsnova.eu`. |

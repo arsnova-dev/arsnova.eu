@@ -1,5 +1,5 @@
 # =============================================================================
-# arsnova.click V3 – Produktion (Debian Root-Server)
+# arsnova.eu – Produktion (Debian Root-Server)
 # Verwendung: docker compose -f docker-compose.prod.yml --env-file .env.production up -d
 # Ports nur auf 127.0.0.1 gebunden → Nginx als einziger Einstieg (TLS, Reverse Proxy)
 # =============================================================================

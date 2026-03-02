@@ -1,5 +1,5 @@
 # =============================================================================
-# arsnova.click V3 – Multi-Stage Dockerfile
+# arsnova.eu – Multi-Stage Dockerfile
 # Stage 1: Install dependencies + build
 # Stage 2: Production image (node:20-alpine)
 # =============================================================================

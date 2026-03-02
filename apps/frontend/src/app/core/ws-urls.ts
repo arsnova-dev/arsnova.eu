@@ -10,7 +10,7 @@ function isProductionLike(): boolean {
 
 /**
  * Basis-URL für WebSockets (ohne Pfad/Port).
- * z. B. wss://arsnova.click oder ws://localhost
+ * z. B. wss://arsnova.eu oder ws://localhost
  */
 function wsBaseUrl(): string {
   if (typeof window === 'undefined') return 'ws://localhost';
