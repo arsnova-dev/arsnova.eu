@@ -93,7 +93,7 @@ Tokenbasierte Card-Flaeche:
 
 ## Startseite: Hero und Onboarding
 - **Hero-Text:** Nutzenversprechen, kein Feature-Listing. Verben statt Nomen.
-- **Alleinstellungsmerkmale (USP):** Direkt unter dem Hero: (1) Zielspanne und Stil – z. B. „Von Kita bis Uni – serioes oder spielerisch.“ In Primary-Farbe, body-large. (2) Bonus-Option – nur im Preset **Spielerisch**: z. B. „Bonus fuer die Besten: Code bei der Quizleitung einloesbar.“ Einzeilig auf Desktop (max-width 38rem ab 600px); „Code“ statt „Token“. Als zweite Zeile, body-medium, on-surface-variant (`.home-hero-usp--secondary`). Beide zentriert, max-width begrenzt.
+- **Alleinstellungsmerkmale (USP):** Direkt unter dem Hero: (1) Zielspanne und Stil – z. B. „Kita bis Uni – serioes oder spielerisch.“ In Primary-Farbe, body-large. (2) Bonus-Option – nur im Preset **Spielerisch**: z. B. „Bonus fuer die Besten: Code bei der Quizleitung einloesbar.“ Einzeilig auf Desktop (max-width 38rem ab 600px); „Code“ statt „Token“. Als zweite Zeile, body-medium, on-surface-variant (`.home-hero-usp--secondary`). Beide zentriert, max-width begrenzt.
 - **Icon-Cluster:** 3 Icons (quiz, forum, how_to_vote) in primary-getoenten Kreisen, verbunden durch Dots. `aria-hidden="true"` da dekorativ.
 - **Trust-Badges:** Staerkstes Argument zuerst (Kostenlos > DSGVO-konform > Open Source).
 - **Kein Onboarding-Banner:** Nach den Hero-Erweiterungen (USPs, Bonus-Option, ggf. Preset-Toggle) wird kein zusaetzliches 3-Schritt-Banner mehr angezeigt. Die Karten (Mitmachen/Veranstalten) und die Hilfe-Seite erklaeren den Ablauf.
@@ -106,7 +106,7 @@ Tokenbasierte Card-Flaeche:
 - Auf Mobile (`< 600 px`) erhaelt die Mitmachen-Karte einen **3 px Primary-Top-Border** als visuellen Akzent, um sie als primaere Aktion hervorzuheben.
 
 ## Wording: Anrede und Typografie
-- **Gedankenstriche:** In der UI sparsam einsetzen – wirken schnell akademisch oder schwer. Stattdessen Komma, Doppelpunkt oder Punkt (z. B. „Von Kita bis Uni …“ statt „… Zielgruppe – von …“).
+- **Gedankenstriche:** In der UI sparsam einsetzen – wirken schnell akademisch oder schwer. Stattdessen Komma, Doppelpunkt oder Punkt (z. B. „Kita bis Uni …“ statt „… Zielgruppe – von …“).
 - **Duzen:** In der gesamten App (Hilfe, Hinweise, Buttons, Fehlermeldungen) wird die Nutzerin/der Nutzer mit **Du** angesprochen – einheitlich fuer alle Rollen (Veranstaltende und Teilnehmende). Entspricht dem Vorgehen vieler Lern- und Umfrage-Apps (z. B. Mentimeter, Kahoot!, Slido). Formelles "Sie" nur in rechtlichen Texten (Impressum, Datenschutz), wo ueblich.
 - **Rollenbezeichnungen:** "Mitmachen" (statt "Teilnehmer/in"), "Veranstalten" (statt "Lehrperson"). Aktivierend, rollenunabhaengig.
 - **CTAs:** Handlungsauffordernd mit klarem Nutzen: "Los geht's" (statt "Beitreten"), "Neues Quiz starten" (statt "Session erstellen"), "Aus Bibliothek" (statt "Quiz auswaehlen"), "Fragerunde" (statt "Q&A").

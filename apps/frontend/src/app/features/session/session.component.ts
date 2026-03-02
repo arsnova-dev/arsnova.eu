@@ -52,7 +52,7 @@ import type { SessionInfoDTO } from '@arsnova/shared-types';
                 @if (s.quizName) {
                   <p><span class="session-card__label">Quiz:</span> {{ s.quizName }}</p>
                 }
-                <p><span class="session-card__label">Teilnehmer:</span> {{ s.participantCount }}</p>
+                <p><span class="session-card__label">Teilnehmende:</span> {{ s.participantCount }}</p>
               </div>
               <p class="session-card__hint">
                 Lobby und Steuerung werden hier angezeigt.

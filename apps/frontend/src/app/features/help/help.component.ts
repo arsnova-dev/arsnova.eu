@@ -42,13 +42,13 @@ import { MatIcon } from '@angular/material/icon';
             <li><strong>Lobby:</strong> Du siehst, wer beigetreten ist; optional kannst du einen QR-Code zum Beitritt anzeigen.</li>
             <li><strong>Beamer-Ansicht:</strong> Für die Projektion im Raum mit großer Darstellung von Frage, Antworten, Countdown und Ergebnissen.</li>
             <li><strong>Steuerung:</strong> Mit „Nächste Frage“ blendest du die Frage ein. Optional zuerst nur den Text (Lesephase), dann „Antworten freigeben“, danach können alle abstimmen. Anschließend „Ergebnis zeigen“.</li>
-            <li><strong>Einstellungen:</strong> Beim Start legst du als Lehrperson den Stil („Seriös“ oder „Spielerisch“) und die Optionen fest (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer usw.). Das gilt für die ganze Session; Teilnehmende können nichts daran ändern.</li>
+            <li><strong>Einstellungen:</strong> Beim Start legst du den Stil („Seriös“ oder „Spielerisch“) und die Optionen fest (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer usw.). Das gilt für die ganze Session; Teilnehmende können nichts daran ändern.</li>
           </ul>
         </section>
 
         <section class="help-section">
           <h2>Mitmachen</h2>
-          <p>Ohne Anmeldung mit dem Code der Session beitreten. Stil und Optionen (Seriös/Spielerisch, Rangliste, Sound usw.) gibt die Lehrperson vor; beim Mitmachen kannst du sie nicht ändern.</p>
+          <p>Ohne Anmeldung mit dem Code der Session beitreten. Stil und Optionen (Seriös/Spielerisch, Rangliste, Sound usw.) gibt die Session vor; beim Mitmachen kannst du sie nicht ändern.</p>
           <ul>
             <li><strong>Beitreten:</strong> 6-stelligen Code auf der Startseite eingeben und auf „Los geht’s“ tippen.</li>
             <li><strong>Name:</strong> Vorgegebene Namen (z. B. nach Altersgruppe), eigener Name oder anonym, je nachdem, was die Session vorgibt.</li>
@@ -59,18 +59,18 @@ import { MatIcon } from '@angular/material/icon';
 
         <section class="help-section">
           <h2>Stile: Seriös und Spielerisch</h2>
-          <p>Die Lehrperson wählt beim Start der Session eine von zwei Voreinstellungen. Teilnehmende können den Stil nicht ändern.</p>
+          <p>Du wählst beim Start der Session eine von zwei Voreinstellungen. Teilnehmende können den Stil nicht ändern.</p>
           <ul>
             <li><strong>Seriös:</strong> Anonym, ohne Rangliste, Fokus auf den Inhalt, z. B. für Abstimmungen oder Feedback.</li>
             <li><strong>Spielerisch:</strong> Mit Rangliste, Sounds, Anfeuerung und Effekten, ideal für Quiz-Wettbewerbe.</li>
           </ul>
-          <p>Alle Optionen (Rangliste, Sound, Lesephase, Team, Ton usw.) legt die Lehrperson fest; sie kann sie einzeln an- und ausschalten.</p>
+          <p>Alle Optionen (Rangliste, Sound, Lesephase, Team, Ton usw.) legst du fest; du kannst sie einzeln an- und ausschalten.</p>
         </section>
 
         <section class="help-section">
           <h2>Weitere Funktionen</h2>
           <ul>
-            <li><strong>Bonus-Option:</strong> Top-Platzierte erhalten einen einlösbaren Code (z. B. für Bonuspunkte oder Anerkennung durch die Lehrperson). Die Lehrperson kann die Code-Liste einsehen und abgleichen; personenbezogene Daten werden dabei nicht gespeichert.</li>
+            <li><strong>Bonus-Option:</strong> Top-Platzierte erhalten einen einlösbaren Code (z. B. für Bonuspunkte oder Anerkennung bei dir). Du kannst die Code-Liste einsehen und abgleichen; die Einlösung liegt bei dir. Personenbezogene Daten werden dabei nicht gespeichert.</li>
             <li><strong>Team-Modus:</strong> Teilnehmende spielen in Teams; es gibt ein Team-Leaderboard.</li>
             <li><strong>Q&amp;A-Runde:</strong> Statt eines Quiz kannst du eine Fragerunde starten. Teilnehmende reichen Fragen ein und können sie hochvoten, du moderierst und beantwortest.</li>
             <li><strong>Gamification:</strong> Sound-Effekte, Belohnungseffekte für die Top-Plätze, Motivationsmeldungen, Emoji-Reaktionen.</li>
