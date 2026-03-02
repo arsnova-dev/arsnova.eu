@@ -643,8 +643,7 @@ Für die **Erstphase** mit geringem Lastaufkommen reicht die kleinste sinnvolle 
 | **CX53** | 16   | 32 GB| 320 GB| ca. 17,49 €                     | **25–35**                                         | **~1.200–1.500**                          |
 | **CAX41**| 16   | 32 GB| 320 GB| ca. 24,49 €                     | 25–35                                             | ~1.200–1.500                              |
 
-- **Bedeutung:** „Gleichzeitige Quizze“ = Sessions mit Status ≠ FINISHED. „Teilnehmer (alle verbunden)“ = alle mit WebSocket verbunden (praktische Obergrenze). Bei höherer Teilnehmerzahl pro Quiz sinkt die Quiz-Anzahl.
-- **2 vCPU:** Bei hoher Last kann CPU (Node Event-Loop + PostgreSQL) zum Engpass werden; für Dauerlast ab mittlerer Auslastung 4 vCPU oder mehr empfehlenswert.
+- **Bedeutung:** „Gleichzeitige Quizze“ = Sessions mit Status ≠ FINISHED. „Teilnehmer (alle verbunden)“ = alle mit WebSocket verbunden (praktische Obergrenze). Bei höherer Teilnehmerzahl pro Quiz sinkt die Quiz-Anzahl.- **CX vs. CAX:** **CX** = x86_64 (Intel/AMD), **CAX** = ARM64 (Ampere Altra). Für diese App kein funktionaler Unterschied – Node.js, Docker, PostgreSQL und Redis laufen auf beiden Architekturen. **Empfehlung: CX (x86)** für maximale Kompatibilität; vereinzelt liefern npm-Pakete mit nativen Binaries kein ARM-Build mit, was den Docker-Build auf CAX brechen kann.- **2 vCPU:** Bei hoher Last kann CPU (Node Event-Loop + PostgreSQL) zum Engpass werden; für Dauerlast ab mittlerer Auslastung 4 vCPU oder mehr empfehlenswert.
 - **Preise:** Abrechnung minütlich, monatlicher Deckel. 20 TB Traffic inklusive (EU). Andere Standorte (z. B. USA/Singapore) teurer.
 
 ### 12.2 Empfehlung nach Phase
