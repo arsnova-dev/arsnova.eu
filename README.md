@@ -1,5 +1,10 @@
 # 🚀 arsnova.eu (Vibe Coding Edition)
 
+> ⚠️ **Wichtiger Hinweis:** Die Anwendung läuft zurzeit unter der Subdomain
+> **click.arsnova.eu**. Alle Beispiele in der Dokumentation beziehen sich auf
+> diese Domain; bei einem späteren Umzug muss das entsprechend angepasst werden.
+
+
 [![CI](https://github.com/kqc-real/arsnova.eu/actions/workflows/ci.yml/badge.svg)](https://github.com/kqc-real/arsnova.eu/actions/workflows/ci.yml)
 [![Tech Stack: Angular](https://img.shields.io/badge/Frontend-Angular%2021-DD0031.svg?style=flat-square&logo=angular)](https://angular.dev/)
 [![Tech Stack: tRPC](https://img.shields.io/badge/API-tRPC-2596be.svg?style=flat-square&logo=trpc)](https://trpc.io/)

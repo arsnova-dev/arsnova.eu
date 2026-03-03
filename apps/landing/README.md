@@ -1,5 +1,10 @@
 # arsnova.eu – Landing
 
+> **Achtung:** Die aktuelle Produktions‑Domain ist `click.arsnova.eu`. Diese
+> Marketingseite wird ebenfalls über diese Subdomain erreichbar sein; für
+> GitHub Pages kannst du nach Bedarf eine Custom Domain einstellen.
+
+
 Marketing- und Informationsseite für arsnova.eu. Astro + Tailwind, SEO-optimiert, für GitHub Pages oder beliebigen Static Host.
 
 ## Entwicklung
@@ -20,6 +25,10 @@ npm run build:landing
 Output: `apps/landing/dist/`
 
 ## GitHub Pages
+
+> Hinweis: Wenn die Landing später direkt unter `click.arsnova.eu` liegen soll,
+> musst du die Custom‑Domain in den Pages‑Einstellungen entsprechend ändern.
+
 
 1. **Repo-Einstellung:** Settings → Pages → Build and deployment → Source: **GitHub Actions**.
 2. Beim Push auf `main` (bei Änderungen in `apps/landing/`) baut das Workflow `.github/workflows/deploy-landing.yml` die Landing und deployt sie.

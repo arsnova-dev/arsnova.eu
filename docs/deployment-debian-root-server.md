@@ -1,4 +1,10 @@
-# Deployment: arsnova.eu auf Debian Root-Server
+# Deployment: click.arsnova.eu auf Debian Root-Server
+
+> **Domain:** Die hier beschriebene Produktionsinstanz ist unter
+> https://click.arsnova.eu erreichbar. Falls bei künftigen Deployments ein
+> anderer Hostname verwendet wird, passe die Nginx-Konfiguration sowie
+> DNS‑Einträge entsprechend an.
+
 
 Vorschlag für das Deployment auf einem externen Linux-Root-Server (Debian) nach aktuellem Stand der Technik: Let's Encrypt, Firewall, gehärteter Server. **Bei Hetzner** (Cloud oder Root) gelten die gleichen Schritte; Besonderheiten und Vereinfachungen sind in Abschnitt 2.7 und Abschnitt 11 beschrieben.
 
