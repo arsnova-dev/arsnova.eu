@@ -200,9 +200,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.themePreset.preset() !== nextPreset) {
         this.themePreset.setPreset(nextPreset);
       }
+      this.blurSessionCodeInput();
       this.showPresetSnackbar();
-      // Fokus zurück auf die Mitmach-Karte (Code-Eingabe), damit der Fokus nach Umschaltung nicht verloren geht
-      setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
     }
     if (closeMenu) this.closeControlsMenu();
   }
@@ -210,6 +209,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private static readonly STORAGE_PLAYFUL_WELCOMED = 'home-playful-welcomed';
 
   private showPresetSnackbar(): void {
+    this.blurSessionCodeInput();
     const isPlayful = this.themePreset.preset() === 'spielerisch';
     const firstTime = isPlatformBrowser(this.platformId) && isPlayful && !localStorage.getItem(HomeComponent.STORAGE_PLAYFUL_WELCOMED);
     this.firstTimePlayfulMessage.set(firstTime);
@@ -222,17 +222,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.snackbarTimer = setTimeout(() => {
       this.presetSnackbarVisible.set(false);
       this.firstTimePlayfulMessage.set(false);
+      setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
     }, duration);
   }
 
-  dismissSnackbar(): void {
+  /** @param refocusInput true = Fokus nach Schließen auf Code-Input setzen (Standard). Bei Aufruf aus openPresetCustomize false. */
+  dismissSnackbar(refocusInput = true): void {
     this.presetSnackbarVisible.set(false);
     this.firstTimePlayfulMessage.set(false);
     if (this.snackbarTimer) { clearTimeout(this.snackbarTimer); this.snackbarTimer = null; }
+    if (refocusInput) setTimeout(() => this.sessionCodeInput?.nativeElement.focus(), 0);
   }
 
   openPresetCustomize(): void {
-    this.dismissSnackbar();
+    this.blurSessionCodeInput();
+    this.dismissSnackbar(false);
     this.presetToastVisible.set(true);
     setTimeout(() => this.loadPresetToast(), 0);
   }
@@ -260,6 +264,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   focusCodeInput(): void {
     this.sessionCodeInput?.nativeElement.focus();
+  }
+
+  /** Blur des Code-Inputs, damit auf Mobile die virtuelle Tastatur schließt und Snackbar/Toast sichtbar bleiben. */
+  private blurSessionCodeInput(): void {
+    this.sessionCodeInput?.nativeElement.blur();
   }
 
   private triggerShake(): void {
