@@ -208,21 +208,15 @@ Nachdem die App lokal läuft, empfiehlt sich diese Lesereihenfolge:
 
 **Nur Port-Konflikte (EADDRINUSE / „Port already in use“):** Vor erneutem `npm run dev` die Dev-Ports freigeben: `npm run free-dev-ports`, danach `npm run dev`.
 
-Falls etwas schiefgeht oder du komplett neu anfangen möchtest, setze auf den **neuesten Tag** (oder einen älteren) zurück:
+Falls etwas schiefgeht oder du komplett neu anfangen möchtest, setze auf den Rücksprung-Tag zurück:
 
 | Tag | Beschreibung |
 |-----|--------------|
-| **`v0.4.0`** | Neuester Stand (empfohlen) |
-| **`v0.3.0`** | Älterer Release |
-| **`v0-epic0`** | Epic 0 abgeschlossen (Redis, tRPC WebSocket, Yjs, Server-Status, Rate-Limiting, CI/CD) |
-| **`v0-baseline`** | Nur Skeleton (Health-Check, CI/CD, Prisma-Schema, Zod-Schemas) |
+| **`v0-epic0`** | Stand nach Epic 0, Routen für Epic 1 vorstrukturiert (empfohlener Rücksprungpunkt) |
 
 ```bash
-# Neuesten Tag (nach Versionsnummer) ermitteln und darauf zurücksetzen:
 git fetch --tags
-LATEST_TAG=$(git tag -l --sort=-version:refname | head -1)
-git reset --hard "$LATEST_TAG"
-# oder fest einen Tag wählen, z. B.: git reset --hard v0.4.0
+git reset --hard v0-epic0
 npm install
 ```
 
