@@ -13,9 +13,10 @@ OUT = OPTIMIERT / "transparent"
 TOLERANCE_DEFAULT = 48
 # Frame 0: Ränder und versprengte gelbe Pixel weg
 # Frame 1: minimale Ränder weg
-# Frame 2, 3, 5: gut mit Default/62
+# Frame 2, 5: gut
+# Frame 3: minimale Ränder und versprengte Pixel
 # Frame 4: nur Standard
-TOLERANCE_PER_FRAME = {0: 58, 1: 54, 2: 62}
+TOLERANCE_PER_FRAME = {0: 58, 1: 54, 2: 62, 3: 55}
 
 
 def get_background_color(img: Image.Image) -> tuple[int, int, int]:
