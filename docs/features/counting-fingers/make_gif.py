@@ -13,8 +13,9 @@ DURATION_MS = 1000  # 1 Sekunde pro Frame → 6 s gesamt
 
 
 def main():
+    # Runterzählen: 5 → 4 → 3 → 2 → 1 → 0 (Frame-Reihenfolge umgekehrt)
     frames = []
-    for i in range(6):
+    for i in range(5, -1, -1):
         path = TRANSPARENT_DIR / f"countdown_poster_clean_{i}.png"
         if not path.exists():
             raise FileNotFoundError(f"Frame fehlt: {path}")
