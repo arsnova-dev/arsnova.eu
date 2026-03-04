@@ -1,7 +1,7 @@
 # Diagramme: arsnova.eu
 
 Alle Diagramme sind in Mermaid geschrieben und werden von GitHub nativ gerendert.  
-**Stand:** 2026-02-23 · **Epic 0 (Infrastruktur) abgeschlossen:** Redis, tRPC WebSocket, Yjs, Server-Status, Rate-Limiting, CI/CD.
+**Stand:** 2026-03-04 · **Epic 0 abgeschlossen;** **Epic 9 (Admin):** Rollen/Routen/Autorisierung siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 > **VS Code:** Mermaid wird in der Standard-Markdown-Vorschau nicht gerendert. Bitte die Erweiterung **„Markdown Preview Mermaid Support“** (`bierner.markdown-mermaid`) installieren. Siehe [README.md](./README.md) in diesem Ordner.
 
@@ -25,6 +25,7 @@ graph TB
         session[sessionRouter]
         vote[voteRouter]
         qa[qaRouter]
+        admin[adminRouter - Epic 9]
     end
 
     subgraph Services["Services"]
@@ -62,6 +63,7 @@ graph TB
     trpcmw --> session
     trpcmw --> vote
     trpcmw --> qa
+    trpcmw --> admin
 
     session --> scoring
     session --> streak
@@ -92,6 +94,9 @@ graph TB
     session --> redis
     session --> wss
     express --> yws
+
+    admin --> pg
+    admin --> cleanup
 ```
 
 ---
@@ -134,14 +139,14 @@ graph TB
         importexport[ImportExportComponent]
     end
 
-    subgraph Session["Session-Steuerung Dozent (session)"]
+    subgraph Session["Session-Steuerung Dozent (/session/:code/host)"]
         lobby[LobbyComponent]
         control[QuizControlComponent]
         qamoderator[QaModeratorComponent]
         tokenlist[BonusTokenListComponent]
     end
 
-    subgraph Beamer["Beamer (session present)"]
+    subgraph Beamer["Beamer (/session/:code/present)"]
         beamer[BeamerViewComponent]
         chart[ResultChartComponent]
         wordcloud[WordcloudComponent]
@@ -151,7 +156,7 @@ graph TB
         qrcode[QrCodeComponent]
     end
 
-    subgraph Student["Student (session vote)"]
+    subgraph Student["Student (/join/:code → /session/:code/vote)"]
         nickname[NicknameSelectComponent]
         voting[VotingViewComponent]
         buttons[AnswerButtonsComponent]
@@ -165,7 +170,16 @@ graph TB
         qastudent[QaStudentComponent]
     end
 
-    subgraph Legal["Legal (impressum, datenschutz)"]
+    subgraph Admin["Admin (/admin) - Epic 9"]
+        adminlogin[AdminLoginComponent]
+        admindash[AdminDashboardComponent]
+        admincode[SessionCodeInputComponent]
+        adminlist[SessionListComponent]
+        admindetail[SessionDetailComponent]
+        adminexport[ExportForAuthoritiesComponent]
+    end
+
+    subgraph Legal["Legal (/legal/imprint, /legal/privacy)"]
         imprint[ImprintComponent]
         privacy[PrivacyComponent]
     end
@@ -224,6 +238,12 @@ graph TB
     scorecard --> tokendisplay
     scorecard --> motivation
 
+    adminlogin --> admindash
+    admindash --> admincode
+    admindash --> adminlist
+    adminlist --> admindetail
+    admindetail --> adminexport
+
     footer --> imprint
     footer --> privacy
 
@@ -247,6 +267,7 @@ erDiagram
     Session ||--o{ Team : hat
     Session ||--o{ BonusToken : generiert
     Session ||--o{ QaQuestion : enthaelt
+    Session ||--o{ AdminAuditLog : protokolliert
     Participant ||--o{ Vote : gibt_ab
     Participant ||--o{ BonusToken : erhaelt
     Participant ||--o{ QaQuestion : stellt
@@ -298,6 +319,12 @@ erDiagram
         string id PK
         string text
         int upvoteCount
+    }
+    AdminAuditLog {
+        string id PK
+        string sessionId FK
+        string action
+        datetime createdAt
     }
 ```
 
@@ -454,9 +481,64 @@ sequenceDiagram
 
 ---
 
-## 6. Aktivitätsablauf: Dozent · Student · Server
+## 5b. Kommunikation Admin-Client ↔ Backend (Epic 9)
 
-Vereinfachtes Aktivitätsdiagramm (Quiz-Lifecycle).
+Admin-Rolle: Inspektion, Löschen, Auszug für Behörden. Autorisierung über Admin-Schlüssel (ADMIN_SECRET), dann Session-Token. Siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md).
+
+```mermaid
+sequenceDiagram
+    participant A as Admin
+    participant FE as Browser Angular
+    participant BE as Backend tRPC
+    participant PG as PostgreSQL
+
+    Note over A,PG: Login (Route /admin)
+    A->>FE: /admin aufrufen
+    FE->>A: Login-Maske (Admin-Schlüssel)
+    A->>FE: Admin-Schlüssel eingeben
+    FE->>BE: admin.login (Secret)
+    BE->>BE: Prüfung gegen ADMIN_SECRET
+    BE-->>FE: Admin-Session-Token
+    FE->>FE: Token in sessionStorage
+
+    Note over A,PG: Session per Code abrufen
+    A->>FE: 6-stelligen Session-Code eingeben
+    FE->>BE: admin.getSessionByCode (code) + Token
+    BE->>BE: adminProcedure – Token prüfen
+    BE->>PG: Session + Quiz + Metadaten lesen
+    BE-->>FE: SessionDetailDTO (inkl. Quiz-Inhalt)
+    FE->>A: Session-Detail + Quiz anzeigen
+
+    Note over A,PG: Optional: Liste aller Sessions
+    A->>FE: Session-Liste anzeigen
+    FE->>BE: admin.listSessions + Token
+    BE->>PG: Sessions abfragen
+    BE-->>FE: SessionListDTO
+    FE->>A: Liste (Code, Status, Quiz-Name, …)
+
+    opt Story 9.2: Löschen (rechtlich)
+        A->>FE: Session endgültig löschen
+        FE->>BE: admin.deleteSession (sessionId) + Token + Grund
+        BE->>PG: Session + zugehörige Daten löschen
+        BE->>PG: AdminAuditLog INSERT
+        BE-->>FE: success
+    end
+
+    opt Story 9.3: Auszug für Behörden
+        A->>FE: Auszug exportieren
+        FE->>BE: admin.exportForAuthorities (sessionId) + Token
+        BE->>PG: Session + Quiz + aggregierte Daten lesen
+        BE->>PG: AdminAuditLog INSERT (Export)
+        BE-->>FE: SessionExportDTO (anonym)
+        FE->>A: JSON/PDF-Download
+    end
+```
+
+---
+
+## 6. Aktivitätsablauf: Dozent · Student · Server · Admin
+
+Vereinfachtes Aktivitätsdiagramm (Quiz-Lifecycle inkl. Admin, Epic 9).
 
 ```mermaid
 flowchart TB
@@ -483,6 +565,10 @@ flowchart TB
         S5[Status RESULTS, QuestionRevealedDTO mit isCorrect]
         S5b[Status PAUSED - zwischen Fragen]
         S6[Status FINISHED, ggf. BonusToken generieren]
+        S7[admin.login - Token ausgeben]
+        S8[admin.listSessions / getSessionByCode]
+        S9[admin.deleteSession + AuditLog]
+        S10[admin.exportForAuthorities + AuditLog]
     end
 
     subgraph Student["Student"]
@@ -493,6 +579,14 @@ flowchart TB
         ST4[Abstimmung vote.submit]
         ST5[Ergebnis + Scorecard anzeigen]
         ST6[Finales Ranking, ggf. Bonus-Token kopieren]
+    end
+
+    subgraph Admin["Admin (Epic 9)"]
+        A1[/admin - Login mit Admin-Schlüssel]
+        A2[Session-Code eingeben oder Liste anzeigen]
+        A3[Session-Detail + Quiz-Inhalt einsehen]
+        A4[Optional: Session löschen - rechtlich]
+        A5[Optional: Auszug für Behörden exportieren]
     end
 
     D1 --> D1a
@@ -517,6 +611,13 @@ flowchart TB
     D8 --> S6
     S6 --> ST6
     ST6 --> D9
+
+    A1 --> S7
+    S7 --> A2 --> S8 --> A3
+    A3 --> A4
+    A4 --> S9
+    A3 --> A5
+    A5 --> S10
 ```
 
 **Legende:**  
@@ -525,4 +626,5 @@ flowchart TB
 - **QuestionRevealedDTO:** isCorrect erst nach expliziter Auflösung (RESULTS).  
 - **PAUSED:** Zwischenzustand nach Ergebnis-Anzeige, bevor die nächste Frage gestartet wird.  
 - **Lesephase:** Bei `readingPhaseEnabled=false` wird QUESTION_OPEN übersprungen — „Nächste Frage" wechselt direkt zu ACTIVE (D5 → S3b, D5b/ST3a entfallen).  
-- **Bonus-Token (Story 4.6):** Nur für Top-X, individuell per onPersonalResult.
+- **Bonus-Token (Story 4.6):** Nur für Top-X, individuell per onPersonalResult.  
+- **Admin (Epic 9):** Eigener Ablauf; Zugriff nur mit Admin-Credentials (ADMIN_SECRET → Session-Token). Route `/admin`; Inspektion, Löschen, Auszug für Behörden; Audit-Log für Lösch- und Export-Aktionen. Siehe ADR-0006.

@@ -240,3 +240,22 @@ enum QaQuestionStatus {
   ARCHIVED   // Als beantwortet markiert
   DELETED    // Vom Dozenten entfernt
 }
+
+// ─── Admin Audit-Log (Epic 9, Story 9.2, 9.3) ────────────────────────────────
+
+// Protokollierung von Admin-Aktionen (Löschen, Export); keine FK zu Session,
+// damit Einträge nach Session-Löschung erhalten bleiben (Snapshot von code/id).
+model AdminAuditLog {
+  id               String           @id @default(uuid())
+  action           AdminAuditAction
+  sessionId        String           // Snapshot (Session kann danach gelöscht sein)
+  sessionCode      String           // 6-stelliger Code (Snapshot)
+  adminIdentifier  String?          // z. B. Token-ID oder "system" (MVP: ein gemeinsamer Schlüssel)
+  reason           String?          // Optionaler Löschgrund (Story 9.2)
+  createdAt        DateTime         @default(now())
+}
+
+enum AdminAuditAction {
+  SESSION_DELETE         // Story 9.2: Session inkl. Quiz-Daten gelöscht
+  EXPORT_FOR_AUTHORITIES // Story 9.3: Auszug für Behörden exportiert
+}

@@ -17,26 +17,29 @@ Willkommen im Entwickler-Team von **arsnova.eu**! Dieses Dokument hilft dir als 
 
 ### Setup in 5 Schritten
 
+Nach **Clone oder Fork** müssen PostgreSQL und Redis laufen und das Datenbankschema angewendet sein, damit die App mit der aktuellen DB-Struktur (inkl. aller Tabellen) arbeitet.
+
 ```bash
-# 1. Repository klonen
+# 1. Repository klonen (oder deinen Fork)
 git clone https://github.com/kqc-real/arsnova.eu.git
 cd arsnova.eu
 
 # 2. Umgebungsvariablen anlegen
 cp .env.example .env
 
-# 3. Datenbank & Redis starten (Docker)
-docker compose up -d
-# → Startet PostgreSQL (Port 5432) und Redis (Port 6379)
+# 3. Datenbank & Redis starten (Docker) – nur Postgres + Redis für Lokalentwicklung
+docker compose up -d postgres redis
+# → PostgreSQL (Port 5432), Redis (Port 6379)
 
 # 4. Dependencies installieren (npm Workspaces)
 npm install
-# → Installiert alle Abhängigkeiten für Backend, Frontend und shared-types
 
-# 5. Prisma-Client generieren & Datenbank-Schema synchronisieren
-npx prisma generate
+# 5. Datenbank-Schema anwenden und Prisma-Client generieren (DB auf aktuellen Stand)
 npx prisma db push
+npx prisma generate
 ```
+
+**Kurz:** Einmalig `npm run setup:dev` (startet Postgres + Redis, wendet Schema an, generiert Client, baut shared-types), danach `npm run dev`.
 
 ### Entwicklungsserver starten
 

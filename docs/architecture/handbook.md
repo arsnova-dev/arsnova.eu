@@ -48,6 +48,7 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 * [ADR-0003: Nutzung von tRPC](./decisions/0003-use-trpc-for-api.md)
 * [ADR-0004: Nutzung von Yjs (CRDTs) für Offline-Sync](./decisions/0004-use-yjs-for-local-first-storage.md)
 * [ADR-0005: UI-Strategie mit Angular Material 3 (ohne Tailwind)](./decisions/0005-use-angular-material-design.md)
+* [ADR-0006: Rollen, Routen und Autorisierung (Host, Teilnehmer, Admin)](./decisions/0006-roles-routes-authorization-host-admin.md)
 
 ---
 

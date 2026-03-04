@@ -1,10 +1,10 @@
 # 🏗️ Architektur-Übersicht: arsnova.eu
 
 **Erstellt:** 2026-02-20  
-**Zuletzt aktualisiert:** 2026-02-23  
+**Zuletzt aktualisiert:** 2026-03-04  
 **Zweck:** Visualisierung der gesamten Codebasis-Struktur und Architektur  
 
-**Epic 0 abgeschlossen:** Redis (Docker + Health-Check), tRPC WebSocket (Port 3001, health.ping), Yjs WebSocket (Port 3002), Server-Status (health.stats, Widget auf Startseite), Rate-Limiting (Redis Sliding-Window), CI/CD (GitHub Actions).
+**Epic 0 abgeschlossen;** **Epic 9 (Admin):** Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 ## System-Architektur-Diagramm
 
@@ -14,14 +14,14 @@ graph TB
         subgraph "Frontend - Angular 17+ (aktuell 19)"
             FE[Angular App<br/>Port 4200]
             FE_COMP[Standalone Components<br/>Signals · Angular Material 3]
-            FE_ROUTES[Routing<br/>/quiz /session /vote]
+            FE_ROUTES[Routing<br/>/quiz /session/:code/host|present|vote<br/>/join/:code /admin]
             FE_SERVICES[Services<br/>tRPC Client · Yjs · Theme · i18n]
         end
         
         subgraph "Backend - Node.js + tRPC (Epic 0 ✅)"
             BE[Express Server<br/>Port 3000]
             TRPC[tRPC Router<br/>/trpc]
-            ROUTERS[Router Layer<br/>health · quiz · session<br/>vote · qa]
+            ROUTERS[Router Layer<br/>health · quiz · session · vote · qa · admin]
             SERVICES[Service Layer<br/>Scoring · Streak · SessionCode<br/>RateLimit · BonusToken]
             DTO[DTO Layer<br/>Data Stripping<br/>QuestionPreviewDTO<br/>QuestionStudentDTO<br/>QuestionRevealedDTO]
         end
@@ -40,6 +40,7 @@ graph TB
     subgraph "Externe Clients"
         DOZENT[Dozent Client<br/>Quiz-Erstellung<br/>Session-Steuerung]
         STUDENT[Student Client<br/>Voting<br/>Leaderboard]
+        ADMIN[Admin Client<br/>/admin · Inspektion<br/>Löschen · Auszug]
     end
     
     subgraph "Echtzeit-Kommunikation (Epic 0.2, 0.3 ✅)"
@@ -74,6 +75,7 @@ graph TB
     %% Client-Verbindungen
     DOZENT --> FE
     STUDENT --> FE
+    ADMIN --> FE
     DOZENT --> IDB
     
     %% Styling
@@ -87,7 +89,7 @@ graph TB
     class BE,TRPC,ROUTERS,SERVICES,DTO backend
     class SHARED shared
     class PG,REDIS,IDB database
-    class DOZENT,STUDENT client
+    class DOZENT,STUDENT,ADMIN client
 ```
 
 ## Datenfluss-Diagramm
@@ -159,6 +161,31 @@ sequenceDiagram
     R-->>S: Ergebnisse + Punkte
 ```
 
+### Admin-Datenfluss (Epic 9)
+
+```mermaid
+sequenceDiagram
+    participant A as Admin
+    participant FE as Frontend
+    participant BE as Backend
+    participant PG as PostgreSQL
+
+    A->>FE: /admin – Login
+    FE->>BE: admin.login (Admin-Schlüssel)
+    BE-->>FE: Session-Token
+    A->>FE: Session-Code eingeben
+    FE->>BE: admin.getSessionByCode (code) + Token
+    BE->>PG: Session + Quiz lesen
+    BE-->>FE: SessionDetailDTO
+    FE->>A: Quiz-Inhalt anzeigen
+    opt Löschen / Export
+        A->>FE: Löschen oder Auszug
+        FE->>BE: admin.deleteSession / exportForAuthorities + Token
+        BE->>PG: Löschen oder Lesen + AuditLog
+        BE-->>FE: success / Export-Daten
+    end
+```
+
 ## Komponenten-Hierarchie
 
 ```mermaid
@@ -189,11 +216,19 @@ graph TD
             LEADERBOARD[LeaderboardComponent]
         end
         
-        subgraph "Student-Ansicht"
+        subgraph "Student-Ansicht (/join → /session/:code/vote)"
             NICK[NicknameSelectComponent]
             VOTING[VotingViewComponent]
             BUTTONS[AnswerButtonsComponent]
             SCORECARD[ScorecardComponent]
+        end
+
+        subgraph "Admin - /admin (Epic 9)"
+            ADMIN_LOGIN[AdminLoginComponent]
+            ADMIN_DASH[AdminDashboardComponent]
+            ADMIN_CODE[SessionCodeInputComponent]
+            ADMIN_LIST[SessionListComponent]
+            ADMIN_DETAIL[SessionDetailComponent]
         end
 
         subgraph "Legal - /legal"
@@ -231,6 +266,11 @@ graph TD
     NICK --> VOTING
     VOTING --> BUTTONS
     VOTING --> SCORECARD
+
+    ADMIN_LOGIN --> ADMIN_DASH
+    ADMIN_DASH --> ADMIN_CODE
+    ADMIN_DASH --> ADMIN_LIST
+    ADMIN_LIST --> ADMIN_DETAIL
     
     HEADER --> THEME
     FOOTER --> IMPRINT
@@ -366,6 +406,15 @@ graph LR
         PREVIEW_DTO -->|Status: QUESTION_OPEN| STUDENT[Student Client]
         STUDENT_DTO -->|Status: ACTIVE| STUDENT
         REVEALED_DTO -->|Status: RESULTS| STUDENT
+    end
+    
+    subgraph "Rollen-Autorisierung (ADR-0006)"
+        HOST[Host-Token<br/>nur bei session.create]
+        HOST -->|host/* Prozeduren| BE
+        ADMIN_SEC[ADMIN_SECRET<br/>Server-Env]
+        ADMIN_SEC -->|admin.login| BE
+        BE -->|Session-Token| ADMIN_CL[Admin Client]
+        ADMIN_CL -->|admin.* + Token| BE
     end
     
     subgraph "Rate Limiting"

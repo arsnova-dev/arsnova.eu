@@ -1,7 +1,7 @@
 # Konsistenzprüfung: Diagramme · Handbuch · Backlog · Code
 
-**Datum:** 2026-02-23  
-**Geprüft:** diagrams.md, architecture-overview.md, handbook.md, Backlog.md, prisma/schema.prisma, libs/shared-types/src/schemas.ts, apps/backend/src/\*, apps/frontend/src/\*  
+**Datum:** 2026-03-04  
+**Geprüft:** diagrams.md, architecture-overview.md, handbook.md, Backlog.md, ADR-0006, ROUTES_AND_STORIES.md, prisma/schema.prisma, libs/shared-types, apps/backend, apps/frontend.  
 
 **Epic 0:** Alle Stories 0.1–0.6 umgesetzt (Redis, tRPC WebSocket, Yjs, Server-Status, Rate-Limiting, CI/CD). health.check, health.stats, health.ping, Rate-Limit-Service und Frontend ServerStatusWidget sind implementiert.
 
@@ -10,13 +10,13 @@
 ## 1. Konsistenz innerhalb der Diagramme (diagrams.md)
 
 ### 1.1 Backend-Komponenten
-- **Router:** health, quiz, session, vote, qa – untereinander konsistent; Verbindungen zu Services, DTO, Validation und PG/Redis/WebSocket/y-websocket stimmig.
+- **Router:** health, quiz, session, vote, qa, **admin** (Epic 9) – untereinander konsistent; adminRouter mit PG/Cleanup; Verbindungen zu Services, DTO, Validation und PG/Redis/WebSocket/y-websocket stimmig.
 - **DTO-Layer:** QuestionStudentDTO (kein isCorrect), QuestionRevealedDTO (mit isCorrect), SessionInfoDTO, LeaderboardEntryDTO, PersonalScorecardDTO – stimmt mit shared-types Zod-Schemas überein.
 - **Validation:** SubmitVoteInputSchema, CreateSessionInputSchema, QuizUploadInputSchema im Diagramm – alle drei existieren identisch in `libs/shared-types/src/schemas.ts`. ✓
 - **Header:** Epic 0 umgesetzt; healthRouter (check, stats, ping), sessionRouter (mit Rate-Limit), voteRouter (mit Rate-Limit), Yjs- und WebSocket-Server implementiert. ✓
 
 ### 1.2 Frontend-Komponenten
-- **Routen:** Home (/), Quiz (/quiz), Session (/session/:code), Beamer (/session/:code/present), Student (/session/:code/vote), Legal (/legal) – konsistent mit Backlog und Handbook.
+- **Routen:** Home (/), Quiz (/quiz), Session (/session/:code/host), Beamer (/session/:code/present), Join (/join/:code), Student (/session/:code/vote), **Admin (/admin)**, Legal (/legal) – konsistent mit Backlog, ADR-0006 und ROUTES_AND_STORIES.md.
 - **Komponenten:** Alle geplanten Komponenten (inkl. QaModeratorComponent, QaStudentComponent, RatingScaleComponent, FreetextInputComponent, MotivationMessageComponent, EmojiBarComponent, BonusTokenDisplay, BonusTokenListComponent, EmojiOverlayComponent, QrCodeComponent, WordcloudComponent, RatingHistogramComponent, ImportExportComponent, ConfirmDialogComponent) sind abgebildet. ✓
 
 ### 1.3 Datenbank-Schema (erDiagram)
@@ -39,12 +39,12 @@
 
 | Thema | diagrams.md | architecture-overview.md | Bewertung |
 |-------|-------------|--------------------------|-----------|
-| tRPC-Router | health, quiz, session, vote, qa | health · quiz · session · vote · qa | ✓ gleich |
+| tRPC-Router | health, quiz, session, vote, qa, admin | health · quiz · session · vote · qa · admin | ✓ gleich |
 | DTOs | QuestionStudentDTO, QuestionRevealedDTO, SessionInfoDTO, LeaderboardEntryDTO, PersonalScorecardDTO | QuestionStudentDTO, QuestionRevealedDTO | ⚠️ Übersicht benennt nur 2 DTOs |
 | Data-Stripping | ACTIVE ohne isCorrect, RESULTS mit isCorrect | Sicherheits-Diagramm + Datenfluss | ✓ gleich |
 | Session-Ablauf | quiz.upload → session.create → … | Datenfluss zeigt quiz.upload + session.create | ✓ nach vorheriger Anpassung konsistent |
-| Frontend-Routen | /, /quiz, /session/:code, /present, /vote, /legal | Home, Quiz, Session, Student, Legal | ✓ gleich |
-| DB-Modelle | 11 Entitäten mit Relationen | 11 Entitäten, gleiche Relationen | ✓ gleich |
+| Frontend-Routen | /, /quiz, /session/:code/host|present|vote, /join/:code, /admin, /legal | architecture-overview: FE_ROUTES + Admin | ✓ gleich |
+| DB-Modelle | 12 Entitäten (inkl. AdminAuditLog geplant) | 11 Entitäten in Übersicht; AdminAuditLog in diagrams.md | ⚠️ Prisma noch ohne AdminAuditLog (Backlog 9.2) |
 | Frontend-Komponenten | 37 Komponenten | 20 Komponenten | ⚠️ Vereinfacht (siehe 2.1) |
 
 ### 2.1 Fehlende Komponenten in architecture-overview.md
@@ -119,6 +119,15 @@ Da beide Dateien als Living Documentation dienen, sollte architecture-overview.m
 - Scorecard (5.6) – ScorecardComponent + PersonalScorecardDTO + onPersonalResult ✓
 - Emoji (5.8) – EmojiBarComponent, EmojiOverlayComponent ✓
 - Motivation (5.7) – MotivationMessageComponent ✓
+
+### Epic 9: Admin (Rollen, Routen, Autorisierung)
+- **adminRouter** in Backend-Diagramm (diagrams.md + architecture-overview.md) ✓
+- **Admin-Client** in Externe Clients (architecture-overview) ✓
+- **Route /admin**, Admin-Subgraph (AdminLogin, AdminDashboard, SessionCodeInput, SessionList, SessionDetail, ExportForAuthorities) in Frontend-Diagrammen ✓
+- **Sequenz Admin ↔ Backend** (admin.login, getSessionByCode, listSessions, deleteSession, exportForAuthorities) in diagrams.md §5b + architecture-overview „Admin-Datenfluss" ✓
+- **Aktivitätsdiagramm:** Admin-Subgraph (A1–A5) + Server S7–S10 ✓
+- **Sicherheits-Architektur:** Rollen-Autorisierung (Host-Token, ADMIN_SECRET, admin.* + Token) in architecture-overview ✓
+- **AdminAuditLog** in erDiagram (diagrams.md) als geplante Entität; Prisma-Schema noch ohne Tabelle (Story 9.2) ⚠️
 
 ### Epic 6: Theming, i18n, Legal
 - Theme (6.1) – ThemeSwitcherComponent + ThemeService ✓

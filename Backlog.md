@@ -4,7 +4,7 @@
 >
 > **Abhängigkeiten (Kernpfad):** Epic 0 → Epic 1 → Epic 2 → Epic 3 → Epic 4 → Epic 5
 >
-> **Parallelpfad (jederzeit ab Epic 0):** Epic 6 (Theming, i18n, Accessibility, Mobile-First, Impressum)
+> **Parallelpfad (jederzeit ab Epic 0):** Epic 6 (Theming, i18n, Accessibility, Mobile-First, Impressum), Epic 9 (Admin: Inspektion, Löschen, Auszug für Behörden)
 
 ---
 
@@ -78,11 +78,14 @@
 | 8    | 8.2   | Fragen einreichen                             | 🟢   | ⬜ Offen  |
 | 8    | 8.3   | Upvoting & Sortierung                         | 🟢   | ⬜ Offen  |
 | 8    | 8.4   | Dozenten-Moderation                           | 🟢   | ⬜ Offen  |
+| 9    | 9.1   | Admin: Sessions & Quiz-Inhalte inspizieren     | 🟡   | ⬜ Offen  |
+| 9    | 9.2   | Admin: Session/Quiz löschen (rechtlich)        | 🟡   | ⬜ Offen  |
+| 9    | 9.3   | Admin: Auszug für Behörden/Staatsanwaltschaft | 🟡   | ⬜ Offen  |
 
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 23 · 🟡 Should: 26 · 🟢 Could: 14 = **63 Storys gesamt**
+> **Statistik:** 🔴 Must: 23 · 🟡 Should: 29 · 🟢 Could: 14 = **66 Storys gesamt**
 
 ---
 
@@ -808,4 +811,43 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
       - **Löschen** — entfernt unangemessene Fragen (nur für Dozent sichtbar).
     - Optional: Vorab-Moderation — Fragen erscheinen erst nach Freigabe durch den Dozenten (`moderationMode: boolean`, default: aus).
     - Prisma: Neues Modell `QaQuestion` mit Feldern `id`, `sessionId`, `participantId` (Autor, für 3-Fragen-Limit), `text`, `upvoteCount`, `status` (PENDING/ACTIVE/PINNED/ARCHIVED/DELETED), `createdAt`.
+
+---
+
+## Epic 9: Admin (Rechtliche & operative Kontrolle)
+
+> **Rolle:** Admin/Betreiber (z. B. Plattform-Betreiber, Support, rechtliche Verantwortliche).  
+> **Hintergrund:** Die App ist accountfrei für Dozenten und Teilnehmer. Auf dem Server liegen jedoch alle **live geschalteten** Sessions inkl. der beim Start hochgeladenen Quiz-Daten (Story 2.1a). Für Meldungen strafrechtlich relevanter Quiz-Inhalte, behördliche Anfragen (z. B. Staatsanwaltschaft) oder Löschpflichten braucht es eine **Admin-Rolle** mit strikter Autorisierung und Nachvollziehbarkeit.
+
+### Admin-Credentials: Wie kommt der Admin an seinen Zugang?
+
+- **Vergabe:** Die Credentials werden **vom Betreiber der Plattform** (z. B. IT, Verantwortliche:r für den Betrieb) bereitgestellt — nicht von der App selbst. Es gibt keine Selbstregistrierung für Admins.
+- **Technik (MVP):** Ein **geheimer Admin-Schlüssel** (API-Key/Passphrase) wird in der **Server-Umgebung** konfiguriert (z. B. Umgebungsvariable `ADMIN_SECRET` oder `ADMIN_API_KEYS`). Der Betreiber legt diesen Wert beim Deployment fest und teilt ihn **außerhalb der App** nur den berechtigten Admins mit (z. B. über sicheren Kanal, Passwortmanager, interne Dokumentation).
+- **Ablauf für den Admin:** Beim Aufruf von `/admin` erscheint eine **Login-Seite** (kein öffentliches Dashboard). Der Admin gibt den ihm mitgeteilten **Admin-Schlüssel** ein. Das Frontend sendet ihn an das Backend (z. B. tRPC `admin.login` oder `admin.verifySecret`); das Backend vergleicht mit dem konfigurierten Wert. Bei Übereinstimmung erhält der Admin ein **Session-Token** (z. B. kurzlebiges JWT oder opaker Token in Redis mit TTL), das im Frontend (z. B. sessionStorage) gespeichert und bei jedem Admin-tRPC-Aufruf mitgeschickt wird. So ist der Admin „eingeloggt“, ohne dass die App ein eigenes Benutzerkonto für ihn anlegt.
+- **Zusammenfassung:** Der Admin bekommt seine Credentials **vom Betreiber** (out-of-band). Technisch reicht ein gemeinsamer geheimer Schlüssel in der Server-Config; keine Datenbank für Admin-Benutzer nötig. Optional später: mehrere Schlüssel oder einfache Admin-Tabelle (Name, Hash des Passworts) für bessere Nachvollziehbarkeit im Audit-Log.
+
+- **Story 9.1 (Admin: Sessions & Quiz-Inhalte inspizieren):** 🟡 Als Admin möchte ich alle auf dem Server gespeicherten Sessions einsehen und die zugehörigen Quiz-Inhalte (Fragen, Antworten, Metadaten) sowie Session-Verlauf (Teilnehmerzahl, Status, Zeitraum) inspizieren können, damit ich bei Meldungen oder Anfragen den Kontext prüfen kann.
+  - **Akzeptanzkriterien:**
+    - **Admin-Autorisierung:** Zugriff nur mit gültiger Admin-Authentifizierung (z. B. Admin-Token/API-Key aus Umgebung oder separates Admin-Login). Die Admin-Rolle wird **nicht** durch die URL verliehen — wer `/admin` aufruft ohne gültige Admin-Credentials, erhält „Zugriff verweigert“; alle Admin-tRPC-Prozeduren prüfen die Admin-Berechtigung serverseitig.
+    - **Code-Eingabe (Session-Lookup):** Im Admin-Bereich (Panel/Dashboard) gibt es eine **Eingabe für den 6-stelligen Session-Code**. Der Admin kann den Code (z. B. aus einer Meldung oder behördlichen Anfrage) eingeben und damit direkt die zugehörigen Session- und Quiz-Daten abrufen. Bei gültigem Code wird die Session-Detail-Ansicht inkl. Quiz-Inhalt angezeigt; bei ungültigem/abgelaufenem Code eine klare Fehlermeldung. Technisch: tRPC `admin.getSessionByCode({ code })` oder Nutzung von `getSessionDetail` mit Code; UI: z. B. prominentes Suchfeld/Code-Eingabe oben im Dashboard.
+    - **Session-Liste:** Admin kann eine paginierte/filterbare Liste aller Sessions abrufen (tRPC `admin.listSessions`): Session-Code, Status, Quiz-Name (falls vorhanden), Typ (QUIZ/Q_AND_A), Zeitraum (startedAt, endedAt), Teilnehmeranzahl. Filter optional: Status, Zeitraum, Code.
+    - **Session-Detail:** Admin kann zu einer Session die vollständigen Metadaten sowie das bei Session-Start hochgeladene Quiz (Fragen, Antwortoptionen inkl. `isCorrect`) einsehen (read-only). Keine Änderung über diese Ansicht. Erreichbar sowohl über die Code-Eingabe als auch über Klick auf einen Eintrag in der Session-Liste.
+    - **Route:** Eigene Route `/admin` (oder `/admin/sessions`) — nur erreichbar, wenn Admin authentifiziert ist. **Absicherung:** Frontend Route Guard prüft Admin-Session-Token (fehlt/ungültig → Login anzeigen oder Redirect); Backend: jede Admin-Prozedur prüft Token (z. B. zentrale `adminProcedure`-Middleware), sonst `UNAUTHORIZED`. Details: `docs/ROUTES_AND_STORIES.md` Abschnitt „Absicherung der Admin-Route“.
+    - **Datenschutz:** Zugriff nur für berechtigte Admins; Zugriffe können für ein Audit-Log protokolliert werden (siehe Story 9.2).
+  - **Abhängigkeiten:** Session- und Quiz-Daten liegen beim Live-Schalten bereits auf dem Server (Story 2.1a). Kein neues Datenmodell nötig; ggf. neuer tRPC-Router `admin` mit gesicherten Procedures.
+
+- **Story 9.2 (Admin: Session/Quiz löschen – rechtlich):** 🟡 Als Admin möchte ich eine Session inkl. der zugehörigen Quiz-Kopie und aller Abstimmungsdaten (Votes, Participants, BonusTokens etc.) endgültig löschen können, wenn dies aus rechtlichen Gründen erforderlich ist (z. B. strafrechtlich relevanter Inhalt, Löschauflage).
+  - **Akzeptanzkriterien:**
+    - **Admin-only:** Nur mit gültiger Admin-Authentifizierung (wie Story 9.1). Löschen ist eine explizite Aktion (Button „Session endgültig löschen“) mit Bestätigungsdialog und optionaler Pflichtangabe eines Löschgrunds (Freitext oder Kategorie).
+    - **Vollständige Löschung:** Die Mutation `admin.deleteSession` (oder vergleichbar) löscht die Session und kaskadiert alle zugehörigen Daten (Participants, Votes, BonusTokens, QaQuestions etc.). Die beim Session-Start hochgeladene Quiz-Kopie (Quiz, Questions, AnswerOptions) wird mitgelöscht, sofern sie nur zu dieser Session gehört (oder explizit „Session-Quiz-Kopie“); Quizzes, die von mehreren Sessions referenziert werden können, sind im aktuellen Modell pro Session eine Kopie (Quiz ist über Session.quizId verknüpft) — hier ist die Löschlogik an das Prisma-Schema anzupassen (Cascade oder explizites Löschen der Session-Quiz-Daten).
+    - **Audit-Log:** Jede Admin-Löschung wird protokolliert: Zeitpunkt, Session-Code/ID, durchführende Admin-Kennung (z. B. Admin-Token-ID oder „system“), optional Löschgrund. Speicherung in einer Tabelle `AdminAuditLog` oder vergleichbar (oder strukturierte Logs), Aufbewahrungsfrist gemäß rechtlichen Anforderungen.
+    - **Keine Wiederherstellung:** Nach Löschung sind die Daten nicht wiederherstellbar; Hinweis in der UI.
+  - **Abhängigkeiten:** Story 9.1 (Admin-Zugang, Session-Liste/Detail).
+
+- **Story 9.3 (Admin: Auszug für Behörden/Staatsanwaltschaft):** 🟡 Als Admin möchte ich zu einer Session einen vollständigen, maschinenlesbaren Auszug (z. B. JSON oder PDF) erzeugen können, der alle relevanten Inhalte (Quiz-Name, Fragen, Antwortoptionen, Session-Metadaten, Teilnehmer-Anzahl, ggf. aggregierte Abstimmungsergebnisse — **keine** personenbezogenen Daten wie Nicknames, sofern nicht rechtlich gefordert) enthält, damit ich Anfragen von Behörden oder Staatsanwaltschaft (z. B. bezichtigter Quiz-Inhalt) erfüllen kann.
+  - **Akzeptanzkriterien:**
+    - **Export-Funktion:** In der Admin-Session-Detail-Ansicht (Story 9.1) ein Button „Auszug für Behörden exportieren“. Erzeugt ein strukturiertes Exportpaket (z. B. JSON mit Schema-Version) mit: Session-ID, -Code, Status, Zeitraum, Quiz-Name, alle Fragen inkl. Text und Antwortoptionen (inkl. Kennzeichnung korrekt/falsch), Session-Typ, Teilnehmeranzahl, aggregierte Ergebnisdaten (wie in Story 4.7). Optional: zweites Format PDF für lesbare Übermittlung.
+    - **DSGVO/Recht:** Der Export enthält bewusst **keine** Nicknames, IP-Adressen oder anderen personenbezogenen Daten, sofern nicht durch Rechtsgrund (z. B. Durchsuchungsbeschluss) explizit gefordert. Hinweis in der UI: „Nur für berechtigte Anfragen verwenden; Datensparsamkeit beachten.“
+    - **Audit:** Export-Vorgänge können im gleichen Audit-Log wie Löschungen erfasst werden (wer, wann, welche Session).
+  - **Abhängigkeiten:** Story 9.1 (Admin-Zugang, Session-Detail); inhaltlich an Story 4.7 (Export-Format) anknüpfbar.
 

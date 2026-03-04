@@ -1,0 +1,80 @@
+# ADR-0006: Rollen, Routen und Autorisierung (Host, Teilnehmer, Admin)
+
+**Status:** Accepted  
+**Datum:** 2026-03-04  
+**Entscheider:** Projektteam  
+
+## Kontext
+
+Die App ist für Dozenten und Teilnehmer **accountfrei**; Sessions und Quiz-Daten werden über Codes und Tokens gesteuert. Es braucht klare Regeln:
+
+1. **Rollen in der URL:** Wer ist wo? Ohne klare Trennung könnte jemand durch bloßes Aufrufen einer URL (z. B. `/session/ABC123/host`) Host-Rechte erlangen.
+2. **Admin-Rolle:** Für rechtliche und operative Kontrolle (Inspektion, Löschen, Auszug für Behörden) wird eine **Admin-Rolle** benötigt – ohne Einführung von Nutzerkonten für normale User.
+3. **Einheitliche Routen:** Alle Routen sollen englisch, kurz und prägnant sein; an der URL soll erkennbar sein, wo man ist und welche Rolle man hat.
+
+## Entscheidung
+
+### 1. Rollen und Routen (URL-Struktur)
+
+| Rolle        | URL-Segment(e)              | Bedeutung |
+|-------------|------------------------------|-----------|
+| **Host**    | `/session/:code/host`        | Dozent: Steuerung, Lobby |
+| **Present** | `/session/:code/present`     | Dozent: Beamer/Projektion |
+| **Join**    | `/join/:code`                | Teilnehmer: Einstieg (QR-Ziel), Nickname, dann Redirect auf vote |
+| **Vote**    | `/session/:code/vote`        | Teilnehmer: Abstimmung, Scorecard |
+| **Admin**   | `/admin`                     | Admin: Dashboard, Session-Code-Eingabe, Liste, Detail, Löschen, Export |
+
+- **`/session/:code`** ohne Segment: Redirect auf `.../host` (wenn Host-Token) oder `/join/:code` (wenn unklar), damit keine mehrdeutige URL bleibt.
+- QR-Code (Story 2.1b) verweist auf **`/join/:code`**.
+- Vollständige Routen- und Story-Referenz: [docs/ROUTES_AND_STORIES.md](../../ROUTES_AND_STORIES.md).
+
+### 2. Host-Autorisierung (kein „Host werden“ per URL)
+
+- **Host-Rechte** hängen nicht an der URL, sondern am **Host-Token**.
+- Das Token wird **einmalig** bei `session.create` vom Backend erzeugt und in der Response zurückgegeben; das Frontend speichert es in **sessionStorage** (z. B. `arsnova_host_${sessionCode}`).
+- **Jede Host-only-Prozedur** (nextQuestion, revealResults, end, getBonusTokens, getExportData usw.) erwartet das Host-Token (Header oder Input); das Backend prüft gegen einen gespeicherten Hash (z. B. Redis `host:${sessionId}`). Ungültig/fehlend → `UNAUTHORIZED`.
+- Aufruf von `/session/:code/host` oder `.../present` **ohne** gültiges Token → Frontend zeigt „Zugriff verweigert“ oder Redirect; Backend liefert bei Host-API-Aufrufen ohne Token keine Daten.
+
+### 3. Admin-Rolle und -Credentials
+
+- **Admin** ist eine **Betreiber-Rolle** (Plattform, Support, rechtliche Verantwortung). Keine Selbstregistrierung.
+- **Credentials:** Ein **geheimer Admin-Schlüssel** (z. B. Passphrase/API-Key) wird in der **Server-Umgebung** konfiguriert (`ADMIN_SECRET` o. ä.). Der **Betreiber** teilt ihn **out-of-band** nur berechtigten Admins mit.
+- **Login:** Beim Aufruf von `/admin` erscheint eine **Login-Seite**. Der Admin gibt den Schlüssel ein; Backend vergleicht mit dem konfigurierten Wert und vergibt bei Übereinstimmung ein **Session-Token** (z. B. JWT oder opaker Token in Redis mit TTL). Das Frontend speichert es (z. B. sessionStorage) und sendet es bei jedem Admin-tRPC-Aufruf mit. Keine Admin-Benutzerdatenbank im MVP.
+
+### 4. Absicherung der Admin-Route
+
+- **URL `/admin`:** Jede:r kann `/admin` im Browser **aufrufen** (die URL ist nicht geheim). **Ohne** gültiges Admin-Session-Token wird **nur die Login-Maske** angezeigt – kein Dashboard, keine Session-Daten.
+- **Frontend:** Route Guard (z. B. Angular `CanActivateFn`) bzw. Admin-Komponente: Ohne Token nur Login-UI auf derselben Route; mit gültigem Token wird das Admin-Dashboard (Session-Liste, Code-Eingabe, Detail, Löschen, Export) gerendert. Jeder Admin-tRPC-Aufruf sendet das Token mit (z. B. Header `Authorization: Bearer <token>`).
+- **Backend:** **Jede** Admin-Prozedur prüft das Token (z. B. zentrale **adminProcedure**-Middleware); ungültig/fehlend → `UNAUTHORIZED`. Sicherheit liegt auf Token-Prüfung, nicht auf Geheimhaltung der URL.
+
+### 5. Admin: Session-Lookup per Code
+
+- Im Admin-Dashboard gibt es eine **Eingabe für den 6-stelligen Session-Code**. Der Admin kann damit direkt die zugehörigen Session- und Quiz-Daten abrufen (z. B. tRPC `admin.getSessionByCode({ code })`). Bei gültigem Code → Session-Detail inkl. Quiz-Inhalt; bei ungültigem Code → klare Fehlermeldung.
+
+### 6. Admin: Audit
+
+- Admin-Aktionen (Löschen, ggf. Export) werden in einem **Audit-Log** protokolliert (wer, wann, welche Session, optional Grund), Aufbewahrung gemäß rechtlichen Anforderungen (Backlog Epic 9, Story 9.2).
+
+## Konsequenzen
+
+### Positiv
+
+- Klare Trennung der Rollen in der URL; keine Rechtevergabe durch bloßes Aufrufen einer Adresse.
+- Host- und Admin-Zugriff sind tokenbasiert und serverseitig prüfbar; Frontend-Guards verbessern UX und verhindern Anzeige geschützter UI.
+- Admin-Rolle passt zur accountfreien Architektur: ein gemeinsamer Schlüssel in der Server-Config, keine Nutzerdatenbank für Admins.
+- Einheitliche, englische und kurze Routen; gute Orientierung für Entwicklung und Nutzung.
+
+### Negativ / Risiken
+
+- Host-Token in sessionStorage: Verlust bei Löschen der Browser-Daten; Session lässt sich dann von diesem Gerät nicht mehr als Host steuern (bewusst akzeptiert).
+- Gemeinsamer Admin-Schlüssel: Keine feingranulare Zuordnung „wer hat was getan“ im Audit ohne spätere Erweiterung (z. B. Admin-Tabelle mit Kennung).
+
+## Alternativen (geprüft)
+
+- **Rolle nur per URL „verstecken“:** Sicherheit durch Unkenntnis der Admin-URL – abgelehnt; Sicherheit soll auf Credentials/Token beruhen, nicht auf Geheimhaltung der Route.
+- **Account-basierte Admin-Anmeldung:** Würde eine Nutzerverwaltung für Admins erfordern; für MVP bewusst vermieden zugunsten eines einzelnen konfigurierbaren Admin-Secrets.
+- **Host-Rechte über Session-Code:** Wer den 6-stelligen Code kennt, könnte Host sein – abgelehnt, da Teilnehmer den Code ebenfalls kennen; Host-Token bleibt exklusiv bei Session-Erstellung.
+
+---
+
+**Referenzen:** Backlog Epic 9 (Admin), [docs/ROUTES_AND_STORIES.md](../../ROUTES_AND_STORIES.md) (Routen, Host-/Admin-Autorisierung, Absicherung).

@@ -65,7 +65,7 @@ Folge diesen Schritten, um das Projekt lokal auf deiner Maschine zum Laufen zu b
 
 ### 2. Infrastruktur & Installation
 
-Klone dieses Repository und wechsle in den Ordner:
+Klone dieses Repository (oder deinen Fork) und wechsle in den Ordner:
 
 ```bash
 git clone https://github.com/kqc-real/arsnova.eu.git
@@ -73,13 +73,12 @@ cd arsnova.eu
 npm install
 ```
 
-Kopiere die Environment-Datei und starte die Docker-Container (Postgres & Redis, **Epic 0**):
+**PostgreSQL und Redis auf aktuellen Stand bringen** (wichtig z. B. nach Fork/Clone): Kopiere die Environment-Datei und starte **PostgreSQL und Redis** (für Lokalentwicklung reichen die beiden Dienste; der App-Container bleibt aus, damit `npm run dev` Port 3000 nutzen kann). Anschließend Schema anwenden und Prisma-Client erzeugen – so ist die Datenbank auf dem Stand des aktuellen `schema.prisma` (inkl. aller Tabellen, z. B. AdminAuditLog):
 
 ```bash
 cp .env.example .env
-npm run docker:up
-# → Startet PostgreSQL (5432) und Redis (6379). Für reine Lokalentwicklung nur Redis + Postgres:
-#   docker compose up -d redis postgres
+npm run docker:up:dev
+# → Startet nur PostgreSQL (5432) und Redis (6379). Volles Stack inkl. App-Container: npm run docker:up
 ```
 
 Pushe das Datenbankschema und generiere den Prisma-Client:
@@ -96,6 +95,8 @@ npm run build -w @arsnova/shared-types
 ```
 
 Ohne diesen Schritt startet das Backend beim ersten `npm run dev` ggf. nicht (fehlendes `dist/` in `libs/shared-types`). Nach Änderungen in `libs/shared-types` diesen Befehl erneut ausführen. Die Root-Skripte `npm run build` und `npm run build:prod` bauen die Bibliothek automatisch zuerst.
+
+**Alles in einem Durchgang (z. B. nach Fork):** `npm run setup:dev` startet Postgres + Redis (`docker:up:dev`), wendet das Schema an (`prisma:push`), generiert den Prisma-Client und baut die shared-types. Danach nur noch `npm run dev`.
 
 **Kurzfassung vor dem ersten Start:** `install` → `.env` + `docker:up` → `prisma:push` → `prisma:generate` → `build -w @arsnova/shared-types` → `npm run dev`
 
