@@ -51,6 +51,7 @@
 | 3    | 3.3b  | Abstimmung abgeben                            | 🔴   | ⬜ Offen  |
 | 3    | 3.4   | Echtzeit-Feedback                             | 🟡   | ⬜ Offen  |
 | 3    | 3.5   | Countdown-Anzeige                             | 🔴   | ⬜ Offen  |
+| 3    | 3.5a  | Countdown Finger-Anzeige (letzte 6 Sekunden)   | 🟡   | ⬜ Offen  |
 | 3    | 3.6   | Anonymer Modus                                | 🟡   | ⬜ Offen  |
 | 4    | 4.1   | Leaderboard mit Punktesystem                  | 🟡   | ⬜ Offen  |
 | 4    | 4.2   | Server aufräumen                              | 🔴   | ⬜ Offen  |
@@ -81,7 +82,7 @@
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 23 · 🟡 Should: 25 · 🟢 Could: 14 = **62 Storys gesamt**
+> **Statistik:** 🔴 Must: 23 · 🟡 Should: 26 · 🟢 Could: 14 = **63 Storys gesamt**
 
 ---
 
@@ -527,6 +528,15 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Die letzten 5 Sekunden werden visuell hervorgehoben (rot, pulsierend).
     - Nach Ablauf wird die Eingabe automatisch gesperrt.
     - Falls kein Timer gesetzt ist, wird kein Countdown angezeigt (offene Antwortphase, Dozent beendet manuell).
+- **Story 3.5a (Countdown Finger-Anzeige, letzte 6 Sekunden):** 🟡 Als Dozent/Teilnehmende möchte ich in den letzten 6 Sekunden des Countdowns die animierte Finger-Countdown-Anzeige (5 → 0) sehen, damit der Zeitablauf spielerisch und einheitlich sichtbar ist.
+  - **Akzeptanzkriterien:**
+    - Sobald der Countdown die letzten 6 Sekunden erreicht, wird die Finger-Countdown-Animation (wie im Preset-Toast „Spielerisch“) eingeblendet.
+    - **Beamer-Ansicht (Story 2.5):** Die Animation wird in **Vollansicht** (groß, zentral oder prominent) angezeigt, sodass sie im Saal gut erkennbar ist.
+    - **Client-Geräte (Teilnehmende):** Die Animation wird **klein** (wie auf dem Preset-Toast) in der **unteren linken Ecke** angezeigt, ohne die Antwort-Buttons oder den restlichen Countdown zu überdecken.
+    - Dauer der Animation: exakt 6 Sekunden (1 Sekunde pro Frame 5 → 4 → 3 → 2 → 1 → 0), synchron mit dem restlichen Countdown.
+    - Nur anzeigen, wenn ein Timer gesetzt ist und das Preset „Spielerisch“ aktiv ist (oder eine optionale Einstellung „Finger-Countdown“ an).
+    - Bei `prefers-reduced-motion` kann die Animation durch einen statischen Zähler oder dezente Anzeige ersetzt werden.
+  - **Abhängigkeiten:** Story 3.5 (Countdown-Anzeige), Story 2.5 (Beamer-Ansicht), Preset „Spielerisch“ / Countdown-Asset (countdown-fingers.gif bzw. transparente Einzelbilder).
 
 ---
 
