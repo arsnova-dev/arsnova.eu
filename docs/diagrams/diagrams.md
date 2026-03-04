@@ -38,7 +38,7 @@ graph TB
     end
 
     subgraph DTO["DTO Layer - Data-Stripping"]
-        prevdto[QuestionPreviewDTO - Lesephase, nur Fragenstamm]
+        prevdto["QuestionPreviewDTO - Lesephase, nur Fragenstamm"]
         studdto[QuestionStudentDTO - kein isCorrect]
         revdto[QuestionRevealedDTO - mit isCorrect]
         sessiondto[SessionInfoDTO]
@@ -324,7 +324,7 @@ erDiagram
         string id PK
         string sessionId FK
         string action
-        datetime createdAt
+        string createdAt
     }
 ```
 
@@ -557,32 +557,32 @@ flowchart TB
     end
 
     subgraph Server["Server"]
-        S1[Quiz-Upload validieren, in PG speichern]
-        S2[Session anlegen, Code generieren]
-        S3a[Status QUESTION_OPEN, QuestionPreviewDTO - Lesephase]
-        S3b[Status ACTIVE, QuestionStudentDTO ohne isCorrect]
-        S4[Vote speichern, Scoring, voteCountUpdate]
-        S5[Status RESULTS, QuestionRevealedDTO mit isCorrect]
-        S5b[Status PAUSED - zwischen Fragen]
-        S6[Status FINISHED, ggf. BonusToken generieren]
-        S7[admin.login - Token ausgeben]
-        S8[admin.listSessions / getSessionByCode]
-        S9[admin.deleteSession + AuditLog]
-        S10[admin.exportForAuthorities + AuditLog]
+        S1["Quiz-Upload validieren, in PG speichern"]
+        S2["Session anlegen, Code generieren"]
+        S3a["Status QUESTION_OPEN, QuestionPreviewDTO - Lesephase"]
+        S3b["Status ACTIVE, QuestionStudentDTO ohne isCorrect"]
+        S4["Vote speichern, Scoring, voteCountUpdate"]
+        S5["Status RESULTS, QuestionRevealedDTO mit isCorrect"]
+        S5b["Status PAUSED - zwischen Fragen"]
+        S6["Status FINISHED, ggf. BonusToken generieren"]
+        S7["admin.login - Token ausgeben"]
+        S8["admin.listSessions / getSessionByCode"]
+        S9["admin.deleteSession + AuditLog"]
+        S10["admin.exportForAuthorities + AuditLog"]
     end
 
     subgraph Student["Student"]
-        ST1[Code eingeben, session.getInfo]
-        ST2[Nickname wählen, session.join]
+        ST1["Code eingeben, session.getInfo"]
+        ST2["Nickname wählen, session.join"]
         ST3a[Fragenstamm anzeigen - Lesephase]
         ST3b[Antwort-Buttons + Countdown anzeigen]
         ST4[Abstimmung vote.submit]
         ST5[Ergebnis + Scorecard anzeigen]
-        ST6[Finales Ranking, ggf. Bonus-Token kopieren]
+        ST6["Finales Ranking, ggf. Bonus-Token kopieren"]
     end
 
     subgraph Admin["Admin (Epic 9)"]
-        A1[/admin - Login mit Admin-Schlüssel]
+        A1["/admin - Login mit Admin-Schlüssel"]
         A2[Session-Code eingeben oder Liste anzeigen]
         A3[Session-Detail + Quiz-Inhalt einsehen]
         A4[Optional: Session löschen - rechtlich]

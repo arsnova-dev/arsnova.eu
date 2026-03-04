@@ -14,13 +14,13 @@ graph TB
         subgraph "Frontend - Angular 17+ (aktuell 19)"
             FE[Angular App<br/>Port 4200]
             FE_COMP[Standalone Components<br/>Signals · Angular Material 3]
-            FE_ROUTES[Routing<br/>/quiz /session/:code/host|present|vote<br/>/join/:code /admin]
+            FE_ROUTES["Routing<br/>/quiz /session/:code host, present, vote<br/>/join/:code /admin"]
             FE_SERVICES[Services<br/>tRPC Client · Yjs · Theme · i18n]
         end
         
         subgraph "Backend - Node.js + tRPC (Epic 0 ✅)"
             BE[Express Server<br/>Port 3000]
-            TRPC[tRPC Router<br/>/trpc]
+            TRPC["tRPC Router<br/>/trpc"]
             ROUTERS[Router Layer<br/>health · quiz · session · vote · qa · admin]
             SERVICES[Service Layer<br/>Scoring · Streak · SessionCode<br/>RateLimit · BonusToken]
             DTO[DTO Layer<br/>Data Stripping<br/>QuestionPreviewDTO<br/>QuestionStudentDTO<br/>QuestionRevealedDTO]
@@ -40,7 +40,7 @@ graph TB
     subgraph "Externe Clients"
         DOZENT[Dozent Client<br/>Quiz-Erstellung<br/>Session-Steuerung]
         STUDENT[Student Client<br/>Voting<br/>Leaderboard]
-        ADMIN[Admin Client<br/>/admin · Inspektion<br/>Löschen · Auszug]
+        ADMIN["Admin Client<br/>/admin · Inspektion<br/>Löschen · Auszug"]
     end
     
     subgraph "Echtzeit-Kommunikation (Epic 0.2, 0.3 ✅)"
