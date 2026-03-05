@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, PLATFORM_ID, inject, signal } from '@angular/core';
+import { Component, Input, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconButton } from '@angular/material/button';
@@ -41,8 +41,6 @@ export class TopToolbarComponent {
   language = signal<'de' | 'en' | 'fr' | 'it' | 'es'>('de');
   controlsMenuOpen = signal(false);
 
-  @Output() presetChanged = new EventEmitter<void>();
-
   /** true wenn gescrollt wurde (stärkerer Schatten). */
   @Input() scrolled = false;
   /** Help/Legal: Toolbar fixiert, kann beim Runterscrollen ausgeblendet werden. */
@@ -75,10 +73,7 @@ export class TopToolbarComponent {
   }
 
   setPreset(value: 'serious' | 'spielerisch', closeMenu = false): void {
-    if (this.themePreset.preset() !== value) {
-      this.themePreset.setPreset(value);
-    }
-    this.presetChanged.emit();
+    this.themePreset.setPreset(value);
     if (closeMenu) this.closeControlsMenu();
   }
 

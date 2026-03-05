@@ -1,5 +1,6 @@
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Subject } from 'rxjs';
 
 const STORAGE_THEME = 'home-theme';
 const STORAGE_PRESET = 'home-preset';
@@ -11,6 +12,10 @@ export type PresetValue = 'serious' | 'spielerisch';
 export class ThemePresetService {
   readonly theme = signal<ThemeValue>('dark');
   readonly preset = signal<PresetValue>('spielerisch');
+
+  /** Wird bei jedem setPreset() ausgelöst, damit die App z. B. die Preset-Snackbar anzeigen kann (Toolbar + Hero-Toggle). */
+  private readonly presetChangedSource = new Subject<void>();
+  readonly presetChanged$ = this.presetChangedSource.asObservable();
 
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -43,9 +48,13 @@ export class ThemePresetService {
   }
 
   setPreset(value: PresetValue): void {
-    this.preset.set(value);
-    if (isPlatformBrowser(this.platformId)) localStorage.setItem(STORAGE_PRESET, value);
-    this.applyPreset();
+    const unchanged = this.preset() === value;
+    if (!unchanged) {
+      this.preset.set(value);
+      if (isPlatformBrowser(this.platformId)) localStorage.setItem(STORAGE_PRESET, value);
+      this.applyPreset();
+    }
+    this.presetChangedSource.next();
   }
 
   private applyTheme(): void {

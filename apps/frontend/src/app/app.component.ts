@@ -69,6 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private versionSub: Subscription | null = null;
   private routerSub: Subscription | null = null;
+  private presetSub: Subscription | null = null;
 
   /** true wenn gescrollt wurde (für stärkeren Schatten, Elevation). */
   hasScrolled = signal(false);
@@ -88,6 +89,7 @@ export class AppComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
+    this.presetSub = this.themePreset.presetChanged$.subscribe(() => this.onPresetChanged());
     if (isPlatformBrowser(this.platformId)) {
       this.isOnline.set(navigator.onLine);
       this.checkForUpdates();
@@ -101,6 +103,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.versionSub?.unsubscribe();
     this.routerSub?.unsubscribe();
+    this.presetSub?.unsubscribe();
     if (this.snackbarTimer) clearTimeout(this.snackbarTimer);
     if (isPlatformBrowser(this.platformId)) {
       window.removeEventListener('beforeinstallprompt', this.beforeInstallPromptListener);

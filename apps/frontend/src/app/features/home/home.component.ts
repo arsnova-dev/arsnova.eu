@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, 
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { trpc } from '../../core/trpc.client';
@@ -14,6 +15,8 @@ import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.ser
   imports: [
     RouterLink,
     MatButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
     MatCard,
     MatCardActions,
     MatCardContent,
