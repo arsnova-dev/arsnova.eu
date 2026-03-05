@@ -2,7 +2,7 @@
 
 **arsnova.eu** ist die **führende europäische, 100 % DSGVO-konforme und kostenlose Alternative** zu Kahoot, Mentimeter und Slido – und setzt in zentralen Punkten den Maßstab: **Datenschutz** (Quiz-Inhalte nie dauerhaft auf dem Server), **Kosten** (vollständig kostenlos, Open Source, kein Abo), **Didaktik** (Lesephase, Presets Seriös/Spielerisch, Bonus-Code für Top-Plätze) und **Offenheit** (Self-Hosted, WCAG 2.1 AA, KI-Quiz mit externem LLM ohne Datenpreisgabe).
 
-**Wo wir vorne liegen:** Kostenlos & Zero-Account · Local-First (Yjs) · KaTeX & Markdown (MINT) · Lesephase & Presets · Bonus-Token · Self-Hosted · Barrierefreiheit · KI-Quiz per externem LLM (Zero-Knowledge).
+**Wo wir vorne liegen:** Eine Startseite, eine URL für alle (Dozenten & Teilnehmer, demokratisch) · Kostenlos & Zero-Account · Local-First (Yjs) · KaTeX & Markdown (MINT) · Lesephase & Presets · Bonus-Token · Self-Hosted · Barrierefreiheit · KI-Quiz per externem LLM (Zero-Knowledge).
 
 **Legende**  
 ✅ = voll umgesetzt  
@@ -12,6 +12,7 @@
 
 | Bereich                  | Feature                                      | Kahoot!     | Mentimeter   | Slido        | **arsnova.eu**                  |
 |--------------------------|----------------------------------------------|-------------|--------------|--------------|---------------------------------------|
+| **Einstieg**             | Eine Startseite, eine URL für Dozenten und Teilnehmer (jeder kann erstellen oder mitmachen) | ❌ (getrennte URLs) | ❌ (getrennte Einstiege) | ❌ (getrennte Einstiege) | **✅** (arsnova.eu – demokratisch, leicht merkbar) |
 | **Kosten & Zugang**      | Vollständig kostenlos & open-source          | ❌          | ❌           | ❌           | **✅**                                 |
 |                          | Kein Dozenten-Account nötig                  | ❌          | ❌           | ❌           | **✅ Zero-Account**                    |
 | **Datenschutz**          | Quiz-Inhalte niemals auf dem Server          | ❌          | ❌           | ❌           | **✅ Local-First (Yjs)**               |

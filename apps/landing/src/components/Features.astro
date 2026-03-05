@@ -1,6 +1,11 @@
 ---
 const features = [
   {
+    title: 'Eine Startseite für alle',
+    description: 'Dozenten und Teilnehmer nutzen dieselbe URL – arsnova.eu. Kein getrenntes „Create“ vs. „Join“, keine zweite Adresse. Einfach die URL weitergeben, jeder kann Quizze erstellen oder mitmachen. Demokratisch und leicht merkbar.',
+    icon: 'single',
+  },
+  {
     title: 'Stil wählen',
     description: 'Du wählst den Stil: Seriös (anonym, Fokus auf Inhalt) oder Spielerisch (Rangliste, Sounds, Anfeuerung). Kita bis Uni, ein Tool für alle.',
     icon: 'toggle',
@@ -53,6 +58,7 @@ const features = [
             {f.icon === 'collab' && '🤝'}
             {f.icon === 'server' && '📦'}
             {f.icon === 'ai' && '🤖'}
+            {f.icon === 'single' && '🔗'}
           </div>
           <h3 class="mt-4 font-display text-lg font-semibold text-white">{f.title}</h3>
           <p class="mt-2 text-slate-400">{f.description}</p>
