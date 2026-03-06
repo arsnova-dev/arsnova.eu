@@ -162,6 +162,7 @@ body {
   font: var(--mat-sys-body-medium);
   background: var(--app-bg-root);
   color: var(--mat-sys-on-surface);
+  hyphens: auto;
 }
 
 // Keyframes für Preset Spielerisch (Startseite) – global, damit Animationen sicher laufen
