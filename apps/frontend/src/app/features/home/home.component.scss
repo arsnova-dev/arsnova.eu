@@ -543,11 +543,6 @@ mat-card-actions.l-stack { display: flex; flex-direction: column; gap: 0.5rem; }
   flex-wrap: wrap;
 }
 
-.home-subcard__demo-sep {
-  font: var(--mat-sys-label-small);
-  color: var(--mat-sys-on-surface-variant);
-}
-
 .home-subcard__demo-btn {
   justify-content: flex-start;
   white-space: nowrap;
