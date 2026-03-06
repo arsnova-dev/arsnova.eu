@@ -85,7 +85,7 @@ export type EmojiReaction = (typeof EMOJI_REACTIONS)[number];
 
 /** Schema für die Erstellung eines neuen Quizzes */
 export const CreateQuizInputSchema = z.object({
-  name: z.string().min(1, 'Quiz-Name darf nicht leer sein').max(200),
+  name: z.string().min(1, { error: 'Quiz-Name darf nicht leer sein' }).max(200),
   description: z.string().max(1000).optional(),
   showLeaderboard: z.boolean().optional().default(true),
   allowCustomNicknames: z.boolean().optional().default(true),
@@ -107,14 +107,14 @@ export type CreateQuizInput = z.infer<typeof CreateQuizInputSchema>;
 
 /** Schema für eine einzelne Antwortoption beim Hinzufügen/Bearbeiten */
 export const AnswerOptionInputSchema = z.object({
-  text: z.string().min(1, 'Antworttext darf nicht leer sein').max(500),
+  text: z.string().min(1, { error: 'Antworttext darf nicht leer sein' }).max(500),
   isCorrect: z.boolean(),
 });
 export type AnswerOptionInput = z.infer<typeof AnswerOptionInputSchema>;
 
 /** Schema für das Hinzufügen/Bearbeiten einer Frage (Story 1.2a, 1.2b, 1.3) */
 export const AddQuestionInputSchema = z.object({
-  text: z.string().min(1, 'Fragenstamm darf nicht leer sein').max(2000),
+  text: z.string().min(1, { error: 'Fragenstamm darf nicht leer sein' }).max(2000),
   type: QuestionTypeEnum,
   timer: z.number().int().min(5).max(300).nullable().optional(),
   difficulty: DifficultyEnum.optional().default('MEDIUM'),
@@ -146,7 +146,7 @@ export const QuizUploadInputSchema = z.object({
   nicknameTheme: NicknameThemeEnum,
   bonusTokenCount: z.number().int().min(1).max(50).nullable().optional(), // Story 4.6
   readingPhaseEnabled: z.boolean().optional(), // Story 2.6: Zwei-Phasen-Frageanzeige
-  questions: z.array(AddQuestionInputSchema).min(1, 'Mindestens eine Frage erforderlich'),
+  questions: z.array(AddQuestionInputSchema).min(1, { error: 'Mindestens eine Frage erforderlich' }),
 });
 export type QuizUploadInput = z.infer<typeof QuizUploadInputSchema>;
 
@@ -157,7 +157,7 @@ export type QuizUploadInput = z.infer<typeof QuizUploadInputSchema>;
 /** Input: Eine neue Live-Session starten */
 export const CreateSessionInputSchema = z.object({
   type: SessionTypeEnum.optional().default('QUIZ'),       // Story 8.1: Quiz oder Q&A
-  quizId: z.string().uuid().optional(),                    // Pflicht bei QUIZ, null bei Q_AND_A
+  quizId: z.uuid().optional(),                    // Pflicht bei QUIZ, null bei Q_AND_A
   title: z.string().max(200).optional(),                   // Story 8.1: Titel für Q&A-Runde
   moderationMode: z.boolean().optional().default(false),   // Story 8.4: Q&A-Fragen moderieren
 });
@@ -165,13 +165,13 @@ export type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
 
 /** Input: Session-Info abfragen (z. B. vor Beitritt) */
 export const GetSessionInfoInputSchema = z.object({
-  code: z.string().length(6, 'Session-Code muss 6 Zeichen lang sein'),
+  code: z.string().length(6, { error: 'Session-Code muss 6 Zeichen lang sein' }),
 });
 export type GetSessionInfoInput = z.infer<typeof GetSessionInfoInputSchema>;
 
 /** Input: Einer Session beitreten (Story 3.1) */
 export const JoinSessionInputSchema = z.object({
-  code: z.string().length(6, 'Session-Code muss 6 Zeichen lang sein'),
+  code: z.string().length(6, { error: 'Session-Code muss 6 Zeichen lang sein' }),
   nickname: z.string().min(1).max(30),
 });
 export type JoinSessionInput = z.infer<typeof JoinSessionInputSchema>;
@@ -182,10 +182,10 @@ export type JoinSessionInput = z.infer<typeof JoinSessionInputSchema>;
 
 /** Input: Abstimmung abgeben */
 export const SubmitVoteInputSchema = z.object({
-  sessionId: z.string().uuid(),
-  participantId: z.string().uuid(), // Vom Join-Response (Story 0.5: Rate-Limit pro Participant)
-  questionId: z.string().uuid(),
-  answerIds: z.array(z.string().uuid()).optional(), // MC: mehrere, SC: eine, FREETEXT/RATING: keine
+  sessionId: z.uuid(),
+  participantId: z.uuid(), // Vom Join-Response (Story 0.5: Rate-Limit pro Participant)
+  questionId: z.uuid(),
+  answerIds: z.array(z.uuid()).optional(), // MC: mehrere, SC: eine, FREETEXT/RATING: keine
   freeText: z.string().max(500).optional(),
   ratingValue: z.number().int().min(0).max(10).optional(), // Nur bei RATING
   responseTimeMs: z.number().int().min(0).optional(), // Antwortzeit in ms
@@ -201,7 +201,7 @@ export type SubmitVoteInput = z.infer<typeof SubmitVoteInputSchema>;
  * WIRD an Studenten gesendet – enthält bewusst kein `isCorrect`!
  */
 export const AnswerOptionStudentDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   text: z.string(),
 });
 export type AnswerOptionStudentDTO = z.infer<typeof AnswerOptionStudentDTOSchema>;
@@ -211,7 +211,7 @@ export type AnswerOptionStudentDTO = z.infer<typeof AnswerOptionStudentDTOSchema
  * Wird erst NACH Auflösung durch den Dozenten (Status RESULTS) gesendet!
  */
 export const AnswerOptionRevealedDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   text: z.string(),
   isCorrect: z.boolean(),
   voteCount: z.number(),        // Anzahl Votes für diese Option
@@ -221,7 +221,7 @@ export type AnswerOptionRevealedDTO = z.infer<typeof AnswerOptionRevealedDTOSche
 
 /** DTO: Frage mit aufgelösten Ergebnissen (Story 3.4, 4.4) */
 export const QuestionRevealedDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   text: z.string(),
   type: QuestionTypeEnum,
   difficulty: DifficultyEnum,
@@ -234,7 +234,7 @@ export type QuestionRevealedDTO = z.infer<typeof QuestionRevealedDTOSchema>;
 
 /** DTO: Frage für Studenten (ohne Lösung) */
 export const QuestionStudentDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   text: z.string(),
   type: QuestionTypeEnum,
   timer: z.number().nullable(),
@@ -254,7 +254,7 @@ export type QuestionStudentDTO = z.infer<typeof QuestionStudentDTOSchema>;
  * Der Dozent gibt erst danach die Antworten frei (→ ACTIVE + QuestionStudentDTO).
  */
 export const QuestionPreviewDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   text: z.string(),
   type: QuestionTypeEnum,
   difficulty: DifficultyEnum,
@@ -268,7 +268,7 @@ export type QuestionPreviewDTO = z.infer<typeof QuestionPreviewDTOSchema>;
 
 /** DTO: Session-Info für den Beitritt */
 export const SessionInfoDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   code: z.string(),
   type: SessionTypeEnum,                           // Story 8.1: Quiz oder Q&A
   status: SessionStatusEnum,
@@ -280,13 +280,13 @@ export type SessionInfoDTO = z.infer<typeof SessionInfoDTOSchema>;
 
 /** Output: Nach Join (Session-Info + eigene Participant-ID für vote.submit). */
 export const JoinSessionOutputSchema = SessionInfoDTOSchema.extend({
-  participantId: z.string().uuid(),
+  participantId: z.uuid(),
 });
 export type JoinSessionOutput = z.infer<typeof JoinSessionOutputSchema>;
 
 /** DTO: Teilnehmer-Info */
 export const ParticipantDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   nickname: z.string(),
 });
 export type ParticipantDTO = z.infer<typeof ParticipantDTOSchema>;
@@ -306,7 +306,7 @@ export type LeaderboardEntryDTO = z.infer<typeof LeaderboardEntryDTOSchema>;
 export const PersonalScorecardDTOSchema = z.object({
   questionOrder: z.number(),         // Frage-Nr. (1-basiert)
   wasCorrect: z.boolean().nullable(), // null bei SURVEY/FREETEXT
-  correctAnswerIds: z.array(z.string().uuid()).optional(), // Korrekte Antwort-IDs (bei Falsch)
+  correctAnswerIds: z.array(z.uuid()).optional(), // Korrekte Antwort-IDs (bei Falsch)
   questionScore: z.number(),         // Punkte für diese Frage (inkl. Streak)
   baseScore: z.number(),             // Punkte vor Streak-Multiplikator
   streakCount: z.number(),           // Aktuelle Serie
@@ -332,8 +332,8 @@ export type TeamLeaderboardEntryDTO = z.infer<typeof TeamLeaderboardEntryDTOSche
 
 /** Input: Emoji-Reaktion senden (Story 5.8) */
 export const SendEmojiReactionInputSchema = z.object({
-  sessionId: z.string().uuid(),
-  questionId: z.string().uuid(),
+  sessionId: z.uuid(),
+  questionId: z.uuid(),
   emoji: z.enum(EMOJI_REACTIONS),
 });
 export type SendEmojiReactionInput = z.infer<typeof SendEmojiReactionInputSchema>;
@@ -428,7 +428,7 @@ export type QuizExport = z.infer<typeof QuizExportSchema>;
 
 /** DTO: Aggregiertes Rating-Ergebnis für eine Skala-Frage */
 export const RatingResultDTOSchema = z.object({
-  questionId: z.string().uuid(),
+  questionId: z.uuid(),
   ratingMin: z.number(),
   ratingMax: z.number(),
   ratingLabelMin: z.string().nullable(),
@@ -457,7 +457,7 @@ export type BonusTokenEntryDTO = z.infer<typeof BonusTokenEntryDTOSchema>;
 
 /** DTO: Vollständige Bonus-Token-Liste für den Dozenten */
 export const BonusTokenListDTOSchema = z.object({
-  sessionId: z.string().uuid(),
+  sessionId: z.uuid(),
   sessionCode: z.string(),
   quizName: z.string(),
   tokens: z.array(BonusTokenEntryDTOSchema),
@@ -470,7 +470,7 @@ export type BonusTokenListDTO = z.infer<typeof BonusTokenListDTOSchema>;
 
 /** Input: Export-Daten für eine beendete Session abrufen (nur Dozent, Session FINISHED) */
 export const GetExportDataInputSchema = z.object({
-  sessionId: z.string().uuid(),
+  sessionId: z.uuid(),
 });
 export type GetExportDataInput = z.infer<typeof GetExportDataInputSchema>;
 
@@ -507,7 +507,7 @@ export type QuestionExportEntry = z.infer<typeof QuestionExportEntrySchema>;
 
 /** DTO: Vollständiger Session-Export für Dozenten (CSV/PDF-Generierung) – DSGVO-konform, nur aggregiert */
 export const SessionExportDTOSchema = z.object({
-  sessionId: z.string().uuid(),
+  sessionId: z.uuid(),
   sessionCode: z.string(),
   quizName: z.string(),
   finishedAt: z.string(),             // ISO-8601
@@ -523,7 +523,7 @@ export type SessionExportDTO = z.infer<typeof SessionExportDTOSchema>;
 
 /** DTO: Eine Q&A-Frage */
 export const QaQuestionDTOSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   text: z.string(),
   upvoteCount: z.number(),
   status: QaQuestionStatusEnum,
@@ -534,14 +534,14 @@ export type QaQuestionDTO = z.infer<typeof QaQuestionDTOSchema>;
 
 /** Input: Q&A-Frage einreichen (Story 8.2) */
 export const SubmitQaQuestionInputSchema = z.object({
-  sessionId: z.string().uuid(),
+  sessionId: z.uuid(),
   text: z.string().min(1).max(500),
 });
 export type SubmitQaQuestionInput = z.infer<typeof SubmitQaQuestionInputSchema>;
 
 /** Input: Q&A-Frage upvoten (Story 8.3) */
 export const UpvoteQaQuestionInputSchema = z.object({
-  questionId: z.string().uuid(),
+  questionId: z.uuid(),
 });
 export type UpvoteQaQuestionInput = z.infer<typeof UpvoteQaQuestionInputSchema>;
 
