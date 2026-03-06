@@ -24,6 +24,21 @@
   }
 }
 
+/* Einheitlicher Abstand zwischen Toolbar und erstem Inhalt (wie Toolbar margin-bottom auf der Startseite). */
+.app-main > * {
+  margin-top: 1rem;
+}
+@media (min-width: 600px) {
+  .app-main > * {
+    margin-top: 1.25rem;
+  }
+}
+@media (min-width: 840px) {
+  .app-main > * {
+    margin-top: 1.5rem;
+  }
+}
+
 .app-skip-link {
   position: absolute;
   top: -100px;

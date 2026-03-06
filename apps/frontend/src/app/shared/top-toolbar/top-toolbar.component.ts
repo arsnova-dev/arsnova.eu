@@ -1,10 +1,11 @@
 import { Component, Input, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
 
@@ -15,6 +16,7 @@ const STORAGE_LANG = 'home-language';
   standalone: true,
   imports: [
     RouterLink,
+    RouterLinkActive,
     MatIconButton,
     MatButtonToggle,
     MatButtonToggleGroup,
@@ -22,6 +24,7 @@ const STORAGE_LANG = 'home-language';
     MatMenuItem,
     MatMenuTrigger,
     MatIcon,
+    MatTooltip,
   ],
   templateUrl: './top-toolbar.component.html',
   styleUrls: ['./top-toolbar.component.scss'],

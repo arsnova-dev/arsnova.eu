@@ -74,25 +74,74 @@
 
 .top-toolbar__row {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  min-width: 0;
+}
+
+/* Brand + Home-Icon gruppieren, damit auf Mobile beides links bleibt. */
+.top-toolbar__start {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.top-toolbar__home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-inline: -8px;
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+  border-radius: 50%;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  flex-shrink: 0;
+  .mat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  &:hover {
+    color: var(--mat-sys-on-surface);
+    background-color: var(--mat-sys-surface-container-high);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.top-toolbar__home-link--active {
+  display: none;
 }
 
 @media (min-width: 600px) {
   .top-toolbar__row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: auto 1fr;
     gap: 1rem;
+    align-items: center;
+  }
+  .top-toolbar__start {
+    grid-column: 1;
+    justify-self: start;
   }
   .top-toolbar__brand {
     justify-self: start;
   }
   .top-toolbar__controls {
-    grid-column: 2 / -1;
+    grid-column: 2;
     display: flex;
+    flex-wrap: nowrap;
     justify-content: space-evenly;
     justify-self: stretch;
+    min-width: 0;
   }
 }
 
@@ -103,6 +152,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  flex-shrink: 0;
   text-decoration: none;
   color: inherit;
 }
@@ -121,9 +171,7 @@
 .top-toolbar__brand-title {
   font-size: 1.375rem;
   line-height: 1.25;
-  font-weight: 500;
-  font-family: inherit;
-  margin: 0;
+  white-space: nowrap;
 }
 
 .mobile-only {
@@ -155,6 +203,8 @@
 .top-toolbar__toggles {
   border: none;
   background: transparent;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 
   .mat-button-toggle {
     border: none !important;

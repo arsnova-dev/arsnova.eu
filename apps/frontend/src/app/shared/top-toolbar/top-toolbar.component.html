@@ -6,9 +6,10 @@
   role="banner"
 >
   <div class="top-toolbar__row">
-    <a routerLink="/" class="top-toolbar__brand" aria-label="arsnova.eu Startseite">
-      <svg
-        class="top-toolbar__brand-icon"
+    <div class="top-toolbar__start">
+      <a routerLink="/" class="top-toolbar__brand" aria-label="arsnova.eu Startseite">
+        <svg
+          class="top-toolbar__brand-icon"
         viewBox="0 0 32 32"
         preserveAspectRatio="xMidYMid meet"
         xmlns="http://www.w3.org/2000/svg"
@@ -30,6 +31,17 @@
       </svg>
       <span class="top-toolbar__brand-title">arsnova.eu</span>
     </a>
+      <a
+        routerLink="/"
+        routerLinkActive="top-toolbar__home-link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="top-toolbar__home-link"
+        matTooltip="Zur Startseite"
+        aria-label="Zur Startseite"
+      >
+        <mat-icon>home</mat-icon>
+      </a>
+    </div>
 
     <button
       type="button"
