@@ -32,7 +32,8 @@
     "@angular/service-worker": "^21.2.0",
     "@angular/ssr": "^21.2.0",
     "@arsnova/shared-types": "*",
-    "@trpc/client": "^10.45.0",
+    "@trpc/client": "^11.0.0",
+    "@trpc/server": "^11.0.0",
     "express": "^5.1.0",
     "katex": "^0.16.32",
     "marked": "^17.0.3",
@@ -44,8 +45,8 @@
     "yjs": "^14.0.0-16"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "2.4.0-beta.1",
-    "@analogjs/vitest-angular": "2.4.0-beta.1",
+    "@analogjs/vite-plugin-angular": "2.4.0-beta.4",
+    "@analogjs/vitest-angular": "2.4.0-beta.4",
     "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",

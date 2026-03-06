@@ -1,6 +1,6 @@
 # 🏛️ Architektur-Handbuch: arsnova.eu
 
-**Zuletzt aktualisiert:** 2026-02-23  
+**Zuletzt aktualisiert:** 2026-03-06  
 **Rolle:** Living Documentation (Documentation as Code)  
 
 **Epic 0 (Infrastruktur) abgeschlossen:** Redis (Docker + Health-Check), tRPC WebSocket (Subscriptions), Yjs WebSocket-Provider, Server-Status (health.stats, Widget), Rate-Limiting (Redis Sliding-Window), CI/CD (GitHub Actions).
@@ -31,7 +31,9 @@ Um die Ziele des Projekts zu erreichen, müssen alle Entwickler folgende drei ar
 Die **Quiz-Bibliothek** der Dozenten wird *nicht dauerhaft* auf dem Server gespeichert. Wenn ein Dozent ein Quiz erstellt, lebt dieses als **CRDT-Dokument (Conflict-free Replicated Data Type)** über `Yjs` primär in der lokalen IndexedDB seines Browsers. Das Backend dient für die Quiz-Erstellung lediglich als "dummer" WebSocket-Relay-Server, um E2E-verschlüsselte Deltas (Änderungen) zwischen den Endgeräten des Dozenten (z.B. PC und iPad) zu synchronisieren. Damit der Dozent dasselbe Quiz auf einem anderen Gerät öffnen kann, erhält er einen **Sync-Link** bzw. **Sync-Code** (Story 1.6a); nur wer diesen Key hat, kann das Quiz bearbeiten oder live steuern – der Session-Beitrittscode für Studenten gewährt keinen Zugriff auf die Quiz-Bearbeitung. Beim **Start einer Live-Session** wird eine **Kopie** des gewählten Quiz an den Server übermittelt (Quiz-Upload, Story 2.1a); diese Kopie wird nur für die Dauer der Session in PostgreSQL gehalten – die dauerhafte "Single Source of Truth" der Quiz-Inhalte bleibt die lokale Yjs/IndexedDB des Dozenten.
 
 ### 3.2 End-to-End Typsicherheit (tRPC)
-Wir verzichten auf klassische REST-Schnittstellen und das manuelle Schreiben von DTO-Klassen im Frontend. Durch die Nutzung von **tRPC** im Monorepo (npm Workspaces) importiert das Angular-Frontend die Typen direkt aus der API-Schicht des Backends. Wenn sich das Datenbank-Schema (Prisma) ändert, schlägt der Frontend-Build sofort fehl.
+Wir verzichten auf klassische REST-Schnittstellen und das manuelle Schreiben von DTO-Klassen im Frontend. Durch die Nutzung von **tRPC v11** im Monorepo (npm Workspaces) importiert das Angular-Frontend die Typen direkt aus der API-Schicht des Backends. Wenn sich das Datenbank-Schema (Prisma) ändert, schlägt der Frontend-Build sofort fehl.
+
+**Hinweis:** Das Frontend führt `@trpc/server` als Dependency nur für die **Bundler-Auflösung** – `@trpc/client` v11 importiert intern Teile von `@trpc/server` (z. B. Observable/RPC). Ohne diese Abhängigkeit würde der Angular-Build die Imports nicht auflösen können; serverseitige Logik wird im Frontend nicht ausgeführt.
 
 ### 3.3 Security & Data-Stripping (Das DTO-Pattern)
 Während einer Live-Sitzung müssen die Fragen an die Smartphones der Studenten gesendet werden. Das Backend lädt die Daten und **muss zwingend** ein DTO (Data Transfer Object) anwenden, bevor die Daten über WebSockets versendet werden. Lösungsrelevante Felder (wie `isCorrect`) werden serverseitig restlos entfernt, um clientseitiges Cheating (z.B. über Chrome DevTools) auszuschließen.
