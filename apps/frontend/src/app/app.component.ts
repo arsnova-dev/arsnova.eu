@@ -96,7 +96,10 @@ export class AppComponent implements OnInit, OnDestroy {
       this.setupPwaInstallPrompt();
       this.routerSub = this.router.events
         .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
-        .subscribe(() => this.toolbarHidden.set(false));
+        .subscribe(() => {
+          this.toolbarHidden.set(false);
+          requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+        });
     }
   }
 

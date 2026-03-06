@@ -307,6 +307,14 @@
   margin-top: 1.25rem;
 }
 
+/* Kein Silbentrennung im Hero-Header (Überschrift, USP, Trust-Badges). */
+.home-hero,
+.home-hero-usp,
+.home-hero-usp--secondary,
+.home-trust-badges {
+  hyphens: none;
+}
+
 @media (min-width: 600px) {
   .home-main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-hero, .home-hero-usp, .home-hero-usp--secondary, .home-hero-preset-mobile, .home-hero-icons, .home-trust-badges { grid-column: 1 / -1; }
