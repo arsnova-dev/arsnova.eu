@@ -155,7 +155,7 @@ Tokenbasierte Card-Flaeche:
 - **Schliessen-Button:** aria-label "Einstellungen schliessen".
 
 ## Seitenuebergreifend: UX und Wording
-- **Zurueck-Links:** Immer "Startseite" mit Icon arrow_back, `aria-label="Zurueck zur Startseite"`.
+- **Zurueck zur Startseite:** Nur ueber Logo oder Home-Icon in der Top-Toolbar; keine expliziten "Startseite"-Links auf Inhaltseiten (NN/G: auf der Startseite selbst keinen aktiven Home-Link anbieten).
 - **Ladezustaende:** Kurz "Wird geladen…" (ohne "Session" oder Kontext, wenn der Kontext schon klar ist).
 - **Fehlermeldungen:** Nutzerorientiert, kein Technik-Jargon. "Ungueltiger Code." statt "Ungueltiger Session-Code."; "Nicht gefunden. Code pruefen oder neu eingeben."; "Seite konnte nicht geladen werden." statt "Inhalt konnte nicht geladen werden.".
 - **Platzhalter-Hinweise:** Keine Story-/Epic-Referenzen in der UI. Stattdessen kurze nutzerorientierte Hinweise (z. B. "Hier Quizzes anlegen und verwalten.", "Lobby und Steuerung werden hier angezeigt.").
