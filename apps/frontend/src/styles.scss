@@ -329,3 +329,75 @@ html {
   white-space: nowrap;
   border: 0;
 }
+
+// ---------------------------------------------------------------------------
+// 6) Quiz Markdown/KaTeX Content Styling
+//    Global scope is required because markdown HTML is injected via [innerHTML].
+// ---------------------------------------------------------------------------
+
+.markdown-katex-error {
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-small);
+}
+
+.quiz-edit-question__text p,
+.quiz-edit-question__answer-text p {
+  margin: 0.45rem 0;
+}
+
+.quiz-edit-form__preview-content p,
+.quiz-edit-form__preview-answers p {
+  margin: 0.55rem 0;
+}
+
+.quiz-edit-form__preview-content h1,
+.quiz-edit-form__preview-content h2,
+.quiz-edit-form__preview-content h3,
+.quiz-edit-form__preview-content h4,
+.quiz-edit-form__preview-answers h1,
+.quiz-edit-form__preview-answers h2,
+.quiz-edit-form__preview-answers h3,
+.quiz-edit-form__preview-answers h4 {
+  margin: 0.85rem 0 0.45rem;
+  line-height: 1.35;
+}
+
+.quiz-preview-question__text p {
+  margin: 0.6rem 0;
+}
+
+.quiz-preview-question__answer-content p {
+  margin: 0.45rem 0;
+}
+
+.quiz-preview-question__text h1,
+.quiz-preview-question__text h2,
+.quiz-preview-question__text h3,
+.quiz-preview-question__text h4,
+.quiz-preview-question__answer-content h1,
+.quiz-preview-question__answer-content h2,
+.quiz-preview-question__answer-content h3,
+.quiz-preview-question__answer-content h4 {
+  margin: 0.9rem 0 0.5rem;
+  line-height: 1.35;
+}
+
+.quiz-preview-question__text ul,
+.quiz-preview-question__text ol,
+.quiz-preview-question__answer-content ul,
+.quiz-preview-question__answer-content ol {
+  margin: 0.55rem 0 0.6rem;
+  padding-left: 1.35rem;
+}
+
+.quiz-preview-question__text li,
+.quiz-preview-question__answer-content li {
+  margin: 0.2rem 0;
+}
+
+.quiz-preview-question__text blockquote,
+.quiz-preview-question__answer-content blockquote {
+  margin: 0.7rem 0;
+  padding-left: 0.7rem;
+  border-left: 3px solid var(--mat-sys-outline-variant);
+}

@@ -3,6 +3,10 @@
   line-height: 1.5;
 }
 
+.quiz-form-card__header {
+  padding-bottom: 0.4rem;
+}
+
 .quiz-form {
   margin-top: 0.6rem;
   row-gap: 1rem;
@@ -72,31 +76,14 @@
   line-height: 1.45;
 }
 
-:host ::ng-deep .quiz-form .mat-mdc-card-header {
-  padding-bottom: 0.4rem;
-}
-
-:host ::ng-deep .quiz-form .mdc-floating-label {
-  line-height: 1.25;
-}
-
-:host ::ng-deep .quiz-form .mat-mdc-form-field-infix {
-  padding-top: 0.95rem;
-  padding-bottom: 0.75rem;
-}
-
-:host ::ng-deep .quiz-form .mat-mdc-form-field-subscript-wrapper {
-  margin-top: 0.2rem;
-  min-height: 2.3rem;
-}
-
-:host ::ng-deep .quiz-form .mat-mdc-form-field-hint-wrapper,
-:host ::ng-deep .quiz-form .mat-mdc-form-field-error-wrapper {
+.quiz-form mat-hint,
+.quiz-form mat-error {
   line-height: 1.4;
   hyphens: none;
+  overflow-wrap: break-word;
 }
 
-:host ::ng-deep .quiz-form textarea[matinput] {
+.quiz-form textarea[matinput] {
   line-height: 1.55;
 }
 

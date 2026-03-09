@@ -3,9 +3,9 @@
 } @else if (quiz(); as quizData) {
   <section class="quiz-edit l-stack l-stack--sm">
     <mat-card appearance="outlined" class="quiz-edit__meta-card">
-      <mat-card-header>
-        <mat-card-subtitle>Quiz</mat-card-subtitle>
-        <mat-card-title>Metadaten</mat-card-title>
+      <mat-card-header class="quiz-edit__card-header">
+        <mat-card-subtitle class="quiz-edit__card-subtitle">Quiz</mat-card-subtitle>
+        <mat-card-title class="quiz-edit__card-title">Metadaten</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <form
@@ -62,9 +62,9 @@
     </mat-card>
 
     <mat-card appearance="outlined" class="quiz-edit__settings-card">
-      <mat-card-header>
-        <mat-card-title>Sitzungs-Konfiguration</mat-card-title>
-        <mat-card-subtitle>Globale Einstellungen für dein Quiz</mat-card-subtitle>
+      <mat-card-header class="quiz-edit__card-header">
+        <mat-card-title class="quiz-edit__card-title">Sitzungs-Konfiguration</mat-card-title>
+        <mat-card-subtitle class="quiz-edit__card-subtitle">Globale Einstellungen für dein Quiz</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <form
@@ -213,15 +213,15 @@
     </mat-card>
 
     <mat-card appearance="outlined" class="quiz-edit__form-card">
-      <mat-card-header>
-        <mat-card-title>
+      <mat-card-header class="quiz-edit__form-header">
+        <mat-card-title class="quiz-edit__form-title">
           @if (isEditing()) {
             Frage bearbeiten
           } @else {
             Frage hinzufügen
           }
         </mat-card-title>
-        <mat-card-subtitle>
+        <mat-card-subtitle class="quiz-edit__form-subtitle">
           MC/SC mit Korrektmarkierung, Umfrage ohne Korrektmarkierung, Freitext ohne Optionen
         </mat-card-subtitle>
       </mat-card-header>
@@ -398,8 +398,8 @@
           }
 
           <mat-card appearance="outlined" class="quiz-edit-form__preview">
-            <mat-card-header>
-              <mat-card-title>Markdown &amp; KaTeX Live-Preview</mat-card-title>
+            <mat-card-header class="quiz-edit__card-header">
+              <mat-card-title class="quiz-edit__card-title">Markdown &amp; KaTeX Live-Preview</mat-card-title>
             </mat-card-header>
             <mat-card-content class="l-stack l-stack--xs">
               @if (previewKatexError()) {

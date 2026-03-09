@@ -2,15 +2,15 @@
   line-height: 1.5;
 }
 
-:host ::ng-deep .quiz-edit .mat-mdc-card-header {
+.quiz-edit__card-header {
   padding-bottom: 0.4rem;
 }
 
-:host ::ng-deep .quiz-edit .mat-mdc-card-title {
+.quiz-edit__card-title {
   line-height: 1.35;
 }
 
-:host ::ng-deep .quiz-edit .mat-mdc-card-subtitle {
+.quiz-edit__card-subtitle {
   line-height: 1.5;
 }
 
@@ -38,15 +38,16 @@
   gap: 0.65rem;
 }
 
-.quiz-edit__form-card :where(.mat-mdc-card-header) {
+.quiz-edit__form-header {
   padding-bottom: 0.55rem;
 }
 
-.quiz-edit__form-card :where(.mat-mdc-card-title) {
+.quiz-edit__form-title {
   margin-bottom: 0.25rem;
+  line-height: 1.35;
 }
 
-.quiz-edit__form-card :where(.mat-mdc-card-subtitle) {
+.quiz-edit__form-subtitle {
   max-width: 68ch;
   line-height: 1.55;
   margin-top: 0.15rem;
@@ -176,61 +177,15 @@
   line-height: 1.55;
 }
 
-:host ::ng-deep .markdown-katex-error {
-  color: var(--mat-sys-error);
-  font: var(--mat-sys-body-small);
-}
-
-:host ::ng-deep .quiz-edit-form .mdc-floating-label {
-  line-height: 1.25;
-}
-
-:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-infix {
-  padding-top: 0.95rem;
-  padding-bottom: 0.75rem;
-}
-
-:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-subscript-wrapper {
-  margin-top: 0.25rem;
-  min-height: 2.4rem;
-}
-
-:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-hint-wrapper,
-:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-error-wrapper {
+.quiz-edit-form mat-hint,
+.quiz-edit-form mat-error {
   line-height: 1.4;
   hyphens: none;
   overflow-wrap: break-word;
 }
 
-:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-hint,
-:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-error {
-  hyphens: none;
-}
-
-:host ::ng-deep .quiz-edit-form textarea[matinput] {
+.quiz-edit-form textarea[matinput] {
   line-height: 1.55;
-}
-
-:host ::ng-deep .quiz-edit-question__text p,
-:host ::ng-deep .quiz-edit-question__answer-text p {
-  margin: 0.45rem 0;
-}
-
-:host ::ng-deep .quiz-edit-form__preview-content p,
-:host ::ng-deep .quiz-edit-form__preview-answers p {
-  margin: 0.55rem 0;
-}
-
-:host ::ng-deep .quiz-edit-form__preview-content h1,
-:host ::ng-deep .quiz-edit-form__preview-content h2,
-:host ::ng-deep .quiz-edit-form__preview-content h3,
-:host ::ng-deep .quiz-edit-form__preview-content h4,
-:host ::ng-deep .quiz-edit-form__preview-answers h1,
-:host ::ng-deep .quiz-edit-form__preview-answers h2,
-:host ::ng-deep .quiz-edit-form__preview-answers h3,
-:host ::ng-deep .quiz-edit-form__preview-answers h4 {
-  margin: 0.85rem 0 0.45rem;
-  line-height: 1.35;
 }
 
 .quiz-edit-list__title {
