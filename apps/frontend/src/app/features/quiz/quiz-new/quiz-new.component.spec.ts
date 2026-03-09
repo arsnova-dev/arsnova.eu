@@ -83,12 +83,18 @@ describe('QuizNewComponent', () => {
   it('erstellt kein Quiz bei ungültigem Formular', async () => {
     const fixture = TestBed.createComponent(QuizNewComponent);
     const component = fixture.componentInstance;
+    fixture.detectChanges();
+    const nameInput = fixture.nativeElement.querySelector(
+      'input[formcontrolname=\"name\"]',
+    ) as HTMLInputElement;
+    const focusSpy = vi.spyOn(nameInput, 'focus');
 
     component.form.patchValue({ name: '', description: '' });
     await component.submit();
 
     expect(mockStore.createQuiz).not.toHaveBeenCalled();
     expect(component.form.invalid).toBe(true);
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   it('setzt mit dem Serious-Preset zentrale Optionen auf seriös', () => {

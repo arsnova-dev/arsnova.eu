@@ -8,7 +8,12 @@
         <mat-card-title>Metadaten</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form class="quiz-edit-form l-stack l-stack--sm" [formGroup]="metadataForm" (ngSubmit)="saveMetadata()">
+        <form
+          #metadataFormElement
+          class="quiz-edit-form l-stack l-stack--sm"
+          [formGroup]="metadataForm"
+          (ngSubmit)="saveMetadata()"
+        >
           <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" maxlength="200" />
@@ -63,6 +68,7 @@
       </mat-card-header>
       <mat-card-content>
         <form
+          #settingsFormElement
           class="quiz-edit-form l-stack l-stack--sm"
           [formGroup]="settingsForm"
           (ngSubmit)="saveSettings()"
@@ -221,7 +227,12 @@
       </mat-card-header>
 
       <mat-card-content>
-        <form class="quiz-edit-form l-stack l-stack--sm" [formGroup]="form" (ngSubmit)="addQuestion()">
+        <form
+          #questionFormElement
+          class="quiz-edit-form l-stack l-stack--sm"
+          [formGroup]="form"
+          (ngSubmit)="addQuestion()"
+        >
           @if (isEditing()) {
             <p class="quiz-edit-form__editing-hint">
               Bearbeitungsmodus aktiv. Speichern aktualisiert die ausgewählte Frage.

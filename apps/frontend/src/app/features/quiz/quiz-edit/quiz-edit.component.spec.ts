@@ -321,6 +321,62 @@ describe('QuizEditComponent', () => {
     expect(component.metadataSaved()).toBe(true);
   });
 
+  it('fokussiert bei ungültigen Metadaten das erste Fehlerfeld', () => {
+    const fixture = TestBed.createComponent(QuizEditComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+    const nameInput = fixture.nativeElement.querySelector(
+      '.quiz-edit__meta-card input[formcontrolname=\"name\"]',
+    ) as HTMLInputElement;
+    const focusSpy = vi.spyOn(nameInput, 'focus');
+
+    component.metadataForm.controls.name.setValue('');
+    component.saveMetadata();
+
+    expect(mockStore.updateQuizMetadata).not.toHaveBeenCalled();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('fokussiert bei ungültigen Einstellungen das erste Fehlerfeld', () => {
+    const fixture = TestBed.createComponent(QuizEditComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+    const timerInput = fixture.nativeElement.querySelector(
+      '.quiz-edit__settings-card input[formcontrolname=\"defaultTimer\"]',
+    ) as HTMLInputElement;
+    const focusSpy = vi.spyOn(timerInput, 'focus');
+
+    component.settingsForm.controls.defaultTimer.setValue(1);
+    component.saveSettings();
+
+    expect(mockStore.updateQuizSettings).not.toHaveBeenCalled();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('springt bei fehlender Korrektmarkierung zur ersten Auswahlhilfe', () => {
+    const fixture = TestBed.createComponent(QuizEditComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    component.form.controls.text.setValue('Ungültige SC Frage');
+    component.answersArray.at(0).controls.text.setValue('A');
+    component.answersArray.at(1).controls.text.setValue('B');
+    component.answersArray.at(0).controls.isCorrect.setValue(false);
+    component.answersArray.at(1).controls.isCorrect.setValue(false);
+    fixture.detectChanges();
+
+    const selectorButton = fixture.nativeElement.querySelector(
+      '.quiz-edit-answer__selector button',
+    ) as HTMLButtonElement;
+    const focusSpy = vi.spyOn(selectorButton, 'focus');
+
+    component.addQuestion();
+
+    expect(mockStore.addQuestion).not.toHaveBeenCalled();
+    expect(component.submitError()).toBe('Bei Single Choice muss genau eine Antwort korrekt sein.');
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
   it('rendert Markdown und KaTeX in der Fragenliste', () => {
     quiz.questions = [
       {

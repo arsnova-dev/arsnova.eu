@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
@@ -24,6 +24,7 @@ import {
 } from '@arsnova/shared-types';
 import { QuizStoreService, type QuizSettings } from '../data/quiz-store.service';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
+import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
 
 /**
  * Neues Quiz anlegen (Epic 1).
@@ -88,6 +89,7 @@ export class QuizNewComponent {
   readonly aiJsonInput = signal('');
   readonly aiImportStatus = signal<string | null>(null);
   readonly aiImportError = signal<string | null>(null);
+  @ViewChild('quizCreateForm') private quizCreateForm?: ElementRef<HTMLFormElement>;
 
   readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
@@ -260,8 +262,13 @@ export class QuizNewComponent {
     this.submitted.set(true);
     this.submitError.set(null);
 
-    if (this.form.invalid || this.isSaving()) {
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
+      focusFirstInvalidField(this.quizCreateForm?.nativeElement, this.form);
+      return;
+    }
+
+    if (this.isSaving()) {
       return;
     }
 

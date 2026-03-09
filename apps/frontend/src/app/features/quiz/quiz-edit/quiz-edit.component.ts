@@ -1,4 +1,4 @@
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -40,6 +40,7 @@ import {
   type SupportedQuestionType,
 } from '../data/quiz-store.service';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
+import { focusAndScrollElement, focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
 
 type AnswerFormGroup = FormGroup<{
   text: FormControl<string>;
@@ -130,6 +131,9 @@ export class QuizEditComponent implements OnDestroy {
   readonly answerPreviewHtml = signal<SafeHtml[]>([]);
   readonly previewKatexError = signal<string | null>(null);
   private previewTimer: ReturnType<typeof setTimeout> | null = null;
+  @ViewChild('metadataFormElement') private metadataFormElement?: ElementRef<HTMLFormElement>;
+  @ViewChild('settingsFormElement') private settingsFormElement?: ElementRef<HTMLFormElement>;
+  @ViewChild('questionFormElement') private questionFormElement?: ElementRef<HTMLFormElement>;
 
   readonly questionTypeOptions: Array<{ value: SupportedQuestionType; label: string }> = [
     { value: 'SINGLE_CHOICE', label: 'Single Choice' },
@@ -442,6 +446,14 @@ export class QuizEditComponent implements OnDestroy {
     if (this.form.invalid || selectionError) {
       this.form.markAllAsTouched();
       this.submitError.set(selectionError);
+      if (this.form.invalid) {
+        focusFirstInvalidField(this.questionFormElement?.nativeElement, this.form);
+      } else if (selectionError) {
+        const selectionControl = this.questionFormElement?.nativeElement.querySelector<HTMLElement>(
+          '.quiz-edit-answer__selector button, .quiz-edit-answer__selector .mat-mdc-checkbox input',
+        );
+        focusAndScrollElement(selectionControl);
+      }
       return;
     }
 
@@ -484,6 +496,7 @@ export class QuizEditComponent implements OnDestroy {
 
     if (this.settingsForm.invalid) {
       this.settingsForm.markAllAsTouched();
+      focusFirstInvalidField(this.settingsFormElement?.nativeElement, this.settingsForm);
       return;
     }
 
@@ -506,6 +519,7 @@ export class QuizEditComponent implements OnDestroy {
 
     if (this.metadataForm.invalid) {
       this.metadataForm.markAllAsTouched();
+      focusFirstInvalidField(this.metadataFormElement?.nativeElement, this.metadataForm);
       return;
     }
 
