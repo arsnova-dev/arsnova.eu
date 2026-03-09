@@ -96,32 +96,51 @@
 .quiz-edit-form__preview-block {
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: var(--mat-sys-corner-medium);
-  padding: 0.75rem;
+  padding: 1rem;
   background: var(--mat-sys-surface-container-low);
 }
 
 .quiz-edit-form__preview-label {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.55rem;
   font: var(--mat-sys-label-medium);
   color: var(--mat-sys-on-surface-variant);
 }
 
 .quiz-edit-form__preview-content {
-  min-height: 1.25rem;
+  min-height: 1.5rem;
+  line-height: 1.6;
 }
 
 .quiz-edit-form__preview-answers {
-  margin: 0;
+  margin: 0.25rem 0 0;
   padding-left: 1.25rem;
 }
 
 .quiz-edit-form__preview-answers li {
-  margin: 0.25rem 0;
+  margin: 0.5rem 0;
+  line-height: 1.55;
 }
 
 :host ::ng-deep .markdown-katex-error {
   color: var(--mat-sys-error);
   font: var(--mat-sys-body-small);
+}
+
+:host ::ng-deep .quiz-edit-form__preview-content p,
+:host ::ng-deep .quiz-edit-form__preview-answers p {
+  margin: 0.55rem 0;
+}
+
+:host ::ng-deep .quiz-edit-form__preview-content h1,
+:host ::ng-deep .quiz-edit-form__preview-content h2,
+:host ::ng-deep .quiz-edit-form__preview-content h3,
+:host ::ng-deep .quiz-edit-form__preview-content h4,
+:host ::ng-deep .quiz-edit-form__preview-answers h1,
+:host ::ng-deep .quiz-edit-form__preview-answers h2,
+:host ::ng-deep .quiz-edit-form__preview-answers h3,
+:host ::ng-deep .quiz-edit-form__preview-answers h4 {
+  margin: 0.85rem 0 0.45rem;
+  line-height: 1.35;
 }
 
 .quiz-edit-list__title {
@@ -141,8 +160,9 @@
 }
 
 .quiz-edit-question__text {
-  margin: 0.45rem 0 0.5rem;
+  margin: 0.65rem 0 0.75rem;
   white-space: pre-wrap;
+  line-height: 1.55;
 }
 
 .quiz-edit-question__answers {
@@ -151,10 +171,11 @@
 }
 
 .quiz-edit-question__answers li {
-  margin: 0.3rem 0;
+  margin: 0.45rem 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.35rem;
+  line-height: 1.5;
 }
 
 .quiz-edit-question__correct-icon {
