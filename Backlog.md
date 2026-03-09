@@ -19,27 +19,27 @@
 | 0    | 0.4   | Server-Status-Indikator                       | 🟡   | ✅ Fertig |
 | 0    | 0.5   | Rate-Limiting & Brute-Force-Schutz            | 🔴   | ✅ Fertig |
 | 0    | 0.6   | CI/CD-Pipeline (GitHub Actions)               | 🔴   | ✅ Fertig |
-| 1    | 1.1   | Quiz erstellen                                | 🔴   | ⬜ Offen  |
-| 1    | 1.2a  | Fragentypen: MC & SC                          | 🔴   | ⬜ Offen  |
-| 1    | 1.2b  | Fragentypen: Freitext & Umfrage               | 🟡   | ⬜ Offen  |
-| 1    | 1.2c  | Fragentyp: Rating-Skala                       | 🟡   | ⬜ Offen  |
-| 1    | 1.3   | Antworten & Lösungen                          | 🔴   | ⬜ Offen  |
-| 1    | 1.4   | Sitzungs-Konfiguration                        | 🟡   | ⬜ Offen  |
-| 1    | 1.5   | Local-First Speicherung                       | 🔴   | ⬜ Offen  |
-| 1    | 1.6   | Yjs Multi-Device-Sync                         | 🟢   | ⬜ Offen  |
-| 1    | 1.6a  | Quiz auf anderem Gerät öffnen (Sync-Key/Link) | 🟡   | ⬜ Offen  |
-| 1    | 1.6b  | Preset & Optionen beim Sync mitführen          | 🟢   | ⬜ Offen  |
-| 1    | 1.7   | Markdown & KaTeX                              | 🔴   | ⬜ Offen  |
-| 1    | 1.8   | Quiz exportieren                              | 🟡   | ⬜ Offen  |
-| 1    | 1.9   | Quiz importieren                              | 🟡   | ⬜ Offen  |
-| 1    | 1.9a  | KI-gestützter Quiz-Import (Zod-Validierung)   | 🟡   | ⬜ Offen  |
-| 1    | 1.9b  | KI-Systemprompt (kontextbasiert, schema-getreu)| 🟡   | ⬜ Offen  |
-| 1    | 1.10  | Quiz bearbeiten & löschen                     | 🔴   | ⬜ Offen  |
-| 1    | 1.11  | Quiz-Presets                                  | 🟡   | ⬜ Offen  |
-| 1    | 1.12  | SC-Schnellformate                             | 🟡   | ⬜ Offen  |
-| 1    | 1.13  | Quiz-Preview & Schnellkorrektur               | 🟡   | ⬜ Offen  |
-| 1    | 1.14  | Word Cloud (interaktiv + Export)              | 🟡   | ⬜ Offen  |
-| 1    | 1.15  | Preset-Konfiguration exportieren & importieren | 🟢   | ⬜ Offen  |
+| 1    | 1.1   | Quiz erstellen                                | 🔴   | ✅ Fertig |
+| 1    | 1.2a  | Fragentypen: MC & SC                          | 🔴   | ✅ Fertig |
+| 1    | 1.2b  | Fragentypen: Freitext & Umfrage               | 🟡   | ✅ Fertig |
+| 1    | 1.2c  | Fragentyp: Rating-Skala                       | 🟡   | ✅ Fertig |
+| 1    | 1.3   | Antworten & Lösungen                          | 🔴   | ✅ Fertig |
+| 1    | 1.4   | Sitzungs-Konfiguration                        | 🟡   | ✅ Fertig |
+| 1    | 1.5   | Local-First Speicherung                       | 🔴   | ✅ Fertig |
+| 1    | 1.6   | Yjs Multi-Device-Sync                         | 🟢   | ✅ Fertig |
+| 1    | 1.6a  | Quiz auf anderem Gerät öffnen (Sync-Key/Link) | 🟡   | ✅ Fertig |
+| 1    | 1.6b  | Preset & Optionen beim Sync mitführen          | 🟢   | ✅ Fertig |
+| 1    | 1.7   | Markdown & KaTeX                              | 🔴   | ✅ Fertig |
+| 1    | 1.8   | Quiz exportieren                              | 🟡   | ✅ Fertig |
+| 1    | 1.9   | Quiz importieren                              | 🟡   | ✅ Fertig |
+| 1    | 1.9a  | KI-gestützter Quiz-Import (Zod-Validierung)   | 🟡   | ✅ Fertig |
+| 1    | 1.9b  | KI-Systemprompt (kontextbasiert, schema-getreu)| 🟡   | ✅ Fertig |
+| 1    | 1.10  | Quiz bearbeiten & löschen                     | 🔴   | ✅ Fertig |
+| 1    | 1.11  | Quiz-Presets                                  | 🟡   | ✅ Fertig |
+| 1    | 1.12  | SC-Schnellformate                             | 🟡   | ✅ Fertig |
+| 1    | 1.13  | Quiz-Preview & Schnellkorrektur               | 🟡   | ✅ Fertig |
+| 1    | 1.14  | Word Cloud (interaktiv + Export)              | 🟡   | ✅ Fertig |
+| 1    | 1.15  | Preset-Konfiguration exportieren & importieren | 🟢   | ✅ Fertig |
 | 2    | 2.1a  | Session-ID & Quiz-Upload                      | 🔴   | ⬜ Offen  |
 | 2    | 2.1b  | QR-Code                                       | 🟢   | ⬜ Offen  |
 | 2    | 2.2   | Lobby-Ansicht                                 | 🔴   | ⬜ Offen  |
@@ -199,6 +199,10 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
 ---
 
 ## Epic 1: Quiz-Verwaltung (Rolle: Dozent / Ersteller)
+
+> **Verifizierung Epic 1 (2026-03-09):** Status aller Storys 1.1–1.15 auf **✅ Fertig** gesetzt.  
+> Frontend-Checks: `npm run typecheck -w @arsnova/frontend` ✅, `npm run test -w @arsnova/frontend -- src/app/features/quiz` ✅ (54/54).  
+> Ergänzend abgeschlossen: Styleguide-/DoD-Nacharbeiten (Lesbarkeit/Spacing, Wording-Konsistenz, deutsches Datumsformat `de-DE`, Fehlerfokus auf erstes ungültiges Feld, Entfernung fragiler `::ng-deep`-Selektoren im Quiz-Feature, Preview-Interaktions- und Markdown/KaTeX-Rendering-Korrekturen).
 
 - **Story 1.1 (Quiz erstellen):** 🔴 Als Dozent möchte ich ein neues Quiz anlegen und benennen können.
   - **Akzeptanzkriterien:**
@@ -870,4 +874,3 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - **DSGVO/Recht:** Der Export enthält bewusst **keine** Nicknames, IP-Adressen oder anderen personenbezogenen Daten, sofern nicht durch Rechtsgrund (z. B. Durchsuchungsbeschluss) explizit gefordert. Hinweis in der UI: „Nur für berechtigte Anfragen verwenden; Datensparsamkeit beachten.“
     - **Audit:** Export-Vorgänge können im gleichen Audit-Log wie Löschungen erfasst werden (wer, wann, welche Session).
   - **Abhängigkeiten:** Story 9.1 (Admin-Zugang, Session-Detail); inhaltlich an Story 4.7 (Export-Format) anknüpfbar.
-
