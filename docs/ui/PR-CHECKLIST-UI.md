@@ -22,22 +22,36 @@ Diese Checkliste ist fuer alle PRs mit UI-Aenderungen in `apps/frontend` verpfli
 - [ ] Layout wurde ueber zentrale Pattern (Stack, Cluster, Grid, Inset, Section) umgesetzt.
 - [ ] Kein einmaliger Spacing-/Layout-Hack ohne Wiederverwendungsabsicht.
 - [ ] Struktur-Styles und visuelle Semantik sind getrennt.
+- [ ] Lesbarkeits-Mindestwerte eingehalten (Body `line-height >= 1.5`, Hint/Error `>= 1.4`, Feldabstand `>= 1rem`).
 
 ## 5) Accessibility und States
 - [ ] Light/Dark wurde geprueft.
 - [ ] Fokuszustand ist sichtbar und kontrastreich.
 - [ ] Disabled, Error, Hover, Focus wurden getestet.
 - [ ] Kontrast ist fuer relevante Text/Surface-Kombinationen plausibel.
+- [ ] Bei ungueltigem Submit springt der Fokus auf das erste fehlerhafte Feld (inkl. Scroll).
 
 ## 6) Regression und Qualitaet
 - [ ] Betroffene Screens wurden manuell geprueft (Desktop + relevante Breakpoints).
 - [ ] Es gibt keine visuelle Regression bei bestehenden Material-Komponenten.
 - [ ] Ueberfluessige Alt-Styles wurden entfernt (kein paralleler Stilpfad).
+- [ ] Overflow-Menues enthalten keine redundanten Duplikate einer bereits sichtbaren Primaeraktion.
+- [ ] Preview-Ansichten sind nicht interaktiv (Radio/Checkbox nur visuell).
+- [ ] Markdown/KaTeX wird in allen relevanten Ansichten konsistent gerendert (Liste, Edit, Preview).
 
 ## 7) Dokumentation
 - [ ] ADR `0005` wurde beachtet.
 - [ ] Styleguide und Tokens-Doku wurden bei Bedarf aktualisiert.
 - [ ] Ausnahmen (falls vorhanden) sind dokumentiert mit Scope, Dauer und Rueckbauplan.
+
+## 8) Wording und Locale
+- [ ] Wording entspricht dem Glossar im Styleguide (z. B. "Vorschau", "Tastenkürzel", "gueltig").
+- [ ] Primaertexte sind nutzerorientiert und enthalten keinen unnötigen Technik-Jargon.
+- [ ] Datum/Zeit ist in deutscher UI als `de-DE` formatiert.
+
+## 9) Guardrails (quick checks)
+- [ ] Kein `::ng-deep` in geaenderten Feature-SCSS-Dateien.
+- [ ] Keine Selektoren gegen interne Material-Elemente (`.mat-mdc-*`, `.mdc-*`) ohne dokumentierte Ausnahme.
 
 ## Reviewer-Entscheidung
 - [ ] Freigabe

@@ -64,6 +64,41 @@ Regeln:
 - Fokuszustand muss klar sichtbar sein (bei Bedarf `mat.strong-focus-indicators()`).
 - Disabled, Error und Hover/Focus-Zustaende nur ueber passende Tokens ausdruecken.
 
+## Verbindliche Lesbarkeitsregeln (MUSS)
+- **Text-Rhythmus:** Fuer Fliesstext in Feature-Screens `line-height` mindestens `1.5`; fuer Hint-/Error-Texte mindestens `1.4`.
+- **Formular-Abstaende:** Zwischen aufeinanderfolgenden Eingabefeldern mindestens `1rem` vertikaler Abstand; zwischen Feld und Hint/Error mindestens `0.2rem`.
+- **Card-Header-Abstaende:** Zwischen Title und Subtitle mindestens `0.15rem`; zwischen Header und erstem Inhaltselement mindestens `0.4rem`.
+- **Label-Lesbarkeit:** Feldlabels duerfen nicht abgeschnitten werden; Umbruch ist erlaubt, aber ohne Silbentrennung (`hyphens: none`).
+- **Lange Hinweise:** Lange Hint-/Tooltip-Texte muessen ohne horizontales Scrollen lesbar bleiben (mobil und desktop).
+
+## Formularverhalten bei Fehlern (MUSS)
+- **Erster Fehler:** Bei Submit mit ungueltigem Formular wird immer zum ersten fehlerhaften Feld gescrollt und fokussiert.
+- **Fokus-Reihenfolge:** Reihenfolge folgt der visuellen Reihenfolge im Formular (oben links nach unten rechts).
+- **Korrektheitslogik:** Bei fachlichen Fehlern ohne invalides Feld (z. B. fehlende Korrektmarkierung) wird die erste relevante Interaktionsstelle fokussiert.
+
+## Aktionen und Menues (MUSS)
+- **Keine Redundanz:** Eine primaere Aktion darf nicht gleichzeitig als sichtbarer CTA und im Overflow-Menue angeboten werden.
+- **Overflow-Menue:** Enthaelt nur sekundaere oder seltene Aktionen.
+- **CTA-Hierarchie:** Pro Kontext genau eine klare Primaeraktion, weitere Aktionen als tonal/text oder Menue.
+
+## Preview-Vertrag (MUSS)
+- **Nicht-interaktiv:** Vorschau-Ansichten sind rein visuell; Eingabeelemente wie Radio/Checkbox duerfen dort nicht direkt auswaehlbar sein.
+- **Fluchtlinien:** Auswahlindikatoren in Listen sind linksbuendig ausgerichtet.
+- **Render-Paritaet:** Markdown/KaTeX muss in Vorschau, Bearbeiten-Liste und Live-Preview konsistent angezeigt werden.
+
+## Markdown/KaTeX Styling (MUSS)
+- **`innerHTML`-Content:** Styles fuer gerendertes Markdown/KaTeX werden global und klar gescoped definiert (z. B. `.quiz-preview-*`, `.quiz-edit-*`), nicht ueber `::ng-deep`.
+- **Fehlerdarstellung:** `.markdown-katex-error` nutzt Error-Tokens und `body-small`.
+- **Typografie:** Absatz-, Listen-, Heading- und Blockquote-Abstaende fuer gerenderten Content sind explizit definiert.
+
+## Technische Details und Progressive Disclosure (MUSS)
+- **Nutzerfokus zuerst:** Primaransichten zeigen nur entscheidungsrelevante Informationen.
+- **Technische IDs/Links:** Nur sekundar, z. B. in aufklappbaren Details (`details/summary`) oder separaten Technikbereichen.
+
+## Locale und Datumsformat (MUSS)
+- **Locale:** Frontend nutzt fuer UI-Datum/Zeit standardmaessig `de-DE`.
+- **Formatkonsistenz:** US-Formate wie `3/9/26, 8:09 AM` sind in der deutschen UI zu vermeiden.
+
 ## Beispielmuster
 Tokenbasierte Card-Flaeche:
 
@@ -128,6 +163,11 @@ Tokenbasierte Card-Flaeche:
 - **CTAs:** Handlungsauffordernd mit klarem Nutzen: "Los geht's" (statt "Beitreten"), "Neues Quiz starten" (statt "Session erstellen"), "Aus Bibliothek" (statt "Quiz auswaehlen"), "Fragerunde" (statt "Q&A").
 - **Hilfetext Session-Code:** "6 Zeichen, z. B. ABC123" -- kurz, konkret, kontextneutral.
 - **Server-Status:** "Verbunden" / "Keine Verbindung" (statt "Server erreichbar/nicht erreichbar"). "Nochmal versuchen" (statt "Erneut verbinden").
+
+### Verbindliche Begriffspaare (MUSS)
+- **UI-Sprache:** "Vorschau" statt "Preview", "Tastenkürzel" statt "Hotkeys".
+- **Verstaendlichkeit:** "gueltig" statt "valide".
+- **KI-Import-Texte:** Keine internen Technikbegriffe wie "Schema-Validierung" in Primaertexten; stattdessen nutzerorientierte Formulierungen ("Wir pruefen den Inhalt vor dem Import.").
 
 ## Preset-Toast (Modal): Design
 - **Backdrop:** Gedimmt (`color-mix` on-surface 32 %) + leichter `backdrop-filter: blur(4px)`. Klick schliesst. Einblend-Animation (0.2 s) nur bei `prefers-reduced-motion: no-preference`.
