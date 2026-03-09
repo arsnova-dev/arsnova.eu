@@ -33,12 +33,13 @@
       <mat-card-content class="quiz-list__ai-content l-stack l-stack--xs">
         <h2 class="quiz-list__ai-title">KI-JSON importieren</h2>
         <p class="quiz-list__ai-hint">
-          JSON aus der KI einfügen. Der Import wird strikt gegen das Schema validiert.
+          Füge JSON aus der KI ein. Vor dem Import prüfen wir den Inhalt automatisch.
         </p>
         <mat-form-field appearance="outline" class="quiz-list__ai-field">
           <mat-label>KI-JSON</mat-label>
           <textarea
             #aiJsonTextarea
+            class="quiz-list__ai-textarea"
             matInput
             rows="8"
             [value]="aiJsonInput()"
@@ -94,6 +95,7 @@
                 mat-icon-button
                 class="quiz-list-item__menu-trigger"
                 type="button"
+                [disableRipple]="true"
                 [matMenuTriggerFor]="quizMenu"
                 [attr.aria-label]="'Aktionen für Quiz ' + quiz.name"
               >

@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -23,6 +23,7 @@ import { trpc } from '../../../core/trpc.client';
     RouterLink,
     DatePipe,
     MatButton,
+    MatIconButton,
     MatCard,
     MatCardContent,
     MatFormField,
