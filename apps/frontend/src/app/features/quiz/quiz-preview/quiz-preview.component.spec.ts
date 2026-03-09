@@ -154,6 +154,21 @@ describe('QuizPreviewComponent', () => {
     expect(renderedMath).not.toBeNull();
   });
 
+  it('rendert Auswahl-Toggles linksbündig vor dem Antworttext', () => {
+    const fixture = TestBed.createComponent(QuizPreviewComponent);
+    const component = fixture.componentInstance;
+    component.currentIndex.set(1);
+    fixture.detectChanges();
+
+    const firstAnswerRow = fixture.nativeElement.querySelector(
+      '.quiz-preview-question__answers li',
+    ) as HTMLElement | null;
+    expect(firstAnswerRow).not.toBeNull();
+    expect(firstAnswerRow?.firstElementChild?.classList.contains('quiz-preview-question__correct-toggle')).toBe(
+      true,
+    );
+  });
+
   it('schaltet mit Hotkey E die Inline-Bearbeitung um', () => {
     const fixture = TestBed.createComponent(QuizPreviewComponent);
     const component = fixture.componentInstance;
