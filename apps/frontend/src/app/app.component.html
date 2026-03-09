@@ -55,6 +55,7 @@
   <main id="main-content" class="app-main app-main--toolbar-fixed" role="main">
     <router-outlet />
   </main>
+  @if (!isFeedbackRoute()) {
   <footer class="app-footer" role="contentinfo">
     <div class="app-footer__inner">
       <div class="app-footer__row">
@@ -73,4 +74,5 @@
       <p class="app-footer__badges">Kostenlos · 100 % DSGVO-konform · Open Source</p>
     </div>
   </footer>
+  }
 </div>

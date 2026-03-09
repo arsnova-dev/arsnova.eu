@@ -50,7 +50,7 @@ export class ThemePresetService {
     if (isPlatformBrowser(this.platformId)) globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
   }
 
-  setPreset(value: PresetValue): void {
+  setPreset(value: PresetValue, options?: { silent?: boolean }): void {
     const unchanged = this.preset() === value;
     if (!unchanged) {
       this.preset.set(value);
@@ -58,7 +58,9 @@ export class ThemePresetService {
       this.applyPreset();
     }
     if (isPlatformBrowser(this.platformId)) globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
-    this.presetChangedSource.next();
+    if (!options?.silent) {
+      this.presetChangedSource.next();
+    }
   }
 
   private applyTheme(): void {

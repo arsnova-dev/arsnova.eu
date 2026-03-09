@@ -75,6 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
   hasScrolled = signal(false);
   /** Toolbar beim Runterscrollen ausblenden, beim Hochscrollen einblenden (UX-Empfehlung, alle Seiten). */
   toolbarHidden = signal(false);
+  isFeedbackRoute = signal(false);
   private lastScrollY = 0;
   private static readonly HIDE_SCROLL_THRESHOLD_PX = 80;
 
@@ -98,6 +99,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
         .subscribe(() => {
           this.toolbarHidden.set(false);
+          this.isFeedbackRoute.set(this.router.url.startsWith('/feedback/'));
           requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
         });
     }
@@ -246,6 +248,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onPresetChanged(): void {
+    if (this.router.url.startsWith('/feedback/')) return;
     this.focusService.blurInput();
     const isPlayful = this.themePreset.preset() === 'spielerisch';
     const firstTime =

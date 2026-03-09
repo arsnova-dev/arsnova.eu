@@ -211,7 +211,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async startQuickFeedback(type: 'MOOD' | 'ABCD' | 'YESNO'): Promise<void> {
     try {
-      const result = await trpc.quickFeedback.create.mutate({ type });
+      const result = await trpc.quickFeedback.create.mutate({
+        type,
+        theme: this.themePreset.theme(),
+        preset: this.themePreset.preset(),
+      });
       await this.router.navigate(['/feedback', result.sessionCode]);
     } catch {
       this.apiStatus.set(null);

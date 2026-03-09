@@ -1,9 +1,11 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
 import { KeyValuePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { trpc } from '../../core/trpc.client';
+import { ThemePresetService } from '../../core/theme-preset.service';
 import type { QuickFeedbackResult } from '@arsnova/shared-types';
+import type { Unsubscribable } from '@trpc/server/observable';
 import QRCode from 'qrcode';
 
 @Component({
@@ -15,12 +17,27 @@ import QRCode from 'qrcode';
 })
 export class FeedbackHostComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly themePreset = inject(ThemePresetService);
+  private subscription: Unsubscribable | null = null;
 
   readonly code = this.route.snapshot.paramMap.get('code') ?? '';
   readonly result = signal<QuickFeedbackResult | null>(null);
   readonly qrDataUrl = signal<string>('');
   readonly error = signal<string | null>(null);
+
+  constructor() {
+    effect(() => {
+      const theme = this.themePreset.theme();
+      const preset = this.themePreset.preset();
+      if (this.code) {
+        trpc.quickFeedback.updateStyle.mutate({
+          sessionCode: this.code,
+          theme,
+          preset,
+        }).catch(() => {});
+      }
+    });
+  }
 
   get joinUrl(): string {
     const base = globalThis.location?.origin ?? '';
@@ -28,26 +45,28 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.fetchResults();
     this.generateQrCode();
-    this.pollTimer = setInterval(() => this.fetchResults(), 1500);
+    this.subscribeToResults();
   }
 
   ngOnDestroy(): void {
-    if (this.pollTimer) {
-      clearInterval(this.pollTimer);
-      this.pollTimer = null;
-    }
+    this.subscription?.unsubscribe();
+    this.subscription = null;
   }
 
-  private async fetchResults(): Promise<void> {
-    try {
-      const data = await trpc.quickFeedback.results.query({ sessionCode: this.code });
-      this.result.set(data);
-      this.error.set(null);
-    } catch {
-      this.error.set('Feedback-Runde nicht gefunden oder abgelaufen.');
-    }
+  private subscribeToResults(): void {
+    this.subscription = trpc.quickFeedback.onResults.subscribe(
+      { sessionCode: this.code },
+      {
+        onData: (data) => {
+          this.result.set(data);
+          this.error.set(null);
+        },
+        onError: () => {
+          this.error.set('Feedback-Runde nicht gefunden oder abgelaufen.');
+        },
+      },
+    );
   }
 
   private async generateQrCode(): Promise<void> {

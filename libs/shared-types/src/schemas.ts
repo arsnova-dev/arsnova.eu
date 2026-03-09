@@ -702,10 +702,22 @@ export type AbcdValue = z.infer<typeof AbcdValueEnum>;
 export const YesNoValueEnum = z.enum(['YES', 'NO', 'MAYBE']);
 export type YesNoValue = z.infer<typeof YesNoValueEnum>;
 
+export const QuickFeedbackThemeEnum = z.enum(['system', 'dark', 'light']);
+export const QuickFeedbackPresetEnum = z.enum(['serious', 'spielerisch']);
+
 export const CreateQuickFeedbackInputSchema = z.object({
   type: QuickFeedbackTypeEnum,
+  theme: QuickFeedbackThemeEnum,
+  preset: QuickFeedbackPresetEnum,
 });
 export type CreateQuickFeedbackInput = z.infer<typeof CreateQuickFeedbackInputSchema>;
+
+export const UpdateQuickFeedbackStyleInputSchema = z.object({
+  sessionCode: z.string(),
+  theme: QuickFeedbackThemeEnum,
+  preset: QuickFeedbackPresetEnum,
+});
+export type UpdateQuickFeedbackStyleInput = z.infer<typeof UpdateQuickFeedbackStyleInputSchema>;
 
 export const CreateQuickFeedbackOutputSchema = z.object({
   feedbackId: z.string(),
@@ -715,12 +727,15 @@ export type CreateQuickFeedbackOutput = z.infer<typeof CreateQuickFeedbackOutput
 
 export const QuickFeedbackVoteInputSchema = z.object({
   sessionCode: z.string(),
+  voterId: z.string().uuid(),
   value: z.string(),
 });
 export type QuickFeedbackVoteInput = z.infer<typeof QuickFeedbackVoteInputSchema>;
 
 export const QuickFeedbackResultSchema = z.object({
   type: QuickFeedbackTypeEnum,
+  theme: QuickFeedbackThemeEnum,
+  preset: QuickFeedbackPresetEnum,
   totalVotes: z.number(),
   distribution: z.record(z.string(), z.number()),
 });

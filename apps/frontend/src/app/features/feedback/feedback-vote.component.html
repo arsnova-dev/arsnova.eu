@@ -1,4 +1,4 @@
-<div class="feedback-vote l-page">
+<div class="feedback-vote">
   @if (error(); as err) {
     <mat-card appearance="outlined" class="feedback-vote__card">
       <mat-card-content>
@@ -25,7 +25,6 @@
           [attr.aria-label]="option.label"
         >
           <span class="feedback-vote__mood-emoji">{{ option.icon }}</span>
-          <span class="feedback-vote__mood-label">{{ option.label }}</span>
         </button>
       }
     </div>
@@ -39,7 +38,6 @@
           [attr.aria-label]="option.label"
         >
           <span class="feedback-vote__mood-emoji">{{ option.icon }}</span>
-          <span class="feedback-vote__mood-label">{{ option.label }}</span>
         </button>
       }
     </div>

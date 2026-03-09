@@ -1,11 +1,12 @@
 /**
- * Quick-Feedback Router – One-Shot-Feedback (Mood / ABCD).
+ * Quick-Feedback Router – One-Shot-Feedback (Mood / ABCD / YesNo).
  * Lightweight, Redis-only (kein Prisma), auto-expire nach 30 Minuten.
  */
 import { TRPCError } from '@trpc/server';
 import {
   CreateQuickFeedbackInputSchema,
   CreateQuickFeedbackOutputSchema,
+  UpdateQuickFeedbackStyleInputSchema,
   QuickFeedbackVoteInputSchema,
   QuickFeedbackResultSchema,
   MoodValueEnum,
@@ -18,10 +19,14 @@ import { publicProcedure, router } from '../trpc';
 import { getRedis } from '../redis';
 
 const FEEDBACK_TTL_SECONDS = 30 * 60;
-const POLL_INTERVAL_MS = 1000;
+const POLL_INTERVAL_MS = 300;
 
 function feedbackKey(code: string): string {
   return `qf:${code}`;
+}
+
+function votersKey(code: string): string {
+  return `qf:voters:${code}`;
 }
 
 function generateCode(): string {
@@ -54,6 +59,8 @@ export const quickFeedbackRouter = router({
 
       const initial: QuickFeedbackResult = {
         type: input.type,
+        theme: input.theme,
+        preset: input.preset,
         totalVotes: 0,
         distribution: Object.fromEntries(validValues(input.type).map((v) => [v, 0])),
       };
@@ -62,8 +69,8 @@ export const quickFeedbackRouter = router({
       return { feedbackId: key, sessionCode: code };
     }),
 
-  vote: publicProcedure
-    .input(QuickFeedbackVoteInputSchema)
+  updateStyle: publicProcedure
+    .input(UpdateQuickFeedbackStyleInputSchema)
     .mutation(async ({ input }) => {
       const redis = getRedis();
       const key = feedbackKey(input.sessionCode.toUpperCase());
@@ -71,6 +78,32 @@ export const quickFeedbackRouter = router({
 
       if (!raw) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+      }
+
+      const result = JSON.parse(raw) as QuickFeedbackResult;
+      result.theme = input.theme;
+      result.preset = input.preset;
+
+      await redis.set(key, JSON.stringify(result), 'EX', FEEDBACK_TTL_SECONDS);
+      return { ok: true };
+    }),
+
+  vote: publicProcedure
+    .input(QuickFeedbackVoteInputSchema)
+    .mutation(async ({ input }) => {
+      const redis = getRedis();
+      const code = input.sessionCode.toUpperCase();
+      const key = feedbackKey(code);
+      const raw = await redis.get(key);
+
+      if (!raw) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+      }
+
+      const vKey = votersKey(code);
+      const alreadyVoted = await redis.sismember(vKey, input.voterId);
+      if (alreadyVoted) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Du hast bereits abgestimmt.' });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -84,6 +117,8 @@ export const quickFeedbackRouter = router({
       result.totalVotes += 1;
 
       await redis.set(key, JSON.stringify(result), 'EX', FEEDBACK_TTL_SECONDS);
+      await redis.sadd(vKey, input.voterId);
+      await redis.expire(vKey, FEEDBACK_TTL_SECONDS);
       return { ok: true };
     }),
 
