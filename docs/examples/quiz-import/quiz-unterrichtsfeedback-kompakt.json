@@ -1,0 +1,70 @@
+{
+  "exportVersion": 1,
+  "exportedAt": "2026-03-09T09:20:00.000Z",
+  "quiz": {
+    "name": "Unterrichtsfeedback - Kompakt",
+    "description": "Kompaktes Nachbereitungsquiz mit Fokus auf Feedback, Transfer und Priorisierung.",
+    "showLeaderboard": false,
+    "allowCustomNicknames": true,
+    "defaultTimer": 30,
+    "enableSoundEffects": false,
+    "enableRewardEffects": false,
+    "enableMotivationMessages": true,
+    "enableEmojiReactions": true,
+    "anonymousMode": true,
+    "teamMode": false,
+    "teamCount": null,
+    "teamAssignment": "AUTO",
+    "backgroundMusic": null,
+    "nicknameTheme": "MIDDLE_SCHOOL",
+    "bonusTokenCount": null,
+    "readingPhaseEnabled": true,
+    "questions": [
+      {
+        "text": "### Check-in\nWie verständlich war die heutige Struktur?",
+        "type": "RATING",
+        "timer": 25,
+        "difficulty": "EASY",
+        "order": 0,
+        "answers": [],
+        "ratingMin": 1,
+        "ratingMax": 5,
+        "ratingLabelMin": "unklar",
+        "ratingLabelMax": "sehr klar"
+      },
+      {
+        "text": "### Fokusfrage\nWelche Phase war für dich am hilfreichsten?",
+        "type": "SURVEY",
+        "timer": 30,
+        "difficulty": "EASY",
+        "order": 1,
+        "answers": [
+          { "text": "Einführung", "isCorrect": false },
+          { "text": "Übungsphase", "isCorrect": false },
+          { "text": "Auswertung", "isCorrect": false }
+        ]
+      },
+      {
+        "text": "### Freitext\nNenne ein Stichwort, das wir in der nächsten Sitzung unbedingt aufgreifen sollen.",
+        "type": "FREETEXT",
+        "timer": 35,
+        "difficulty": "EASY",
+        "order": 2,
+        "answers": []
+      },
+      {
+        "text": "### Priorisierung\nWelche Maßnahme sollte als nächstes umgesetzt werden?",
+        "type": "SINGLE_CHOICE",
+        "timer": 30,
+        "difficulty": "EASY",
+        "order": 3,
+        "answers": [
+          { "text": "Mehr kurze Übungsblöcke", "isCorrect": true },
+          { "text": "Längere Theorieblöcke", "isCorrect": false },
+          { "text": "Weniger Feedback", "isCorrect": false },
+          { "text": "Keine Wiederholungen", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "exportVersion": 1,
+  "exportedAt": "2026-03-09T09:15:00.000Z",
+  "quiz": {
+    "name": "MINT-Kompakt - Mixed Format Demo",
+    "description": "Gemischtes Beispiel mit allen Frageformaten in einem Quiz für End-to-End-Prüfung.",
+    "showLeaderboard": true,
+    "allowCustomNicknames": true,
+    "defaultTimer": 40,
+    "enableSoundEffects": false,
+    "enableRewardEffects": false,
+    "enableMotivationMessages": true,
+    "enableEmojiReactions": true,
+    "anonymousMode": false,
+    "teamMode": false,
+    "teamCount": null,
+    "teamAssignment": "AUTO",
+    "backgroundMusic": null,
+    "nicknameTheme": "HIGH_SCHOOL",
+    "bonusTokenCount": null,
+    "readingPhaseEnabled": true,
+    "questions": [
+      {
+        "text": "### Single Choice\nWelche Ableitung ist korrekt für $f(x)=x^3$?",
+        "type": "SINGLE_CHOICE",
+        "timer": 35,
+        "difficulty": "EASY",
+        "order": 0,
+        "answers": [
+          { "text": "$f'(x)=3x^2$", "isCorrect": true },
+          { "text": "$f'(x)=x^2$", "isCorrect": false },
+          { "text": "$f'(x)=3x$", "isCorrect": false },
+          { "text": "$f'(x)=x^4$", "isCorrect": false }
+        ]
+      },
+      {
+        "text": "### Multiple Choice\nWelche Aussagen zur Standardabweichung sind richtig?",
+        "type": "MULTIPLE_CHOICE",
+        "timer": 50,
+        "difficulty": "MEDIUM",
+        "order": 1,
+        "answers": [
+          { "text": "Sie ist immer >= 0.", "isCorrect": true },
+          { "text": "Sie hat dieselbe Einheit wie die Daten.", "isCorrect": true },
+          { "text": "Sie kann negativ sein.", "isCorrect": false },
+          { "text": "Sie entspricht immer dem Mittelwert.", "isCorrect": false }
+        ]
+      },
+      {
+        "text": "### Umfrage\nWie hast du das Lerntempo heute wahrgenommen?",
+        "type": "SURVEY",
+        "timer": 30,
+        "difficulty": "EASY",
+        "order": 2,
+        "answers": [
+          { "text": "zu schnell", "isCorrect": false },
+          { "text": "passend", "isCorrect": false },
+          { "text": "zu langsam", "isCorrect": false }
+        ]
+      },
+      {
+        "text": "### Freitext\nNenne einen Begriff, der dir zu\n\n$$E_\\mathrm{kin}=\\frac{1}{2}mv^2$$\n\nspontan einfällt.",
+        "type": "FREETEXT",
+        "timer": 45,
+        "difficulty": "EASY",
+        "order": 3,
+        "answers": []
+      },
+      {
+        "text": "### Rating\nWie sicher fühlst du dich bei Aufgaben mit bedingter Wahrscheinlichkeit\n\n$$P(A\\mid B)=\\frac{P(B\\mid A)P(A)}{P(B)}$$",
+        "type": "RATING",
+        "timer": 30,
+        "difficulty": "MEDIUM",
+        "order": 4,
+        "answers": [],
+        "ratingMin": 1,
+        "ratingMax": 5,
+        "ratingLabelMin": "unsicher",
+        "ratingLabelMax": "sehr sicher"
+      },
+      {
+        "text": "### Single Choice\nWelche Aussage zu linearen Funktionen ist korrekt?",
+        "type": "SINGLE_CHOICE",
+        "timer": 35,
+        "difficulty": "EASY",
+        "order": 5,
+        "answers": [
+          { "text": "Eine lineare Funktion hat die Form $f(x)=mx+b$.", "isCorrect": true },
+          { "text": "Eine lineare Funktion ist immer quadratisch.", "isCorrect": false },
+          { "text": "Eine lineare Funktion hat immer die Steigung 0.", "isCorrect": false },
+          { "text": "Eine lineare Funktion ist nicht graphisch darstellbar.", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

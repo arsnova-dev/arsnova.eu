@@ -1,0 +1,73 @@
+{
+  "exportVersion": 1,
+  "exportedAt": "2026-03-09T09:10:00.000Z",
+  "quiz": {
+    "name": "Digitalisierung - Word-Cloud Komplettbeispiel",
+    "description": "FREETEXT-Quiz zur Bewertung der Word-Cloud-Darstellung inklusive Markdown- und KaTeX-Fragen.",
+    "showLeaderboard": false,
+    "allowCustomNicknames": true,
+    "defaultTimer": 70,
+    "enableSoundEffects": false,
+    "enableRewardEffects": false,
+    "enableMotivationMessages": true,
+    "enableEmojiReactions": true,
+    "anonymousMode": true,
+    "teamMode": false,
+    "teamCount": null,
+    "teamAssignment": "AUTO",
+    "backgroundMusic": null,
+    "nicknameTheme": "HIGH_SCHOOL",
+    "bonusTokenCount": null,
+    "readingPhaseEnabled": true,
+    "questions": [
+      {
+        "text": "### Eisbrecher (ein Wort)\nNenne **ein einziges Wort**, das du mit *Digitalisierung in der Schule* verbindest.",
+        "type": "FREETEXT",
+        "timer": 45,
+        "difficulty": "EASY",
+        "order": 0,
+        "answers": []
+      },
+      {
+        "text": "### Chancen\nNenne bis zu **drei kurze Schlagworte** zu Chancen digitaler Lernformen (z. B. Kollaboration, Feedback, Barrierefreiheit).",
+        "type": "FREETEXT",
+        "timer": 60,
+        "difficulty": "EASY",
+        "order": 1,
+        "answers": []
+      },
+      {
+        "text": "### Risiken\nWelche Risiken siehst du? Bitte ebenfalls als kurze Begriffe (z. B. Datenschutz, Ablenkung, Ungleichheit).",
+        "type": "FREETEXT",
+        "timer": 60,
+        "difficulty": "MEDIUM",
+        "order": 2,
+        "answers": []
+      },
+      {
+        "text": "### Verständnischeck mit Formel\nIm Unterricht wurde der relative Lernzuwachs als\n\n$$\\Delta_r = \\frac{N_{neu} - N_{alt}}{N_{alt}}$$\n\nnotiert. Welchen Begriff verbindest du spontan mit dieser Formel?",
+        "type": "FREETEXT",
+        "timer": 75,
+        "difficulty": "MEDIUM",
+        "order": 3,
+        "answers": []
+      },
+      {
+        "text": "### Umsetzbarkeit\nWelcher einzelne Begriff beschreibt am besten, was **sofort** im Kurs verbessert werden sollte?",
+        "type": "FREETEXT",
+        "timer": 55,
+        "difficulty": "EASY",
+        "order": 4,
+        "answers": []
+      },
+      {
+        "text": "### Exit-Token\nGib einen kurzen Abschlussbegriff ein, den du aus der Sitzung mitnimmst.",
+        "type": "FREETEXT",
+        "timer": 45,
+        "difficulty": "EASY",
+        "order": 5,
+        "answers": []
+      }
+    ]
+  }
+}
