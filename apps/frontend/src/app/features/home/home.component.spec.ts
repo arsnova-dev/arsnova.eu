@@ -12,6 +12,10 @@ vi.mock('../../core/trpc.client', () => ({
     health: {
       check: { query: vi.fn().mockResolvedValue({ status: 'ok', redis: 'ok', timestamp: new Date().toISOString(), version: '0.1.0' }) },
     },
+    quickFeedback: {
+      results: { query: vi.fn().mockRejectedValue(new Error('not found')) },
+      create: { mutate: vi.fn().mockRejectedValue(new Error('not available')) },
+    },
   },
 }));
 

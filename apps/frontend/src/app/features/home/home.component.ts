@@ -246,7 +246,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isJoining.set(true);
     this.addToRecentSessionCodes(code);
     try {
-      await this.router.navigate(['/join', code]);
+      const fbResult = await trpc.quickFeedback.results.query({ sessionCode: code }).catch(() => null);
+      if (fbResult) {
+        await this.router.navigate(['/feedback', code, 'vote']);
+      } else {
+        await this.router.navigate(['/join', code]);
+      }
+    } catch {
+      this.joinError.set('Beitritt fehlgeschlagen.');
+      this.triggerShake();
     } finally {
       this.isJoining.set(false);
     }
