@@ -16,4 +16,11 @@ describe('renderMarkdownWithKatex', () => {
     expect(result.katexError).toBeTruthy();
     expect(result.html).toContain('KaTeX-Fehler');
   });
+
+  it('escaped eingebettetes HTML aus Markdown-Text', () => {
+    const result = renderMarkdownWithKatex('<img src=x onerror=alert(1)>');
+
+    expect(result.html).toContain('&lt;img src=x onerror=alert(1)&gt;');
+    expect(result.html).not.toContain('<img src=');
+  });
 });

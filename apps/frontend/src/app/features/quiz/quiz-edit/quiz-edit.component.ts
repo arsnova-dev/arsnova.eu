@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard,
@@ -114,6 +115,7 @@ type QuizMetadataFormGroup = FormGroup<{
 export class QuizEditComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly sanitizer = inject(DomSanitizer);
   private readonly quizStore = inject(QuizStoreService);
 
   readonly id = this.route.snapshot.paramMap.get('id') ?? '';
@@ -124,8 +126,8 @@ export class QuizEditComponent implements OnDestroy {
   readonly settingsSaved = signal(false);
   readonly metadataSubmitError = signal<string | null>(null);
   readonly metadataSaved = signal(false);
-  readonly questionPreviewHtml = signal('');
-  readonly answerPreviewHtml = signal<string[]>([]);
+  readonly questionPreviewHtml = signal<SafeHtml | null>(null);
+  readonly answerPreviewHtml = signal<SafeHtml[]>([]);
   readonly previewKatexError = signal<string | null>(null);
   private previewTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -735,12 +737,18 @@ export class QuizEditComponent implements OnDestroy {
 
     this.previewTimer = setTimeout(() => {
       const questionResult = renderMarkdownWithKatex(this.textControl.value);
-      this.questionPreviewHtml.set(questionResult.html);
+      this.questionPreviewHtml.set(
+        this.sanitizer.bypassSecurityTrustHtml(questionResult.html),
+      );
 
       const answerResults = this.answersArray.controls.map((answer) =>
         renderMarkdownWithKatex(answer.controls.text.value),
       );
-      this.answerPreviewHtml.set(answerResults.map((result) => result.html));
+      this.answerPreviewHtml.set(
+        answerResults.map((result) =>
+          this.sanitizer.bypassSecurityTrustHtml(result.html),
+        ),
+      );
 
       const firstError =
         questionResult.katexError ??

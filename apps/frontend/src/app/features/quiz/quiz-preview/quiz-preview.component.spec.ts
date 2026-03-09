@@ -142,6 +142,18 @@ describe('QuizPreviewComponent', () => {
     );
   });
 
+  it('rendert KaTeX-Formeln als MathML in der Frageanzeige', () => {
+    quiz.questions[0]!.text = 'Formeltest: $a^2 + b^2 = c^2$';
+    const fixture = TestBed.createComponent(QuizPreviewComponent);
+    fixture.detectChanges();
+
+    const renderedMath = fixture.nativeElement.querySelector(
+      '.quiz-preview-question__text .katex math',
+    ) as HTMLElement | null;
+
+    expect(renderedMath).not.toBeNull();
+  });
+
   it('schaltet mit Hotkey E die Inline-Bearbeitung um', () => {
     const fixture = TestBed.createComponent(QuizPreviewComponent);
     const component = fixture.componentInstance;

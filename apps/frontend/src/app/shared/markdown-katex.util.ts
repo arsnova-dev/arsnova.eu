@@ -9,21 +9,31 @@ export interface MarkdownRenderResult {
 export function renderMarkdownWithKatex(source: string): MarkdownRenderResult {
   const input = source ?? '';
   let katexError: string | null = null;
+  const renderedMath: string[] = [];
+
+  const storeRenderedMath = (html: string): string => {
+    const index = renderedMath.push(html) - 1;
+    return mathPlaceholder(index);
+  };
 
   const renderExpression = (expression: string, displayMode: boolean): string => {
     try {
-      return katex.renderToString(expression.trim(), {
-        displayMode,
-        throwOnError: true,
-        strict: 'ignore',
-      });
+      return storeRenderedMath(
+        katex.renderToString(expression.trim(), {
+          displayMode,
+          throwOnError: true,
+          strict: 'ignore',
+        }),
+      );
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Ungültige KaTeX-Syntax.';
       if (!katexError) {
         katexError = message;
       }
-      return `<span class="markdown-katex-error">KaTeX-Fehler: ${escapeHtml(message)}</span>`;
+      return storeRenderedMath(
+        `<span class="markdown-katex-error">KaTeX-Fehler: ${escapeHtml(message)}</span>`,
+      );
     }
   };
 
@@ -35,8 +45,22 @@ export function renderMarkdownWithKatex(source: string): MarkdownRenderResult {
     (_, expression: string) => renderExpression(expression, false),
   );
 
-  const html = marked.parse(withInlineMath) as string;
+  const markdownHtml = parseMarkdownEscapingInlineHtml(withInlineMath);
+  const html = renderedMath.reduce(
+    (current, value, index) => current.replaceAll(mathPlaceholder(index), value),
+    markdownHtml,
+  );
   return { html, katexError };
+}
+
+function parseMarkdownEscapingInlineHtml(source: string): string {
+  const renderer = new marked.Renderer();
+  renderer.html = ({ text }) => escapeHtml(text);
+  return marked.parse(source, { renderer }) as string;
+}
+
+function mathPlaceholder(index: number): string {
+  return `KATEXPLACEHOLDERTOKEN${index}`;
 }
 
 function escapeHtml(value: string): string {

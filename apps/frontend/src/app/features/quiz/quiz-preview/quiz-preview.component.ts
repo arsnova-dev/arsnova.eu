@@ -1,5 +1,6 @@
 import { Component, HostListener, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
@@ -36,6 +37,7 @@ import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 export class QuizPreviewComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly sanitizer = inject(DomSanitizer);
   private readonly quizStore = inject(QuizStoreService);
   private persistTimer: ReturnType<typeof setTimeout> | null = null;
   private animationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -309,8 +311,8 @@ export class QuizPreviewComponent implements OnDestroy {
     return 'Medium';
   }
 
-  renderMarkdown(value: string): string {
-    return renderMarkdownWithKatex(value).html;
+  renderMarkdown(value: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(renderMarkdownWithKatex(value).html);
   }
 
   ratingScaleValues(min: number | null, max: number | null): number[] {
