@@ -124,17 +124,29 @@
         </mat-card>
 
         <mat-card appearance="raised" class="home-card home-card--create">
-          <mat-card-header>
-            <mat-card-subtitle>
-              <mat-icon class="home-card__icon">school</mat-icon>
-              Veranstalten
-            </mat-card-subtitle>
-            <mat-card-title class="home-card__title">Quiz starten</mat-card-title>
+          <mat-card-header class="home-card__header-with-action">
+            <div class="home-card__header-text">
+              <mat-card-subtitle>
+                <mat-icon class="home-card__icon">school</mat-icon>
+                Veranstalten
+              </mat-card-subtitle>
+              <mat-card-title class="home-card__title">Quiz starten</mat-card-title>
+            </div>
+            <a
+              mat-button
+              [routerLink]="['/quiz', demoQuizId, 'preview']"
+              class="home-card__demo-btn"
+              (mouseenter)="preloadQuiz()"
+              aria-label="Demo spielen"
+            >
+              <mat-icon class="home-card__demo-btn-icon">play_circle</mat-icon>
+              Demo
+            </a>
           </mat-card-header>
 
           <mat-card-content>
             <div class="home-card__meta">
-              <p class="home-card__copy">Quiz, Q&amp;A oder Umfrage in Sekunden</p>
+              <p class="home-card__copy">Quiz oder Q&amp;A in Sekunden</p>
               <a
                 matButton
                 routerLink="/help"

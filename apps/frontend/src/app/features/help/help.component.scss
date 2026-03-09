@@ -58,6 +58,27 @@
   margin-bottom: 2rem;
 }
 
+.help-section--demo {
+  padding: 1.25rem 1.25rem 1rem;
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 25%, var(--mat-sys-surface));
+  border-radius: var(--mat-sys-corner-large);
+  border-inline-start: 4px solid var(--mat-sys-primary);
+}
+@media (min-width: 600px) {
+  .help-section--demo {
+    margin-inline: -2rem;
+    padding-inline: 2rem;
+  }
+}
+@media (min-width: 840px) {
+  .help-section--demo {
+    margin-inline: -2.5rem;
+    padding-inline: 2.5rem;
+  }
+}
+
 .help-section h2 {
   font: var(--mat-sys-title-large);
   color: var(--mat-sys-on-surface);
