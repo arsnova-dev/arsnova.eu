@@ -38,10 +38,11 @@
         <mat-form-field appearance="outline">
           <mat-label>KI-JSON</mat-label>
           <textarea
+            #aiJsonTextarea
             matInput
             rows="8"
             [value]="aiJsonInput()"
-            (input)="updateAiJsonInput($any($event.target).value)"
+            (input)="updateAiJsonInput(aiJsonTextarea.value)"
           ></textarea>
         </mat-form-field>
         <div class="quiz-list__ai-actions">

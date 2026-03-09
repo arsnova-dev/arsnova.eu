@@ -61,9 +61,10 @@
           </div>
           @if (inlineEditMode()) {
             <textarea
+              #questionDraftInput
               class="quiz-preview-question__input"
               [value]="questionDraftText()"
-              (input)="onQuestionDraftChanged($any($event.target).value)"
+              (input)="onQuestionDraftChanged(questionDraftInput.value)"
               rows="3"
             ></textarea>
           } @else {
@@ -101,9 +102,10 @@
                 <li>
                   @if (inlineEditMode()) {
                     <input
+                      #answerDraftInput
                       class="quiz-preview-question__answer-input"
                       [value]="answerDraftTexts()[i]"
-                      (input)="onAnswerDraftChanged(i, $any($event.target).value)"
+                      (input)="onAnswerDraftChanged(i, answerDraftInput.value)"
                     />
                   } @else {
                     <span [innerHTML]="renderMarkdown(answer.text)" (click)="enterInlineEditMode()"></span>
