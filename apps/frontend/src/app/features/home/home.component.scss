@@ -306,6 +306,10 @@
   gap: 1.75rem;
 }
 
+.home-main > * {
+  min-width: 0;
+}
+
 /* Kein Silbentrennung im Hero-Header (Überschrift, USP, Trust-Badges). */
 .home-hero,
 .home-hero-usp,

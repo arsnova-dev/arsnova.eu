@@ -5,6 +5,7 @@
 import { publicProcedure, router } from '../trpc';
 import {
   HealthCheckResponseSchema,
+  HealthPingEventSchema,
   ServerStatsDTOSchema,
 } from '@arsnova/shared-types';
 import { pingRedis } from '../redis';
@@ -26,7 +27,7 @@ export async function* heartbeatGenerator(
   intervalMs: number = 5000,
 ): AsyncGenerator<{ heartbeat: string }> {
   while (true) {
-    yield { heartbeat: new Date().toISOString() };
+    yield HealthPingEventSchema.parse({ heartbeat: new Date().toISOString() });
     await new Promise((r) => setTimeout(r, intervalMs));
   }
 }

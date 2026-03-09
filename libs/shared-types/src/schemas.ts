@@ -163,6 +163,15 @@ export const CreateSessionInputSchema = z.object({
 });
 export type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
 
+/** Output: Antwort auf session.create (Story 2.1a). */
+export const CreateSessionOutputSchema = z.object({
+  sessionId: z.uuid(),
+  code: z.string().length(6),
+  status: SessionStatusEnum,
+  quizName: z.string().nullable(),
+});
+export type CreateSessionOutput = z.infer<typeof CreateSessionOutputSchema>;
+
 /** Input: Session-Info abfragen (z. B. vor Beitritt) */
 export const GetSessionInfoInputSchema = z.object({
   code: z.string().length(6, { error: 'Session-Code muss 6 Zeichen lang sein' }),
@@ -191,6 +200,12 @@ export const SubmitVoteInputSchema = z.object({
   responseTimeMs: z.number().int().min(0).optional(), // Antwortzeit in ms
 });
 export type SubmitVoteInput = z.infer<typeof SubmitVoteInputSchema>;
+
+/** Output: Antwort auf vote.submit (Story 3.3b). */
+export const SubmitVoteOutputSchema = z.object({
+  voteId: z.uuid(),
+});
+export type SubmitVoteOutput = z.infer<typeof SubmitVoteOutputSchema>;
 
 // ---------------------------------------------------------------------------
 // DTOs – Sichere Antwort-Objekte für den Client (Data-Stripping!)

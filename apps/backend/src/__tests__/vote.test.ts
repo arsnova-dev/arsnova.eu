@@ -39,7 +39,7 @@ describe('vote.submit', () => {
       sessionId: 'session-1',
       session: { status: 'ACTIVE', quizId: 'quiz-1' },
     });
-    prismaMock.vote.create.mockResolvedValue({ id: 'vote-1' });
+    prismaMock.vote.create.mockResolvedValue({ id: '11111111-1111-4111-8111-111111111119' });
   });
 
   it('vergibt für FREETEXT immer 0 Punkte und speichert keine selectedAnswers', async () => {

@@ -3,7 +3,12 @@
  * submit: Stimme abgeben, Rate-Limit 1 Request/Sekunde pro Participant.
  */
 import { TRPCError } from '@trpc/server';
-import { SubmitVoteInputSchema, type QuestionType, type Difficulty } from '@arsnova/shared-types';
+import {
+  SubmitVoteInputSchema,
+  SubmitVoteOutputSchema,
+  type QuestionType,
+  type Difficulty,
+} from '@arsnova/shared-types';
 import { publicProcedure, router } from '../trpc';
 import { prisma } from '../db';
 import { checkVoteRate } from '../lib/rateLimit';
@@ -12,6 +17,7 @@ import { calculateVoteScore } from '../lib/quizScoring';
 export const voteRouter = router({
   submit: publicProcedure
     .input(SubmitVoteInputSchema)
+    .output(SubmitVoteOutputSchema)
     .mutation(async ({ input }) => {
       const limit = await checkVoteRate(input.participantId);
       if (!limit.allowed) {

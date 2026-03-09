@@ -4,6 +4,7 @@
 import { TRPCError } from '@trpc/server';
 import {
   CreateSessionInputSchema,
+  CreateSessionOutputSchema,
   GetSessionInfoInputSchema,
   GetLiveFreetextInputSchema,
   JoinSessionInputSchema,
@@ -77,6 +78,7 @@ export const sessionRouter = router({
   /** Session erstellen (Story 2.1a). Rate-Limit: 10/h pro IP (Story 0.5). */
   create: publicProcedure
     .input(CreateSessionInputSchema)
+    .output(CreateSessionOutputSchema)
     .mutation(async ({ ctx, input }) => {
       const ip = getClientIp(ctx);
       const limit = await checkSessionCreateRate(ip);
