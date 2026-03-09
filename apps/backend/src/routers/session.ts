@@ -5,9 +5,13 @@ import { TRPCError } from '@trpc/server';
 import {
   CreateSessionInputSchema,
   GetSessionInfoInputSchema,
+  GetLiveFreetextInputSchema,
   JoinSessionInputSchema,
   JoinSessionOutputSchema,
   GetExportDataInputSchema,
+  ActiveQuizIdsDTOSchema,
+  FreetextSessionExportDTOSchema,
+  LiveFreetextDTOSchema,
   SessionInfoDTOSchema,
   SessionExportDTOSchema,
   type SessionExportDTO,
@@ -123,6 +127,170 @@ export const sessionRouter = router({
         quizName: session.quiz?.name ?? null,
         title: session.title ?? null,
         participantCount: session._count.participants,
+      };
+    }),
+
+  /** Quiz-IDs mit laufender Session (Story 1.10: Löschsperre in Quiz-Liste). */
+  getActiveQuizIds: publicProcedure
+    .output(ActiveQuizIdsDTOSchema)
+    .query(async () => {
+      const sessions = await prisma.session.findMany({
+        where: {
+          status: { not: 'FINISHED' },
+          quizId: { not: null },
+        },
+        select: { quizId: true },
+        distinct: ['quizId'],
+      });
+
+      return sessions
+        .map((session) => session.quizId)
+        .filter((quizId): quizId is string => typeof quizId === 'string');
+    }),
+
+  /** Live-Freitextdaten der aktuell aktiven Frage (Story 1.14, polling-ready). */
+  getLiveFreetext: publicProcedure
+    .input(GetLiveFreetextInputSchema)
+    .output(LiveFreetextDTOSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: {
+          quiz: {
+            select: {
+              questions: {
+                orderBy: { order: 'asc' },
+                select: {
+                  id: true,
+                  order: true,
+                  type: true,
+                  text: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+
+      const question = session.quiz?.questions.find((entry) => entry.order === session.currentQuestion) ?? null;
+      if (!question || question.type !== 'FREETEXT') {
+        return {
+          sessionId: session.id,
+          questionId: question?.id ?? null,
+          questionOrder: question?.order ?? null,
+          questionType: (question?.type as QuestionType | undefined) ?? null,
+          questionText: question?.text ?? null,
+          responses: [],
+          updatedAt: new Date().toISOString(),
+        };
+      }
+
+      const votes = await prisma.vote.findMany({
+        where: {
+          sessionId: session.id,
+          questionId: question.id,
+          freeText: { not: null },
+        },
+        orderBy: { votedAt: 'asc' },
+        select: { freeText: true },
+      });
+
+      const responses = votes
+        .map((vote) => vote.freeText?.trim() ?? '')
+        .filter((value) => value.length > 0);
+
+      return {
+        sessionId: session.id,
+        questionId: question.id,
+        questionOrder: question.order,
+        questionType: question.type as QuestionType,
+        questionText: question.text,
+        responses,
+        updatedAt: new Date().toISOString(),
+      };
+    }),
+
+  /** Aggregierte Freitextdaten über alle Freitextfragen einer Session (Story 1.14). */
+  getFreetextSessionExport: publicProcedure
+    .input(GetLiveFreetextInputSchema)
+    .output(FreetextSessionExportDTOSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: {
+          quiz: {
+            select: {
+              questions: {
+                where: { type: 'FREETEXT' },
+                orderBy: { order: 'asc' },
+                select: {
+                  id: true,
+                  order: true,
+                  text: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+
+      const freetextQuestions = session.quiz?.questions ?? [];
+      if (freetextQuestions.length === 0) {
+        return {
+          sessionId: session.id,
+          sessionCode: session.code,
+          exportedAt: new Date().toISOString(),
+          entries: [],
+        };
+      }
+
+      const questionIds = freetextQuestions.map((question) => question.id);
+      const votes = await prisma.vote.findMany({
+        where: {
+          sessionId: session.id,
+          questionId: { in: questionIds },
+          freeText: { not: null },
+        },
+        select: {
+          questionId: true,
+          freeText: true,
+        },
+      });
+
+      const votesByQuestion = new Map<string, Map<string, number>>();
+      for (const vote of votes) {
+        const text = vote.freeText?.trim() ?? '';
+        if (!text) continue;
+        const aggregates = votesByQuestion.get(vote.questionId) ?? new Map<string, number>();
+        aggregates.set(text, (aggregates.get(text) ?? 0) + 1);
+        votesByQuestion.set(vote.questionId, aggregates);
+      }
+
+      const entries = freetextQuestions.map((question) => {
+        const aggregates = votesByQuestion.get(question.id) ?? new Map<string, number>();
+        return {
+          questionId: question.id,
+          questionOrder: question.order,
+          questionText: question.text,
+          aggregates: [...aggregates.entries()]
+            .map(([text, count]) => ({ text, count }))
+            .sort((a, b) => b.count - a.count || a.text.localeCompare(b.text)),
+        };
+      });
+
+      return {
+        sessionId: session.id,
+        sessionCode: session.code,
+        exportedAt: new Date().toISOString(),
+        entries,
       };
     }),
 

@@ -1,0 +1,57 @@
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Word-Cloud (Freitext)</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="word-cloud l-stack l-stack--sm">
+    @if (words().length === 0) {
+      <p class="word-cloud__empty">Noch keine Freitext-Antworten vorhanden.</p>
+    } @else {
+      <div class="word-cloud__visual">
+        @for (entry of words(); track entry.word) {
+          <button
+            type="button"
+            mat-button
+            class="word-cloud__word"
+            [class.word-cloud__word--active]="selectedWord() === entry.word"
+            [style.font-size.px]="entry.size"
+            [attr.title]="'Anzahl: ' + entry.count"
+            (click)="toggleWord(entry.word)"
+          >
+            {{ entry.word }}
+          </button>
+        }
+      </div>
+      <div class="word-cloud__actions">
+        <button mat-button type="button" (click)="toggleStopwords()">
+          <mat-icon>filter_alt</mat-icon>
+          @if (hideStopwords()) {
+            Stopwörter einblenden
+          } @else {
+            Stopwörter ausblenden
+          }
+        </button>
+        <button mat-button type="button" (click)="exportCsv()">
+          <mat-icon>table_view</mat-icon>
+          CSV exportieren
+        </button>
+        <button mat-button type="button" (click)="exportPng()">
+          <mat-icon>image</mat-icon>
+          PNG exportieren
+        </button>
+      </div>
+      @if (statusMessage()) {
+        <p class="word-cloud__status" role="status">{{ statusMessage() }}</p>
+      }
+      @if (selectedWord()) {
+        <p class="word-cloud__filter-info">
+          Filter aktiv: <strong>{{ selectedWord() }}</strong>
+        </p>
+      }
+      <ul class="word-cloud__responses">
+        @for (response of filteredResponses(); track response + $index) {
+          <li>{{ response }}</li>
+        }
+      </ul>
+    }
+  </mat-card-content>
+</mat-card>

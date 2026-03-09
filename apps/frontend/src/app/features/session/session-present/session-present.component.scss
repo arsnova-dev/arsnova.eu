@@ -3,3 +3,12 @@
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-medium);
 }
+
+.session-placeholder__question {
+  margin: 0;
+  font: var(--mat-sys-title-small);
+}
+
+.session-present {
+  width: 100%;
+}

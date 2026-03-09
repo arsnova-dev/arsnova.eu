@@ -1,0 +1,47 @@
+.word-cloud__empty {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.word-cloud__visual {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: flex-end;
+}
+
+.word-cloud__word {
+  min-width: 0;
+  line-height: 1.1;
+}
+
+.word-cloud__word--active {
+  background: var(--mat-sys-primary-container);
+}
+
+.word-cloud__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.word-cloud__status {
+  margin: 0;
+  color: var(--mat-sys-tertiary);
+  font: var(--mat-sys-body-small);
+}
+
+.word-cloud__filter-info {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.word-cloud__responses {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.word-cloud__responses li {
+  margin: 0.25rem 0;
+}

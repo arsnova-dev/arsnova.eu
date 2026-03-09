@@ -1,5 +1,12 @@
-<mat-card appearance="outlined" class="session-placeholder">
-  <mat-card-content>
-    <p class="session-placeholder__text">Beamer-Ansicht (Presenter) – Story 2.5, 2.6, 3.5, 4.x</p>
-  </mat-card-content>
-</mat-card>
+<section class="session-present l-stack l-stack--sm">
+  <mat-card appearance="outlined" class="session-placeholder">
+    <mat-card-content>
+      <p class="session-placeholder__text">{{ presenterInfo() }}</p>
+      @if (currentQuestionLabel()) {
+        <p class="session-placeholder__question">{{ currentQuestionLabel() }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <app-word-cloud [responses]="freetextResponses()" />
+</section>

@@ -1,3 +1,7 @@
+.session-host {
+  width: 100%;
+}
+
 .session-card {
   margin-top: 1rem;
 }
@@ -34,4 +38,13 @@
   margin: 0 0 1rem;
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-medium);
+}
+
+.session-placeholder__question {
+  margin: 0;
+  font: var(--mat-sys-title-small);
+}
+
+.session-host__actions {
+  margin-top: 0.75rem;
 }
