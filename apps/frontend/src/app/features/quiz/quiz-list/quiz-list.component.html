@@ -99,10 +99,6 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #quizMenu="matMenu">
-                <a mat-menu-item [routerLink]="quiz.id">
-                  <mat-icon>edit</mat-icon>
-                  Bearbeiten
-                </a>
                 <a mat-menu-item [routerLink]="[quiz.id, 'preview']">
                   <mat-icon>visibility</mat-icon>
                   Vorschau
