@@ -123,7 +123,14 @@
 .quiz-list-item__menu-trigger:focus-visible,
 .quiz-list-item__menu-trigger:active {
   background-color: transparent;
+  border: 0;
+  outline: 0;
   box-shadow: none;
+}
+
+:host ::ng-deep .quiz-list-item__menu-trigger .mat-mdc-focus-indicator,
+:host ::ng-deep .quiz-list-item__menu-trigger .mat-mdc-button-persistent-ripple::before {
+  display: none;
 }
 
 @media (min-width: 700px) {
