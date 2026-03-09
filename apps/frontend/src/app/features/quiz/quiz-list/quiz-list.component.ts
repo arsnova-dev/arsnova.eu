@@ -11,6 +11,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { QuizStoreService } from '../data/quiz-store.service';
 import { trpc } from '../../../core/trpc.client';
+import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 
 /**
  * Quiz-Liste (Epic 1).
@@ -131,6 +132,21 @@ export class QuizListComponent implements OnInit {
       const message = error instanceof Error ? error.message : 'Import fehlgeschlagen.';
       this.actionError.set(message);
       target.value = '';
+    }
+  }
+
+  async copyKiPrompt(): Promise<void> {
+    const prompt = buildKiQuizSystemPrompt({
+      presetLabel: 'Standard',
+      nicknameTheme: 'NOBEL_LAUREATES',
+      readingPhaseEnabled: true,
+      defaultDifficulty: 'MEDIUM',
+    });
+    try {
+      await navigator.clipboard.writeText(prompt);
+      this.actionInfo.set('Prompt in die Zwischenablage kopiert.');
+    } catch {
+      this.actionError.set('Kopieren fehlgeschlagen – bitte manuell kopieren.');
     }
   }
 

@@ -33,8 +33,12 @@
       <mat-card-content class="quiz-list__ai-content l-stack l-stack--xs">
         <h2 class="quiz-list__ai-title">KI-Quiz importieren</h2>
         <p class="quiz-list__ai-hint">
-          Füge das JSON aus deiner KI ein. Wir prüfen den Inhalt vor dem Import.
+          Kopiere den Prompt in deine KI, dann füge das generierte JSON hier ein.
         </p>
+        <button mat-button type="button" (click)="copyKiPrompt()">
+          <mat-icon>content_copy</mat-icon>
+          Prompt kopieren
+        </button>
         <mat-form-field appearance="outline" class="quiz-list__ai-field">
           <mat-label>KI-JSON</mat-label>
           <textarea
