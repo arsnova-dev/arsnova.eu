@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 
 const STORAGE_THEME = 'home-theme';
 const STORAGE_PRESET = 'home-preset';
+const PRESET_UPDATED_EVENT = 'arsnova:preset-updated';
 
 export type ThemeValue = 'system' | 'dark' | 'light';
 export type PresetValue = 'serious' | 'spielerisch';
@@ -46,6 +47,7 @@ export class ThemePresetService {
     this.theme.set(value);
     if (isPlatformBrowser(this.platformId)) localStorage.setItem(STORAGE_THEME, value);
     this.applyTheme();
+    if (isPlatformBrowser(this.platformId)) globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
   }
 
   setPreset(value: PresetValue): void {
@@ -55,6 +57,7 @@ export class ThemePresetService {
       if (isPlatformBrowser(this.platformId)) localStorage.setItem(STORAGE_PRESET, value);
       this.applyPreset();
     }
+    if (isPlatformBrowser(this.platformId)) globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
     this.presetChangedSource.next();
   }
 

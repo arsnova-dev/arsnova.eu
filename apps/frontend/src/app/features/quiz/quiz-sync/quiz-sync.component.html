@@ -1,6 +1,36 @@
-<mat-card appearance="outlined" class="quiz-placeholder">
+<mat-card appearance="outlined" class="quiz-sync-card">
   <mat-card-content>
-    <p class="quiz-placeholder__text">Quiz Sync (docId: {{ docId }}) – Story 1.6, 1.6a, 1.6b</p>
+    <p class="quiz-sync__title">Quiz-Sync aktivieren</p>
+    <p class="quiz-sync__text">Sync-ID: <strong>{{ docId }}</strong></p>
+    <p class="quiz-sync__text">Sync-Code: <strong>{{ syncCode() }}</strong></p>
+    <p class="quiz-sync__text">Aktiver Raum: <strong>{{ activeSyncRoomId() }}</strong></p>
+    <p class="quiz-sync__text">Sync-Link: <span class="quiz-sync__link">{{ syncLink() }}</span></p>
+    <p class="quiz-sync__text">
+      Verbindung:
+      @if (syncConnectionState() === 'connected') {
+        <strong class="quiz-sync__state quiz-sync__state--ok">verbunden</strong>
+      } @else if (syncConnectionState() === 'connecting') {
+        <strong class="quiz-sync__state">verbinde…</strong>
+      } @else {
+        <strong class="quiz-sync__state">lokal (offline)</strong>
+      }
+    </p>
+    <div class="quiz-sync__actions">
+      <button mat-button type="button" (click)="copySyncCode()">
+        <mat-icon>pin</mat-icon>
+        Sync-Code kopieren
+      </button>
+      <button mat-button type="button" (click)="copySyncLink()">
+        <mat-icon>link</mat-icon>
+        Sync-Link kopieren
+      </button>
+    </div>
+    @if (copyStatus()) {
+      <p class="quiz-sync__hint" role="status">{{ copyStatus() }}</p>
+    }
+    @if (syncError()) {
+      <p class="quiz-sync__error" role="alert">{{ syncError() }}</p>
+    }
     <a mat-button routerLink=".." aria-label="Zurück zur Quiz-Liste">
       <mat-icon>arrow_back</mat-icon>
       Zurück

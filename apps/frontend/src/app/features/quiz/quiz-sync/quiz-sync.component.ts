@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import { QuizStoreService } from '../data/quiz-store.service';
 
 /**
  * Quiz per Sync-Link auf anderem Gerät öffnen (Epic 1).
@@ -16,6 +18,52 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './quiz-sync.component.scss',
 })
 export class QuizSyncComponent {
+  private readonly document = inject(DOCUMENT);
   private readonly route = inject(ActivatedRoute);
+  private readonly quizStore = inject(QuizStoreService);
+
   readonly docId = this.route.snapshot.paramMap.get('docId') ?? '';
+  readonly syncConnectionState = this.quizStore.syncConnectionState;
+  readonly activeSyncRoomId = this.quizStore.syncRoomId;
+  readonly syncError = signal<string | null>(null);
+  readonly copyStatus = signal<string | null>(null);
+  readonly syncCode = computed(() =>
+    this.docId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase(),
+  );
+  readonly syncLink = computed(() => {
+    const origin = this.document.defaultView?.location.origin;
+    const path = `/quiz/sync/${this.docId}`;
+    return origin ? `${origin}${path}` : path;
+  });
+
+  constructor() {
+    try {
+      this.quizStore.activateSyncRoom(this.docId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Sync-Raum konnte nicht aktiviert werden.';
+      this.syncError.set(message);
+    }
+  }
+
+  async copySyncLink(): Promise<void> {
+    await this.copyText(this.syncLink(), 'Sync-Link wurde kopiert.');
+  }
+
+  async copySyncCode(): Promise<void> {
+    await this.copyText(this.syncCode(), 'Sync-Code wurde kopiert.');
+  }
+
+  private async copyText(value: string, successMessage: string): Promise<void> {
+    this.copyStatus.set(null);
+    try {
+      const clipboard = this.document.defaultView?.navigator.clipboard;
+      if (!clipboard) {
+        throw new Error('Clipboard API nicht verfügbar.');
+      }
+      await clipboard.writeText(value);
+      this.copyStatus.set(successMessage);
+    } catch {
+      this.copyStatus.set('Kopieren nicht möglich. Bitte manuell markieren und kopieren.');
+    }
+  }
 }
