@@ -38,6 +38,20 @@
   gap: 0.65rem;
 }
 
+.quiz-edit__form-card :where(.mat-mdc-card-header) {
+  padding-bottom: 0.55rem;
+}
+
+.quiz-edit__form-card :where(.mat-mdc-card-title) {
+  margin-bottom: 0.25rem;
+}
+
+.quiz-edit__form-card :where(.mat-mdc-card-subtitle) {
+  max-width: 68ch;
+  line-height: 1.55;
+  margin-top: 0.15rem;
+}
+
 .quiz-edit-form {
   row-gap: 1rem;
 }
