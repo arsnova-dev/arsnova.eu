@@ -24,12 +24,17 @@ export class QuizSyncComponent {
 
   readonly docId = this.route.snapshot.paramMap.get('docId') ?? '';
   readonly syncConnectionState = this.quizStore.syncConnectionState;
-  readonly activeSyncRoomId = this.quizStore.syncRoomId;
   readonly syncError = signal<string | null>(null);
   readonly copyStatus = signal<string | null>(null);
   readonly syncCode = computed(() =>
     this.docId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase(),
   );
+  readonly syncStatusLabel = computed(() => {
+    const state = this.syncConnectionState();
+    if (state === 'connected') return 'Verbunden';
+    if (state === 'connecting') return 'Verbindung wird aufgebaut';
+    return 'Offline (nur lokal)';
+  });
   readonly syncLink = computed(() => {
     const origin = this.document.defaultView?.location.origin;
     const path = `/quiz/sync/${this.docId}`;
