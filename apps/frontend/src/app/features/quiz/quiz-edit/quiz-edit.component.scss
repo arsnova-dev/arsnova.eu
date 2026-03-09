@@ -30,6 +30,19 @@
   row-gap: 1rem;
 }
 
+.quiz-edit-form mat-form-field {
+  width: 100%;
+  margin: 0.2rem 0 0.45rem;
+}
+
+.quiz-edit-form__grid mat-form-field {
+  margin: 0;
+}
+
+.quiz-edit-answers {
+  row-gap: 0.9rem;
+}
+
 .quiz-edit-form__grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -140,6 +153,28 @@
 :host ::ng-deep .markdown-katex-error {
   color: var(--mat-sys-error);
   font: var(--mat-sys-body-small);
+}
+
+:host ::ng-deep .quiz-edit-form .mdc-floating-label {
+  line-height: 1.25;
+}
+
+:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-infix {
+  padding-top: 0.95rem;
+  padding-bottom: 0.75rem;
+}
+
+:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-subscript-wrapper {
+  margin-top: 0.2rem;
+}
+
+:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-hint-wrapper,
+:host ::ng-deep .quiz-edit-form .mat-mdc-form-field-error-wrapper {
+  line-height: 1.4;
+}
+
+:host ::ng-deep .quiz-edit-form textarea[matinput] {
+  line-height: 1.55;
 }
 
 :host ::ng-deep .quiz-edit-form__preview-content p,
