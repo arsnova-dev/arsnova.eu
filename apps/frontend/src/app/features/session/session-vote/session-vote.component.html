@@ -1,5 +1,106 @@
-<mat-card appearance="outlined" class="session-placeholder">
-  <mat-card-content>
-    <p class="session-placeholder__text">Teilnehmer-Ansicht (Abstimmung) – Story 3.1–3.6, 4.x, 5.x</p>
-  </mat-card-content>
-</mat-card>
+<div class="vote-page">
+  @if (isLobby()) {
+    <div class="vote-lobby">
+      <mat-icon class="vote-lobby__icon">hourglass_empty</mat-icon>
+      <p class="vote-lobby__text">Warte auf den Dozenten…</p>
+      <p class="vote-lobby__hint">Die erste Frage erscheint automatisch.</p>
+    </div>
+  } @else if (isFinished()) {
+    <div class="vote-finished">
+      <mat-icon class="vote-finished__icon">emoji_events</mat-icon>
+      <p class="vote-finished__text">Session beendet</p>
+    </div>
+  } @else if (isQuestionOpen()) {
+    @if (currentQuestion(); as q) {
+      <div class="vote-question">
+        <p class="vote-question__label">Frage {{ q.order + 1 }}</p>
+        <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
+        <p class="vote-question__reading-hint" role="status" aria-live="polite">
+          Lies die Frage — Antworten folgen gleich.
+        </p>
+      </div>
+    }
+  } @else if (isActive() || isResults()) {
+    @if (currentQuestion(); as q) {
+      <div class="vote-question">
+        <div class="vote-question__header">
+          <p class="vote-question__label">Frage {{ q.order + 1 }}</p>
+          @if (countdownSeconds() !== null && isActive()) {
+            <span class="vote-countdown" [class.vote-countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownSeconds() + ' Sekunden verbleibend'">
+              {{ countdownSeconds() }}
+            </span>
+          }
+        </div>
+        <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
+      </div>
+
+      @if (voteSent()) {
+        <div class="vote-sent" role="status" aria-live="polite">
+          <mat-icon>check_circle</mat-icon>
+          <span>Antwort gesendet</span>
+        </div>
+      }
+
+      @if (voteError()) {
+        <p class="vote-error" role="alert">{{ voteError() }}</p>
+      }
+
+      @if (hasAnswers()) {
+        <ul class="vote-answers">
+          @for (a of $any(q).answers; track a.id; let i = $index) {
+            @let isSelected = selectedAnswerIds().has(a.id);
+            @let isRevealed = isResults();
+            @let isCorrect = isRevealed && a.isCorrect;
+            @let isWrong = isRevealed && isSelected && !a.isCorrect;
+            <li>
+              <button
+                class="vote-answer"
+                [class.vote-answer--selected]="isSelected"
+                [class.vote-answer--correct]="isCorrect"
+                [class.vote-answer--wrong]="isWrong"
+                [class.vote-answer--disabled]="voteSent() || !isActive()"
+                [disabled]="voteSent() || !isActive()"
+                (click)="toggleAnswer(a.id)"
+                [attr.aria-label]="getLetter(i) + ': ' + a.text"
+              >
+                <span class="vote-answer__badge" [style.background-color]="getColor(i)">
+                  <span class="vote-answer__shape">{{ getShape(i) }}</span>
+                  <span class="vote-answer__letter">{{ getLetter(i) }}</span>
+                </span>
+                <span class="vote-answer__text" [innerHTML]="renderMarkdown(a.text)"></span>
+                @if (isRevealed) {
+                  @if (a.isCorrect) {
+                    <mat-icon class="vote-answer__icon vote-answer__icon--correct">check_circle</mat-icon>
+                  } @else {
+                    <mat-icon class="vote-answer__icon vote-answer__icon--wrong">cancel</mat-icon>
+                  }
+                }
+                @if (voteSending() && isSelected) {
+                  <mat-progress-spinner diameter="20" mode="indeterminate" class="vote-answer__spinner"></mat-progress-spinner>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+
+        @if ($any(q).type === 'MULTIPLE_CHOICE' && !voteSent() && isActive()) {
+          <button mat-flat-button color="primary" class="vote-submit-mc" [disabled]="selectedAnswerIds().size === 0 || debounced()" (click)="submitVote()">
+            Absenden
+          </button>
+        }
+      } @else if ($any(q).type === 'FREETEXT' && isActive()) {
+        <div class="vote-freetext">
+          <textarea class="vote-freetext__input" [value]="freeTextValue()" (input)="freeTextValue.set($any($event.target).value)" placeholder="Deine Antwort…" maxlength="500" rows="3" [disabled]="voteSent()"></textarea>
+          <button mat-flat-button color="primary" class="vote-freetext__submit" [disabled]="!freeTextValue().trim() || voteSent() || debounced()" (click)="submitVote()">
+            Absenden
+          </button>
+        </div>
+      }
+    }
+  } @else {
+    <div class="vote-lobby">
+      <mat-icon class="vote-lobby__icon">hourglass_empty</mat-icon>
+      <p class="vote-lobby__text">Einen Moment…</p>
+    </div>
+  }
+</div>

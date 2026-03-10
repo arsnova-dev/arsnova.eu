@@ -191,11 +191,12 @@ export const SessionStatusUpdateSchema = z.object({
 });
 export type SessionStatusUpdate = z.infer<typeof SessionStatusUpdateSchema>;
 
-/** DTO: Aktuelle Frage für Host-Ansicht (Story 2.3) – Text + Antwortoptionen inkl. isCorrect. */
+/** DTO: Aktuelle Frage für Host-Ansicht (Story 2.3, 3.5) – Text + Antwortoptionen inkl. isCorrect + Timer. */
 export const HostCurrentQuestionDTOSchema = z.object({
   order: z.number().int().min(0),
   text: z.string(),
   type: QuestionTypeEnum,
+  timer: z.number().nullable().optional(),
   answers: z.array(z.object({
     id: z.uuid(),
     text: z.string(),
@@ -323,6 +324,8 @@ export const SessionInfoDTOSchema = z.object({
   nicknameTheme: NicknameThemeEnum.optional(),
   /** Nur bei type QUIZ: Freitext-Nickname erlauben (Story 3.2). */
   allowCustomNicknames: z.boolean().optional(),
+  /** Anonymer Modus: kein Nickname-Schritt, auto-generierte ID (Story 3.6). */
+  anonymousMode: z.boolean().optional(),
 });
 export type SessionInfoDTO = z.infer<typeof SessionInfoDTOSchema>;
 

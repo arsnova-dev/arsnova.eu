@@ -78,6 +78,10 @@ export class JoinComponent implements OnInit {
         return;
       }
       this.session.set(session);
+      if (session.anonymousMode) {
+        await this.joinAnonymous(session);
+        return;
+      }
       await this.loadParticipants();
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
@@ -101,6 +105,26 @@ export class JoinComponent implements OnInit {
 
   isTaken(nickname: string): boolean {
     return this.takenNicknames().has(nickname.trim().toLowerCase());
+  }
+
+  private async joinAnonymous(session: SessionInfoDTO): Promise<void> {
+    this.joining.set(true);
+    try {
+      const nickname = `Teilnehmer #${session.participantCount + 1}`;
+      const result = await trpc.session.join.mutate({ code: this.code, nickname });
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`, result.participantId);
+      }
+      await this.router.navigate(['/session', this.code, 'vote']);
+    } catch (err: unknown) {
+      const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
+        ? (err as { message: string }).message
+        : 'Beitritt fehlgeschlagen.';
+      this.error.set(msg);
+    } finally {
+      this.joining.set(false);
+      this.loading.set(false);
+    }
   }
 
   async submitJoin(): Promise<void> {

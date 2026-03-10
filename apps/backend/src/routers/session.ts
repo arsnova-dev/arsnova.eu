@@ -18,6 +18,9 @@ import {
   SessionParticipantsPayloadSchema,
   SessionStatusUpdateSchema,
   HostCurrentQuestionDTOSchema,
+  QuestionStudentDTOSchema,
+  QuestionPreviewDTOSchema,
+  QuestionRevealedDTOSchema,
   type SessionExportDTO,
   type QuestionExportEntry,
   type QuestionType,
@@ -120,7 +123,7 @@ export const sessionRouter = router({
       const session = await prisma.session.findUnique({
         where: { code: input.code.toUpperCase() },
         include: {
-          quiz: { select: { name: true, nicknameTheme: true, allowCustomNicknames: true } },
+          quiz: { select: { name: true, nicknameTheme: true, allowCustomNicknames: true, anonymousMode: true } },
           _count: { select: { participants: true } },
         },
       });
@@ -138,6 +141,7 @@ export const sessionRouter = router({
         ...(session.quiz && {
           nicknameTheme: session.quiz.nicknameTheme,
           allowCustomNicknames: session.quiz.allowCustomNicknames,
+          anonymousMode: session.quiz.anonymousMode,
         }),
       };
     }),
@@ -338,6 +342,7 @@ export const sessionRouter = router({
                   order: true,
                   text: true,
                   type: true,
+                  timer: true,
                   answers: { select: { id: true, text: true, isCorrect: true } },
                 },
               },
@@ -355,8 +360,102 @@ export const sessionRouter = router({
         order: question.order,
         text: question.text,
         type: question.type as 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREETEXT' | 'RATING',
+        timer: question.timer ?? null,
         answers: question.answers.map((a) => ({ id: a.id, text: a.text, isCorrect: a.isCorrect })),
       };
+    }),
+
+  /**
+   * Aktuelle Frage für Studenten (Story 3.3a):
+   * QUESTION_OPEN → QuestionPreviewDTO (nur Stamm), ACTIVE → QuestionStudentDTO (ohne isCorrect),
+   * RESULTS → QuestionRevealedDTO (mit isCorrect + Votes), sonst null.
+   */
+  getCurrentQuestionForStudent: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: {
+          quiz: {
+            select: {
+              questions: {
+                orderBy: { order: 'asc' },
+                include: { answers: { select: { id: true, text: true, isCorrect: true } } },
+              },
+            },
+          },
+          _count: { select: { votes: true } },
+        },
+      });
+      if (!session?.quiz) return null;
+      const idx = session.currentQuestion;
+      if (idx === null || idx === undefined) return null;
+      const question = session.quiz.questions[idx];
+      if (!question) return null;
+
+      if (session.status === 'QUESTION_OPEN') {
+        return QuestionPreviewDTOSchema.parse({
+          id: question.id,
+          text: question.text,
+          type: question.type,
+          difficulty: question.difficulty,
+          order: question.order,
+          ratingMin: question.ratingMin ?? null,
+          ratingMax: question.ratingMax ?? null,
+          ratingLabelMin: question.ratingLabelMin ?? null,
+          ratingLabelMax: question.ratingLabelMax ?? null,
+        });
+      }
+
+      if (session.status === 'ACTIVE') {
+        return QuestionStudentDTOSchema.parse({
+          id: question.id,
+          text: question.text,
+          type: question.type,
+          timer: question.timer,
+          difficulty: question.difficulty,
+          order: question.order,
+          answers: question.answers.map((a) => ({ id: a.id, text: a.text })),
+          ratingMin: question.ratingMin ?? null,
+          ratingMax: question.ratingMax ?? null,
+          ratingLabelMin: question.ratingLabelMin ?? null,
+          ratingLabelMax: question.ratingLabelMax ?? null,
+        });
+      }
+
+      if (session.status === 'RESULTS') {
+        const votes = await prisma.vote.findMany({
+          where: { sessionId: session.id, questionId: question.id },
+          include: { selectedAnswers: true },
+        });
+        const totalVotes = votes.length;
+        const answerVoteCounts = new Map<string, number>();
+        for (const v of votes) {
+          for (const sa of v.selectedAnswers) {
+            answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
+          }
+        }
+        return QuestionRevealedDTOSchema.parse({
+          id: question.id,
+          text: question.text,
+          type: question.type,
+          difficulty: question.difficulty,
+          order: question.order,
+          answers: question.answers.map((a) => ({
+            id: a.id,
+            text: a.text,
+            isCorrect: a.isCorrect,
+            voteCount: answerVoteCounts.get(a.id) ?? 0,
+            votePercentage: totalVotes > 0 ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100) : 0,
+          })),
+          freeTextResponses: question.type === 'FREETEXT'
+            ? votes.map((v) => v.freeText?.trim()).filter((t): t is string => !!t)
+            : undefined,
+          totalVotes,
+        });
+      }
+
+      return null;
     }),
 
   /** Quiz-IDs mit laufender Session (Story 1.10: Löschsperre in Quiz-Liste). */
