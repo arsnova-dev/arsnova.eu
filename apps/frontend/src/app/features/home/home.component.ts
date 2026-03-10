@@ -247,16 +247,26 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.joinError.set(null);
     this.isJoining.set(true);
-    this.addToRecentSessionCodes(code);
     try {
       const fbResult = await trpc.quickFeedback.results.query({ sessionCode: code }).catch(() => null);
       if (fbResult) {
+        this.addToRecentSessionCodes(code);
         await this.router.navigate(['/feedback', code, 'vote']);
-      } else {
-        await this.router.navigate(['/join', code]);
+        return;
       }
-    } catch {
-      this.joinError.set('Beitritt fehlgeschlagen.');
+      const session = await trpc.session.getInfo.query({ code });
+      if (session.status === 'FINISHED') {
+        this.joinError.set('Diese Session ist bereits beendet.');
+        this.triggerShake();
+        return;
+      }
+      this.addToRecentSessionCodes(code);
+      await this.router.navigate(['/join', code]);
+    } catch (err: unknown) {
+      const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
+        ? (err as { message: string }).message
+        : 'Session nicht gefunden.';
+      this.joinError.set(msg);
       this.triggerShake();
     } finally {
       this.isJoining.set(false);

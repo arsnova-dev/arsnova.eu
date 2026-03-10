@@ -1,8 +1,28 @@
-<div class="l-page l-section">
-  <mat-card appearance="outlined" class="join-placeholder">
-    <mat-card-content>
-      <p class="join-placeholder__text">Session beitreten (Code: {{ code || '—' }}) – Story 2.1b, 3.1, 3.2</p>
-      <p class="join-placeholder__hint">QR-Ziel: /join/:code → Nickname → Redirect auf /session/:code/vote</p>
-    </mat-card-content>
-  </mat-card>
+<div class="l-page l-section join-page">
+  @if (loading()) {
+    <mat-card appearance="outlined" class="join-card">
+      <mat-card-content>
+        <p class="join-card__text">Session wird geladen…</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (error()) {
+    <mat-card appearance="outlined" class="join-card join-card--error">
+      <mat-card-content>
+        <p class="join-card__text" role="alert">{{ error() }}</p>
+        <p class="join-card__hint">Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (session(); as s) {
+    <mat-card appearance="outlined" class="join-card join-card--lobby">
+      <mat-card-content>
+        <p class="join-card__label">Session-Code</p>
+        <p class="join-card__code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
+        @if (s.quizName) {
+          <p class="join-card__quiz">{{ s.quizName }}</p>
+        }
+        <p class="join-card__participants">{{ s.participantCount }} Teilnehmende</p>
+        <p class="join-card__hint">Nickname wählen (Story 3.2) — dann geht’s zur Abstimmung.</p>
+      </mat-card-content>
+    </mat-card>
+  }
 </div>

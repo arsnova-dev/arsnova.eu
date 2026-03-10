@@ -1,11 +1,52 @@
-.join-placeholder__text {
-  margin: 0 0 0.5rem;
-  color: var(--mat-sys-on-surface-variant);
-  font: var(--mat-sys-body-medium);
+.join-page {
+  padding-top: 1.5rem;
 }
 
-.join-placeholder__hint {
-  margin: 0 0 1rem;
-  font: var(--mat-sys-body-small);
-  color: var(--mat-sys-on-surface-variant);
+.join-card {
+  &__text {
+    margin: 0;
+    font: var(--mat-sys-body-medium);
+    color: var(--mat-sys-on-surface);
+  }
+
+  &__label {
+    margin: 0 0 0.25rem;
+    font: var(--mat-sys-label-medium);
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &__code {
+    margin: 0 0 0.75rem;
+    font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--mat-sys-primary);
+  }
+
+  &__quiz {
+    margin: 0 0 0.25rem;
+    font: var(--mat-sys-title-small);
+    color: var(--mat-sys-on-surface);
+  }
+
+  &__participants {
+    margin: 0 0 0.75rem;
+    font: var(--mat-sys-body-small);
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &__hint {
+    margin: 0;
+    font: var(--mat-sys-body-small);
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &--error .join-card__text {
+    color: var(--mat-sys-error);
+  }
+
+  &--lobby .join-card__code {
+    margin-bottom: 0.5rem;
+  }
 }

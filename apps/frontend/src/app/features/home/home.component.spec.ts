@@ -16,6 +16,9 @@ vi.mock('../../core/trpc.client', () => ({
       results: { query: vi.fn().mockRejectedValue(new Error('not found')) },
       create: { mutate: vi.fn().mockRejectedValue(new Error('not available')) },
     },
+    session: {
+      getInfo: { query: vi.fn().mockResolvedValue({ id: 'sess-1', code: 'TEST01', type: 'QUIZ', status: 'LOBBY', quizName: 'Test', title: null, participantCount: 0 }) },
+    },
   },
 }));
 
@@ -143,6 +146,17 @@ describe('HomeComponent', () => {
       await comp.joinSession();
 
       expect(navSpy).not.toHaveBeenCalled();
+    });
+
+    it('setzt joinError wenn getInfo Session nicht findet (Story 3.1)', async () => {
+      const { trpc } = await import('../../core/trpc.client');
+      vi.mocked(trpc.session.getInfo.query).mockRejectedValueOnce(new Error('Session nicht gefunden.'));
+
+      const comp = createComponent();
+      comp.sessionCode.set('NOTFND');
+      await comp.joinSession();
+
+      expect(comp.joinError()).toBe('Session nicht gefunden.');
     });
   });
 
