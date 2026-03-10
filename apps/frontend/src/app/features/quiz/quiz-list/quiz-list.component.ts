@@ -9,9 +9,13 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
+import { PresetStorageEntrySchema } from '@arsnova/shared-types';
+import { ThemePresetService } from '../../../core/theme-preset.service';
 import { QuizStoreService } from '../data/quiz-store.service';
 import { trpc } from '../../../core/trpc.client';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
+
+const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
 
 /**
  * Quiz-Liste (Epic 1).
@@ -43,6 +47,7 @@ export class QuizListComponent implements OnInit {
   private readonly document = inject(DOCUMENT);
   private readonly quizStore = inject(QuizStoreService);
   private readonly router = inject(Router);
+  private readonly themePreset = inject(ThemePresetService);
   readonly quizzes = this.quizStore.quizzes;
   readonly actionInfo = signal<string | null>(null);
   readonly actionError = signal<string | null>(null);
@@ -181,13 +186,29 @@ export class QuizListComponent implements OnInit {
 
   /**
    * Quiz live schalten (Story 2.1a): Upload + Session erstellen, dann zur Host-Ansicht.
+   * Übernimmt das aktuell gewählte Home-Preset (z. B. Altersgruppe Kita) in den Upload-Payload.
    */
   async startLiveSession(quizId: string): Promise<void> {
     this.actionError.set(null);
     this.actionInfo.set(null);
     this.liveStartPending.set(true);
     try {
-      const payload = this.quizStore.getUploadPayload(quizId);
+      let payload = this.quizStore.getUploadPayload(quizId);
+      const presetKey = PRESET_OPTIONS_STORAGE_PREFIX + this.themePreset.preset();
+      try {
+        const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(presetKey) : null;
+        const parsed = raw ? (JSON.parse(raw) as unknown) : null;
+        const entry = PresetStorageEntrySchema.safeParse(parsed);
+        if (entry.success) {
+          payload = {
+            ...payload,
+            nicknameTheme: entry.data.nicknameThemeValue,
+            allowCustomNicknames: entry.data.nameMode === 'allowCustomNicknames',
+          };
+        }
+      } catch {
+        // Preset-Optionen nicht lesbar → Quiz-Einstellungen unverändert nutzen
+      }
       const { quizId: uploadedQuizId } = await trpc.quiz.upload.mutate(payload);
       const result = await trpc.session.create.mutate({
         quizId: uploadedQuizId,

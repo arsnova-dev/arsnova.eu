@@ -27,6 +27,7 @@ import {
   type OptionDistributionEntry,
   type FreetextAggregateEntry,
   type BonusTokenEntryDTO,
+  UpdateSessionPresetInputSchema,
 } from '@arsnova/shared-types';
 import { publicProcedure, router, getClientIp } from '../trpc';
 import { prisma } from '../db';
@@ -123,25 +124,59 @@ export const sessionRouter = router({
       const session = await prisma.session.findUnique({
         where: { code: input.code.toUpperCase() },
         include: {
-          quiz: { select: { name: true, nicknameTheme: true, allowCustomNicknames: true, anonymousMode: true } },
+          quiz: {
+            select: {
+              name: true,
+              nicknameTheme: true,
+              allowCustomNicknames: true,
+              anonymousMode: true,
+              showLeaderboard: true,
+              enableSoundEffects: true,
+              enableRewardEffects: true,
+              enableMotivationMessages: true,
+              enableEmojiReactions: true,
+              readingPhaseEnabled: true,
+              defaultTimer: true,
+              backgroundMusic: true,
+              teamMode: true,
+              teamCount: true,
+              teamAssignment: true,
+              bonusTokenCount: true,
+              preset: true,
+            },
+          },
           _count: { select: { participants: true } },
         },
       });
       if (!session) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
+      const q = session.quiz;
       return {
         id: session.id,
         code: session.code,
         type: session.type,
         status: session.status,
-        quizName: session.quiz?.name ?? null,
+        quizName: q?.name ?? null,
         title: session.title ?? null,
         participantCount: session._count.participants,
-        ...(session.quiz && {
-          nicknameTheme: session.quiz.nicknameTheme,
-          allowCustomNicknames: session.quiz.allowCustomNicknames,
-          anonymousMode: session.quiz.anonymousMode,
+        ...(q && {
+          nicknameTheme: q.nicknameTheme ?? 'NOBEL_LAUREATES',
+          allowCustomNicknames: q.allowCustomNicknames,
+          anonymousMode: q.anonymousMode,
+          showLeaderboard: q.showLeaderboard,
+          enableSoundEffects: q.enableSoundEffects,
+          enableRewardEffects: q.enableRewardEffects,
+          enableMotivationMessages: q.enableMotivationMessages,
+          enableEmojiReactions: q.enableEmojiReactions,
+          readingPhaseEnabled: q.readingPhaseEnabled,
+          defaultTimer: q.defaultTimer,
+          backgroundMusic: q.backgroundMusic,
+          teamMode: q.teamMode,
+          teamCount: q.teamCount,
+          teamAssignment: q.teamAssignment,
+          bonusTokenCount: q.bonusTokenCount,
+          preset: q.preset as 'PLAYFUL' | 'SERIOUS',
         }),
       };
     }),
@@ -192,6 +227,23 @@ export const sessionRouter = router({
     }),
 
   /** Subscription: Status-Wechsel (Story 2.3). Pollt alle 2s und pusht bei Änderung. */
+  updatePreset: publicProcedure
+    .input(UpdateSessionPresetInputSchema)
+    .mutation(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        select: { id: true, quizId: true },
+      });
+      if (!session || !session.quizId) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      await prisma.quiz.update({
+        where: { id: session.quizId },
+        data: { preset: input.preset },
+      });
+      return { preset: input.preset };
+    }),
+
   onStatusChanged: publicProcedure
     .input(GetSessionInfoInputSchema)
     .subscription(async function* ({ input }) {
@@ -200,21 +252,40 @@ export const sessionRouter = router({
       while (true) {
         const session = await prisma.session.findUnique({
           where: { code },
-          select: { status: true, currentQuestion: true },
+          select: {
+            status: true,
+            currentQuestion: true,
+            statusChangedAt: true,
+            quiz: {
+              select: {
+                preset: true,
+                questions: { orderBy: { order: 'asc' }, select: { timer: true } },
+              },
+            },
+          },
         });
         if (!session) {
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
         }
-        const payload = {
+        const isActive = session.status === 'ACTIVE';
+        const currentTimer = isActive && session.currentQuestion !== null
+          ? session.quiz?.questions[session.currentQuestion]?.timer ?? null
+          : null;
+        const payload: { status: string; currentQuestion: number | null; activeAt?: string; timer?: number | null; preset?: string } = {
           status: session.status,
           currentQuestion: session.currentQuestion,
+          preset: (session.quiz?.preset as 'PLAYFUL' | 'SERIOUS') || undefined,
+          ...(isActive && {
+            activeAt: session.statusChangedAt.toISOString(),
+            timer: currentTimer,
+          }),
         };
         const json = JSON.stringify(payload);
         if (json !== lastJson) {
           lastJson = json;
           yield payload;
         }
-        await new Promise((r) => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 500));
       }
     }),
 
@@ -255,7 +326,7 @@ export const sessionRouter = router({
       if (nextIdx >= questionCount) {
         await prisma.session.update({
           where: { id: session.id },
-          data: { status: 'FINISHED', currentQuestion: null },
+          data: { status: 'FINISHED', currentQuestion: null, statusChangedAt: new Date() },
         });
         return { status: 'FINISHED' as const, currentQuestion: null };
       }
@@ -264,9 +335,13 @@ export const sessionRouter = router({
       const newStatus = readingPhase ? ('QUESTION_OPEN' as const) : ('ACTIVE' as const);
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: newStatus, currentQuestion: nextIdx },
+        data: { status: newStatus, currentQuestion: nextIdx, statusChangedAt: new Date() },
       });
-      return { status: newStatus, currentQuestion: nextIdx };
+      return {
+        status: newStatus,
+        currentQuestion: nextIdx,
+        ...(newStatus === 'ACTIVE' && { activeAt: new Date().toISOString() }),
+      };
     }),
 
   /** Antwortoptionen freigeben – Lesephase beenden (Story 2.3). Nur bei QUESTION_OPEN. */
@@ -289,11 +364,12 @@ export const sessionRouter = router({
       }
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: 'ACTIVE' },
+        data: { status: 'ACTIVE', statusChangedAt: new Date() },
       });
       return {
         status: 'ACTIVE' as const,
         currentQuestion: session.currentQuestion,
+        activeAt: new Date().toISOString(),
       };
     }),
 
@@ -317,7 +393,7 @@ export const sessionRouter = router({
       }
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: 'RESULTS' },
+        data: { status: 'RESULTS', statusChangedAt: new Date() },
       });
       return {
         status: 'RESULTS' as const,
@@ -343,6 +419,10 @@ export const sessionRouter = router({
                   text: true,
                   type: true,
                   timer: true,
+                  ratingMin: true,
+                  ratingMax: true,
+                  ratingLabelMin: true,
+                  ratingLabelMax: true,
                   answers: { select: { id: true, text: true, isCorrect: true } },
                 },
               },
@@ -356,13 +436,79 @@ export const sessionRouter = router({
       const questions = session.quiz.questions;
       const question = questions[idx] ?? null;
       if (!question) return null;
-      return {
+
+      const base = {
         order: question.order,
         text: question.text,
-        type: question.type as 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREETEXT' | 'RATING',
+        type: question.type as 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREETEXT' | 'RATING' | 'SURVEY',
         timer: question.timer ?? null,
         answers: question.answers.map((a) => ({ id: a.id, text: a.text, isCorrect: a.isCorrect })),
+        ratingMin: question.ratingMin ?? null,
+        ratingMax: question.ratingMax ?? null,
+        ratingLabelMin: question.ratingLabelMin ?? null,
+        ratingLabelMax: question.ratingLabelMax ?? null,
       };
+
+      if (session.status === 'RESULTS' || session.status === 'ACTIVE') {
+        const votes = await prisma.vote.findMany({
+          where: { sessionId: session.id, questionId: question.id },
+          include: { selectedAnswers: true },
+        });
+
+        if (question.type === 'RATING') {
+          const values = votes.map((v) => v.ratingValue).filter((v): v is number => v !== null && v !== undefined);
+          const count = values.length;
+          const avg = count > 0 ? Math.round((values.reduce((s, v) => s + v, 0) / count) * 10) / 10 : null;
+          const dist: Record<string, number> = {};
+          for (const v of values) {
+            const key = String(v);
+            dist[key] = (dist[key] ?? 0) + 1;
+          }
+          return { ...base, ratingAvg: avg, ratingCount: count, ratingDistribution: dist, totalVotes: count };
+        }
+
+        if (question.type === 'FREETEXT') {
+          const texts = votes
+            .map((v) => v.freeText?.trim())
+            .filter((t): t is string => !!t);
+          return { ...base, freeTextResponses: texts, totalVotes: votes.length };
+        }
+
+        const totalVotes = votes.length;
+        const answerVoteCounts = new Map<string, number>();
+        for (const v of votes) {
+          for (const sa of v.selectedAnswers) {
+            answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
+          }
+        }
+
+        const correctIds = new Set(
+          question.answers.filter((a) => a.isCorrect).map((a) => a.id),
+        );
+        const correctVoterCount = correctIds.size > 0
+          ? votes.filter((v) => {
+              const selected = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
+              if (selected.size !== correctIds.size) return false;
+              for (const id of correctIds) { if (!selected.has(id)) return false; }
+              return true;
+            }).length
+          : undefined;
+
+        return {
+          ...base,
+          totalVotes,
+          correctVoterCount,
+          voteDistribution: question.answers.map((a) => ({
+            id: a.id,
+            text: a.text,
+            isCorrect: a.isCorrect,
+            voteCount: answerVoteCounts.get(a.id) ?? 0,
+            votePercentage: totalVotes > 0 ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100) : 0,
+          })),
+        };
+      }
+
+      return base;
     }),
 
   /**
@@ -384,7 +530,7 @@ export const sessionRouter = router({
               },
             },
           },
-          _count: { select: { votes: true } },
+          _count: { select: { votes: true, participants: true } },
         },
       });
       if (!session?.quiz) return null;
@@ -408,6 +554,10 @@ export const sessionRouter = router({
       }
 
       if (session.status === 'ACTIVE') {
+        const voteCount = await prisma.vote.count({
+          where: { sessionId: session.id, questionId: question.id },
+        });
+        const participantCount = session._count.participants;
         return QuestionStudentDTOSchema.parse({
           id: question.id,
           text: question.text,
@@ -416,10 +566,13 @@ export const sessionRouter = router({
           difficulty: question.difficulty,
           order: question.order,
           answers: question.answers.map((a) => ({ id: a.id, text: a.text })),
+          activeAt: session.statusChangedAt.toISOString(),
           ratingMin: question.ratingMin ?? null,
           ratingMax: question.ratingMax ?? null,
           ratingLabelMin: question.ratingLabelMin ?? null,
           ratingLabelMax: question.ratingLabelMax ?? null,
+          participantCount,
+          totalVotes: voteCount,
         });
       }
 

@@ -101,7 +101,8 @@ export const CreateQuizInputSchema = z.object({
   backgroundMusic: z.string().max(50).nullable().optional().default(null),
   nicknameTheme: NicknameThemeEnum.optional().default('NOBEL_LAUREATES'),
   bonusTokenCount: z.number().int().min(1).max(50).nullable().optional().default(null), // Story 4.6
-  readingPhaseEnabled: z.boolean().optional().default(true), // Story 2.6: Zwei-Phasen-Frageanzeige (Lesephase)
+  readingPhaseEnabled: z.boolean().optional().default(true),
+  preset: QuizPresetEnum.optional().default('PLAYFUL'),
 });
 export type CreateQuizInput = z.infer<typeof CreateQuizInputSchema>;
 
@@ -145,7 +146,8 @@ export const QuizUploadInputSchema = z.object({
   backgroundMusic: z.string().max(50).nullable().optional(),
   nicknameTheme: NicknameThemeEnum,
   bonusTokenCount: z.number().int().min(1).max(50).nullable().optional(), // Story 4.6
-  readingPhaseEnabled: z.boolean().optional(), // Story 2.6: Zwei-Phasen-Frageanzeige
+  readingPhaseEnabled: z.boolean().optional(),
+  preset: QuizPresetEnum.optional(),
   questions: z.array(AddQuestionInputSchema).min(1, { error: 'Mindestens eine Frage erforderlich' }),
 });
 export type QuizUploadInput = z.infer<typeof QuizUploadInputSchema>;
@@ -184,10 +186,20 @@ export const GetSessionInfoInputSchema = z.object({
 });
 export type GetSessionInfoInput = z.infer<typeof GetSessionInfoInputSchema>;
 
-/** Output: Status-Update nach nextQuestion / revealAnswers / revealResults (Story 2.3). */
+/** Input: Preset zur Laufzeit ändern (Host → alle Clients). */
+export const UpdateSessionPresetInputSchema = z.object({
+  code: z.string().length(6),
+  preset: QuizPresetEnum,
+});
+export type UpdateSessionPresetInput = z.infer<typeof UpdateSessionPresetInputSchema>;
+
+/** Output: Status-Update nach nextQuestion / revealAnswers / revealResults (Story 2.3, 3.5). */
 export const SessionStatusUpdateSchema = z.object({
   status: SessionStatusEnum,
   currentQuestion: z.number().int().min(0).nullable(),
+  /** Server-Zeitstempel bei Wechsel zu ACTIVE (ISO-8601). Für Countdown-Synchronisation (Story 3.5). */
+  activeAt: z.string().optional(),
+  preset: QuizPresetEnum.optional(),
 });
 export type SessionStatusUpdate = z.infer<typeof SessionStatusUpdateSchema>;
 
@@ -202,6 +214,23 @@ export const HostCurrentQuestionDTOSchema = z.object({
     text: z.string(),
     isCorrect: z.boolean(),
   })),
+  ratingMin: z.number().nullable().optional(),
+  ratingMax: z.number().nullable().optional(),
+  ratingLabelMin: z.string().nullable().optional(),
+  ratingLabelMax: z.string().nullable().optional(),
+  ratingAvg: z.number().nullable().optional(),
+  ratingCount: z.number().int().optional(),
+  ratingDistribution: z.record(z.string(), z.number()).optional(),
+  freeTextResponses: z.array(z.string()).optional(),
+  voteDistribution: z.array(z.object({
+    id: z.uuid(),
+    text: z.string(),
+    isCorrect: z.boolean(),
+    voteCount: z.number().int(),
+    votePercentage: z.number().int(),
+  })).optional(),
+  totalVotes: z.number().int().optional(),
+  correctVoterCount: z.number().int().optional(),
 });
 export type HostCurrentQuestionDTO = z.infer<typeof HostCurrentQuestionDTOSchema>;
 
@@ -277,7 +306,7 @@ export const QuestionRevealedDTOSchema = z.object({
 });
 export type QuestionRevealedDTO = z.infer<typeof QuestionRevealedDTOSchema>;
 
-/** DTO: Frage für Studenten (ohne Lösung) */
+/** DTO: Frage für Studenten (ohne Lösung). activeAt = Server-Zeitpunkt bei ACTIVE-Wechsel (Countdown-Sync, Story 3.5). Optional participantCount/totalVotes für Anzeige „Alle haben abgestimmt“ und Countdown-Ausblendung. */
 export const QuestionStudentDTOSchema = z.object({
   id: z.uuid(),
   text: z.string(),
@@ -286,10 +315,13 @@ export const QuestionStudentDTOSchema = z.object({
   difficulty: DifficultyEnum,
   order: z.number(),
   answers: z.array(AnswerOptionStudentDTOSchema),
-  ratingMin: z.number().nullable().optional(),        // Nur bei RATING
-  ratingMax: z.number().nullable().optional(),        // Nur bei RATING
-  ratingLabelMin: z.string().nullable().optional(),   // Nur bei RATING
-  ratingLabelMax: z.string().nullable().optional(),   // Nur bei RATING
+  activeAt: z.string().optional(),
+  ratingMin: z.number().nullable().optional(),
+  ratingMax: z.number().nullable().optional(),
+  ratingLabelMin: z.string().nullable().optional(),
+  ratingLabelMax: z.string().nullable().optional(),
+  participantCount: z.number().int().min(0).optional(),
+  totalVotes: z.number().int().min(0).optional(),
 });
 export type QuestionStudentDTO = z.infer<typeof QuestionStudentDTOSchema>;
 
@@ -315,17 +347,27 @@ export type QuestionPreviewDTO = z.infer<typeof QuestionPreviewDTOSchema>;
 export const SessionInfoDTOSchema = z.object({
   id: z.uuid(),
   code: z.string(),
-  type: SessionTypeEnum,                           // Story 8.1: Quiz oder Q&A
+  type: SessionTypeEnum,
   status: SessionStatusEnum,
-  quizName: z.string().nullable(),                 // null bei Q&A-Sessions
-  title: z.string().nullable().optional(),          // Story 8.1: Q&A-Titel
+  quizName: z.string().nullable(),
+  title: z.string().nullable().optional(),
   participantCount: z.number(),
-  /** Nur bei type QUIZ: Thema für Nickname-Liste (Story 3.2). */
   nicknameTheme: NicknameThemeEnum.optional(),
-  /** Nur bei type QUIZ: Freitext-Nickname erlauben (Story 3.2). */
   allowCustomNicknames: z.boolean().optional(),
-  /** Anonymer Modus: kein Nickname-Schritt, auto-generierte ID (Story 3.6). */
   anonymousMode: z.boolean().optional(),
+  showLeaderboard: z.boolean().optional(),
+  enableSoundEffects: z.boolean().optional(),
+  enableRewardEffects: z.boolean().optional(),
+  enableMotivationMessages: z.boolean().optional(),
+  enableEmojiReactions: z.boolean().optional(),
+  readingPhaseEnabled: z.boolean().optional(),
+  defaultTimer: z.number().nullable().optional(),
+  backgroundMusic: z.string().nullable().optional(),
+  teamMode: z.boolean().optional(),
+  teamCount: z.number().nullable().optional(),
+  teamAssignment: z.string().nullable().optional(),
+  bonusTokenCount: z.number().nullable().optional(),
+  preset: QuizPresetEnum.optional(),
 });
 export type SessionInfoDTO = z.infer<typeof SessionInfoDTOSchema>;
 

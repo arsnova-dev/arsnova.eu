@@ -18,7 +18,7 @@
           <span class="session-lobby__participants-count">{{ count }}</span>
           {{ count === 1 ? 'Teilnehmer' : 'Teilnehmende' }}
         </p>
-        @if (payload && payload.participants.length > 0) {
+        @if (!s.anonymousMode && payload && payload.participants.length > 0) {
           <ul class="session-lobby__list" role="list" aria-label="Teilnehmende">
             @for (p of payload.participants; track p.id) {
               <li class="session-lobby__list-item">{{ p.nickname }}</li>
@@ -36,13 +36,13 @@
             [disabled]="controlPending()"
             (click)="nextQuestion()"
           >
-            Nächste Frage
+            Erste Frage starten
           </button>
         </div>
       </div>
     } @else {
-      <!-- Keine Lobby: Beamer-tauglich (Dozenten-Laptop = Projektion). l-page l-section. -->
-      <div class="session-host__run l-page l-section">
+      <!-- Keine Lobby: Beamer-tauglich. Fragenkarte = Toolbar-Breite (56rem), Ergebniskarte darunter. -->
+      <div class="session-host__run l-page">
         <!-- Minimal für Projektion: nur Code + Teilnehmerzahl; Rest in Dozenten-Info (eingeklappt) -->
         <header class="session-host__meta">
           <span class="session-host__meta-code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</span>
@@ -61,36 +61,148 @@
             <p class="session-host__finished-text" role="status">Session beendet.</p>
           </div>
         } @else {
-          <!-- Aktuelle Frage prominent -->
+          @if (showFingerCountdown()) {
+            <div class="session-host__finger-countdown">
+              <app-countdown-fingers [seconds]="countdownSeconds()!" size="large" />
+            </div>
+          }
+
+          <!-- Karte 1: Frage (toolbar-breit) -->
           @if (currentQuestionForHost(); as q) {
             <mat-card appearance="outlined" class="session-host__question-card">
               <mat-card-header>
-                <mat-card-subtitle>Frage {{ q.order + 1 }}</mat-card-subtitle>
+                <mat-card-subtitle class="session-host__question-subtitle">
+                  <span>Frage {{ q.order + 1 }}</span>
+                  @if (allHaveVoted()) {
+                    <span class="session-host__all-voted" role="status" aria-live="polite">
+                      <mat-icon>how_to_vote</mat-icon>
+                      Alle haben abgestimmt
+                    </span>
+                  } @else if (countdownSeconds() !== null && effectiveStatus() === 'ACTIVE') {
+                    <span class="session-host__countdown" [class.session-host__countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownSeconds() + ' Sekunden verbleibend'">
+                      {{ countdownSeconds() }}
+                    </span>
+                  }
+                </mat-card-subtitle>
                 <mat-card-title class="session-host__question-title">
                   <span class="session-host__question-title-inner" [innerHTML]="renderMarkdown(q.text)"></span>
                 </mat-card-title>
               </mat-card-header>
-              <mat-card-content>
-                @if (effectiveStatus() === 'QUESTION_OPEN') {
-                  <!-- Lesephase (Story 2.6): nur Fragenstamm, keine Antwortoptionen -->
+              @if (effectiveStatus() === 'QUESTION_OPEN') {
+                <mat-card-content>
                   <p class="session-host__reading-hint" role="status" aria-live="polite">Gleich geht's los…</p>
-                } @else if (q.answers.length > 0) {
-                  <ul class="session-host__answers" role="list">
-                    @for (a of q.answers; track a.id) {
-                      <li
-                        class="session-host__answer"
-                        [class.session-host__answer--correct]="effectiveStatus() === 'RESULTS' && a.isCorrect"
-                      >
-                        <span class="session-host__answer-text session-host__rich-text" [innerHTML]="renderMarkdown(a.text)"></span>
-                        @if (effectiveStatus() === 'RESULTS' && a.isCorrect) {
-                          <mat-icon class="session-host__answer-icon" aria-hidden="true">check_circle</mat-icon>
-                        }
-                      </li>
-                    }
-                  </ul>
-                }
-              </mat-card-content>
+                </mat-card-content>
+              }
             </mat-card>
+
+            <!-- Karte 2: Ergebnis (schmaler, zentriert) -->
+            @if (effectiveStatus() !== 'QUESTION_OPEN') {
+              <div class="session-host__results-wrap">
+              <mat-card appearance="outlined" class="session-host__results-card">
+                <mat-card-content>
+                  @if (q.type === 'RATING') {
+                    <div class="session-host__rating">
+                      @if (q.ratingLabelMin || q.ratingLabelMax) {
+                        <div class="session-host__rating-labels">
+                          <span>{{ q.ratingLabelMin }}</span>
+                          <span>{{ q.ratingLabelMax }}</span>
+                        </div>
+                      }
+                      @if (effectiveStatus() === 'RESULTS' && q.ratingAvg !== null && q.ratingAvg !== undefined) {
+                        <div class="session-host__rating-result">
+                          <span class="session-host__rating-avg">∅ {{ q.ratingAvg }}</span>
+                          <span class="session-host__rating-count">{{ q.ratingCount }} von {{ participantsPayload()?.participantCount ?? '?' }} {{ q.ratingCount === 1 ? 'hat' : 'haben' }} bewertet</span>
+                        </div>
+                        <div class="session-host__rating-bars" role="img" aria-label="Bewertungsverteilung">
+                          @for (val of ratingBarRange(q); track val) {
+                            @let count = q.ratingDistribution?.['' + val] ?? 0;
+                            @let pct = q.ratingCount ? Math.round(count / q.ratingCount * 100) : 0;
+                            <div class="session-host__rating-bar">
+                              <span class="session-host__rating-bar-label">{{ val }}</span>
+                              <div class="session-host__rating-bar-track">
+                                <div class="session-host__rating-bar-fill" [style.width.%]="pct"></div>
+                              </div>
+                              <span class="session-host__rating-bar-count">{{ count }}</span>
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <p class="session-host__rating-waiting">{{ allHaveVoted() ? 'Die Ergebnisse liegen vor.' : (countdownEnded() ? 'Zeit abgelaufen.' : 'Warte auf Bewertungen…') }}</p>
+                      }
+                    </div>
+                  } @else if (q.type === 'FREETEXT') {
+                    <div class="session-host__freetext">
+                      @if (effectiveStatus() === 'RESULTS' && q.freeTextResponses && q.freeTextResponses.length > 0) {
+                        <p class="session-host__freetext-count">{{ q.freeTextResponses.length }} von {{ participantsPayload()?.participantCount ?? '?' }} {{ q.freeTextResponses.length === 1 ? 'hat' : 'haben' }} geantwortet</p>
+                        <ul class="session-host__freetext-list" role="list">
+                          @for (text of q.freeTextResponses; track text) {
+                            <li class="session-host__freetext-item">{{ text }}</li>
+                          }
+                        </ul>
+                      } @else {
+                        <p class="session-host__freetext-waiting">{{ allHaveVoted() ? 'Die Ergebnisse liegen vor.' : (countdownEnded() ? 'Zeit abgelaufen.' : 'Warte auf Antworten…') }}</p>
+                      }
+                    </div>
+                  } @else if (q.voteDistribution && q.voteDistribution.length > 0 && effectiveStatus() === 'RESULTS') {
+                    <div class="session-host__vote-dist">
+                      <p class="session-host__vote-dist-total">{{ q.totalVotes }} von {{ participantsPayload()?.participantCount ?? '?' }} {{ q.totalVotes === 1 ? 'hat' : 'haben' }} abgestimmt</p>
+                      @if (q.correctVoterCount !== null && q.correctVoterCount !== undefined && q.type !== 'SURVEY') {
+                        <p class="session-host__vote-dist-correct">
+                          <mat-icon>check_circle</mat-icon>
+                          {{ q.correctVoterCount }} von {{ q.totalVotes }} komplett richtig
+                          ({{ q.totalVotes ? Math.round(q.correctVoterCount / q.totalVotes * 100) : 0 }}&nbsp;%)
+                        </p>
+                      }
+                      <ul class="session-host__vote-dist-list" role="list">
+                        @for (a of q.voteDistribution; track a.id; let i = $index) {
+                          <li class="session-host__vote-dist-item" [class.session-host__vote-dist-item--correct]="a.isCorrect && q.type !== 'SURVEY'">
+                            <div class="session-host__vote-dist-header">
+                              <span class="session-host__answer-badge session-host__answer-badge--small" [style.background-color]="getColor(i)">
+                                <span class="session-host__answer-badge-shape">{{ getShape(i) }}</span>
+                                <span class="session-host__answer-badge-letter">{{ getLetter(i) }}</span>
+                              </span>
+                              <span class="session-host__vote-dist-text session-host__rich-text" [innerHTML]="renderMarkdown(a.text)"></span>
+                              @if (a.isCorrect && q.type !== 'SURVEY') {
+                                <mat-icon class="session-host__answer-icon" aria-hidden="true">check_circle</mat-icon>
+                              }
+                              <span class="session-host__vote-dist-pct">{{ a.votePercentage }}&nbsp;%</span>
+                              <span class="session-host__vote-dist-count">({{ a.voteCount }})</span>
+                            </div>
+                            <div class="session-host__vote-dist-track">
+                              <div
+                                class="session-host__vote-dist-fill"
+                                [class.session-host__vote-dist-fill--correct]="a.isCorrect && q.type !== 'SURVEY'"
+                                [class.session-host__vote-dist-fill--neutral]="q.type === 'SURVEY'"
+                                [style.width.%]="a.votePercentage">
+                              </div>
+                            </div>
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  } @else if (q.answers.length > 0) {
+                    <ul class="session-host__answers" role="list">
+                      @for (a of q.answers; track a.id; let i = $index) {
+                        <li
+                          class="session-host__answer"
+                          [class.session-host__answer--correct]="effectiveStatus() === 'RESULTS' && a.isCorrect"
+                        >
+                          <span class="session-host__answer-badge" [style.background-color]="getColor(i)">
+                            <span class="session-host__answer-badge-shape">{{ getShape(i) }}</span>
+                            <span class="session-host__answer-badge-letter">{{ getLetter(i) }}</span>
+                          </span>
+                          <span class="session-host__answer-text session-host__rich-text" [innerHTML]="renderMarkdown(a.text)"></span>
+                          @if (effectiveStatus() === 'RESULTS' && a.isCorrect) {
+                            <mat-icon class="session-host__answer-icon" aria-hidden="true">check_circle</mat-icon>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                </mat-card-content>
+              </mat-card>
+              </div>
+            }
           } @else {
             <p class="session-host__no-question">Keine Frage aktiv. Mit „Nächste Frage“ starten.</p>
           }

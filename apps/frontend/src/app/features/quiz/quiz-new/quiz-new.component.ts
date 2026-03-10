@@ -23,6 +23,7 @@ import {
   type TeamAssignment,
 } from '@arsnova/shared-types';
 import { QuizStoreService, type QuizSettings } from '../data/quiz-store.service';
+import { ThemePresetService } from '../../../core/theme-preset.service';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
 
@@ -60,6 +61,7 @@ export class QuizNewComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly quizStore = inject(QuizStoreService);
+  private readonly themePreset = inject(ThemePresetService);
 
   readonly presetOptions: Array<{ value: QuizPreset; label: string }> = [
     { value: 'PLAYFUL', label: 'Spielerisch' },
@@ -239,6 +241,7 @@ export class QuizNewComponent {
       nicknameTheme: this.form.controls.nicknameTheme.value ?? 'NOBEL_LAUREATES',
       bonusTokenCount: this.bonusTokenCountControl.value,
       readingPhaseEnabled: this.form.controls.readingPhaseEnabled.value,
+      preset: this.themePreset.preset() === 'serious' ? 'SERIOUS' as const : 'PLAYFUL' as const,
     };
   }
 

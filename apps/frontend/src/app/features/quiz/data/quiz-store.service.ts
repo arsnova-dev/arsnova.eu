@@ -20,6 +20,7 @@ import {
   QUIZ_EXPORT_VERSION,
   type Difficulty,
   type NicknameTheme,
+  type QuizPreset,
   type QuizExport,
   type QuizUploadInput,
   type TeamAssignment,
@@ -69,6 +70,7 @@ export interface QuizSettings {
   nicknameTheme: NicknameTheme;
   bonusTokenCount: number | null;
   readingPhaseEnabled: boolean;
+  preset: QuizPreset;
 }
 
 export interface QuizDocument {
@@ -161,6 +163,7 @@ const QuizSettingsSchema = CreateQuizInputSchema.pick({
   nicknameTheme: true,
   bonusTokenCount: true,
   readingPhaseEnabled: true,
+  preset: true,
 });
 
 const QuestionCreateSchema = AddQuestionInputSchema.pick({
@@ -539,6 +542,7 @@ export class QuizStoreService {
       nicknameTheme: document.settings.nicknameTheme,
       bonusTokenCount: document.settings.bonusTokenCount ?? undefined,
       readingPhaseEnabled: document.settings.readingPhaseEnabled,
+      preset: document.settings.preset,
       questions: document.questions.map((q) => ({
         text: q.text,
         type: q.type,
@@ -593,6 +597,7 @@ export class QuizStoreService {
         nicknameTheme: parsed.data.quiz.nicknameTheme,
         bonusTokenCount: parsed.data.quiz.bonusTokenCount ?? null,
         readingPhaseEnabled: parsed.data.quiz.readingPhaseEnabled ?? true,
+        preset: (parsed.data.quiz as Record<string, unknown>)['preset'] as QuizPreset ?? 'PLAYFUL',
       }),
       questions: parsed.data.quiz.questions
         .sort((a, b) => a.order - b.order)
@@ -1082,6 +1087,7 @@ function parseQuizSettings(input: Partial<QuizSettings>): QuizSettings {
     nicknameTheme: input.nicknameTheme,
     bonusTokenCount: input.bonusTokenCount ?? null,
     readingPhaseEnabled: input.readingPhaseEnabled,
+    preset: input.preset,
   });
 
   if (!parsed.success) {
@@ -1105,6 +1111,7 @@ function parseQuizSettings(input: Partial<QuizSettings>): QuizSettings {
     nicknameTheme: parsed.data.nicknameTheme,
     bonusTokenCount: parsed.data.bonusTokenCount ?? null,
     readingPhaseEnabled: parsed.data.readingPhaseEnabled ?? true,
+    preset: parsed.data.preset ?? 'PLAYFUL',
   };
 }
 
@@ -1138,6 +1145,7 @@ function normalizeStoredQuizSettings(value: unknown): QuizSettings {
           : undefined,
       bonusTokenCount: readNumberOrNull(candidate['bonusTokenCount']),
       readingPhaseEnabled: readBoolean(candidate['readingPhaseEnabled']),
+      preset: typeof candidate['preset'] === 'string' ? (candidate['preset'] as QuizPreset) : undefined,
     });
   } catch {
     return { ...DEFAULT_QUIZ_SETTINGS };

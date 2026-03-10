@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
@@ -12,6 +12,7 @@ import type { NicknameTheme } from '@arsnova/shared-types';
 import { NICKNAME_LISTS } from './nickname-themes';
 
 const PARTICIPANT_STORAGE_KEY = 'arsnova-participant';
+const SESSION_POLL_MS = 3000;
 
 /**
  * Teilnehmer-Einstieg (QR/Link). Code validieren → Lobby (Story 3.1). Nickname (3.2) → session/:code/vote.
@@ -24,7 +25,7 @@ const PARTICIPANT_STORAGE_KEY = 'arsnova-participant';
   templateUrl: './join.component.html',
   styleUrl: './join.component.scss',
 })
-export class JoinComponent implements OnInit {
+export class JoinComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly code = (this.route.snapshot.paramMap.get('code') ?? '').trim().toUpperCase();
@@ -38,11 +39,28 @@ export class JoinComponent implements OnInit {
   readonly customNickname = signal('');
   readonly joining = signal(false);
 
-  /** Theme-Liste für QUIZ mit nicknameTheme; sonst leer. */
+  private pollTimer: ReturnType<typeof setInterval> | null = null;
+
+  /** Nur die Namensliste, die der Dozent für das Quiz vorgegeben hat (nicknameTheme aus Session/Quiz). */
   readonly nicknameOptions = computed(() => {
     const s = this.session();
-    if (!s || s.type !== 'QUIZ' || !s.nicknameTheme) return [];
-    return NICKNAME_LISTS[s.nicknameTheme as NicknameTheme] as string[];
+    if (!s || s.type !== 'QUIZ') return [];
+    const theme = (s.nicknameTheme ?? 'NOBEL_LAUREATES') as NicknameTheme;
+    if (!(theme in NICKNAME_LISTS)) return [];
+    return [...(NICKNAME_LISTS[theme] ?? [])];
+  });
+
+  /** Liste anzeigen nur wenn Dozent keine eigenen Nicks erlaubt und Quiz eine Namensliste (nicknameTheme) vorgegeben hat. */
+  readonly showNicknameList = computed(() => {
+    const s = this.session();
+    if (!s || s.allowCustomNicknames === true) return false;
+    return this.nicknameOptions().length > 0;
+  });
+
+  /** Eigenes Namensfeld nur wenn Dozent eigene Nicks erlaubt (Preset: eigener Name). */
+  readonly showCustomNickname = computed(() => {
+    const s = this.session();
+    return s?.allowCustomNicknames === true;
   });
 
   readonly canSubmit = computed(() => {
@@ -67,6 +85,13 @@ export class JoinComponent implements OnInit {
     void this.loadSession();
   }
 
+  ngOnDestroy(): void {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
+    }
+  }
+
   private async loadSession(): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
@@ -83,6 +108,7 @@ export class JoinComponent implements OnInit {
         return;
       }
       await this.loadParticipants();
+      this.startSessionPoll();
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message
@@ -90,6 +116,42 @@ export class JoinComponent implements OnInit {
       this.error.set(msg);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  /** Session-Info und Teilnehmer periodisch nachziehen, damit Änderungen des Dozenten (z. B. Namensliste) beim Client ankommen. */
+  private startSessionPoll(): void {
+    if (this.pollTimer) return;
+    this.pollTimer = setInterval(() => void this.refreshSession(), SESSION_POLL_MS);
+  }
+
+  private stopSessionPoll(): void {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
+    }
+  }
+
+  private async refreshSession(): Promise<void> {
+    if (this.joining() || this.loading()) return;
+    try {
+      const session = await trpc.session.getInfo.query({ code: this.code });
+      if (session.status === 'FINISHED') {
+        this.session.set(session);
+        this.error.set('Diese Session ist bereits beendet.');
+        this.stopSessionPoll();
+        return;
+      }
+      this.session.set(session);
+      const opts = this.nicknameOptions();
+      if (opts.length > 0 && this.selectedNickname().trim() && !opts.includes(this.selectedNickname().trim())) {
+        this.selectedNickname.set('');
+      }
+      if (!session.anonymousMode) {
+        await this.loadParticipants();
+      }
+    } catch {
+      this.stopSessionPoll();
     }
   }
 

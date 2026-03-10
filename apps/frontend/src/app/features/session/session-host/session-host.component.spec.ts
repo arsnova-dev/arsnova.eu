@@ -84,7 +84,7 @@ describe('SessionHostComponent', () => {
     return TestBed.createComponent(SessionHostComponent);
   };
 
-  it('zeigt Lobby mit Session-Code und Button Nächste Frage bei Status LOBBY', async () => {
+  it('zeigt Lobby mit Session-Code und Button Erste Frage starten bei Status LOBBY', async () => {
     getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'LOBBY' });
 
     const fixture = setup();
@@ -94,7 +94,7 @@ describe('SessionHostComponent', () => {
 
     const text = fixture.nativeElement.textContent ?? '';
     expect(text).toContain('ABC123');
-    expect(text).toContain('Nächste Frage');
+    expect(text).toContain('Erste Frage starten');
     fixture.destroy();
   });
 

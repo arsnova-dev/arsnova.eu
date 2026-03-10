@@ -105,6 +105,8 @@ html {
   --app-status-healthy: light-dark(#16a34a, #4ade80);
   --app-color-danger-bg: var(--mat-sys-error-container);
   --app-color-danger-fg: var(--mat-sys-on-error-container);
+  --arsnova-bar-correct: light-dark(#2e7d32, #66bb6a);
+  --arsnova-bar-wrong: light-dark(#c62828, #ef5350);
   --app-color-info-bg: var(--mat-sys-tertiary-container);
   --app-color-info-fg: var(--mat-sys-on-tertiary-container);
   --app-color-warning-bg: var(--mat-sys-surface-variant);
@@ -438,4 +440,29 @@ html {
   margin: 0.7rem 0;
   padding-left: 0.7rem;
   border-left: 3px solid var(--mat-sys-outline-variant);
+}
+
+/* Fragetext/Formeln im Rahmen halten + Silbentrennung (z. B. Frage 9) */
+.session-host__question-title-inner,
+.vote-question__text {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.session-host__question-title-inner .katex,
+.session-host__question-title-inner .katex-display,
+.vote-question__text .katex,
+.vote-question__text .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  display: inline-block;
+  vertical-align: middle;
+  scrollbar-gutter: stable;
+}
+
+.vote-question__text .katex-display,
+.session-host__question-title-inner .katex-display {
+  display: block;
 }

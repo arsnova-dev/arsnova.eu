@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
@@ -7,8 +7,10 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle }
 import { MatIcon } from '@angular/material/icon';
 import QRCode from 'qrcode';
 import type { Unsubscribable } from '@trpc/server/observable';
+import type { Subscription } from 'rxjs';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
+import { ThemePresetService } from '../../../core/theme-preset.service';
 import type {
   HostCurrentQuestionDTO,
   SessionInfoDTO,
@@ -16,6 +18,10 @@ import type {
   SessionStatusUpdate,
 } from '@arsnova/shared-types';
 import { WordCloudComponent } from '../session-present/word-cloud.component';
+import { CountdownFingersComponent } from '../../../shared/countdown-fingers/countdown-fingers.component';
+
+const ANSWER_COLORS = ['#1565c0', '#e65100', '#2e7d32', '#6a1b9a', '#c62828', '#00838f', '#4e342e', '#37474f'];
+const ANSWER_SHAPES = ['\u25B3', '\u25CB', '\u25A1', '\u25C7', '\u2606', '\u2B21', '\u2B20', '\u2BC6'];
 
 /**
  * Host-Ansicht: Lobby + Präsentations-Steuerung (Epic 2).
@@ -33,6 +39,7 @@ import { WordCloudComponent } from '../session-present/word-cloud.component';
     MatCardTitle,
     MatIcon,
     WordCloudComponent,
+    CountdownFingersComponent,
   ],
   templateUrl: './session-host.component.html',
   styleUrl: './session-host.component.scss',
@@ -46,9 +53,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly controlPending = signal(false);
   private participantSub: Unsubscribable | null = null;
   private statusSub: Unsubscribable | null = null;
+  private presetSub: Subscription | null = null;
   private readonly document = inject(DOCUMENT);
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly themePreset = inject(ThemePresetService);
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private readonly code = this.route.parent?.snapshot.paramMap.get('code') ?? '';
   readonly freetextResponses = signal<string[]>([]);
@@ -57,6 +66,55 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly exportStatus = signal<string | null>(null);
   /** Aktuelle Frage für Host (Text + Antwortoptionen), null wenn keine Frage aktiv. */
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
+  /** Countdown in Sekunden (null = kein Timer, Story 3.5). */
+  readonly countdownSeconds = signal<number | null>(null);
+  /** true, sobald der Countdown 0 erreicht hat (bis zum nächsten Start). */
+  readonly countdownEnded = signal(false);
+  private countdownTimer: ReturnType<typeof setInterval> | null = null;
+  private fingerHideTimeout: ReturnType<typeof setTimeout> | null = null;
+  readonly Math = Math;
+
+  showFingerCountdown(): boolean {
+    const s = this.countdownSeconds();
+    return this.effectiveStatus() === 'ACTIVE' && s !== null && s >= 0 && s <= 5 && this.themePreset.preset() === 'spielerisch';
+  }
+
+  /** Stimmenzahl der aktuellen Frage (für Vergleich mit Teilnehmerzahl). */
+  private getVoteCountForCurrentQuestion(q: HostCurrentQuestionDTO | null): number {
+    if (!q) return 0;
+    if (q.type === 'RATING') return q.ratingCount ?? 0;
+    if (q.type === 'FREETEXT') return q.freeTextResponses?.length ?? 0;
+    return q.totalVotes ?? 0;
+  }
+
+  readonly allHaveVoted = computed(() => {
+    if (this.effectiveStatus() !== 'ACTIVE') return false;
+    const participants = this.participantsPayload()?.participantCount ?? 0;
+    if (participants <= 0) return false;
+    const votes = this.getVoteCountForCurrentQuestion(this.currentQuestionForHost());
+    return votes >= participants;
+  });
+
+  constructor() {
+    effect(() => {
+      if (this.allHaveVoted()) {
+        this.stopCountdown();
+        this.countdownSeconds.set(null);
+      }
+    });
+  }
+
+  getColor(index: number): string { return ANSWER_COLORS[index % ANSWER_COLORS.length]; }
+  getShape(index: number): string { return ANSWER_SHAPES[index % ANSWER_SHAPES.length]; }
+  getLetter(index: number): string { return String.fromCharCode(65 + index); }
+
+  ratingBarRange(q: HostCurrentQuestionDTO): number[] {
+    const min = q.ratingMin ?? 1;
+    const max = q.ratingMax ?? 5;
+    const range: number[] = [];
+    for (let i = min; i <= max; i++) range.push(i);
+    return range;
+  }
 
   /** Für Lobby: volle Beitritts-URL (präsentierbar, Story 2.1b QR-Code). */
   get joinUrl(): string {
@@ -74,6 +132,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     try {
       const session = await trpc.session.getInfo.query({ code: this.code.toUpperCase() });
       this.session.set(session);
+      if (session.preset === 'PLAYFUL' || session.preset === 'SERIOUS') {
+        this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', { silent: true });
+      }
     } catch {
       this.session.set(null);
     }
@@ -97,10 +158,19 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.statusSub = trpc.session.onStatusChanged.subscribe(
         { code: this.code.toUpperCase() },
         {
-          onData: (data) => this.statusUpdate.set(data),
+          onData: (data) => this.statusUpdate.set({
+            status: data.status as SessionStatusUpdate['status'],
+            currentQuestion: data.currentQuestion,
+            activeAt: data.activeAt,
+          }),
           onError: () => {},
         },
       );
+
+      this.presetSub = this.themePreset.presetChanged$.subscribe(() => {
+        const preset = this.themePreset.preset() === 'serious' ? 'SERIOUS' as const : 'PLAYFUL' as const;
+        void trpc.session.updatePreset.mutate({ code: this.code.toUpperCase(), preset });
+      });
     }
   }
 
@@ -109,10 +179,46 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.participantSub = null;
     this.statusSub?.unsubscribe();
     this.statusSub = null;
+    this.presetSub?.unsubscribe();
+    this.presetSub = null;
     if (this.pollTimer) {
       clearInterval(this.pollTimer);
       this.pollTimer = null;
     }
+    this.stopCountdown();
+  }
+
+  private startCountdown(timerSeconds: number | null | undefined, activeAt?: string): void {
+    this.stopCountdown();
+    this.countdownEnded.set(false);
+    if (!timerSeconds || timerSeconds <= 0) {
+      this.countdownSeconds.set(null);
+      return;
+    }
+    const start = activeAt ? new Date(activeAt).getTime() : Date.now();
+    const deadline = start + timerSeconds * 1000;
+
+    const tick = (): void => {
+      const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+      this.countdownSeconds.set(remaining);
+      if (remaining <= 0) {
+        this.stopCountdown();
+        this.countdownSeconds.set(0);
+        this.countdownEnded.set(true);
+        this.fingerHideTimeout = setTimeout(() => {
+          this.countdownSeconds.set(null);
+          this.fingerHideTimeout = null;
+        }, 5000);
+      }
+    };
+
+    tick();
+    this.countdownTimer = setInterval(tick, 1000);
+  }
+
+  private stopCountdown(): void {
+    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+    if (this.fingerHideTimeout) { clearTimeout(this.fingerHideTimeout); this.fingerHideTimeout = null; }
   }
 
   async exportFreetextSessionCsv(): Promise<void> {
@@ -175,9 +281,14 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.stopCountdown();
+      this.countdownSeconds.set(null);
       const result = await trpc.session.nextQuestion.mutate({ code: this.code.toUpperCase() });
       this.statusUpdate.set(result);
       await this.refreshCurrentQuestionForHost();
+      if (result.status === 'ACTIVE') {
+        this.startCountdown(this.currentQuestionForHost()?.timer, result.activeAt);
+      }
     } finally {
       this.controlPending.set(false);
     }
@@ -190,6 +301,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       const result = await trpc.session.revealAnswers.mutate({ code: this.code.toUpperCase() });
       this.statusUpdate.set(result);
       await this.refreshCurrentQuestionForHost();
+      this.startCountdown(this.currentQuestionForHost()?.timer, result.activeAt);
     } finally {
       this.controlPending.set(false);
     }
@@ -199,6 +311,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.stopCountdown();
+      this.countdownSeconds.set(null);
       const result = await trpc.session.revealResults.mutate({ code: this.code.toUpperCase() });
       this.statusUpdate.set(result);
       await this.refreshCurrentQuestionForHost();

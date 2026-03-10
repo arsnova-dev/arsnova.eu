@@ -48,14 +48,14 @@
 | 2    | 2.5   | Beamer-Ansicht / Presenter-Mode               | 🔴   | ⬜ Offen  |
 | 2    | 2.6   | Zwei-Phasen-Frageanzeige (Lesephase)          | 🟡   | ⬜ Offen  |
 | 2    | 2.7   | Peer Instruction (zweite Abstimmung, Vorher/Nachher) | 🟡   | ⬜ Offen  |
-| 3    | 3.1   | Beitreten                                     | 🔴   | ⬜ Offen  |
-| 3    | 3.2   | Nicknames                                     | 🟡   | ⬜ Offen  |
-| 3    | 3.3a  | Frage empfangen                               | 🔴   | ⬜ Offen  |
-| 3    | 3.3b  | Abstimmung abgeben                            | 🔴   | ⬜ Offen  |
-| 3    | 3.4   | Echtzeit-Feedback                             | 🟡   | ⬜ Offen  |
-| 3    | 3.5   | Countdown-Anzeige                             | 🔴   | ⬜ Offen  |
-| 3    | 3.5a  | Countdown Finger-Anzeige (letzte 6 Sekunden)   | 🟡   | ⬜ Offen  |
-| 3    | 3.6   | Anonymer Modus                                | 🟡   | ⬜ Offen  |
+| 3    | 3.1   | Beitreten                                     | 🔴   | ✅ Fertig |
+| 3    | 3.2   | Nicknames                                     | 🟡   | ✅ Fertig |
+| 3    | 3.3a  | Frage empfangen                               | 🔴   | ✅ Fertig |
+| 3    | 3.3b  | Abstimmung abgeben                            | 🔴   | ✅ Fertig |
+| 3    | 3.4   | Echtzeit-Feedback                             | 🟡   | ✅ Fertig |
+| 3    | 3.5   | Countdown-Anzeige                             | 🔴   | ✅ Fertig |
+| 3    | 3.5a  | Countdown Finger-Anzeige (letzte 6 Sekunden)   | 🟡   | ✅ Fertig |
+| 3    | 3.6   | Anonymer Modus                                | 🟡   | ✅ Fertig |
 | 4    | 4.1   | Leaderboard mit Punktesystem                  | 🟡   | ⬜ Offen  |
 | 4    | 4.2   | Server aufräumen                              | 🔴   | ⬜ Offen  |
 | 4    | 4.3   | WebSocket Reconnection                        | 🟡   | ⬜ Offen  |
@@ -498,7 +498,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
 
 ---
 
-## Epic 3: Teilnahme & Abstimmung (Rolle: Student)
+## Epic 3: Teilnahme & Abstimmung (Rolle: Student) ✅ abgeschlossen
 
 - **Story 3.1 (Beitreten):** 🔴 Als Student möchte ich über die Eingabe des Session-Codes sofort und ohne Registrierung in die Quiz-Lobby gelangen.
   - **Akzeptanzkriterien:**

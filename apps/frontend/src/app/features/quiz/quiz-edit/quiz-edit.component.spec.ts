@@ -31,6 +31,7 @@ describe('QuizEditComponent', () => {
       nicknameTheme: 'NOBEL_LAUREATES',
       bonusTokenCount: null,
       readingPhaseEnabled: false,
+      preset: 'PLAYFUL',
     },
     questions: [],
   };
@@ -244,6 +245,7 @@ describe('QuizEditComponent', () => {
       nicknameTheme: 'HIGH_SCHOOL',
       bonusTokenCount: 5,
       readingPhaseEnabled: true,
+      preset: 'SERIOUS',
     });
     const fixture = TestBed.createComponent(QuizEditComponent);
     const component = fixture.componentInstance;
@@ -264,6 +266,7 @@ describe('QuizEditComponent', () => {
       nicknameTheme: 'HIGH_SCHOOL',
       bonusTokenCount: 5,
       readingPhaseEnabled: true,
+      preset: 'SERIOUS',
     });
 
     component.saveSettings();

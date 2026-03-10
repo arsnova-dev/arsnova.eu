@@ -25,7 +25,12 @@
       <div class="vote-question">
         <div class="vote-question__header">
           <p class="vote-question__label">Frage {{ q.order + 1 }}</p>
-          @if (countdownSeconds() !== null && isActive()) {
+          @if (allHaveVoted() && isActive()) {
+            <span class="vote-all-voted" role="status">
+              <mat-icon>how_to_vote</mat-icon>
+              Alle haben abgestimmt
+            </span>
+          } @else if (countdownSeconds() !== null && isActive()) {
             <span class="vote-countdown" [class.vote-countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownSeconds() + ' Sekunden verbleibend'">
               {{ countdownSeconds() }}
             </span>
@@ -38,6 +43,19 @@
         <div class="vote-sent" role="status" aria-live="polite">
           <mat-icon>check_circle</mat-icon>
           <span>Antwort gesendet</span>
+        </div>
+        @if (motivationMessage()) {
+          <p class="vote-motivation" aria-live="polite">{{ motivationMessage() }}</p>
+        }
+      }
+      @if (showRewardEffect()) {
+        <div class="vote-reward" role="status" aria-live="polite">🎉 Richtig!</div>
+      }
+
+      @if (timeoutMessage() && !voteSent()) {
+        <div class="vote-timeout" role="status" aria-live="polite">
+          <mat-icon>timer_off</mat-icon>
+          <span>{{ timeoutMessage() }}</span>
         </div>
       }
 
@@ -58,8 +76,8 @@
                 [class.vote-answer--selected]="isSelected"
                 [class.vote-answer--correct]="isCorrect"
                 [class.vote-answer--wrong]="isWrong"
-                [class.vote-answer--disabled]="voteSent() || !isActive()"
-                [disabled]="voteSent() || !isActive()"
+                [class.vote-answer--disabled]="voteSent() || !isActive() || timerExpired()"
+                [disabled]="voteSent() || !isActive() || timerExpired()"
                 (click)="toggleAnswer(a.id)"
                 [attr.aria-label]="getLetter(i) + ': ' + a.text"
               >
@@ -83,18 +101,62 @@
           }
         </ul>
 
-        @if ($any(q).type === 'MULTIPLE_CHOICE' && !voteSent() && isActive()) {
-          <button mat-flat-button color="primary" class="vote-submit-mc" [disabled]="selectedAnswerIds().size === 0 || debounced()" (click)="submitVote()">
+        @if (!voteSent() && isActive()) {
+          <button mat-flat-button color="primary" class="vote-submit-mc" [disabled]="selectedAnswerIds().size === 0 || debounced() || timerExpired()" (click)="submitVote()">
             Absenden
           </button>
         }
       } @else if ($any(q).type === 'FREETEXT' && isActive()) {
         <div class="vote-freetext">
-          <textarea class="vote-freetext__input" [value]="freeTextValue()" (input)="freeTextValue.set($any($event.target).value)" placeholder="Deine Antwort…" maxlength="500" rows="3" [disabled]="voteSent()"></textarea>
-          <button mat-flat-button color="primary" class="vote-freetext__submit" [disabled]="!freeTextValue().trim() || voteSent() || debounced()" (click)="submitVote()">
+          <textarea class="vote-freetext__input" [value]="freeTextValue()" (input)="freeTextValue.set($any($event.target).value)" placeholder="Deine Antwort…" maxlength="500" rows="3" [disabled]="voteSent() || timerExpired()"></textarea>
+          <button mat-flat-button color="primary" class="vote-freetext__submit" [disabled]="!freeTextValue().trim() || voteSent() || debounced() || timerExpired()" (click)="submitVote()">
             Absenden
           </button>
         </div>
+      } @else if ($any(q).type === 'FREETEXT' && isResults()) {
+        <div class="vote-freetext vote-freetext--result">
+          @if (freeTextValue()) {
+            <p class="vote-freetext__own">Deine Antwort: <strong>{{ freeTextValue() }}</strong></p>
+          } @else {
+            <p class="vote-freetext__own vote-freetext__own--empty">Keine Antwort abgegeben.</p>
+          }
+        </div>
+      } @else if (isRating() && isActive()) {
+        <div class="vote-rating" role="radiogroup" [attr.aria-label]="'Bewertung von ' + ratingLabelMin() + ' bis ' + ratingLabelMax()">
+          @if (ratingLabelMin() || ratingLabelMax()) {
+            <div class="vote-rating__labels">
+              <span class="vote-rating__label vote-rating__label--min">{{ ratingLabelMin() }}</span>
+              <span class="vote-rating__label vote-rating__label--max">{{ ratingLabelMax() }}</span>
+            </div>
+          }
+          <div class="vote-rating__buttons">
+            @for (val of ratingRange(); track val) {
+              <button
+                class="vote-rating__btn"
+                [class.vote-rating__btn--selected]="ratingValue() === val"
+                [disabled]="voteSent() || debounced() || timerExpired()"
+                role="radio"
+                [attr.aria-checked]="ratingValue() === val"
+                [attr.aria-label]="'Bewertung ' + val"
+                (click)="selectRating(val)">
+                {{ val }}
+              </button>
+            }
+          </div>
+          @if (!voteSent()) {
+            <button mat-flat-button color="primary" class="vote-rating__submit" [disabled]="ratingValue() === null || debounced() || timerExpired()" (click)="submitVote()">
+              Absenden
+            </button>
+          }
+        </div>
+      } @else if (isRating() && isResults()) {
+        <div class="vote-rating vote-rating--result">
+          <p class="vote-rating__result-label">Deine Bewertung: <strong>{{ ratingValue() ?? '–' }}</strong></p>
+        </div>
+      }
+
+      @if (showFingerCountdown() && !allHaveVoted()) {
+        <app-countdown-fingers [seconds]="countdownSeconds()!" size="small" />
       }
     }
   } @else {

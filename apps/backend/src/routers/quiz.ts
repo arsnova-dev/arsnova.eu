@@ -37,11 +37,12 @@ export const quizRouter = router({
           nicknameTheme: input.nicknameTheme,
           bonusTokenCount: input.bonusTokenCount ?? null,
           readingPhaseEnabled: input.readingPhaseEnabled ?? true,
+          preset: input.preset ?? 'PLAYFUL',
           questions: {
             create: input.questions.map((q) => ({
               text: q.text,
               type: q.type,
-              timer: q.timer ?? null,
+              timer: q.timer ?? input.defaultTimer ?? null,
               difficulty: q.difficulty,
               order: q.order,
               ratingMin: q.ratingMin ?? null,

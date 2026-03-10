@@ -77,6 +77,7 @@ type QuizSettingsFormGroup = FormGroup<{
   backgroundMusic: FormControl<string>;
   nicknameTheme: FormControl<NicknameTheme>;
   bonusTokenCount: FormControl<number | null>;
+  preset: FormControl<QuizPreset>;
 }>;
 
 type QuizMetadataFormGroup = FormGroup<{
@@ -232,6 +233,7 @@ export class QuizEditComponent implements OnDestroy {
     bonusTokenCount: this.formBuilder.control<number | null>(null, {
       validators: [Validators.min(1), Validators.max(50)],
     }),
+    preset: this.formBuilder.control<QuizPreset>('PLAYFUL'),
   });
 
   readonly metadataForm: QuizMetadataFormGroup = this.formBuilder.group({
@@ -333,6 +335,7 @@ export class QuizEditComponent implements OnDestroy {
       anonymousMode: values.anonymousMode ?? false,
       readingPhaseEnabled: values.readingPhaseEnabled ?? false,
       defaultTimer: values.defaultTimer ?? null,
+      preset,
     });
   }
 
@@ -686,6 +689,7 @@ export class QuizEditComponent implements OnDestroy {
       backgroundMusic: settings.backgroundMusic ?? '',
       nicknameTheme: settings.nicknameTheme,
       bonusTokenCount: settings.bonusTokenCount,
+      preset: settings.preset,
     });
     this.settingsForm.markAsPristine();
     this.settingsForm.markAsUntouched();
@@ -710,6 +714,7 @@ export class QuizEditComponent implements OnDestroy {
       nicknameTheme: this.settingsForm.controls.nicknameTheme.value ?? 'NOBEL_LAUREATES',
       bonusTokenCount: this.settingsForm.controls.bonusTokenCount.value,
       readingPhaseEnabled: this.settingsForm.controls.readingPhaseEnabled.value,
+      preset: this.settingsForm.controls.preset.value,
     };
   }
 

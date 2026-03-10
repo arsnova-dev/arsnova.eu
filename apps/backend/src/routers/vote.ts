@@ -37,6 +37,9 @@ export const voteRouter = router({
       if (participant.session.status === 'FINISHED') {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Diese Session ist beendet.' });
       }
+      if (participant.session.status !== 'ACTIVE') {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Die Frage ist nicht mehr aktiv.' });
+      }
       const question = await prisma.question.findFirst({
         where: { id: input.questionId, quizId: participant.session.quizId ?? undefined },
         include: { answers: { select: { id: true, isCorrect: true } } },
@@ -44,6 +47,14 @@ export const voteRouter = router({
       if (!question) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Frage nicht gefunden.' });
       }
+
+      if (question.timer && question.timer > 0 && participant.session.statusChangedAt) {
+        const deadline = new Date(participant.session.statusChangedAt).getTime() + question.timer * 1000;
+        if (Date.now() > deadline + 2000) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Die Zeit für diese Frage ist abgelaufen.' });
+        }
+      }
+
       const questionType = question.type as QuestionType;
       const answerIds = [...new Set(input.answerIds ?? [])];
       const allowedAnswerIds = new Set(question.answers.map((answer) => answer.id));
@@ -145,6 +156,20 @@ export const voteRouter = router({
           .filter((answer) => answer.isCorrect)
           .map((answer) => answer.id),
       });
+      const existing = await prisma.vote.findUnique({
+        where: {
+          sessionId_participantId_questionId: {
+            sessionId: input.sessionId,
+            participantId: input.participantId,
+            questionId: input.questionId,
+          },
+        },
+        select: { id: true },
+      });
+      if (existing) {
+        return { voteId: existing.id };
+      }
+
       const vote = await prisma.vote.create({
         data: {
           sessionId: input.sessionId,

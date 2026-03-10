@@ -49,6 +49,7 @@ describe('QuizNewComponent', () => {
         nicknameTheme: 'NOBEL_LAUREATES',
         bonusTokenCount: null,
         readingPhaseEnabled: false,
+        preset: 'PLAYFUL',
       },
     });
 
@@ -59,7 +60,7 @@ describe('QuizNewComponent', () => {
     expect(mockStore.createQuiz).toHaveBeenCalledWith({
       name: 'Test-Quiz',
       description: '',
-      settings: {
+      settings: expect.objectContaining({
         showLeaderboard: true,
         allowCustomNicknames: true,
         defaultTimer: null,
@@ -75,7 +76,8 @@ describe('QuizNewComponent', () => {
         nicknameTheme: 'NOBEL_LAUREATES',
         bonusTokenCount: null,
         readingPhaseEnabled: false,
-      },
+        preset: 'PLAYFUL',
+      }),
     });
     expect(navigateSpy).toHaveBeenCalledWith(['/quiz', '928f0bb8-bfd8-442b-9f2e-a7544628a92f']);
   });

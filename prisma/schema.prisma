@@ -29,6 +29,7 @@ model Quiz {
   nicknameTheme        NicknameTheme @default(NOBEL_LAUREATES) // Story 3.2: Nickname-Liste
   bonusTokenCount      Int?                         // Story 4.6: Anzahl Top-Plätze mit Bonus-Token (1–50, null = deaktiviert)
   readingPhaseEnabled  Boolean    @default(true)   // Story 2.6: Zwei-Phasen-Frageanzeige (Lesephase vor Antworten)
+  preset               String     @default("PLAYFUL") // PLAYFUL oder SERIOUS – visuelles Theme für alle Clients
   questions            Question[]
   sessions             Session[]
   createdAt            DateTime   @default(now())
@@ -71,6 +72,7 @@ model Session {
   code            String        @unique // 6-stelliger Beitrittscode
   type            SessionType   @default(QUIZ)    // Story 8.1: Quiz oder Q&A
   status          SessionStatus @default(LOBBY)
+  statusChangedAt DateTime      @default(now())    // Zeitpunkt des letzten Statuswechsels (Story 3.5 Countdown-Sync)
   title           String?                          // Story 8.1: Titel für Q&A-Runden
   moderationMode  Boolean       @default(false)   // Story 8.4: Q&A-Fragen vorab moderieren
   currentQuestion Int?                             // Index der aktuell aktiven Frage (0-basiert)
