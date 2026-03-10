@@ -310,7 +310,7 @@ export const QuestionPreviewDTOSchema = z.object({
 });
 export type QuestionPreviewDTO = z.infer<typeof QuestionPreviewDTOSchema>;
 
-/** DTO: Session-Info für den Beitritt */
+/** DTO: Session-Info für den Beitritt (Story 3.1, 3.2). Enthält Nickname-Konfiguration bei QUIZ. */
 export const SessionInfoDTOSchema = z.object({
   id: z.uuid(),
   code: z.string(),
@@ -319,6 +319,10 @@ export const SessionInfoDTOSchema = z.object({
   quizName: z.string().nullable(),                 // null bei Q&A-Sessions
   title: z.string().nullable().optional(),          // Story 8.1: Q&A-Titel
   participantCount: z.number(),
+  /** Nur bei type QUIZ: Thema für Nickname-Liste (Story 3.2). */
+  nicknameTheme: NicknameThemeEnum.optional(),
+  /** Nur bei type QUIZ: Freitext-Nickname erlauben (Story 3.2). */
+  allowCustomNicknames: z.boolean().optional(),
 });
 export type SessionInfoDTO = z.infer<typeof SessionInfoDTOSchema>;
 

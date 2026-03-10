@@ -112,14 +112,17 @@ export const sessionRouter = router({
       };
     }),
 
-  /** Session-Info per Code (für Beitritt, Story 3.1). */
+  /** Session-Info per Code (für Beitritt, Story 3.1, 3.2). Enthält Nickname-Konfiguration bei QUIZ. */
   getInfo: publicProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionInfoDTOSchema)
     .query(async ({ input }) => {
       const session = await prisma.session.findUnique({
         where: { code: input.code.toUpperCase() },
-        include: { quiz: { select: { name: true } }, _count: { select: { participants: true } } },
+        include: {
+          quiz: { select: { name: true, nicknameTheme: true, allowCustomNicknames: true } },
+          _count: { select: { participants: true } },
+        },
       });
       if (!session) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
@@ -132,6 +135,10 @@ export const sessionRouter = router({
         quizName: session.quiz?.name ?? null,
         title: session.title ?? null,
         participantCount: session._count.participants,
+        ...(session.quiz && {
+          nicknameTheme: session.quiz.nicknameTheme,
+          allowCustomNicknames: session.quiz.allowCustomNicknames,
+        }),
       };
     }),
 

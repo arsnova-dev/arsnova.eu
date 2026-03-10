@@ -1,9 +1,9 @@
 /**
- * Unit-Tests für JoinComponent (Story 3.1: Code validieren, Lobby/Fehler anzeigen).
+ * Unit-Tests für JoinComponent (Story 3.1: Code validieren, 3.2: Nickname, Join).
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, ActivatedRoute } from '@angular/router';
+import { provideRouter, ActivatedRoute, Router } from '@angular/router';
 import { JoinComponent } from './join.component';
 import { trpc } from '../../core/trpc.client';
 
@@ -15,6 +15,8 @@ const mockSession = {
   quizName: 'Test-Quiz',
   title: null as string | null,
   participantCount: 5,
+  nicknameTheme: 'NOBEL_LAUREATES' as const,
+  allowCustomNicknames: true,
 };
 
 vi.mock('../../core/trpc.client', () => ({
@@ -29,8 +31,12 @@ vi.mock('../../core/trpc.client', () => ({
           quizName: 'Test-Quiz',
           title: null,
           participantCount: 5,
+          nicknameTheme: 'NOBEL_LAUREATES',
+          allowCustomNicknames: true,
         }),
       },
+      getParticipants: { query: vi.fn().mockResolvedValue({ participants: [], participantCount: 0 }) },
+      join: { mutate: vi.fn().mockResolvedValue({ id: 'sess-1', code: 'ABC123', type: 'QUIZ', status: 'LOBBY', quizName: 'Test-Quiz', title: null, participantCount: 6, participantId: 'part-1' }) },
     },
   },
 }));
@@ -38,6 +44,8 @@ vi.mock('../../core/trpc.client', () => ({
 describe('JoinComponent', () => {
   beforeEach(() => {
     vi.mocked(trpc.session.getInfo.query).mockResolvedValue(mockSession);
+    vi.mocked(trpc.session.getParticipants.query).mockResolvedValue({ participants: [], participantCount: 0 });
+    vi.mocked(trpc.session.join.mutate).mockResolvedValue({ ...mockSession, participantId: 'part-1' });
     TestBed.configureTestingModule({
       imports: [JoinComponent],
       providers: [
@@ -106,5 +114,46 @@ describe('JoinComponent', () => {
 
     expect(comp.error()).toBe('Diese Session ist bereits beendet.');
     expect(comp.session()).toBeNull();
+  });
+
+  it('stellt Nickname-Liste bereit bei QUIZ mit nicknameTheme (Story 3.2)', async () => {
+    const { fixture, comp } = createWithCode('ABC123');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 80));
+
+    expect(comp.nicknameOptions().length).toBeGreaterThanOrEqual(50);
+    expect(comp.nicknameOptions()[0]).toBe('Marie Curie');
+  });
+
+  it('markiert vergebene Nicknames (isTaken)', async () => {
+    vi.mocked(trpc.session.getParticipants.query).mockResolvedValue({
+      participants: [{ id: 'p1', nickname: 'Marie Curie' }],
+      participantCount: 1,
+    });
+    const { fixture, comp } = createWithCode('ABC123');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 80));
+
+    expect(comp.isTaken('Marie Curie')).toBe(true);
+    expect(comp.isTaken('Albert Einstein')).toBe(false);
+  });
+
+  it('ruft join mit Code und Nickname auf und navigiert zu vote (Story 3.2)', async () => {
+    const { fixture, comp } = createWithCode('ABC123');
+    const router = fixture.debugElement.injector.get(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 80));
+
+    comp.selectedNickname.set('Ada Yonath');
+    comp.submitJoin();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(trpc.session.join.mutate).toHaveBeenCalledWith({ code: 'ABC123', nickname: 'Ada Yonath' });
+    expect(navSpy).toHaveBeenCalledWith(['/session', 'ABC123', 'vote']);
   });
 });

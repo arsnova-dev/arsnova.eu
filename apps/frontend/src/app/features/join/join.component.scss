@@ -49,4 +49,25 @@
   &--lobby .join-card__code {
     margin-bottom: 0.5rem;
   }
+
+  &__field {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  &__submit {
+    margin-top: 0.75rem;
+  }
+
+  &__error {
+    margin: 0.5rem 0 0;
+    font: var(--mat-sys-body-small);
+    color: var(--mat-sys-error);
+  }
+
+  &__option--taken {
+    color: var(--mat-sys-on-surface-variant);
+    font-style: italic;
+  }
 }
