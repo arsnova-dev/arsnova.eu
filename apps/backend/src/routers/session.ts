@@ -15,6 +15,7 @@ import {
   LiveFreetextDTOSchema,
   SessionInfoDTOSchema,
   SessionExportDTOSchema,
+  SessionParticipantsPayloadSchema,
   type SessionExportDTO,
   type QuestionExportEntry,
   type QuestionType,
@@ -130,6 +131,51 @@ export const sessionRouter = router({
         title: session.title ?? null,
         participantCount: session._count.participants,
       };
+    }),
+
+  /** Teilnehmerliste einer Session (Story 2.2 Lobby). */
+  getParticipants: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .output(SessionParticipantsPayloadSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: { participants: { orderBy: { joinedAt: 'asc' }, select: { id: true, nickname: true } } },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      return {
+        participants: session.participants.map((p) => ({ id: p.id, nickname: p.nickname })),
+        participantCount: session.participants.length,
+      };
+    }),
+
+  /** Subscription: Lobby-Teilnehmerliste (Story 2.2). Pollt alle 2s und pusht bei Änderung. */
+  onParticipantJoined: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .subscription(async function* ({ input }) {
+      const code = input.code.toUpperCase();
+      let lastJson = '';
+      while (true) {
+        const session = await prisma.session.findUnique({
+          where: { code },
+          include: { participants: { orderBy: { joinedAt: 'asc' }, select: { id: true, nickname: true } } },
+        });
+        if (!session) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+        }
+        const payload = {
+          participants: session.participants.map((p) => ({ id: p.id, nickname: p.nickname })),
+          participantCount: session.participants.length,
+        };
+        const json = JSON.stringify(payload);
+        if (json !== lastJson) {
+          lastJson = json;
+          yield payload;
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
     }),
 
   /** Quiz-IDs mit laufender Session (Story 1.10: Löschsperre in Quiz-Liste). */

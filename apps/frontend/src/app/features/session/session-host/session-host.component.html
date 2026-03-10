@@ -12,10 +12,19 @@
         }
         <p class="session-lobby__join-hint">Beitreten unter</p>
         <p class="session-lobby__join-url"><a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a></p>
+        @let payload = participantsPayload();
+        @let count = payload ? payload.participantCount : s.participantCount;
         <p class="session-lobby__participants">
-          <span class="session-lobby__participants-count">{{ s.participantCount }}</span>
-          {{ s.participantCount === 1 ? 'Teilnehmer' : 'Teilnehmende' }}
+          <span class="session-lobby__participants-count">{{ count }}</span>
+          {{ count === 1 ? 'Teilnehmer' : 'Teilnehmende' }}
         </p>
+        @if (payload && payload.participants.length > 0) {
+          <ul class="session-lobby__list" role="list" aria-label="Teilnehmende">
+            @for (p of payload.participants; track p.id) {
+              <li class="session-lobby__list-item">{{ p.nickname }}</li>
+            }
+          </ul>
+        }
         @if (s.quizName) {
           <p class="session-lobby__quiz-name">{{ s.quizName }}</p>
         }

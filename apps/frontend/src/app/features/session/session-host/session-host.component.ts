@@ -5,8 +5,9 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import QRCode from 'qrcode';
+import type { Unsubscribable } from '@trpc/server/observable';
 import { trpc } from '../../../core/trpc.client';
-import type { SessionInfoDTO } from '@arsnova/shared-types';
+import type { SessionInfoDTO, SessionParticipantsPayload } from '@arsnova/shared-types';
 import { WordCloudComponent } from '../session-present/word-cloud.component';
 
 /**
@@ -31,6 +32,9 @@ import { WordCloudComponent } from '../session-present/word-cloud.component';
 })
 export class SessionHostComponent implements OnInit, OnDestroy {
   session = signal<SessionInfoDTO | null>(null);
+  /** Lobby: Live-Teilnehmerliste (Story 2.2). */
+  readonly participantsPayload = signal<SessionParticipantsPayload | null>(null);
+  private participantSub: Unsubscribable | null = null;
   private readonly document = inject(DOCUMENT);
   private readonly route = inject(ActivatedRoute);
   private pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -65,9 +69,21 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.pollTimer = setInterval(() => {
       void this.refreshLiveFreetext();
     }, 2000);
+
+    if (this.code.length === 6) {
+      this.participantSub = trpc.session.onParticipantJoined.subscribe(
+        { code: this.code.toUpperCase() },
+        {
+          onData: (data) => this.participantsPayload.set(data),
+          onError: () => {},
+        },
+      );
+    }
   }
 
   ngOnDestroy(): void {
+    this.participantSub?.unsubscribe();
+    this.participantSub = null;
     if (this.pollTimer) {
       clearInterval(this.pollTimer);
       this.pollTimer = null;

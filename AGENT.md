@@ -9,13 +9,20 @@ Für Pfade (`apps/backend`, `apps/frontend`, `libs/shared-types`), strikte Monor
 * Schreibe nicht die gesamte App auf einmal.
 * Wenn der Nutzer ein Feature anfragt (z.B. "Erstelle das Leaderboard"), frage nach, ob zuerst **Backend** (tRPC-Endpoint + DTO in `libs/shared-types`) oder **Frontend** (Angular UI) umgesetzt werden soll – so bleibt die tRPC-Typsicherheit gewahrt.
 * Liefere Code, der **sofort kompiliert** und **gut kommentiert** ist.
-* Bevor du eine Story als fertig markierst: einen einfachen **tRPC-Integrationstest** generieren, der das DTO-Stripping (z.B. kein `isCorrect` an Studenten in ACTIVE) verifiziert.
+* Liefer bei jeder Story die **DoD-Tests mit** (siehe Abschnitt „Test-Regel: Tests gehören zur Story“).
+* Bevor du eine Story als fertig markierst: einen einfachen **tRPC-Integrationstest** generieren, der das DTO-Stripping (z.B. kein `isCorrect` an Studenten in ACTIVE) verifiziert, sofern die Story Frage-Auslieferung betrifft.
 
 ## 🧪 Unit-Tests (Angular Style Guide)
 * **Platzierung:** Unit-Test-Dateien liegen **im gleichen Ordner** wie die zu testende Datei (z.B. Komponente, Service, Pipe).
 * **Benennung:** Gleicher Basis-Dateiname + `.spec.ts` (z.B. `home.component.ts` → `home.component.spec.ts`, `preset-toast.component.ts` → `preset-toast.component.spec.ts`).
 * **Eine Spec pro Artefakt:** Jede Komponente/Service hat ihre eigene Spec-Datei; keine zentralen Test-Sammlungen. Tests für eine Komponente gehören in die Spec **neben** dieser Komponente.
 * **Stack:** Vitest + `@analogjs/vitest-angular`; Specs werden von `tsconfig.spec.json` (include: `src/**/*.spec.ts`) erfasst.
+
+### Test-Regel: Tests gehören zur Story (DoD)
+* **Unit-Tests sind Teil der Story, keine spätere Phase.** Eine Story gilt erst als fertig, wenn die in der DoD geforderten Tests mitgeliefert sind.
+* **Backend (tRPC):** Pro neuer Query/Mutation/Subscription mindestens: **ein Happy-Path-Test** (gültige Eingabe → erwartete Ausgabe) und **ein Fehlerfall** (ungültige Eingabe, NOT_FOUND, Rate-Limit o.ä.). Tests liegen in `apps/backend/src/__tests__/` (z.B. pro Router oder thematisch gruppiert).
+* **Frontend:** Pro neuer Komponente/Service eine Spec-Datei im gleichen Ordner; kritische Logik und Nutzerinteraktionen abdecken.
+* Bevor eine Story als „fertig“ markiert wird: Tests ausführen (`npm run test -w @arsnova/backend` bzw. `-w @arsnova/frontend`) und DoD-Check (inkl. DTO-Stripping-Tests wo relevant).
 
 ## 📐 Zusätzliche Angular-Details (zu .cursorrules)
 * **RxJS:** Nur für asynchrone Streams (WebSockets, tRPC-Subscriptions) oder z.B. Debouncing – **niemals** für einfachen UI-State (`BehaviorSubject` ist verboten).

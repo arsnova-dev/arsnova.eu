@@ -330,12 +330,19 @@ export type LiveFreetextDTO = z.infer<typeof LiveFreetextDTOSchema>;
 export const ActiveQuizIdsDTOSchema = z.array(z.uuid());
 export type ActiveQuizIdsDTO = z.infer<typeof ActiveQuizIdsDTOSchema>;
 
-/** DTO: Teilnehmer-Info */
+/** DTO: Teilnehmer-Info (Story 2.2 Lobby). */
 export const ParticipantDTOSchema = z.object({
   id: z.uuid(),
   nickname: z.string(),
 });
 export type ParticipantDTO = z.infer<typeof ParticipantDTOSchema>;
+
+/** Payload: Teilnehmerliste einer Session (Story 2.2 – getParticipants / onParticipantJoined). */
+export const SessionParticipantsPayloadSchema = z.object({
+  participants: z.array(ParticipantDTOSchema),
+  participantCount: z.number(),
+});
+export type SessionParticipantsPayload = z.infer<typeof SessionParticipantsPayloadSchema>;
 
 /** DTO: Leaderboard-Eintrag (Story 4.1) */
 export const LeaderboardEntryDTOSchema = z.object({

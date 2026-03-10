@@ -83,6 +83,26 @@
   color: var(--mat-sys-primary);
 }
 
+.session-lobby__list {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.session-lobby__list-item {
+  padding: 0.25rem 0;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
 .session-lobby__quiz-name {
   margin: 0;
   font: var(--mat-sys-body-medium);
