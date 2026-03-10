@@ -38,7 +38,7 @@ export function feedbackDisplayLabel(key: string, type: string): string {
 export function feedbackTitle(type: string): string {
   switch (type) {
     case 'MOOD': return 'Stimmungsbild';
-    case 'YESNO': return 'Ja / Nein / Vielleicht';
+    case 'YESNO': return 'ja · nein · vielleicht';
     case 'ABCD': return 'ABCD-Voting';
     default: return 'Feedback';
   }

@@ -7,6 +7,7 @@
   </mat-card>
 } @else if (result(); as data) {
   <div class="feedback-host">
+    <div class="feedback-host__wrapper">
     <section class="feedback-host__join">
       @if (qrDataUrl()) {
         <img [src]="qrDataUrl()" alt="QR-Code zum Beitreten" class="feedback-host__qr" />
@@ -64,6 +65,7 @@
         }
       </div>
     </section>
+    </div>
   </div>
 } @else {
   <div class="feedback-host__loading">

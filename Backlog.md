@@ -47,6 +47,7 @@
 | 2    | 2.4   | Security / Data-Stripping                     | 🔴   | ⬜ Offen  |
 | 2    | 2.5   | Beamer-Ansicht / Presenter-Mode               | 🔴   | ⬜ Offen  |
 | 2    | 2.6   | Zwei-Phasen-Frageanzeige (Lesephase)          | 🟡   | ⬜ Offen  |
+| 2    | 2.7   | Peer Instruction (zweite Abstimmung, Vorher/Nachher) | 🟡   | ⬜ Offen  |
 | 3    | 3.1   | Beitreten                                     | 🔴   | ⬜ Offen  |
 | 3    | 3.2   | Nicknames                                     | 🟡   | ⬜ Offen  |
 | 3    | 3.3a  | Frage empfangen                               | 🔴   | ⬜ Offen  |
@@ -87,7 +88,7 @@
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 23 · 🟡 Should: 31 · 🟢 Could: 14 = **68 Storys gesamt**
+> **Statistik:** 🔴 Must: 23 · 🟡 Should: 32 · 🟢 Could: 14 = **69 Storys gesamt**
 
 ---
 
@@ -479,6 +480,20 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - **Security:** Während `QUESTION_OPEN` werden weder `isCorrect` noch die Antwortoptionen an Studenten gesendet — das DTO-Stripping (Story 2.4) greift bereits in dieser Phase.
     - **Barrierefreiheit:** Der Übergang von Phase 1 zu Phase 2 wird via `aria-live="polite"` angekündigt, damit Screenreader-Nutzer den Wechsel mitbekommen.
   - **Abhängigkeiten:** Story 2.3 (Steuerung), Story 2.4 (Security), Story 2.5 (Beamer), Story 3.3a (Frage empfangen), Story 3.5 (Countdown).
+- **Story 2.7 (Peer Instruction – zweite Abstimmung, Vorher/Nachher):** 🟡 Als Dozent möchte ich die Methode **Peer Instruction** (Eric Mazur) umsetzen können: **Zwei Abstimmrunden** mit Zwischendiskussion, wobei die erste Runde für die Dauer der Session gespeichert und mit der zweiten Runde verglichen wird, damit der Lernerfolg durch Peer-Diskussion sichtbar wird.
+  - **Hintergrund (Peer Instruction):** Konzeptfrage bzw. Abstimmungsthema stellen → **erste Abstimmung** (individuell) → kurze **Peer-Diskussion** (Sitznachbarn überzeugen) → **zweite Abstimmung** (revidierte Antwort) → Auflösung. Die Vergleichsanzeige Vorher/Nachher macht den Effekt der Diskussion deutlich.
+  - **Zwei Anwendungsfälle:** (1) **Blitz-Feedback:** Peer Instruction erfolgt mit **zwei Blitz-Feedback-Runden** desselben Typs (z. B. Stimmungsbild, ja/nein/vielleicht oder ABCD): erste Runde starten → Ergebnis nicht auflösen, Hinweis „Diskutiert mit eurem Nachbarn“ → zweite Runde (gleicher Code/Session) → Vorher/Nachher-Anzeige. (2) **Quiz:** Optional bei MC/SC-Fragen zwei Abstimmrunden pro Frage mit Diskussionsphase dazwischen (wie unten).
+  - **Akzeptanzkriterien:**
+    - **Blitz-Feedback (Hauptfall):** In einer Blitz-Feedback-Session können **zwei Runden** derselben Abstimmung durchgeführt werden. Die **erste Runde** wird gespeichert; nach Aufforderung zur Diskussion (ohne Auflösung) startet der Dozent die **zweite Runde** (weiterhin derselbe Session-Code). Nach der zweiten Runde wird ein **Doppel-Balkendiagramm (Vorher/Nachher)** angezeigt. Beide Runden bleiben nur für die Dauer der Session gespeichert.
+    - **Quiz (optional):** Der Dozent kann bei MC/SC-Fragen optional „Peer Instruction“ aktivieren. Dann: Zwei getrennte Abstimmphasen pro Frage; zwischen den Phasen keine Auflösung, nur Aufforderung zur Diskussion (z. B. „Tauscht euch mit eurem Nachbarn aus – zweite Abstimmung gleich.“).
+    - **Erste Abstimmung:** Wie bisher (Story 3.3b) – Teilnehmende geben ihre erste Antwort ab. Diese **erste Runde** wird **pro Frage und Session** serverseitig gespeichert (z. B. `Vote.round = 1` oder separates Aggregat „Round1“). Nach Ende der ersten Runde wechselt die UI in eine **Diskussionsphase** (Beamer: Hinweis „Diskutiert mit eurem Nachbarn“; Teilnehmende sehen keine Auflösung).
+    - **Zweite Abstimmung:** Dozent startet die zweite Runde (z. B. Button „Zweite Abstimmung“). Teilnehmende können **neu abstimmen** (ggf. gleiche oder geänderte Antwort). Zweite Runde wird ebenfalls gespeichert (`round = 2` bzw. „Round2“). Danach erfolgt die normale Auflösung (Ergebnis anzeigen, Story 4.4).
+    - **Speicherdauer:** Die Daten der ersten Runde werden nur **für die Dauer der Session** vorgehalten (z. B. Redis/Prisma wie andere Votes). Nach Session-Ende (Story 4.2) werden sie mit gelöscht – kein dauerhafter Vergleich über Sessions hinweg.
+    - **Anzeige Vorher/Nachher:** In der Ergebnisphase (`RESULTS`) wird bei Peer-Instruction-Fragen eine **Vergleichsdarstellung** angezeigt:
+      - **Doppel-Balkendiagramm (oder vergleichbar):** Pro Antwortoption zwei Balken nebeneinander oder übereinander: **Vorher** (erste Runde) und **Nachher** (zweite Runde), z. B. farblich unterschieden (Vorher: dezent/grau, Nachher: kräftig/primary). So ist auf einen Blick sichtbar, wie sich die Verteilung durch die Diskussion geändert hat.
+      - Alternative/Ergänzung: Zusätzliche Kennzahlen (z. B. „Richtig in Runde 1: 45 % → Runde 2: 72 %“) für schnelle Einordnung.
+    - **Beamer & Dozenten-Steuerung:** Die Vorher/Nachher-Visualisierung erscheint in der Beamer-Ansicht (Story 2.5) und in der Dozenten-Ergebnisansicht. Barrierefrei: Balken mit `aria-label`/`role`, sinnvolle Kontraste (Story 6.5).
+  - **Abhängigkeiten:** Story 2.3 (Steuerung), Story 2.5 (Beamer), Story 3.3b (Abstimmung), Story 4.4 (Ergebnis-Visualisierung), Story 4.2 (Session-Cleanup für Speicherdauer).
 
 ---
 
