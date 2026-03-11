@@ -1,16 +1,23 @@
 import { DecimalPipe, DOCUMENT } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, signal, computed, effect } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
+import { firstValueFrom } from 'rxjs';
 import QRCode from 'qrcode';
 import type { Unsubscribable } from '@trpc/server/observable';
 import type { Subscription } from 'rxjs';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { ThemePresetService } from '../../../core/theme-preset.service';
+import { SoundService } from '../../../core/sound.service';
+import {
+  ConfirmLeaveDialogComponent,
+  type ConfirmLeaveDialogData,
+} from '../../../shared/confirm-leave-dialog/confirm-leave-dialog.component';
 import type {
   BonusTokenEntryDTO,
   HostCurrentQuestionDTO,
@@ -62,6 +69,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly themePreset = inject(ThemePresetService);
+  private readonly sound = inject(SoundService);
+  private readonly dialog = inject(MatDialog);
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private readonly code = this.route.parent?.snapshot.paramMap.get('code') ?? '';
   readonly freetextResponses = signal<string[]>([]);
@@ -104,17 +113,39 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     return votes >= participants;
   });
 
+  private previousStatus: string | null = null;
+
   constructor() {
     effect(() => {
       if (this.allHaveVoted()) {
         this.stopCountdown();
         this.countdownSeconds.set(null);
+        this.sound.stopAllSfx();
       }
     });
     effect(() => {
       const status = this.effectiveStatus();
       if (status === 'FINISHED' || status === 'RESULTS') {
         void this.loadLeaderboard();
+      }
+    });
+    // Story 5.1: Sound-Effekte bei Status-Wechsel
+    effect(() => {
+      const status = this.effectiveStatus();
+      const prev = this.previousStatus;
+      this.previousStatus = status;
+      if (!status || status === prev) return;
+      const settings = this.session();
+      if (!settings?.enableSoundEffects) return;
+      this.sound.unlock();
+      if (status === 'ACTIVE' && prev !== 'ACTIVE') {
+        this.sound.stopAllSfx();
+        void this.sound.play('questionStart');
+      } else if (status === 'FINISHED') {
+        this.sound.stopAllSfx();
+        void this.sound.play('sessionEnd');
+      } else if (status === 'RESULTS' || status === 'QUESTION_OPEN') {
+        this.sound.stopAllSfx();
       }
     });
   }
@@ -160,7 +191,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.pollTimer = setInterval(() => {
       void this.refreshLiveFreetext();
       void this.refreshCurrentQuestionForHost();
+      this.syncMusic();
     }, 2000);
+    this.syncMusic();
 
     if (this.code.length === 6) {
       this.participantSub = trpc.session.onParticipantJoined.subscribe(
@@ -186,8 +219,17 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         const preset = this.themePreset.preset() === 'serious' ? 'SERIOUS' as const : 'PLAYFUL' as const;
         void trpc.session.updatePreset.mutate({ code: this.code.toUpperCase(), preset });
       });
+
+      this.document.addEventListener('click', this.unlockListener, { once: true });
+      this.document.addEventListener('keydown', this.unlockListener, { once: true });
     }
   }
+
+  private unlockListener = (): void => {
+    this.sound.unlock();
+    this.document.removeEventListener('click', this.unlockListener);
+    this.document.removeEventListener('keydown', this.unlockListener);
+  };
 
   ngOnDestroy(): void {
     this.participantSub?.unsubscribe();
@@ -201,6 +243,60 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.pollTimer = null;
     }
     this.stopCountdown();
+    this.sound.stopAll();
+    this.document.removeEventListener('click', this.unlockListener);
+    this.document.removeEventListener('keydown', this.unlockListener);
+  }
+
+  /** Warnt den Host, wenn er den Tab schließt oder die Seite neu lädt. */
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.isSessionActive()) {
+      event.preventDefault();
+    }
+  }
+
+  /** Prüft, ob die Session noch läuft (nicht FINISHED und nicht null). */
+  private isSessionActive(): boolean {
+    const status = this.effectiveStatus();
+    return status !== null && status !== 'FINISHED';
+  }
+
+  /**
+   * CanDeactivate-Guard-Hook: zeigt einen Bestätigungsdialog,
+   * wenn die Session noch läuft.
+   */
+  async canDeactivate(): Promise<boolean> {
+    if (!this.isSessionActive()) return true;
+
+    const status = this.effectiveStatus();
+    const participants = this.participantsPayload()?.participantCount ?? 0;
+
+    const consequences: string[] = [
+      'Die Session läuft im Hintergrund weiter – Teilnehmende bleiben verbunden.',
+      'Du verlierst die Steuerung (nächste Frage, Timer, Ergebnisse zeigen).',
+    ];
+    if (participants > 0) {
+      consequences.push(`${participants} Teilnehmende warten auf deine Steuerung.`);
+    }
+    if (status === 'ACTIVE' || status === 'QUESTION_OPEN') {
+      consequences.push('Die aktuelle Frage bleibt offen – kein automatisches Weiterschalten.');
+    }
+
+    const dialogRef = this.dialog.open(ConfirmLeaveDialogComponent, {
+      data: {
+        title: 'Session verlassen?',
+        message: 'Deine Session ist noch aktiv.',
+        consequences,
+        confirmLabel: 'Trotzdem verlassen',
+        cancelLabel: 'Zurück zur Session',
+      } satisfies ConfirmLeaveDialogData,
+      width: '26rem',
+      autoFocus: 'dialog',
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+    return result === true;
   }
 
   private startCountdown(timerSeconds: number | null | undefined, activeAt?: string): void {
@@ -216,6 +312,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const tick = (): void => {
       const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
       this.countdownSeconds.set(remaining);
+      if (remaining > 0 && remaining <= 5 && this.session()?.enableSoundEffects) {
+        void this.sound.play('countdownTick');
+      }
       if (remaining <= 0) {
         this.stopCountdown();
         this.countdownSeconds.set(0);
@@ -234,6 +333,31 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private stopCountdown(): void {
     if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
     if (this.fingerHideTimeout) { clearTimeout(this.fingerHideTimeout); this.fingerHideTimeout = null; }
+  }
+
+  /**
+   * Imperatives Musik-Sync: startet/stoppt Hintergrundmusik.
+   * Wird vom Poll-Timer alle 2s aufgerufen – komplett unabhängig
+   * von Angular Effects. Liest Signals direkt.
+   */
+  private musicStartPending = false;
+
+  private syncMusic(): void {
+    const status = this.effectiveStatus();
+    const track = this.session()?.backgroundMusic;
+    const allVoted = this.allHaveVoted();
+    const shouldPlay = !!track
+      && !allVoted
+      && (status === 'LOBBY' || status === 'ACTIVE' || status === 'QUESTION_OPEN');
+
+    if (shouldPlay && !this.sound.musicPlaying() && !this.musicStartPending) {
+      this.musicStartPending = true;
+      this.sound.playMusic(track as import('../../../core/sound.service').MusicTrack)
+        .finally(() => { this.musicStartPending = false; });
+    } else if (!shouldPlay) {
+      this.musicStartPending = false;
+      this.sound.stopMusic();
+    }
   }
 
   async exportFreetextSessionCsv(): Promise<void> {
@@ -299,6 +423,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.stopCountdown();
       this.countdownSeconds.set(null);
       const result = await trpc.session.nextQuestion.mutate({ code: this.code.toUpperCase() });
+      this.currentQuestionForHost.set(null);
       this.statusUpdate.set(result);
       await this.refreshCurrentQuestionForHost();
       if (result.status === 'ACTIVE') {
@@ -314,6 +439,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.controlPending.set(true);
     try {
       const result = await trpc.session.revealAnswers.mutate({ code: this.code.toUpperCase() });
+      this.currentQuestionForHost.set(null);
       this.statusUpdate.set(result);
       await this.refreshCurrentQuestionForHost();
       this.startCountdown(this.currentQuestionForHost()?.timer, result.activeAt);
@@ -355,6 +481,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.controlPending.set(true);
     try {
       const result = await trpc.session.startSecondRound.mutate({ code: this.code.toUpperCase() });
+      this.currentQuestionForHost.set(null);
       this.statusUpdate.set(result);
       await this.refreshCurrentQuestionForHost();
       this.startCountdown(this.currentQuestionForHost()?.timer, result.activeAt);

@@ -504,6 +504,7 @@ export type TeamLeaderboardEntryDTO = z.infer<typeof TeamLeaderboardEntryDTOSche
 export const SendEmojiReactionInputSchema = z.object({
   sessionId: z.uuid(),
   questionId: z.uuid(),
+  participantId: z.uuid(),
   emoji: z.enum(EMOJI_REACTIONS),
 });
 export type SendEmojiReactionInput = z.infer<typeof SendEmojiReactionInputSchema>;

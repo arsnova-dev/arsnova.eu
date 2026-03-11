@@ -56,21 +56,21 @@
 | 3    | 3.5   | Countdown-Anzeige                             | 🔴   | ✅ Fertig |
 | 3    | 3.5a  | Countdown Finger-Anzeige (letzte 6 Sekunden)   | 🟡   | ✅ Fertig |
 | 3    | 3.6   | Anonymer Modus                                | 🟡   | ✅ Fertig |
-| 4    | 4.1   | Leaderboard mit Punktesystem                  | 🟡   | ⬜ Offen  |
-| 4    | 4.2   | Server aufräumen                              | 🔴   | ⬜ Offen  |
-| 4    | 4.3   | WebSocket Reconnection                        | 🟡   | ⬜ Offen  |
-| 4    | 4.4   | Ergebnis-Visualisierung                       | 🔴   | ⬜ Offen  |
-| 4    | 4.5   | Freitext-Auswertung                           | 🟡   | ⬜ Offen  |
-| 4    | 4.6   | Bonus-Code für Top-Platzierungen               | 🟡   | ⬜ Offen  |
-| 4    | 4.7   | Ergebnis-Export für Dozenten (anonym)         | 🟡   | ⬜ Offen  |
-| 4    | 4.8   | Session-Bewertung durch Teilnehmende          | 🟡   | ⬜ Offen  |
-| 5    | 5.1   | Sound-Effekte                                 | 🟡   | ⬜ Offen  |
-| 5    | 5.3   | Hintergrundmusik                              | 🟢   | ⬜ Offen  |
-| 5    | 5.4   | Belohnungseffekte                             | 🟡   | ⬜ Offen  |
-| 5    | 5.5   | Answer Streak                                 | 🟡   | ⬜ Offen  |
-| 5    | 5.6   | Persönliche Scorecard                         | 🔴   | ⬜ Offen  |
-| 5    | 5.7   | Motivationsmeldungen                          | 🟡   | ⬜ Offen  |
-| 5    | 5.8   | Emoji-Reaktionen                              | 🟢   | ⬜ Offen  |
+| 4    | 4.1   | Leaderboard mit Punktesystem                  | 🟡   | ✅ Fertig |
+| 4    | 4.2   | Server aufräumen                              | 🔴   | ✅ Fertig |
+| 4    | 4.3   | WebSocket Reconnection                        | 🟡   | ✅ Fertig |
+| 4    | 4.4   | Ergebnis-Visualisierung                       | 🔴   | ✅ Fertig |
+| 4    | 4.5   | Freitext-Auswertung                           | 🟡   | ✅ Fertig |
+| 4    | 4.6   | Bonus-Code für Top-Platzierungen               | 🟡   | ✅ Fertig |
+| 4    | 4.7   | Ergebnis-Export für Dozenten (anonym)         | 🟡   | ✅ Fertig |
+| 4    | 4.8   | Session-Bewertung durch Teilnehmende          | 🟡   | ✅ Fertig |
+| 5    | 5.1   | Sound-Effekte                                 | 🟡   | ✅ Fertig |
+| 5    | 5.3   | Hintergrundmusik                              | 🟢   | ✅ Fertig |
+| 5    | 5.4   | Belohnungseffekte                             | 🟡   | ✅ Fertig |
+| 5    | 5.5   | Answer Streak                                 | 🟡   | ✅ Fertig |
+| 5    | 5.6   | Persönliche Scorecard                         | 🔴   | ✅ Fertig |
+| 5    | 5.7   | Motivationsmeldungen                          | 🟡   | ✅ Fertig |
+| 5    | 5.8   | Emoji-Reaktionen                              | 🟢   | ✅ Fertig |
 | 6    | 6.1   | Dark/Light/System-Theme                       | 🟡   | ⬜ Offen  |
 | 6    | 6.2   | Internationalisierung                         | 🟡   | ⬜ Offen  |
 | 6    | 6.3   | Impressum & Datenschutz                       | 🔴   | ⬜ Offen  |
@@ -687,7 +687,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Ein kurzer Sound signalisiert den Start einer neuen Frage (`SessionStatus.ACTIVE`).
     - Ein Tick-Sound begleitet die letzten 5 Sekunden des Countdowns.
     - Der Dozent kann Sounds global an/aus schalten (Quiz-Konfiguration `enableSoundEffects`, default: an).
-    - Sound-Dateien werden als statische Assets im Frontend gebundelt (kein Server-Roundtrip).
+    - Sound-Dateien liegen unter **`apps/frontend/src/assets/sound`** und werden als statische Assets gebundelt (kein Server-Roundtrip).
     - Sounds werden über die Web Audio API abgespielt und respektieren die Browser-Autoplay-Policy (erster Klick aktiviert Audio-Context).
 - ~~**Story 5.2~~ → verschoben nach Story 3.5** *(Countdown-Anzeige gehört zur Kern-Abstimmung, nicht zur Gamification — siehe Epic 3)*
 - **Story 5.3 (Hintergrundmusik):** 🟢 Als Dozent möchte ich eine Hintergrundmusik während der Lobby- und Countdown-Phase abspielen können, um eine spielerische Stimmung zu erzeugen.
@@ -696,7 +696,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Musik wird nur auf dem Beamer/Dozenten-Gerät abgespielt, **nicht** auf den Smartphones der Studenten.
     - Musik stoppt automatisch, wenn eine Frage aufgelöst wird (`SessionStatus.RESULTS`).
     - Lautstärkeregler (0–100 %) in der Dozenten-Ansicht.
-    - Musik-Dateien sind lizenzfrei und werden als Assets gebundelt.
+    - Musik-Dateien liegen unter **`apps/frontend/src/assets/sound`** (z.B. `lobby/`), sind lizenzfrei und werden als Assets gebundelt.
     - Konfigurierbar pro Quiz (`backgroundMusic: string | null`).
 - **Story 5.4 (Belohnungseffekte bei Platzierung):** 🟡 Als Student möchte ich bei einer vorderen Platzierung im Leaderboard eine visuelle Belohnung sehen, damit der Wettbewerb motivierend wird.
   - **Akzeptanzkriterien:**

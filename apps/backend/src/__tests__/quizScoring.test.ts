@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   calculateVoteScore,
+  getStreakMultiplier,
+  questionAffectsStreak,
   questionCountsTowardsTotalQuestions,
 } from '../lib/quizScoring';
 
@@ -67,6 +69,38 @@ describe('quizScoring', () => {
         correctAnswerIds: ['a1', 'a2'],
       }),
     ).toBe(0);
+  });
+
+  describe('getStreakMultiplier (Story 5.5)', () => {
+    it('gibt ×1.0 für Streak 0 und 1', () => {
+      expect(getStreakMultiplier(0)).toBe(1.0);
+      expect(getStreakMultiplier(1)).toBe(1.0);
+    });
+
+    it('gibt steigende Multiplikatoren für 2-4', () => {
+      expect(getStreakMultiplier(2)).toBe(1.1);
+      expect(getStreakMultiplier(3)).toBe(1.2);
+      expect(getStreakMultiplier(4)).toBe(1.3);
+    });
+
+    it('gibt ×1.5 für 5+ Streak', () => {
+      expect(getStreakMultiplier(5)).toBe(1.5);
+      expect(getStreakMultiplier(10)).toBe(1.5);
+      expect(getStreakMultiplier(99)).toBe(1.5);
+    });
+  });
+
+  describe('questionAffectsStreak (Story 5.5)', () => {
+    it('SC und MC beeinflussen den Streak', () => {
+      expect(questionAffectsStreak('SINGLE_CHOICE')).toBe(true);
+      expect(questionAffectsStreak('MULTIPLE_CHOICE')).toBe(true);
+    });
+
+    it('FREETEXT, SURVEY und RATING unterbrechen den Streak nicht', () => {
+      expect(questionAffectsStreak('FREETEXT')).toBe(false);
+      expect(questionAffectsStreak('SURVEY')).toBe(false);
+      expect(questionAffectsStreak('RATING')).toBe(false);
+    });
   });
 });
 

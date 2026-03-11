@@ -26,6 +26,7 @@ import {
   BonusTokenListDTOSchema,
   SubmitSessionFeedbackInputSchema,
   SessionFeedbackSummarySchema,
+  PersonalScorecardDTOSchema,
   type SessionExportDTO,
   type QuestionExportEntry,
   type QuestionType,
@@ -37,8 +38,21 @@ import {
   type RoundDistributionEntry,
   type VoterMigrationEntry,
   UpdateSessionPresetInputSchema,
+  SendEmojiReactionInputSchema,
+  EMOJI_REACTIONS,
 } from '@arsnova/shared-types';
-import { questionCountsTowardsTotalQuestions } from '../lib/quizScoring';
+import { questionCountsTowardsTotalQuestions, questionAffectsStreak } from '../lib/quizScoring';
+
+/**
+ * In-Memory-Store für Emoji-Reaktionen (Story 5.8).
+ * Key: `sessionId:questionId`, Value: Map<participantId, emoji>.
+ * Flüchtig – kein Redis/DB nötig.
+ */
+const emojiStore = new Map<string, Map<string, string>>();
+
+function getEmojiKey(sessionId: string, questionId: string): string {
+  return `${sessionId}:${questionId}`;
+}
 import { publicProcedure, router, getClientIp } from '../trpc';
 import { prisma } from '../db';
 import {
@@ -1258,6 +1272,145 @@ export const sessionRouter = router({
       };
     }),
 
+  /** Persönliche Scorecard nach einer Frage (Story 5.6). Abrufbar bei Status RESULTS oder FINISHED. */
+  getPersonalScorecard: publicProcedure
+    .input(z.object({
+      code: z.string().length(6),
+      participantId: z.string().uuid(),
+      questionIndex: z.number().int().min(0),
+      round: z.number().int().min(1).max(2).optional().default(1),
+    }))
+    .output(PersonalScorecardDTOSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: {
+          quiz: {
+            include: {
+              questions: {
+                orderBy: { order: 'asc' },
+                include: { answers: { select: { id: true, isCorrect: true } } },
+              },
+            },
+          },
+          participants: { select: { id: true } },
+        },
+      });
+      if (!session?.quiz) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session oder Quiz nicht gefunden.' });
+      }
+      if (!['RESULTS', 'FINISHED', 'DISCUSSION', 'PAUSED'].includes(session.status)) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Scorecard nur bei RESULTS, DISCUSSION, PAUSED oder FINISHED verfügbar.' });
+      }
+
+      const question = session.quiz.questions[input.questionIndex];
+      if (!question) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Frage nicht gefunden.' });
+      }
+
+      const questionType = question.type as QuestionType;
+      const isScored = questionAffectsStreak(questionType);
+      const correctIds = question.answers.filter((a) => a.isCorrect).map((a) => a.id);
+
+      const myVote = await prisma.vote.findUnique({
+        where: {
+          sessionId_participantId_questionId_round: {
+            sessionId: session.id,
+            participantId: input.participantId,
+            questionId: question.id,
+            round: input.round,
+          },
+        },
+        select: { score: true, streakCount: true, streakBonus: true, selectedAnswers: { select: { answerOptionId: true } } },
+      });
+
+      const baseScore = myVote && isScored
+        ? (myVote.streakBonus > 0 ? Math.round(myVote.score / myVote.streakBonus) : myVote.score)
+        : 0;
+      const streakCount = myVote?.streakCount ?? 0;
+      const streakMultiplier = myVote?.streakBonus ?? 1.0;
+      const questionScore = myVote?.score ?? 0;
+
+      let wasCorrect: boolean | null = null;
+      if (isScored && myVote) {
+        const selectedSet = new Set(myVote.selectedAnswers.map((a) => a.answerOptionId));
+        const correctSet = new Set(correctIds);
+        wasCorrect = selectedSet.size === correctSet.size && [...selectedSet].every((id) => correctSet.has(id));
+      }
+
+      // Alle Votes bis einschließlich dieser Frage (für Ranking)
+      const questionsUpToNow = session.quiz.questions.slice(0, input.questionIndex + 1).map((q) => q.id);
+      const allVotes = await prisma.vote.findMany({
+        where: {
+          sessionId: session.id,
+          round: input.round,
+          questionId: { in: questionsUpToNow },
+        },
+        select: { participantId: true, score: true, responseTimeMs: true },
+      });
+
+      const totals = new Map<string, { totalScore: number; totalResponseTimeMs: number }>();
+      for (const p of session.participants) {
+        totals.set(p.id, { totalScore: 0, totalResponseTimeMs: 0 });
+      }
+      for (const v of allVotes) {
+        const t = totals.get(v.participantId);
+        if (!t) continue;
+        t.totalScore += v.score;
+        t.totalResponseTimeMs += v.responseTimeMs ?? 0;
+      }
+
+      const ranked = [...totals.entries()]
+        .map(([pid, s]) => ({ pid, ...s }))
+        .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+      const currentRank = ranked.findIndex((e) => e.pid === input.participantId) + 1 || ranked.length + 1;
+      const totalScore = totals.get(input.participantId)?.totalScore ?? 0;
+
+      // Vorheriger Rang (nach vorheriger Frage)
+      let previousRank: number | null = null;
+      if (input.questionIndex > 0) {
+        const prevQuestionIds = session.quiz.questions.slice(0, input.questionIndex).map((q) => q.id);
+        const prevVotes = await prisma.vote.findMany({
+          where: {
+            sessionId: session.id,
+            round: input.round,
+            questionId: { in: prevQuestionIds },
+          },
+          select: { participantId: true, score: true, responseTimeMs: true },
+        });
+        const prevTotals = new Map<string, { totalScore: number; totalResponseTimeMs: number }>();
+        for (const p of session.participants) {
+          prevTotals.set(p.id, { totalScore: 0, totalResponseTimeMs: 0 });
+        }
+        for (const v of prevVotes) {
+          const t = prevTotals.get(v.participantId);
+          if (!t) continue;
+          t.totalScore += v.score;
+          t.totalResponseTimeMs += v.responseTimeMs ?? 0;
+        }
+        const prevRanked = [...prevTotals.entries()]
+          .map(([pid, s]) => ({ pid, ...s }))
+          .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+        previousRank = prevRanked.findIndex((e) => e.pid === input.participantId) + 1 || prevRanked.length + 1;
+      }
+
+      const rankChange = previousRank !== null ? previousRank - currentRank : 0;
+
+      return {
+        questionOrder: input.questionIndex + 1,
+        wasCorrect,
+        correctAnswerIds: wasCorrect === false ? correctIds : undefined,
+        questionScore,
+        baseScore,
+        streakCount,
+        streakMultiplier,
+        currentRank,
+        previousRank,
+        rankChange,
+        totalScore,
+      };
+    }),
+
   /** Persönliches Ergebnis für einen Studenten (Story 4.6: Bonus-Code). */
   getPersonalResult: publicProcedure
     .input(z.object({
@@ -1596,5 +1749,67 @@ export const sessionRouter = router({
         wouldRepeatYes: repeatYes,
         wouldRepeatNo: repeatNo,
       };
+    }),
+
+  /** Emoji-Reaktion senden (Story 5.8). Max 1 pro Teilnehmer pro Frage. */
+  react: publicProcedure
+    .input(SendEmojiReactionInputSchema)
+    .output(z.object({ ok: z.boolean() }))
+    .mutation(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { id: input.sessionId },
+        select: { id: true, status: true, quizId: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      if (session.status !== 'RESULTS') {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen nur in der Ergebnis-Phase.' });
+      }
+
+      const quiz = session.quizId ? await prisma.quiz.findUnique({
+        where: { id: session.quizId },
+        select: { enableEmojiReactions: true },
+      }) : null;
+      if (!quiz?.enableEmojiReactions) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen sind deaktiviert.' });
+      }
+
+      const key = getEmojiKey(input.sessionId, input.questionId);
+      let map = emojiStore.get(key);
+      if (!map) {
+        map = new Map();
+        emojiStore.set(key, map);
+      }
+
+      map.set(input.participantId, input.emoji);
+
+      return { ok: true };
+    }),
+
+  /** Emoji-Reaktionen für eine Frage abrufen (Story 5.8, Host/Beamer). */
+  getReactions: publicProcedure
+    .input(z.object({
+      sessionId: z.string().uuid(),
+      questionId: z.string().uuid(),
+    }))
+    .output(z.object({
+      reactions: z.record(z.string(), z.number()),
+      total: z.number(),
+    }))
+    .query(({ input }) => {
+      const key = getEmojiKey(input.sessionId, input.questionId);
+      const map = emojiStore.get(key);
+      if (!map || map.size === 0) {
+        const empty: Record<string, number> = {};
+        for (const e of EMOJI_REACTIONS) empty[e] = 0;
+        return { reactions: empty, total: 0 };
+      }
+      const counts: Record<string, number> = {};
+      for (const e of EMOJI_REACTIONS) counts[e] = 0;
+      for (const emoji of map.values()) {
+        if (emoji in counts) counts[emoji]++;
+      }
+      return { reactions: counts, total: map.size };
     }),
 });

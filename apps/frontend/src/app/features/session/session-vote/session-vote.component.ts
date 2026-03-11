@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { ThemePresetService } from '../../../core/theme-preset.service';
-import type { SessionStatus, SessionInfoDTO, QuestionStudentDTO, QuestionPreviewDTO, QuestionRevealedDTO } from '@arsnova/shared-types';
+import type { SessionStatus, SessionInfoDTO, QuestionStudentDTO, QuestionPreviewDTO, QuestionRevealedDTO, PersonalScorecardDTO } from '@arsnova/shared-types';
 import { CountdownFingersComponent } from '../../../shared/countdown-fingers/countdown-fingers.component';
 import type { Unsubscribable } from '@trpc/server/observable';
 
@@ -39,6 +39,27 @@ const MESSAGES_TIMEOUT = [
 ];
 function pickRandom(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/**
+ * Kontextbasierte Motivationsmeldung aus Scorecard-Daten (Story 5.7).
+ * Liefert eine passende Meldung basierend auf wasCorrect, streakCount, rankChange, currentRank und totalParticipants.
+ */
+function getContextMotivation(sc: PersonalScorecardDTO, totalParticipants: number): string {
+  if (sc.wasCorrect === true) {
+    if (sc.streakCount >= 3) return `On fire! 🔥 ${sc.streakCount}er-Serie!`;
+    if (sc.rankChange > 0) return `${sc.rankChange} ${sc.rankChange === 1 ? 'Platz' : 'Plätze'} aufgestiegen! 🚀`;
+    return pickRandom(['Perfekt! 🎯', 'Richtig! 💪', 'Volltreffer! ⭐', 'Stark! 🔥', 'Nailed it! 👏']);
+  }
+  if (sc.wasCorrect === false) {
+    if (sc.streakCount === 0 && sc.previousRank !== null && sc.previousRank < sc.currentRank) {
+      return 'Streak gerissen! Nächste Runde! 💪';
+    }
+    const topThird = Math.ceil(totalParticipants / 3);
+    if (sc.currentRank <= topThird) return 'Kopf hoch – du liegst noch gut! 🏅';
+    return 'Weiter so – jede Frage ist eine neue Chance! 🌟';
+  }
+  return pickRandom(MESSAGES_NEUTRAL);
 }
 
 @Component({
@@ -83,6 +104,15 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   readonly personalScore = signal<number | null>(null);
   readonly bonusToken = signal<string | null>(null);
   readonly personalResultLoaded = signal(false);
+
+  /** Story 5.6: Persönliche Scorecard pro Frage */
+  readonly scorecard = signal<PersonalScorecardDTO | null>(null);
+  private scorecardQuestionIndex = -1;
+
+  /** Story 5.8: Emoji-Reaktionen */
+  readonly emojiOptions = ['👏', '🎉', '😮', '😂', '😢'] as const;
+  readonly emojiSent = signal(false);
+  readonly emojiSentEmoji = signal('');
 
   readonly feedbackOverall = signal<number>(0);
   readonly feedbackQuality = signal<number>(0);
@@ -292,6 +322,10 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         this.motivationMessage.set(null);
         this.timeoutMessage.set(null);
         this.showRewardEffect.set(false);
+        this.scorecard.set(null);
+        this.scorecardQuestionIndex = -1;
+        this.emojiSent.set(false);
+        this.emojiSentEmoji.set('');
         this.startCountdown(q);
       } else if (!prevHadTimer && newHasTimer && !this.countdownTimer) {
         this.startCountdown(q);
@@ -319,6 +353,15 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
           }
         } else if (settings.enableMotivationMessages) {
           this.motivationMessage.set(pickRandom(MESSAGES_NEUTRAL));
+        }
+      }
+
+      // Story 5.6: Scorecard laden, wenn RESULTS und noch nicht geladen
+      if (q && this.isResults() && 'order' in q) {
+        const qOrder = (q as { order: number }).order;
+        if (qOrder !== this.scorecardQuestionIndex) {
+          this.scorecardQuestionIndex = qOrder;
+          void this.loadScorecard(qOrder);
         }
       }
 
@@ -389,6 +432,43 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.voteSending.set(false);
       setTimeout(() => this.debounced.set(false), 300);
     }
+  }
+
+  async sendEmoji(emoji: string): Promise<void> {
+    if (this.emojiSent()) return;
+    const q = this.currentQuestion();
+    const qId = q && 'id' in q ? q.id : null;
+    if (!qId || !this.sessionId() || !this.participantId()) return;
+    this.emojiSent.set(true);
+    this.emojiSentEmoji.set(emoji);
+    try {
+      await trpc.session.react.mutate({
+        sessionId: this.sessionId(),
+        questionId: qId,
+        participantId: this.participantId(),
+        emoji: emoji as '👏' | '🎉' | '😮' | '😂' | '😢',
+      });
+    } catch { /* noop */ }
+  }
+
+  async loadScorecard(questionIndex: number): Promise<void> {
+    const pid = this.participantId();
+    if (!this.code || !pid) return;
+    try {
+      const sc = await trpc.session.getPersonalScorecard.query({
+        code: this.code,
+        participantId: pid,
+        questionIndex,
+        round: this.currentRound(),
+      });
+      this.scorecard.set(sc);
+
+      const settings = this.sessionSettings();
+      if (settings.enableMotivationMessages) {
+        const totalParticipants = settings.participantCount ?? 1;
+        this.motivationMessage.set(getContextMotivation(sc, totalParticipants));
+      }
+    } catch { /* noop */ }
   }
 
   async loadPersonalResult(): Promise<void> {

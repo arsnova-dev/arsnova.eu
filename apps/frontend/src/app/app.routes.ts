@@ -1,4 +1,8 @@
-import { Routes } from '@angular/router';
+import { type CanDeactivateFn, Routes } from '@angular/router';
+import type { SessionHostComponent } from './features/session/session-host/session-host.component';
+
+const canDeactivateHost: CanDeactivateFn<SessionHostComponent> = (component) =>
+  component.canDeactivate();
 
 export const routes: Routes = [
   {
@@ -64,6 +68,7 @@ export const routes: Routes = [
           import('./features/session/session-host/session-host.component').then(
             (m) => m.SessionHostComponent
           ),
+        canDeactivate: [canDeactivateHost],
       },
       {
         path: 'present',

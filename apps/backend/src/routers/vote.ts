@@ -12,7 +12,7 @@ import {
 import { publicProcedure, router } from '../trpc';
 import { prisma } from '../db';
 import { checkVoteRate } from '../lib/rateLimit';
-import { calculateVoteScore } from '../lib/quizScoring';
+import { calculateVoteScore, getStreakMultiplier, questionAffectsStreak } from '../lib/quizScoring';
 
 export const voteRouter = router({
   submit: publicProcedure
@@ -156,16 +156,19 @@ export const voteRouter = router({
       });
       const timerSeconds = question.timer ?? quiz?.defaultTimer ?? null;
 
-      const score = calculateVoteScore({
+      const correctAnswerIds = question.answers
+        .filter((answer) => answer.isCorrect)
+        .map((answer) => answer.id);
+
+      const baseScore = calculateVoteScore({
         type: questionType,
         difficulty: question.difficulty as Difficulty,
         selectedAnswerIds: answerIds,
-        correctAnswerIds: question.answers
-          .filter((answer) => answer.isCorrect)
-          .map((answer) => answer.id),
+        correctAnswerIds,
         responseTimeMs: input.responseTimeMs ?? null,
         timerDurationMs: timerSeconds ? timerSeconds * 1000 : null,
       });
+
       const existing = await prisma.vote.findUnique({
         where: {
           sessionId_participantId_questionId_round: {
@@ -181,6 +184,33 @@ export const voteRouter = router({
         return { voteId: existing.id };
       }
 
+      // --- Streak (Story 5.5) ---
+      let streakCount = 0;
+      let streakMultiplier = 1.0;
+
+      if (questionAffectsStreak(questionType)) {
+        const isCorrect = baseScore > 0;
+
+        if (isCorrect) {
+          const previousVote = await prisma.vote.findFirst({
+            where: {
+              sessionId: input.sessionId,
+              participantId: input.participantId,
+              round,
+              streakCount: { gt: 0 },
+              question: { type: { in: ['SINGLE_CHOICE', 'MULTIPLE_CHOICE'] } },
+            },
+            orderBy: { votedAt: 'desc' },
+            select: { streakCount: true },
+          });
+          streakCount = (previousVote?.streakCount ?? 0) + 1;
+        }
+        // Falsche Antwort: streakCount bleibt 0
+        streakMultiplier = getStreakMultiplier(streakCount);
+      }
+
+      const score = Math.round(baseScore * streakMultiplier);
+
       const vote = await prisma.vote.create({
         data: {
           sessionId: input.sessionId,
@@ -190,6 +220,8 @@ export const voteRouter = router({
           ratingValue: input.ratingValue ?? null,
           responseTimeMs: input.responseTimeMs ?? null,
           score,
+          streakCount,
+          streakBonus: streakMultiplier,
           round,
           selectedAnswers: answerIds.length
             ? { create: answerIds.map((answerOptionId: string) => ({ answerOptionId })) }

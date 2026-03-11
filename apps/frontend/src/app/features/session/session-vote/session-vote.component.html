@@ -7,94 +7,123 @@
       <p class="vote-lobby__hint">Die erste Frage erscheint automatisch.</p>
     </div>
   } @else if (isFinished()) {
-    <div class="vote-finished">
-      <mat-icon class="vote-finished__icon">emoji_events</mat-icon>
-      <p class="vote-finished__text">Session beendet</p>
-      @if (personalResultLoaded()) {
-        <p class="vote-finished__rank">
-          Platz {{ personalRank() }} · {{ personalScore() | number }} Punkte
-        </p>
+    <div class="vote-finished-page">
+
+      <!-- Hero: Ergebnis -->
+      <section class="vote-finished-hero" aria-labelledby="finished-heading">
+        <mat-icon class="vote-finished-hero__icon" aria-hidden="true">emoji_events</mat-icon>
+        <h1 class="vote-finished-hero__title" id="finished-heading">Session beendet</h1>
+        @if (personalResultLoaded()) {
+          <div class="vote-finished-hero__stats">
+            <div class="vote-finished-hero__stat">
+              <span class="vote-finished-hero__stat-value">#{{ personalRank() }}</span>
+              <span class="vote-finished-hero__stat-label">Platz</span>
+            </div>
+            <span class="vote-finished-hero__divider" aria-hidden="true"></span>
+            <div class="vote-finished-hero__stat">
+              <span class="vote-finished-hero__stat-value">{{ personalScore() | number }}</span>
+              <span class="vote-finished-hero__stat-label">Punkte</span>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- Bonus-Code -->
+      @if (bonusToken(); as token) {
+        <section class="vote-bonus-card" aria-labelledby="bonus-heading">
+          <h2 class="vote-bonus-card__title" id="bonus-heading">
+            <mat-icon aria-hidden="true">school</mat-icon>
+            Dein Bonus-Code
+          </h2>
+          <p class="vote-bonus-card__code">{{ token }}</p>
+          <button matButton="tonal" type="button" class="vote-bonus-card__copy" (click)="copyBonusCode()">
+            <mat-icon>content_copy</mat-icon>
+            Code kopieren
+          </button>
+          <p class="vote-bonus-card__hint">
+            Sende diesen Code per E-Mail an deinen Dozenten, um Bonuspunkte zu erhalten.
+            Deine Anonymität bleibt gewahrt, solange du den Code nicht einreichst.
+          </p>
+        </section>
       }
+
+      <!-- Feedback-Formular -->
+      @if (!feedbackSubmitted()) {
+        <section class="vote-feedback-card" aria-labelledby="feedback-heading"
+          [class.vote-feedback-card--playful]="isPlayfulPreset()"
+          [class.vote-feedback-card--serious]="!isPlayfulPreset()">
+          <h2 class="vote-feedback-card__title" id="feedback-heading">Deine Meinung zählt</h2>
+
+          <fieldset class="vote-feedback-card__group">
+            <legend class="vote-feedback-card__label">Wie hat dir das Quiz gefallen?</legend>
+            <div class="vote-feedback-card__stars" role="radiogroup" aria-label="Gesamtbewertung">
+              @for (s of feedbackStars(); track s) {
+                <button class="vote-feedback-card__star"
+                  type="button"
+                  [class.vote-feedback-card__star--active]="s <= feedbackOverall()"
+                  [attr.aria-pressed]="s <= feedbackOverall()"
+                  (click)="setFeedbackOverall(s)"
+                  [attr.aria-label]="s + ' von 5 Sternen'">
+                  {{ s <= feedbackOverall() ? '★' : '☆' }}
+                </button>
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="vote-feedback-card__group">
+            <legend class="vote-feedback-card__label">Qualität der Fragen?</legend>
+            <div class="vote-feedback-card__stars" role="radiogroup" aria-label="Fragenqualität">
+              @for (s of feedbackStars(); track s) {
+                <button class="vote-feedback-card__star"
+                  type="button"
+                  [class.vote-feedback-card__star--active]="s <= feedbackQuality()"
+                  [attr.aria-pressed]="s <= feedbackQuality()"
+                  (click)="setFeedbackQuality(s)"
+                  [attr.aria-label]="s + ' von 5 Sternen'">
+                  {{ s <= feedbackQuality() ? '★' : '☆' }}
+                </button>
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="vote-feedback-card__group">
+            <legend class="vote-feedback-card__label">Nochmal mitmachen?</legend>
+            <div class="vote-feedback-card__repeat" role="group" aria-label="Nochmal mitmachen?">
+              <button matButton="tonal" type="button"
+                [class.vote-feedback-card__repeat--yes]="feedbackRepeat() === true"
+                [attr.aria-pressed]="feedbackRepeat() === true"
+                (click)="setFeedbackRepeat(true)"
+                aria-label="Ja, gerne wieder">
+                <mat-icon>thumb_up</mat-icon> Ja, gerne
+              </button>
+              <button matButton="tonal" type="button"
+                [class.vote-feedback-card__repeat--no]="feedbackRepeat() === false"
+                [attr.aria-pressed]="feedbackRepeat() === false"
+                (click)="setFeedbackRepeat(false)"
+                aria-label="Eher nicht">
+                <mat-icon>thumb_down</mat-icon> Eher nicht
+              </button>
+            </div>
+          </fieldset>
+
+          <button mat-flat-button class="vote-feedback-card__submit"
+            [disabled]="feedbackOverall() === 0 || feedbackSubmitting()"
+            (click)="submitFeedback()">
+            Bewertung absenden
+          </button>
+        </section>
+      } @else {
+        @if (feedbackSummary(); as summary) {
+          <section class="vote-feedback-done" aria-labelledby="feedback-done-heading">
+            <mat-icon class="vote-feedback-done__icon" aria-hidden="true">check_circle</mat-icon>
+            <h2 class="vote-feedback-done__title" id="feedback-done-heading">Danke für dein Feedback</h2>
+            <p class="vote-feedback-done__avg">Ø {{ summary.overallAverage | number:'1.1-1' }} ★</p>
+            <p class="vote-feedback-done__count">{{ summary.totalResponses }} Bewertungen insgesamt</p>
+          </section>
+        }
+      }
+
     </div>
-    @if (bonusToken(); as token) {
-      <div class="vote-bonus">
-        <p class="vote-bonus__label">🎓 Dein Bonus-Code</p>
-        <p class="vote-bonus__code">{{ token }}</p>
-        <button mat-tonal-button class="vote-bonus__copy" (click)="copyBonusCode()">
-          <mat-icon>content_copy</mat-icon>
-          Kopieren
-        </button>
-        <p class="vote-bonus__hint">
-          Sende diesen Code per E-Mail an deinen Dozenten, um Bonuspunkte zu erhalten. Deine Anonymität bleibt gewahrt, solange du den Code nicht einreichst.
-        </p>
-      </div>
-    }
-
-    @if (!feedbackSubmitted()) {
-      <div class="vote-feedback" [class.vote-feedback--playful]="isPlayfulPreset()" [class.vote-feedback--serious]="!isPlayfulPreset()">
-        <p class="vote-feedback__title">Deine Meinung zählt</p>
-
-        <p class="vote-feedback__label">Wie hat dir das Quiz gefallen?</p>
-        <div class="vote-feedback__stars" role="radiogroup" aria-label="Gesamtbewertung">
-          @for (s of feedbackStars(); track s) {
-            <button class="vote-feedback__star"
-              type="button"
-              [class.vote-feedback__star--active]="s <= feedbackOverall()"
-              [attr.aria-pressed]="s <= feedbackOverall()"
-              (click)="setFeedbackOverall(s)"
-              [attr.aria-label]="s + ' von 5 Sternen'">
-              {{ s <= feedbackOverall() ? '★' : '☆' }}
-            </button>
-          }
-        </div>
-
-        <p class="vote-feedback__label">Qualität der Fragen?</p>
-        <div class="vote-feedback__stars" role="radiogroup" aria-label="Fragenqualität">
-          @for (s of feedbackStars(); track s) {
-            <button class="vote-feedback__star"
-              type="button"
-              [class.vote-feedback__star--active]="s <= feedbackQuality()"
-              [attr.aria-pressed]="s <= feedbackQuality()"
-              (click)="setFeedbackQuality(s)"
-              [attr.aria-label]="s + ' von 5 Sternen'">
-              {{ s <= feedbackQuality() ? '★' : '☆' }}
-            </button>
-          }
-        </div>
-
-        <p class="vote-feedback__label">Regelmäßig solche Quizze?</p>
-        <div class="vote-feedback__repeat" role="group" aria-label="Regelmäßig solche Quizze?">
-          <button mat-tonal-button type="button"
-            [class.vote-feedback__repeat--active]="feedbackRepeat() === true"
-            [attr.aria-pressed]="feedbackRepeat() === true"
-            (click)="setFeedbackRepeat(true)"
-            aria-label="Ja, regelmäßig">
-            <mat-icon>thumb_up</mat-icon> Ja
-          </button>
-          <button mat-tonal-button type="button"
-            [class.vote-feedback__repeat--active]="feedbackRepeat() === false"
-            [attr.aria-pressed]="feedbackRepeat() === false"
-            (click)="setFeedbackRepeat(false)"
-            aria-label="Nein">
-            <mat-icon>thumb_down</mat-icon> Nein
-          </button>
-        </div>
-
-        <button mat-flat-button class="vote-feedback__submit"
-          [disabled]="feedbackOverall() === 0 || feedbackSubmitting()"
-          (click)="submitFeedback()">
-          Bewertung absenden
-        </button>
-      </div>
-    } @else {
-      @if (feedbackSummary(); as summary) {
-        <div class="vote-feedback-summary">
-          <p class="vote-feedback-summary__title">Feedback-Ergebnis</p>
-          <p class="vote-feedback-summary__avg">Ø {{ summary.overallAverage | number:'1.1-1' }} ★</p>
-          <p class="vote-feedback-summary__count">{{ summary.totalResponses }} Bewertungen</p>
-        </div>
-      }
-    }
   } @else if (isQuestionOpen()) {
     @if (currentQuestion(); as q) {
       <div class="vote-question">
@@ -160,6 +189,84 @@
       }
       @if (showRewardEffect()) {
         <div class="vote-reward" role="status" aria-live="polite">🎉 Richtig!</div>
+      }
+
+      @if (scorecard(); as sc) {
+        <div class="vote-scorecard" role="region" aria-label="Persönliche Scorecard"
+          [class.vote-scorecard--rank1]="sc.currentRank === 1"
+          [class.vote-scorecard--rank2]="sc.currentRank === 2"
+          [class.vote-scorecard--rank3]="sc.currentRank === 3">
+          @if (sc.currentRank <= 3 && sessionSettings().enableRewardEffects) {
+            <div class="vote-scorecard__trophy" aria-hidden="true">
+              @if (sc.currentRank === 1) { 🥇 }
+              @else if (sc.currentRank === 2) { 🥈 }
+              @else { 🥉 }
+            </div>
+          }
+          @if (sc.currentRank === 1 && sessionSettings().enableRewardEffects) {
+            <div class="vote-confetti" aria-hidden="true">
+              @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+                <span class="vote-confetti__piece" [style.--i]="i"></span>
+              }
+            </div>
+          }
+          <div class="vote-scorecard__result">
+            @if (sc.wasCorrect === true) {
+              <span class="vote-scorecard__correct">✓ Richtig</span>
+            } @else if (sc.wasCorrect === false) {
+              <span class="vote-scorecard__wrong">✗ Falsch</span>
+            } @else {
+              <span class="vote-scorecard__neutral">Antwort registriert</span>
+            }
+          </div>
+
+          <div class="vote-scorecard__stats">
+            <div class="vote-scorecard__stat">
+              <span class="vote-scorecard__stat-value">{{ sc.questionScore | number }}</span>
+              <span class="vote-scorecard__stat-label">Punkte</span>
+            </div>
+            @if (sc.streakCount >= 2) {
+              <div class="vote-scorecard__stat">
+                <span class="vote-scorecard__stat-value vote-scorecard__streak">
+                  @if (sc.streakCount >= 3) { 🔥 }
+                  {{ sc.streakCount }}er
+                </span>
+                <span class="vote-scorecard__stat-label">Serie (×{{ sc.streakMultiplier | number:'1.1-1' }})</span>
+              </div>
+            }
+            <div class="vote-scorecard__stat">
+              <span class="vote-scorecard__stat-value">#{{ sc.currentRank }}</span>
+              <span class="vote-scorecard__stat-label">
+                @if (sc.rankChange > 0) {
+                  ↑ {{ sc.rankChange }}
+                } @else if (sc.rankChange < 0) {
+                  ↓ {{ sc.rankChange * -1 }}
+                } @else {
+                  Rang
+                }
+              </span>
+            </div>
+            <div class="vote-scorecard__stat">
+              <span class="vote-scorecard__stat-value">{{ sc.totalScore | number }}</span>
+              <span class="vote-scorecard__stat-label">Gesamt</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (isResults() && sessionSettings().enableEmojiReactions && !emojiSent()) {
+        <div class="vote-emoji-bar" role="group" aria-label="Emoji-Reaktion">
+          @for (emoji of emojiOptions; track emoji) {
+            <button class="vote-emoji-bar__btn" type="button"
+              (click)="sendEmoji(emoji)"
+              [attr.aria-label]="'Reagiere mit ' + emoji">
+              {{ emoji }}
+            </button>
+          }
+        </div>
+      }
+      @if (emojiSent()) {
+        <p class="vote-emoji-sent" role="status">{{ emojiSentEmoji() }}</p>
       }
 
       @if (timeoutMessage() && !voteSent()) {

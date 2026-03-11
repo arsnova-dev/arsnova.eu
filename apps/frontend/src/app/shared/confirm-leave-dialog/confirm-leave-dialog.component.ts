@@ -1,0 +1,72 @@
+import { Component, inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+
+export interface ConfirmLeaveDialogData {
+  title: string;
+  message: string;
+  consequences: string[];
+  confirmLabel: string;
+  cancelLabel: string;
+}
+
+@Component({
+  selector: 'app-confirm-leave-dialog',
+  standalone: true,
+  imports: [MatButton, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle, MatIcon],
+  template: `
+    <h2 mat-dialog-title class="confirm-leave__title">
+      <mat-icon aria-hidden="true">warning</mat-icon>
+      {{ data.title }}
+    </h2>
+    <mat-dialog-content>
+      <p class="confirm-leave__message">{{ data.message }}</p>
+      @if (data.consequences.length > 0) {
+        <ul class="confirm-leave__list">
+          @for (item of data.consequences; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      }
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="false">{{ data.cancelLabel }}</button>
+      <button mat-flat-button color="warn" [mat-dialog-close]="true">{{ data.confirmLabel }}</button>
+    </mat-dialog-actions>
+  `,
+  styles: [`
+    .confirm-leave__title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      mat-icon {
+        color: var(--mat-sys-error, #b3261e);
+      }
+    }
+
+    .confirm-leave__message {
+      font: var(--mat-sys-body-large);
+      color: var(--mat-sys-on-surface);
+      margin: 0 0 0.75rem;
+    }
+
+    .confirm-leave__list {
+      margin: 0;
+      padding-left: 1.25rem;
+      font: var(--mat-sys-body-medium);
+      color: var(--mat-sys-on-surface-variant);
+      line-height: 1.7;
+    }
+  `],
+})
+export class ConfirmLeaveDialogComponent {
+  readonly data = inject<ConfirmLeaveDialogData>(MAT_DIALOG_DATA);
+}
