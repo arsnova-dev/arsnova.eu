@@ -656,7 +656,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
       - Bonus-Codes (BonusToken-Datensätze) bleiben 90 Tage in der Datenbank gespeichert, danach werden sie automatisch gelöscht (Erweiterung von Story 4.2).
       - Codes sind nicht übertragbar — der Dozent prüft den Absender der E-Mail eigenverantwortlich.
     - **Abhängigkeiten:** Story 4.1 (Leaderboard), Story 5.6 (Persönliche Scorecard).
-- **Story 4.7 (Ergebnis-Export für Dozenten – anonym):** 🟡 Als Dozent möchte ich nach Ende einer Session die Auswertung anonym als Datei (CSV/PDF) herunterladen können, damit ich die Ergebnisse für Nachbereitung, Lehrevaluation oder Akkreditierung nutzen kann — ohne personenbezogene Daten.
+- **Story 4.7 (Ergebnis-Export für Dozenten – anonym):** ✅ Als Dozent möchte ich nach Ende einer Session die Auswertung anonym als Datei (CSV/PDF) herunterladen können, damit ich die Ergebnisse für Nachbereitung, Lehrevaluation oder Akkreditierung nutzen kann — ohne personenbezogene Daten.
   - **Akzeptanzkriterien:**
     - Nach Beendigung der Session (Status `FINISHED`) steht in der Dozenten-Ansicht ein Button **„Ergebnis exportieren“** zur Verfügung.
     - **CSV-Export (mindestens):** Enthält pro Zeile aggregierte Daten, z. B.: Session-ID, Quiz-Name, Datum, pro Frage: Fragentext (Kurz), Fragentyp, Anzahl Teilnehmer, Verteilung der Antworten (Anzahl pro Option bzw. bei Freitext: aggregierte Begriffe/Häufigkeiten), Durchschnittspunktzahl pro Frage, keine Nicknames und keine personenbezogenen Daten.
@@ -666,7 +666,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - **tRPC & Schemas (bei serverseitiger Variante):** Query `session.getExportData` mit `GetExportDataInputSchema` (sessionId); Rückgabe `SessionExportDTO` (sessionId, sessionCode, quizName, finishedAt, participantCount, questions[], bonusTokens?). Siehe `libs/shared-types/src/schemas.ts` (SessionExportDTOSchema, QuestionExportEntrySchema, OptionDistributionEntrySchema, FreetextAggregateEntrySchema).
     - DSGVO: Export enthält ausschließlich anonymisierte bzw. aggregierte Daten; Hinweis in der UI: „Export für Dokumentation und Evaluation – keine personenbezogenen Daten“.
     - Abhängigkeiten: Story 4.1 (Leaderboard), Story 4.4 (Ergebnis-Visualisierung), Story 4.5 (Freitext-Auswertung), Story 4.6 (Bonus-Code-Liste).
-- **Story 4.8 (Session-Bewertung durch Teilnehmende):** 🟡 Als Teilnehmende möchte ich am Ende einer Session das Quiz bewerten können (z. B. Qualität der Fragen, hat mir gefallen, sollen wir solche Quizze regelmäßig machen?), damit Dozent und alle Beteiligten ein gemeinsames Stimmungsbild sehen.
+- **Story 4.8 (Session-Bewertung durch Teilnehmende):** ✅ Als Teilnehmende möchte ich am Ende einer Session das Quiz bewerten können (z. B. Qualität der Fragen, hat mir gefallen, sollen wir solche Quizze regelmäßig machen?), damit Dozent und alle Beteiligten ein gemeinsames Stimmungsbild sehen.
   - **Akzeptanzkriterien:**
     - Nach Beendigung der Session (Status `FINISHED`) können Teilnehmende auf ihrem Gerät eine **kurze Bewertung** abgeben (einmalig pro Person pro Session).
     - **Aufforderung zur Teilnahme:** Auf dem Teilnehmenden-Gerät erscheint eine deutliche Einladung, das Quiz zu bewerten und sich an der Umfrage zu beteiligen (z. B. „Deine Meinung zählt — bewerte das Quiz“ bzw. „Beteilige dich an der Umfrage“). Auf der Beamer-Ansicht kann der Dozent optional einen ähnlichen Aufruf anzeigen (z. B. „Jetzt abstimmen: Wie hat euch das Quiz gefallen?“), um die Beteiligung zu steigern.
