@@ -15,6 +15,7 @@ import type {
   BonusTokenEntryDTO,
   HostCurrentQuestionDTO,
   LeaderboardEntryDTO,
+  SessionFeedbackSummary,
   SessionInfoDTO,
   SessionParticipantsPayload,
   SessionStatusUpdate,
@@ -70,6 +71,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly leaderboard = signal<LeaderboardEntryDTO[]>([]);
   readonly leaderboardLoading = signal(false);
   readonly bonusTokens = signal<BonusTokenEntryDTO[]>([]);
+  readonly feedbackSummary = signal<SessionFeedbackSummary | null>(null);
   /** Aktuelle Frage für Host (Text + Antwortoptionen), null wenn keine Frage aktiv. */
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
   /** Countdown in Sekunden (null = kein Timer, Story 3.5). */
@@ -373,6 +375,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     }
     if (this.effectiveStatus() === 'FINISHED') {
       this.loadBonusTokens();
+      this.loadFeedbackSummary();
     }
   }
 
@@ -384,6 +387,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     } catch {
       this.bonusTokens.set([]);
     }
+  }
+
+  async loadFeedbackSummary(): Promise<void> {
+    if (!this.code) return;
+    try {
+      const summary = await trpc.session.getSessionFeedbackSummary.query({ code: this.code.toUpperCase() });
+      if (summary.totalResponses > 0) {
+        this.feedbackSummary.set(summary);
+      }
+    } catch { /* noop */ }
   }
 
   exportBonusTokensCsv(): void {
@@ -401,6 +414,68 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     a.download = `bonus-codes-${this.code}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async exportSessionResultsCsv(): Promise<void> {
+    const sid = this.session()?.id;
+    if (!sid) return;
+    this.exportStatus.set(null);
+    try {
+      const data = await trpc.session.getExportData.query({ sessionId: sid });
+      const rows: string[] = [
+        'Frage Nr.;Fragentext;Typ;Teilnehmer;Ø Punkte;Details',
+      ];
+
+      for (const q of data.questions) {
+        let details = '';
+        if (q.optionDistribution) {
+          details = q.optionDistribution
+            .map((o) => `${o.text}: ${o.count} (${o.percentage}%)${o.isCorrect ? ' ✓' : ''}`)
+            .join(' | ');
+        } else if (q.freetextAggregates) {
+          details = q.freetextAggregates
+            .map((f) => `${f.text}: ${f.count}`)
+            .join(' | ');
+        } else if (q.ratingDistribution) {
+          details = Object.entries(q.ratingDistribution)
+            .map(([k, v]) => `${k}★: ${v}`)
+            .join(' | ');
+          if (q.ratingAverage != null) details += ` (Ø ${q.ratingAverage})`;
+        }
+
+        rows.push(
+          [
+            q.questionOrder + 1,
+            escapeCsv(q.questionTextShort),
+            q.type,
+            q.participantCount,
+            q.averageScore ?? '',
+            escapeCsv(details),
+          ].join(';'),
+        );
+      }
+
+      if (data.bonusTokens && data.bonusTokens.length > 0) {
+        rows.push('');
+        rows.push('Bonus-Codes');
+        rows.push('Rang;Nickname;Code;Punkte;Generiert am');
+        for (const t of data.bonusTokens) {
+          rows.push(`${t.rank};${t.nickname};${t.token};${t.totalScore};${t.generatedAt}`);
+        }
+      }
+
+      const csv = '\uFEFF' + rows.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = this.document.createElement('a');
+      a.href = url;
+      a.download = `ergebnis-export-${data.sessionCode}-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      this.exportStatus.set('Ergebnis-CSV exportiert.');
+    } catch {
+      this.exportStatus.set('Export fehlgeschlagen.');
+    }
   }
 
   async endSession(): Promise<void> {

@@ -83,6 +83,7 @@ model Session {
   teams           Team[]
   votes           Vote[]
   bonusTokens     BonusToken[]  // Story 4.6: Bonus-Tokens für Top-Platzierungen
+  sessionFeedbacks SessionFeedback[] // Story 4.8: Session-Bewertungen
   qaQuestions     QaQuestion[]  // Story 8: Q&A-Fragen
   startedAt       DateTime      @default(now())
   endedAt         DateTime?
@@ -98,6 +99,7 @@ model Participant {
   team      Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
   votes      Vote[]
   bonusTokens BonusToken[] // Story 4.6: Ausgestellte Bonus-Tokens
+  sessionFeedbacks SessionFeedback[] // Story 4.8: Bewertungen
   qaQuestions QaQuestion[] // Story 8.2: Eingereichte Q&A-Fragen
   qaUpvotes  QaUpvote[]   // Story 8.3: Q&A-Upvotes
   joinedAt   DateTime @default(now())
@@ -209,6 +211,21 @@ model BonusToken {
   totalScore    Int         // Erreichte Gesamtpunktzahl
   rank          Int         // Platzierung im Leaderboard (1-basiert)
   generatedAt   DateTime    @default(now())
+}
+
+// Story 4.8: Session-Bewertung durch Teilnehmende
+model SessionFeedback {
+  id                    String      @id @default(uuid())
+  sessionId             String
+  session               Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  participantId         String
+  participant           Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  overallRating         Int         // 1–5 Sterne
+  questionQualityRating Int?        // 1–5 (optional)
+  wouldRepeat           Boolean?    // "Sollen wir regelmäßig solche Quizze machen?"
+  createdAt             DateTime    @default(now())
+
+  @@unique([sessionId, participantId]) // Nur eine Bewertung pro Person pro Session
 }
 
 // ─── Q&A-Modus (Epic 8) ────────────────────────────────────────────────────

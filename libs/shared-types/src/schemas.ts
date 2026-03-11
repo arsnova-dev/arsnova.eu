@@ -880,3 +880,25 @@ export const QuickFeedbackResultSchema = z.object({
   opinionShift: OpinionShiftSchema.optional(),
 });
 export type QuickFeedbackResult = z.infer<typeof QuickFeedbackResultSchema>;
+
+// ─── Session-Bewertung (Story 4.8) ───────────────────────────────────────────
+
+export const SubmitSessionFeedbackInputSchema = z.object({
+  code: z.string().length(6),
+  participantId: z.string().uuid(),
+  overallRating: z.number().int().min(1).max(5),
+  questionQualityRating: z.number().int().min(1).max(5).optional(),
+  wouldRepeat: z.boolean().optional(),
+});
+export type SubmitSessionFeedbackInput = z.infer<typeof SubmitSessionFeedbackInputSchema>;
+
+export const SessionFeedbackSummarySchema = z.object({
+  totalResponses: z.number(),
+  overallAverage: z.number(),
+  overallDistribution: z.record(z.string(), z.number()),
+  questionQualityAverage: z.number().nullable(),
+  questionQualityDistribution: z.record(z.string(), z.number()).nullable(),
+  wouldRepeatYes: z.number(),
+  wouldRepeatNo: z.number(),
+});
+export type SessionFeedbackSummary = z.infer<typeof SessionFeedbackSummarySchema>;

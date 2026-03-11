@@ -84,6 +84,13 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   readonly bonusToken = signal<string | null>(null);
   readonly personalResultLoaded = signal(false);
 
+  readonly feedbackOverall = signal<number>(0);
+  readonly feedbackQuality = signal<number>(0);
+  readonly feedbackRepeat = signal<boolean | null>(null);
+  readonly feedbackSubmitted = signal(false);
+  readonly feedbackSubmitting = signal(false);
+  readonly feedbackSummary = signal<{ totalResponses: number; overallAverage: number; overallDistribution: Record<string, number> } | null>(null);
+
   constructor() {
     effect(() => {
       if (this.isFinished() && !this.personalResultLoaded()) {
@@ -403,6 +410,44 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     try {
       await navigator.clipboard.writeText(token);
       this.snackBar.open('Code kopiert!', '', { duration: 2000 });
+    } catch { /* noop */ }
+  }
+
+  setFeedbackOverall(v: number): void { this.feedbackOverall.set(v); }
+  setFeedbackQuality(v: number): void { this.feedbackQuality.set(v); }
+  setFeedbackRepeat(v: boolean): void {
+    this.feedbackRepeat.set(this.feedbackRepeat() === v ? null : v);
+  }
+
+  feedbackStars(): number[] { return [1, 2, 3, 4, 5]; }
+
+  async submitFeedback(): Promise<void> {
+    if (this.feedbackSubmitting() || this.feedbackSubmitted() || this.feedbackOverall() === 0) return;
+    this.feedbackSubmitting.set(true);
+    try {
+      await trpc.session.submitSessionFeedback.mutate({
+        code: this.code,
+        participantId: this.participantId(),
+        overallRating: this.feedbackOverall(),
+        questionQualityRating: this.feedbackQuality() > 0 ? this.feedbackQuality() : undefined,
+        wouldRepeat: this.feedbackRepeat() ?? undefined,
+      });
+      this.feedbackSubmitted.set(true);
+      this.snackBar.open('Danke für dein Feedback!', '', { duration: 2000 });
+      void this.loadFeedbackSummary();
+    } catch {
+      this.snackBar.open('Feedback konnte nicht gesendet werden.', '', { duration: 2000 });
+    } finally {
+      this.feedbackSubmitting.set(false);
+    }
+  }
+
+  async loadFeedbackSummary(): Promise<void> {
+    try {
+      const summary = await trpc.session.getSessionFeedbackSummary.query({ code: this.code });
+      if (summary.totalResponses > 0) {
+        this.feedbackSummary.set(summary);
+      }
     } catch { /* noop */ }
   }
 }

@@ -24,6 +24,8 @@ import {
   QuestionRevealedDTOSchema,
   LeaderboardEntryDTOSchema,
   BonusTokenListDTOSchema,
+  SubmitSessionFeedbackInputSchema,
+  SessionFeedbackSummarySchema,
   type SessionExportDTO,
   type QuestionExportEntry,
   type QuestionType,
@@ -1494,5 +1496,105 @@ export const sessionRouter = router({
       };
 
       return result;
+    }),
+
+  /** Session-Bewertung abgeben (Story 4.8). Einmalig pro Participant. */
+  submitSessionFeedback: publicProcedure
+    .input(SubmitSessionFeedbackInputSchema)
+    .output(z.object({ success: z.boolean() }))
+    .mutation(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        select: { id: true, status: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      if (session.status !== 'FINISHED') {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Bewertung nur nach Session-Ende möglich.' });
+      }
+
+      const existing = await prisma.sessionFeedback.findUnique({
+        where: { sessionId_participantId: { sessionId: session.id, participantId: input.participantId } },
+      });
+      if (existing) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Du hast bereits bewertet.' });
+      }
+
+      await prisma.sessionFeedback.create({
+        data: {
+          sessionId: session.id,
+          participantId: input.participantId,
+          overallRating: input.overallRating,
+          questionQualityRating: input.questionQualityRating,
+          wouldRepeat: input.wouldRepeat,
+        },
+      });
+      return { success: true };
+    }),
+
+  /** Aggregierte Session-Bewertung abrufen (Story 4.8). Für Dozent und Teilnehmende. */
+  getSessionFeedbackSummary: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .output(SessionFeedbackSummarySchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        select: { id: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+
+      const feedbacks = await prisma.sessionFeedback.findMany({
+        where: { sessionId: session.id },
+      });
+
+      const totalResponses = feedbacks.length;
+      if (totalResponses === 0) {
+        return {
+          totalResponses: 0,
+          overallAverage: 0,
+          overallDistribution: {},
+          questionQualityAverage: null,
+          questionQualityDistribution: null,
+          wouldRepeatYes: 0,
+          wouldRepeatNo: 0,
+        };
+      }
+
+      const overallDist: Record<string, number> = {};
+      let overallSum = 0;
+      const qqDist: Record<string, number> = {};
+      let qqSum = 0;
+      let qqCount = 0;
+      let repeatYes = 0;
+      let repeatNo = 0;
+
+      for (const f of feedbacks) {
+        const key = String(f.overallRating);
+        overallDist[key] = (overallDist[key] ?? 0) + 1;
+        overallSum += f.overallRating;
+
+        if (f.questionQualityRating != null) {
+          const qqKey = String(f.questionQualityRating);
+          qqDist[qqKey] = (qqDist[qqKey] ?? 0) + 1;
+          qqSum += f.questionQualityRating;
+          qqCount++;
+        }
+
+        if (f.wouldRepeat === true) repeatYes++;
+        else if (f.wouldRepeat === false) repeatNo++;
+      }
+
+      return {
+        totalResponses,
+        overallAverage: Math.round((overallSum / totalResponses) * 100) / 100,
+        overallDistribution: overallDist,
+        questionQualityAverage: qqCount > 0 ? Math.round((qqSum / qqCount) * 100) / 100 : null,
+        questionQualityDistribution: qqCount > 0 ? qqDist : null,
+        wouldRepeatYes: repeatYes,
+        wouldRepeatNo: repeatNo,
+      };
     }),
 });

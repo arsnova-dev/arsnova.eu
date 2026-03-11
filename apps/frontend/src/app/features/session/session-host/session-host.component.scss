@@ -222,6 +222,27 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.session-host__export-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.session-host__export-hint {
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-primary);
+  margin: 0;
+}
+
+.session-host__export-dsgvo {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+  opacity: 0.7;
+}
+
 .session-host__end-btn {
   margin-top: 1rem;
 }
@@ -1170,4 +1191,49 @@ $round2-color: var(--mat-sys-primary, #1565c0);
 
 .session-host__bonus-export-btn {
   margin-top: 1rem;
+}
+
+/* --- Session-Bewertungs-Summary (Story 4.8) --- */
+
+.session-host__feedback-summary {
+  max-width: 500px;
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--mat-sys-secondary-container) 40%, transparent);
+  text-align: center;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: leaderboard-enter 500ms cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation-delay: 400ms;
+  }
+}
+
+.session-host__feedback-summary-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.75rem;
+}
+
+.session-host__feedback-avg {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f59e0b;
+  margin: 0;
+}
+
+.session-host__feedback-count {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0.25rem 0 0;
+}
+
+.session-host__feedback-detail {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0.5rem 0 0;
 }

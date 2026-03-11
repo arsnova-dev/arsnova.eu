@@ -29,6 +29,64 @@
         </p>
       </div>
     }
+
+    @if (!feedbackSubmitted()) {
+      <div class="vote-feedback">
+        <p class="vote-feedback__title">Deine Meinung zählt</p>
+
+        <p class="vote-feedback__label">Wie hat dir das Quiz gefallen?</p>
+        <div class="vote-feedback__stars" role="radiogroup" aria-label="Gesamtbewertung">
+          @for (s of feedbackStars(); track s) {
+            <button class="vote-feedback__star"
+              [class.vote-feedback__star--active]="s <= feedbackOverall()"
+              (click)="setFeedbackOverall(s)"
+              [attr.aria-label]="s + ' Stern' + (s > 1 ? 'e' : '')">
+              {{ s <= feedbackOverall() ? '★' : '☆' }}
+            </button>
+          }
+        </div>
+
+        <p class="vote-feedback__label">Qualität der Fragen?</p>
+        <div class="vote-feedback__stars" role="radiogroup" aria-label="Fragenqualität">
+          @for (s of feedbackStars(); track s) {
+            <button class="vote-feedback__star"
+              [class.vote-feedback__star--active]="s <= feedbackQuality()"
+              (click)="setFeedbackQuality(s)"
+              [attr.aria-label]="s + ' Stern' + (s > 1 ? 'e' : '')">
+              {{ s <= feedbackQuality() ? '★' : '☆' }}
+            </button>
+          }
+        </div>
+
+        <p class="vote-feedback__label">Regelmäßig solche Quizze?</p>
+        <div class="vote-feedback__repeat">
+          <button mat-tonal-button
+            [class.vote-feedback__repeat--active]="feedbackRepeat() === true"
+            (click)="setFeedbackRepeat(true)">
+            <mat-icon>thumb_up</mat-icon> Ja
+          </button>
+          <button mat-tonal-button
+            [class.vote-feedback__repeat--active]="feedbackRepeat() === false"
+            (click)="setFeedbackRepeat(false)">
+            <mat-icon>thumb_down</mat-icon> Nein
+          </button>
+        </div>
+
+        <button mat-flat-button class="vote-feedback__submit"
+          [disabled]="feedbackOverall() === 0 || feedbackSubmitting()"
+          (click)="submitFeedback()">
+          Bewertung absenden
+        </button>
+      </div>
+    } @else {
+      @if (feedbackSummary(); as summary) {
+        <div class="vote-feedback-summary">
+          <p class="vote-feedback-summary__title">Feedback-Ergebnis</p>
+          <p class="vote-feedback-summary__avg">Ø {{ summary.overallAverage | number:'1.1-1' }} ★</p>
+          <p class="vote-feedback-summary__count">{{ summary.totalResponses }} Bewertungen</p>
+        </div>
+      }
+    }
   } @else if (isQuestionOpen()) {
     @if (currentQuestion(); as q) {
       <div class="vote-question">

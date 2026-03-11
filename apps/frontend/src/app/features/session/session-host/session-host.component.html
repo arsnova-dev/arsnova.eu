@@ -61,6 +61,16 @@
             <mat-icon class="session-host__finished-icon">verified</mat-icon>
             <p class="session-host__finished-text" role="status">Session beendet</p>
             <p class="session-host__finished-sub">Alle Ergebnisse sind gespeichert.</p>
+            <div class="session-host__export-actions">
+              <button mat-tonal-button (click)="exportSessionResultsCsv()">
+                <mat-icon>download</mat-icon>
+                Ergebnis exportieren
+              </button>
+              @if (exportStatus(); as status) {
+                <p class="session-host__export-hint">{{ status }}</p>
+              }
+              <p class="session-host__export-dsgvo">Export für Dokumentation und Evaluation – keine personenbezogenen Daten.</p>
+            </div>
           </div>
 
           @if (leaderboard().length > 0) {
@@ -127,6 +137,25 @@
                 <mat-icon>download</mat-icon>
                 CSV exportieren
               </button>
+            </div>
+          }
+
+          @if (feedbackSummary(); as fb) {
+            <div class="session-host__feedback-summary">
+              <h2 class="session-host__feedback-summary-title">
+                <mat-icon>rate_review</mat-icon>
+                Session-Bewertung
+              </h2>
+              <p class="session-host__feedback-avg">Ø {{ fb.overallAverage | number:'1.1-1' }} ★</p>
+              <p class="session-host__feedback-count">{{ fb.totalResponses }} Bewertungen</p>
+              @if (fb.questionQualityAverage !== null) {
+                <p class="session-host__feedback-detail">Fragenqualität: Ø {{ fb.questionQualityAverage | number:'1.1-1' }} ★</p>
+              }
+              @if (fb.wouldRepeatYes > 0 || fb.wouldRepeatNo > 0) {
+                <p class="session-host__feedback-detail">
+                  Regelmäßig? {{ fb.wouldRepeatYes }}× Ja · {{ fb.wouldRepeatNo }}× Nein
+                </p>
+              }
             </div>
           }
         } @else {

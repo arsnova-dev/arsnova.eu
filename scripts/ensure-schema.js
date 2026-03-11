@@ -84,6 +84,36 @@ const statements = [
      END IF;
    END $$`,
 
+  // Story 4.8: SessionFeedback-Tabelle
+  `CREATE TABLE IF NOT EXISTS "SessionFeedback" (
+     "id" TEXT NOT NULL,
+     "sessionId" TEXT NOT NULL,
+     "participantId" TEXT NOT NULL,
+     "overallRating" INTEGER NOT NULL,
+     "questionQualityRating" INTEGER,
+     "wouldRepeat" BOOLEAN,
+     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     CONSTRAINT "SessionFeedback_pkey" PRIMARY KEY ("id")
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "SessionFeedback_sessionId_participantId_key"
+     ON "SessionFeedback"("sessionId", "participantId")`,
+  `DO $$ BEGIN
+     IF NOT EXISTS (
+       SELECT 1 FROM pg_constraint WHERE conname = 'SessionFeedback_sessionId_fkey'
+     ) THEN
+       ALTER TABLE "SessionFeedback" ADD CONSTRAINT "SessionFeedback_sessionId_fkey"
+         FOREIGN KEY ("sessionId") REFERENCES "Session"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+     END IF;
+   END $$`,
+  `DO $$ BEGIN
+     IF NOT EXISTS (
+       SELECT 1 FROM pg_constraint WHERE conname = 'SessionFeedback_participantId_fkey'
+     ) THEN
+       ALTER TABLE "SessionFeedback" ADD CONSTRAINT "SessionFeedback_participantId_fkey"
+         FOREIGN KEY ("participantId") REFERENCES "Participant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+     END IF;
+   END $$`,
+
   // Epic 9: AdminAuditLog
   `DO $$ BEGIN
      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AdminAuditAction') THEN
