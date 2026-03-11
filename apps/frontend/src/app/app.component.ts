@@ -23,6 +23,7 @@ import { ThemePresetService } from './core/theme-preset.service';
 import { PresetSnackbarFocusService } from './core/preset-snackbar-focus.service';
 import { Subscription } from 'rxjs';
 import { TopToolbarComponent } from './shared/top-toolbar/top-toolbar.component';
+import { ConnectionBannerComponent } from './shared/connection-banner/connection-banner.component';
 
 const STORAGE_PLAYFUL_WELCOMED = 'home-playful-welcomed';
 const STORAGE_PWA_INSTALL_DISMISSED = 'pwa-install-dismissed';
@@ -41,7 +42,7 @@ class PresetToastHostDirective {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MatButton, MatIcon, TopToolbarComponent, PresetToastHostDirective],
+  imports: [RouterOutlet, RouterLink, MatButton, MatIcon, TopToolbarComponent, PresetToastHostDirective, ConnectionBannerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

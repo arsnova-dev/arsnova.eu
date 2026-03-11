@@ -9,11 +9,48 @@ import type { AppRouter } from '@arsnova/api';
 import { getTrpcWsUrl } from './ws-urls';
 
 const isBrowser = typeof window !== 'undefined';
-const wsClient = isBrowser ? createWSClient({ url: getTrpcWsUrl() }) : null;
+
+/**
+ * Exponential Backoff: 500ms → 1s → 2s → 4s → max 10s (Story 4.3).
+ */
+function retryDelayMs(attempt: number): number {
+  return Math.min(500 * Math.pow(2, attempt), 10_000);
+}
+
+/** Connection state observable for UI feedback (Story 4.3). */
+export type WsConnectionState = 'connected' | 'disconnected' | 'reconnecting';
+type StateListener = (state: WsConnectionState) => void;
+const stateListeners = new Set<StateListener>();
+let currentWsState: WsConnectionState = isBrowser ? 'disconnected' : 'connected';
+
+export function getWsConnectionState(): WsConnectionState { return currentWsState; }
+export function onWsStateChange(fn: StateListener): () => void {
+  stateListeners.add(fn);
+  return () => stateListeners.delete(fn);
+}
+
+function setWsState(state: WsConnectionState): void {
+  if (state === currentWsState) return;
+  currentWsState = state;
+  stateListeners.forEach((fn) => fn(state));
+}
+
+const wsClient = isBrowser
+  ? createWSClient({
+      url: getTrpcWsUrl(),
+      retryDelayMs,
+      onOpen() { setWsState('connected'); },
+      onClose() { setWsState('reconnecting'); },
+    })
+  : null;
+
+if (isBrowser && wsClient) {
+  setWsState('connected');
+}
 
 /**
  * tRPC-Client für das Angular-Frontend.
- * Queries/Mutations: HTTP Batch; Subscriptions: WebSocket (Story 0.2).
+ * Queries/Mutations: HTTP Batch; Subscriptions: WebSocket (Story 0.2, 4.3).
  * SSR: WebSocket existiert nicht in Node – nur HTTP-Link verwenden.
  */
 export const trpc = createTRPCProxyClient<AppRouter>({
