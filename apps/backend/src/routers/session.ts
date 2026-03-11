@@ -710,6 +710,7 @@ export const sessionRouter = router({
       if (!question) return null;
 
       const base = {
+        questionId: question.id,
         order: question.order,
         text: question.text,
         type: question.type as 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREETEXT' | 'RATING' | 'SURVEY',
@@ -1172,7 +1173,7 @@ export const sessionRouter = router({
       for (const v of votes) {
         const s = stats.get(v.participantId);
         if (!s) continue;
-        s.totalScore += v.score;
+        s.totalScore += Number(v.score) || 0;
         s.totalResponseTimeMs += v.responseTimeMs ?? 0;
 
         if (questionCountsTowardsTotalQuestions(v.question.type as QuestionType)) {
@@ -1189,11 +1190,12 @@ export const sessionRouter = router({
         .map(([pid, s]) => ({
           rank: 0,
           nickname: nicknameById.get(pid) ?? '?',
-          totalScore: s.totalScore,
+          totalScore: Number(s.totalScore) || 0,
           correctCount: s.correctCount,
           totalQuestions: totalScoredQuestions,
           totalResponseTimeMs: s.totalResponseTimeMs,
         }))
+        .filter((e) => e.totalScore > 0)
         .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
 
       for (let i = 0; i < entries.length; i++) {
@@ -1356,15 +1358,17 @@ export const sessionRouter = router({
       for (const v of allVotes) {
         const t = totals.get(v.participantId);
         if (!t) continue;
-        t.totalScore += v.score;
+        t.totalScore += Number(v.score) || 0;
         t.totalResponseTimeMs += v.responseTimeMs ?? 0;
       }
 
       const ranked = [...totals.entries()]
-        .map(([pid, s]) => ({ pid, ...s }))
+        .map(([pid, s]) => ({ pid, totalScore: Number(s.totalScore) || 0, totalResponseTimeMs: s.totalResponseTimeMs }))
+        .filter((e) => e.totalScore > 0)
         .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
-      const currentRank = ranked.findIndex((e) => e.pid === input.participantId) + 1 || ranked.length + 1;
       const totalScore = totals.get(input.participantId)?.totalScore ?? 0;
+      const myIdx = ranked.findIndex((e) => e.pid === input.participantId);
+      const currentRank = totalScore > 0 && myIdx >= 0 ? myIdx + 1 : 0;
 
       // Vorheriger Rang (nach vorheriger Frage)
       let previousRank: number | null = null;
@@ -1385,16 +1389,21 @@ export const sessionRouter = router({
         for (const v of prevVotes) {
           const t = prevTotals.get(v.participantId);
           if (!t) continue;
-          t.totalScore += v.score;
+          t.totalScore += Number(v.score) || 0;
           t.totalResponseTimeMs += v.responseTimeMs ?? 0;
         }
         const prevRanked = [...prevTotals.entries()]
-          .map(([pid, s]) => ({ pid, ...s }))
+          .map(([pid, s]) => ({ pid, totalScore: Number(s.totalScore) || 0, totalResponseTimeMs: s.totalResponseTimeMs }))
+          .filter((e) => e.totalScore > 0)
           .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
-        previousRank = prevRanked.findIndex((e) => e.pid === input.participantId) + 1 || prevRanked.length + 1;
+        const prevScore = prevTotals.get(input.participantId)?.totalScore ?? 0;
+        const prevIdx = prevRanked.findIndex((e) => e.pid === input.participantId);
+        previousRank = prevScore > 0 && prevIdx >= 0 ? prevIdx + 1 : 0;
       }
 
-      const rankChange = previousRank !== null ? previousRank - currentRank : 0;
+      const rankChange = (previousRank !== null && currentRank > 0 && previousRank > 0)
+        ? previousRank - currentRank
+        : 0;
 
       return {
         questionOrder: input.questionIndex + 1,
@@ -1456,10 +1465,13 @@ export const sessionRouter = router({
 
       const ranked = [...stats.entries()]
         .map(([pid, s]) => ({ pid, ...s }))
+        .filter((e) => e.totalScore > 0)
         .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
 
-      const myRank = ranked.findIndex((e) => e.pid === input.participantId) + 1;
       const myStat = stats.get(input.participantId);
+      const myScore = myStat?.totalScore ?? 0;
+      const myIndex = ranked.findIndex((e) => e.pid === input.participantId);
+      const myRank = myScore > 0 && myIndex >= 0 ? myIndex + 1 : 0;
 
       const token = await prisma.bonusToken.findFirst({
         where: { sessionId: session.id, participantId: input.participantId },
@@ -1467,8 +1479,8 @@ export const sessionRouter = router({
       });
 
       return {
-        totalScore: myStat?.totalScore ?? 0,
-        rank: myRank || ranked.length + 1,
+        totalScore: myScore,
+        rank: myRank,
         bonusToken: token?.token ?? null,
       };
     }),
@@ -1684,6 +1696,29 @@ export const sessionRouter = router({
         },
       });
       return { success: true };
+    }),
+
+  /** Prüfen, ob dieser Teilnehmer bereits eine Session-Bewertung abgegeben hat (Story 4.8). */
+  getHasSubmittedFeedback: publicProcedure
+    .input(z.object({
+      code: z.string().length(6),
+      participantId: z.string().uuid(),
+    }))
+    .output(z.object({ submitted: z.boolean() }))
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        select: { id: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      const existing = await prisma.sessionFeedback.findUnique({
+        where: {
+          sessionId_participantId: { sessionId: session.id, participantId: input.participantId },
+        },
+      });
+      return { submitted: !!existing };
     }),
 
   /** Aggregierte Session-Bewertung abrufen (Story 4.8). Für Dozent und Teilnehmende. */

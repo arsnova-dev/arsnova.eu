@@ -84,6 +84,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly feedbackSummary = signal<SessionFeedbackSummary | null>(null);
   /** Aktuelle Frage für Host (Text + Antwortoptionen), null wenn keine Frage aktiv. */
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
+  /** Emoji-Reaktionen der Teilnehmer in der Ergebnis-Phase (Story 5.8). */
+  readonly emojiReactions = signal<{ reactions: Record<string, number>; total: number } | null>(null);
   /** Countdown in Sekunden (null = kein Timer, Story 3.5). */
   readonly countdownSeconds = signal<number | null>(null);
   /** true, sobald der Countdown 0 erreicht hat (bis zum nächsten Start). */
@@ -91,6 +93,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
   private fingerHideTimeout: ReturnType<typeof setTimeout> | null = null;
   readonly Math = Math;
+
+  /** Reihenfolge der Emojis für die Reaktions-Anzeige (Story 5.8). */
+  readonly emojiOrder: readonly string[] = ['👏', '🎉', '😮', '😂', '😢'];
 
   showFingerCountdown(): boolean {
     const s = this.countdownSeconds();
@@ -162,6 +167,17 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     return range;
   }
 
+  /** Verteilung der Sterne als lesbare Zeile (z. B. "1× 4 ★ · 2× 5 ★"). */
+  getFeedbackDistributionLine(dist: Record<string, number>): string | null {
+    if (!dist || Object.keys(dist).length === 0) return null;
+    const parts: string[] = [];
+    for (let star = 1; star <= 5; star++) {
+      const n = dist[String(star)] ?? 0;
+      if (n > 0) parts.push(`${n}× ${star} ★`);
+    }
+    return parts.length > 0 ? parts.join(' · ') : null;
+  }
+
   /** Für Lobby: volle Beitritts-URL (präsentierbar, Story 2.1b QR-Code). */
   get joinUrl(): string {
     const origin = typeof this.document?.defaultView?.location?.origin === 'string'
@@ -191,6 +207,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.pollTimer = setInterval(() => {
       void this.refreshLiveFreetext();
       void this.refreshCurrentQuestionForHost();
+      void this.refreshEmojiReactions();
       this.syncMusic();
     }, 2000);
     this.syncMusic();
@@ -487,6 +504,25 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.startCountdown(this.currentQuestionForHost()?.timer, result.activeAt);
     } finally {
       this.controlPending.set(false);
+    }
+  }
+
+  async refreshEmojiReactions(): Promise<void> {
+    if (this.effectiveStatus() !== 'RESULTS' || !this.session()?.enableEmojiReactions) {
+      this.emojiReactions.set(null);
+      return;
+    }
+    const sid = this.session()?.id;
+    const qid = this.currentQuestionForHost()?.questionId;
+    if (!sid || !qid) {
+      this.emojiReactions.set(null);
+      return;
+    }
+    try {
+      const data = await trpc.session.getReactions.query({ sessionId: sid, questionId: qid });
+      this.emojiReactions.set(data);
+    } catch {
+      this.emojiReactions.set(null);
     }
   }
 

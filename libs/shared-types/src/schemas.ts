@@ -249,6 +249,7 @@ export type RoundComparisonDTO = z.infer<typeof RoundComparisonDTOSchema>;
 
 /** DTO: Aktuelle Frage für Host-Ansicht (Story 2.3, 3.5) – Text + Antwortoptionen inkl. isCorrect + Timer. */
 export const HostCurrentQuestionDTOSchema = z.object({
+  questionId: z.string().uuid(),
   order: z.number().int().min(0),
   text: z.string(),
   type: QuestionTypeEnum,

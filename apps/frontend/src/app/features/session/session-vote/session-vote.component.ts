@@ -120,11 +120,17 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   readonly feedbackSubmitted = signal(false);
   readonly feedbackSubmitting = signal(false);
   readonly feedbackSummary = signal<{ totalResponses: number; overallAverage: number; overallDistribution: Record<string, number> } | null>(null);
+  private feedbackStateLoaded = false;
 
   constructor() {
     effect(() => {
       if (this.isFinished() && !this.personalResultLoaded()) {
         void this.loadPersonalResult();
+      }
+    });
+    effect(() => {
+      if (this.isFinished() && this.code && this.participantId() && !this.feedbackStateLoaded) {
+        void this.loadFeedbackState();
       }
     });
   }
@@ -539,5 +545,23 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         this.feedbackSummary.set(summary);
       }
     } catch { /* noop */ }
+  }
+
+  /** Beim Neuladen prüfen, ob dieser Teilnehmer bereits bewertet hat (Formular ausblenden). */
+  private async loadFeedbackState(): Promise<void> {
+    if (!this.code || !this.participantId() || this.feedbackStateLoaded) return;
+    try {
+      const { submitted } = await trpc.session.getHasSubmittedFeedback.query({
+        code: this.code,
+        participantId: this.participantId()!,
+      });
+      this.feedbackSubmitted.set(submitted);
+      if (submitted) {
+        void this.loadFeedbackSummary();
+      }
+      this.feedbackStateLoaded = true;
+    } catch {
+      this.feedbackStateLoaded = true;
+    }
   }
 }

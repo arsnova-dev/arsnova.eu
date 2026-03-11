@@ -16,7 +16,7 @@
         @if (personalResultLoaded()) {
           <div class="vote-finished-hero__stats">
             <div class="vote-finished-hero__stat">
-              <span class="vote-finished-hero__stat-value">#{{ personalRank() }}</span>
+              <span class="vote-finished-hero__stat-value">{{ personalRank() === 0 ? '—' : '#' + personalRank() }}</span>
               <span class="vote-finished-hero__stat-label">Platz</span>
             </div>
             <span class="vote-finished-hero__divider" aria-hidden="true"></span>
@@ -192,11 +192,17 @@
       }
 
       @if (scorecard(); as sc) {
-        <div class="vote-scorecard" role="region" aria-label="Persönliche Scorecard"
-          [class.vote-scorecard--rank1]="sc.currentRank === 1"
-          [class.vote-scorecard--rank2]="sc.currentRank === 2"
-          [class.vote-scorecard--rank3]="sc.currentRank === 3">
-          @if (sc.currentRank <= 3 && sessionSettings().enableRewardEffects) {
+        <div class="vote-scorecard" role="region" aria-labelledby="scorecard-heading" aria-describedby="scorecard-hint">
+          <h2 class="vote-scorecard__heading" id="scorecard-heading">
+            <mat-icon class="vote-scorecard__heading-icon" aria-hidden="true">person</mat-icon>
+            Dein Ergebnis
+          </h2>
+          <p class="vote-scorecard__hint" id="scorecard-hint">Nur du siehst diese Anzeige – nicht der Dozent.</p>
+          <div class="vote-scorecard__inner"
+            [class.vote-scorecard--rank1]="sc.currentRank === 1"
+            [class.vote-scorecard--rank2]="sc.currentRank === 2"
+            [class.vote-scorecard--rank3]="sc.currentRank === 3">
+          @if (sc.currentRank >= 1 && sc.currentRank <= 3 && sessionSettings().enableRewardEffects) {
             <div class="vote-scorecard__trophy" aria-hidden="true">
               @if (sc.currentRank === 1) { 🥇 }
               @else if (sc.currentRank === 2) { 🥈 }
@@ -235,14 +241,14 @@
               </div>
             }
             <div class="vote-scorecard__stat">
-              <span class="vote-scorecard__stat-value">#{{ sc.currentRank }}</span>
+              <span class="vote-scorecard__stat-value">{{ sc.currentRank === 0 ? '—' : '#' + sc.currentRank }}</span>
               <span class="vote-scorecard__stat-label">
                 @if (sc.rankChange > 0) {
                   ↑ {{ sc.rankChange }}
                 } @else if (sc.rankChange < 0) {
                   ↓ {{ sc.rankChange * -1 }}
                 } @else {
-                  Rang
+                  Dein Rang
                 }
               </span>
             </div>
@@ -251,22 +257,31 @@
               <span class="vote-scorecard__stat-label">Gesamt</span>
             </div>
           </div>
+          </div>
         </div>
       }
 
-      @if (isResults() && sessionSettings().enableEmojiReactions && !emojiSent()) {
-        <div class="vote-emoji-bar" role="group" aria-label="Emoji-Reaktion">
-          @for (emoji of emojiOptions; track emoji) {
-            <button class="vote-emoji-bar__btn" type="button"
-              (click)="sendEmoji(emoji)"
-              [attr.aria-label]="'Reagiere mit ' + emoji">
-              {{ emoji }}
-            </button>
-          }
-        </div>
-      }
-      @if (emojiSent()) {
-        <p class="vote-emoji-sent" role="status">{{ emojiSentEmoji() }}</p>
+      @if (isResults() && sessionSettings().enableEmojiReactions) {
+        @if (!emojiSent()) {
+          <div class="vote-emoji-wrap" role="group" aria-labelledby="emoji-bar-label" aria-describedby="emoji-bar-hint">
+            <p class="vote-emoji-bar__label" id="emoji-bar-label">Schnell reagieren</p>
+            <p class="vote-emoji-bar__hint" id="emoji-bar-hint">Tippe auf ein Symbol – deine Reaktion erscheint anonym beim Dozenten (optional).</p>
+            <div class="vote-emoji-bar">
+              @for (emoji of emojiOptions; track emoji) {
+                <button class="vote-emoji-bar__btn" type="button"
+                  (click)="sendEmoji(emoji)"
+                  [attr.aria-label]="'Reagiere mit ' + emoji">
+                  {{ emoji }}
+                </button>
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="vote-emoji-sent" role="status">
+            <span class="vote-emoji-sent__icon" aria-hidden="true">{{ emojiSentEmoji() }}</span>
+            Reaktion gesendet
+          </p>
+        }
       }
 
       @if (timeoutMessage() && !voteSent()) {

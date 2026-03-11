@@ -155,18 +155,51 @@
             <section class="session-host__feedback-card" aria-labelledby="feedback-heading">
               <h2 class="session-host__feedback-summary-title" id="feedback-heading">
                 <mat-icon aria-hidden="true">rate_review</mat-icon>
-                Session-Bewertung
+                Feedback der Teilnehmer
               </h2>
-              <p class="session-host__feedback-avg">Ø {{ fb.overallAverage | number:'1.1-1' }} ★</p>
-              <p class="session-host__feedback-count">{{ fb.totalResponses }} Bewertungen</p>
-              @if (fb.questionQualityAverage !== null) {
-                <p class="session-host__feedback-detail">Fragenqualität: Ø {{ fb.questionQualityAverage | number:'1.1-1' }} ★</p>
-              }
-              @if (fb.wouldRepeatYes > 0 || fb.wouldRepeatNo > 0) {
-                <p class="session-host__feedback-detail">
-                  Regelmäßig? {{ fb.wouldRepeatYes }}× Ja · {{ fb.wouldRepeatNo }}× Nein
+              <div class="session-host__feedback-hero">
+                <span class="session-host__feedback-hero-label">Gesamtbewertung</span>
+                <p class="session-host__feedback-avg" aria-label="Durchschnitt {{ fb.overallAverage | number:'1.1-1' }} von 5 Sternen">
+                  <span class="session-host__feedback-avg-number">{{ fb.overallAverage | number:'1.1-1' }}</span>
+                  <span class="session-host__feedback-avg-of">/ 5</span>
+                  <span class="session-host__feedback-avg-stars" aria-hidden="true">★</span>
                 </p>
-              }
+                <p class="session-host__feedback-count">
+                  {{ fb.totalResponses }} {{ fb.totalResponses === 1 ? 'Bewertung' : 'Bewertungen' }}
+                </p>
+                @if (getFeedbackDistributionLine(fb.overallDistribution); as distLine) {
+                  <p class="session-host__feedback-distribution">{{ distLine }}</p>
+                }
+              </div>
+              <div class="session-host__feedback-details">
+                @if (fb.questionQualityAverage !== null) {
+                  <div class="session-host__feedback-detail-row">
+                    <span class="session-host__feedback-detail-label">
+                      <mat-icon class="session-host__feedback-detail-icon" aria-hidden="true">star</mat-icon>
+                      Qualität der Fragen
+                    </span>
+                    <span class="session-host__feedback-detail-value">Ø {{ fb.questionQualityAverage | number:'1.1-1' }} ★</span>
+                  </div>
+                }
+                @if (fb.wouldRepeatYes > 0 || fb.wouldRepeatNo > 0) {
+                  <div class="session-host__feedback-detail-row session-host__feedback-detail-row--repeat">
+                    <span class="session-host__feedback-detail-label">
+                      <mat-icon class="session-host__feedback-detail-icon" aria-hidden="true">thumb_up</mat-icon>
+                      Nochmal mitmachen?
+                    </span>
+                    <span class="session-host__feedback-repeat-badges">
+                      <span class="session-host__feedback-badge session-host__feedback-badge--yes">
+                        <mat-icon aria-hidden="true">thumb_up</mat-icon>
+                        {{ fb.wouldRepeatYes }}
+                      </span>
+                      <span class="session-host__feedback-badge session-host__feedback-badge--no">
+                        <mat-icon aria-hidden="true">thumb_down</mat-icon>
+                        {{ fb.wouldRepeatNo }}
+                      </span>
+                    </span>
+                  </div>
+                }
+              </div>
             </section>
           }
           </div>
@@ -400,6 +433,30 @@
             }
           } @else {
             <p class="session-host__no-question">Keine Frage aktiv. Mit „Nächste Frage“ starten.</p>
+          }
+
+          @if (effectiveStatus() === 'RESULTS' && session()?.enableEmojiReactions && emojiReactions(); as reactions) {
+            <div class="session-host__emoji-reactions" aria-labelledby="emoji-reactions-heading">
+              <p class="session-host__emoji-reactions-title" id="emoji-reactions-heading">
+                <mat-icon aria-hidden="true">emoji_emotions</mat-icon>
+                Reaktionen der Teilnehmer
+              </p>
+              @if (reactions.total > 0) {
+                <div class="session-host__emoji-reactions-list" role="list">
+                  @for (emoji of emojiOrder; track emoji) {
+                    @if (reactions.reactions[emoji] > 0) {
+                      <span class="session-host__emoji-item" role="listitem">
+                        <span class="session-host__emoji-icon" aria-hidden="true">{{ emoji }}</span>
+                        <span class="session-host__emoji-count">{{ reactions.reactions[emoji] }}</span>
+                      </span>
+                    }
+                  }
+                </div>
+                <p class="session-host__emoji-reactions-total">{{ reactions.total }} {{ reactions.total === 1 ? 'Reaktion' : 'Reaktionen' }}</p>
+              } @else {
+                <p class="session-host__emoji-reactions-empty">Noch keine Reaktionen.</p>
+              }
+            </div>
           }
 
           @if (effectiveStatus() === 'RESULTS' && leaderboard().length > 0) {
