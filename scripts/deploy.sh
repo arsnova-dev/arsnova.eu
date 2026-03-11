@@ -19,8 +19,25 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 1
 fi
 
-echo ">>> Docker Compose: Build & Start (Produktion)"
-echo ">>> (Prisma-Migrationen laufen automatisch im Container-Entrypoint.)"
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --build
+echo ">>> Schritt 1: Neuesten Code von GitHub holen …"
+git pull --ff-only origin main
+echo ">>> Git pull abgeschlossen ($(git log -1 --format='%h %s'))"
 
+echo ""
+echo ">>> Schritt 2: Docker Compose – Build ohne Cache & Start (Produktion)"
+docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" build --no-cache
+docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d
+
+echo ""
+echo ">>> Schritt 3: Warte auf Healthcheck …"
+sleep 5
+if docker compose -f "$COMPOSE_FILE" ps --format json | grep -q '"Health":"healthy"'; then
+  echo ">>> App ist healthy."
+else
+  echo ">>> App startet noch – Container-Logs prüfen:"
+  echo ">>>   docker compose -f $COMPOSE_FILE logs app --tail 50"
+fi
+
+echo ""
 echo ">>> Deploy abgeschlossen."
+echo ">>> Version: $(git log -1 --format='%h – %s (%ci)')"
