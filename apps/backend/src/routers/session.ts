@@ -446,9 +446,10 @@ export const sessionRouter = router({
       const nextIdx = currentIdx + 1;
 
       if (nextIdx >= questionCount) {
+        const now = new Date();
         await prisma.session.update({
           where: { id: session.id },
-          data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: new Date() },
+          data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: now, endedAt: now },
         });
         return { status: 'FINISHED' as const, currentQuestion: null, currentRound: 1 };
       }
@@ -1032,6 +1033,29 @@ export const sessionRouter = router({
         participantCount: session._count.participants + 1,
         participantId: participant.id,
       };
+    }),
+
+  /** Session manuell beenden (Story 4.2). Setzt Status FINISHED, endedAt, räumt Redis auf. */
+  end: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .output(SessionStatusUpdateSchema)
+    .mutation(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        select: { id: true, status: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      if (session.status === 'FINISHED') {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Session ist bereits beendet.' });
+      }
+      const now = new Date();
+      await prisma.session.update({
+        where: { id: session.id },
+        data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: now, endedAt: now },
+      });
+      return { status: 'FINISHED' as const, currentQuestion: null, currentRound: 1 };
     }),
 
   /**

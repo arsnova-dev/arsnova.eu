@@ -185,14 +185,45 @@
 }
 
 .session-host__finished {
-  margin: 2rem 0;
+  margin: 3rem 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.session-host__finished-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: var(--mat-sys-primary);
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: finished-pop 0.4s ease-out;
+  }
+}
+
+@keyframes finished-pop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
 }
 
 .session-host__finished-text {
   margin: 0;
-  font: var(--mat-sys-headline-small);
+  font: var(--mat-sys-headline-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+.session-host__finished-sub {
+  margin: 0;
+  font: var(--mat-sys-body-large);
   color: var(--mat-sys-on-surface-variant);
+}
+
+.session-host__end-btn {
+  margin-top: 1rem;
 }
 
 .session-host__question-card {

@@ -13,6 +13,7 @@ import { WebSocketServer } from 'ws';
 import { appRouter } from './routers';
 import { getRedis, closeRedis } from './redis';
 import { logger } from './lib/logger';
+import { startSessionCleanupScheduler, stopSessionCleanupScheduler } from './lib/sessionCleanup';
 
 const PORT = Number(process.env['PORT']) || 3000;
 const WS_PORT = Number(process.env['WS_PORT']) || 3001;
@@ -63,6 +64,7 @@ if (fs.existsSync(frontendDist)) {
 const server = app.listen(PORT, () => {
   logger.info(`🚀 Backend HTTP auf http://localhost:${PORT}`);
   logger.info(`   tRPC: http://localhost:${PORT}/trpc`);
+  startSessionCleanupScheduler();
 });
 
 // WebSocket-Server für tRPC-Subscriptions (Story 0.2)
@@ -95,6 +97,7 @@ try {
 }
 
 function shutdown(): void {
+  stopSessionCleanupScheduler();
   wsHandler.broadcastReconnectNotification();
   wss.close();
   server.close();

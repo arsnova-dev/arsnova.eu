@@ -58,7 +58,9 @@
 
         @if (effectiveStatus() === 'FINISHED') {
           <div class="session-host__finished">
-            <p class="session-host__finished-text" role="status">Session beendet.</p>
+            <mat-icon class="session-host__finished-icon">verified</mat-icon>
+            <p class="session-host__finished-text" role="status">Session beendet</p>
+            <p class="session-host__finished-sub">Alle Ergebnisse sind gespeichert.</p>
           </div>
         } @else {
           @if (showFingerCountdown()) {
@@ -362,7 +364,7 @@
 
           <!-- Weitere Aktionen (eingeklappt) -->
           <details class="session-host__extra">
-            <summary>Export &amp; Freitext</summary>
+            <summary>Weitere Aktionen</summary>
             <div class="session-host__extra-content">
               <button mat-button type="button" (click)="exportFreetextSessionCsv()">
                 <mat-icon>download</mat-icon>
@@ -372,6 +374,17 @@
                 <p class="session-host__export-status" role="status">{{ exportStatus() }}</p>
               }
               <app-word-cloud [responses]="freetextResponses()" />
+              <button
+                mat-button
+                color="warn"
+                type="button"
+                class="session-host__end-btn"
+                [disabled]="controlPending()"
+                (click)="endSession()"
+              >
+                <mat-icon>stop_circle</mat-icon>
+                Session beenden
+              </button>
             </div>
           </details>
         }
