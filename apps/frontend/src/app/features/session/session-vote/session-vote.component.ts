@@ -1,9 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { ThemePresetService } from '../../../core/theme-preset.service';
@@ -42,7 +44,7 @@ function pickRandom(arr: string[]): string {
 @Component({
   selector: 'app-session-vote',
   standalone: true,
-  imports: [MatButton, MatIcon, MatProgressSpinner, CountdownFingersComponent],
+  imports: [MatButton, MatIcon, MatProgressSpinner, CountdownFingersComponent, DecimalPipe],
   templateUrl: './session-vote.component.html',
   styleUrl: './session-vote.component.scss',
 })
@@ -51,6 +53,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly themePreset = inject(ThemePresetService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly snackBar = inject(MatSnackBar);
   private statusSub: Unsubscribable | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -76,6 +79,18 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   private fingerHideTimeout: ReturnType<typeof setTimeout> | null = null;
 
   readonly currentRound = signal(1);
+  readonly personalRank = signal<number | null>(null);
+  readonly personalScore = signal<number | null>(null);
+  readonly bonusToken = signal<string | null>(null);
+  readonly personalResultLoaded = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.isFinished() && !this.personalResultLoaded()) {
+        void this.loadPersonalResult();
+      }
+    });
+  }
 
   readonly isActive = computed(() => this.status() === 'ACTIVE');
   readonly isQuestionOpen = computed(() => this.status() === 'QUESTION_OPEN');
@@ -365,5 +380,29 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.voteSending.set(false);
       setTimeout(() => this.debounced.set(false), 300);
     }
+  }
+
+  async loadPersonalResult(): Promise<void> {
+    const pid = this.participantId();
+    if (!this.code || !pid) return;
+    try {
+      const result = await trpc.session.getPersonalResult.query({
+        code: this.code,
+        participantId: pid,
+      });
+      this.personalRank.set(result.rank);
+      this.personalScore.set(result.totalScore);
+      this.bonusToken.set(result.bonusToken);
+      this.personalResultLoaded.set(true);
+    } catch { /* noop */ }
+  }
+
+  async copyBonusCode(): Promise<void> {
+    const token = this.bonusToken();
+    if (!token) return;
+    try {
+      await navigator.clipboard.writeText(token);
+      this.snackBar.open('Code kopiert!', '', { duration: 2000 });
+    } catch { /* noop */ }
   }
 }

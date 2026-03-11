@@ -23,6 +23,7 @@ import {
   QuestionPreviewDTOSchema,
   QuestionRevealedDTOSchema,
   LeaderboardEntryDTOSchema,
+  BonusTokenListDTOSchema,
   type SessionExportDTO,
   type QuestionExportEntry,
   type QuestionType,
@@ -203,6 +204,70 @@ async function buildRoundComparison(
         }
       : undefined,
   };
+}
+
+/**
+ * Generiert BNS-Codes im Format BNS-XXXX-XXXX (12 Zeichen, kryptografisch sicher).
+ */
+function generateBonusCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const bytes = randomBytes(8);
+  let code = 'BNS-';
+  for (let i = 0; i < 4; i++) code += chars[bytes[i]! % chars.length];
+  code += '-';
+  for (let i = 4; i < 8; i++) code += chars[bytes[i]! % chars.length];
+  return code;
+}
+
+/**
+ * Generiert Bonus-Tokens für die Top X Teilnehmer (Story 4.6).
+ * Nur wenn bonusTokenCount konfiguriert und noch keine Tokens existieren.
+ */
+async function generateBonusTokens(session: {
+  id: string;
+  quiz: { name: string; bonusTokenCount: number | null; questions: { type: string }[] } | null;
+  participants: { id: string; nickname: string }[];
+  bonusTokens: { id: string }[];
+}): Promise<void> {
+  const topX = session.quiz?.bonusTokenCount;
+  if (!topX || topX <= 0 || !session.quiz) return;
+  if (session.bonusTokens.length > 0) return;
+
+  const votes = await prisma.vote.findMany({
+    where: { sessionId: session.id, round: 1 },
+    select: { participantId: true, score: true, responseTimeMs: true },
+  });
+
+  const stats = new Map<string, { totalScore: number; totalResponseTimeMs: number }>();
+  for (const p of session.participants) {
+    stats.set(p.id, { totalScore: 0, totalResponseTimeMs: 0 });
+  }
+  for (const v of votes) {
+    const s = stats.get(v.participantId);
+    if (!s) continue;
+    s.totalScore += v.score;
+    s.totalResponseTimeMs += v.responseTimeMs ?? 0;
+  }
+
+  const nicknameById = new Map(session.participants.map((p) => [p.id, p.nickname]));
+  const ranked = [...stats.entries()]
+    .map(([pid, s]) => ({ pid, ...s }))
+    .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+
+  const topEntries = ranked.slice(0, topX);
+  if (topEntries.length === 0) return;
+
+  const tokenData = topEntries.map((entry, i) => ({
+    token: generateBonusCode(),
+    sessionId: session.id,
+    participantId: entry.pid,
+    nickname: nicknameById.get(entry.pid) ?? `Teilnehmer #${i + 1}`,
+    quizName: session.quiz!.name,
+    totalScore: entry.totalScore,
+    rank: i + 1,
+  }));
+
+  await prisma.bonusToken.createMany({ data: tokenData });
 }
 
 export const sessionRouter = router({
@@ -425,10 +490,14 @@ export const sessionRouter = router({
         include: {
           quiz: {
             select: {
+              name: true,
               readingPhaseEnabled: true,
-              questions: { orderBy: { order: 'asc' }, select: { id: true } },
+              bonusTokenCount: true,
+              questions: { orderBy: { order: 'asc' }, select: { id: true, type: true } },
             },
           },
+          participants: { select: { id: true, nickname: true } },
+          bonusTokens: { select: { id: true }, take: 1 },
         },
       });
       if (!session?.quiz) {
@@ -455,6 +524,7 @@ export const sessionRouter = router({
           where: { id: session.id },
           data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: now, endedAt: now },
         });
+        await generateBonusTokens(session);
         return { status: 'FINISHED' as const, currentQuestion: null, currentRound: 1 };
       }
 
@@ -1117,14 +1187,27 @@ export const sessionRouter = router({
       return entries;
     }),
 
-  /** Session manuell beenden (Story 4.2). Setzt Status FINISHED, endedAt, räumt Redis auf. */
+  /** Session manuell beenden (Story 4.2, 4.6). Setzt FINISHED, endedAt, generiert Bonus-Codes. */
   end: publicProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
       const session = await prisma.session.findUnique({
         where: { code: input.code.toUpperCase() },
-        select: { id: true, status: true },
+        select: {
+          id: true,
+          status: true,
+          quizId: true,
+          quiz: {
+            select: {
+              name: true,
+              bonusTokenCount: true,
+              questions: { select: { type: true } },
+            },
+          },
+          participants: { select: { id: true, nickname: true } },
+          bonusTokens: { select: { id: true }, take: 1 },
+        },
       });
       if (!session) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
@@ -1137,7 +1220,102 @@ export const sessionRouter = router({
         where: { id: session.id },
         data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: now, endedAt: now },
       });
+
+      await generateBonusTokens(session);
+
       return { status: 'FINISHED' as const, currentQuestion: null, currentRound: 1 };
+    }),
+
+  /** Bonus-Codes für Dozent abrufen (Story 4.6). Nur bei FINISHED. */
+  getBonusTokens: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .output(BonusTokenListDTOSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: {
+          quiz: { select: { name: true } },
+          bonusTokens: { orderBy: { rank: 'asc' } },
+        },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      return {
+        sessionId: session.id,
+        sessionCode: session.code,
+        quizName: session.quiz?.name ?? '',
+        tokens: session.bonusTokens.map((t) => ({
+          token: t.token,
+          nickname: t.nickname,
+          quizName: t.quizName,
+          totalScore: t.totalScore,
+          rank: t.rank,
+          generatedAt: t.generatedAt.toISOString(),
+        })),
+      };
+    }),
+
+  /** Persönliches Ergebnis für einen Studenten (Story 4.6: Bonus-Code). */
+  getPersonalResult: publicProcedure
+    .input(z.object({
+      code: z.string().length(6),
+      participantId: z.string().uuid(),
+    }))
+    .output(z.object({
+      totalScore: z.number(),
+      rank: z.number(),
+      bonusToken: z.string().nullable(),
+    }))
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        select: {
+          id: true,
+          status: true,
+          participants: { select: { id: true } },
+        },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      if (session.status !== 'FINISHED') {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Ergebnis nur nach Session-Ende verfügbar.' });
+      }
+
+      const votes = await prisma.vote.findMany({
+        where: { sessionId: session.id, round: 1 },
+        select: { participantId: true, score: true, responseTimeMs: true },
+      });
+
+      const stats = new Map<string, { totalScore: number; totalResponseTimeMs: number }>();
+      for (const p of session.participants) {
+        stats.set(p.id, { totalScore: 0, totalResponseTimeMs: 0 });
+      }
+      for (const v of votes) {
+        const s = stats.get(v.participantId);
+        if (!s) continue;
+        s.totalScore += v.score;
+        s.totalResponseTimeMs += v.responseTimeMs ?? 0;
+      }
+
+      const ranked = [...stats.entries()]
+        .map(([pid, s]) => ({ pid, ...s }))
+        .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+
+      const myRank = ranked.findIndex((e) => e.pid === input.participantId) + 1;
+      const myStat = stats.get(input.participantId);
+
+      const token = await prisma.bonusToken.findFirst({
+        where: { sessionId: session.id, participantId: input.participantId },
+        select: { token: true },
+      });
+
+      return {
+        totalScore: myStat?.totalScore ?? 0,
+        rank: myRank || ranked.length + 1,
+        bonusToken: token?.token ?? null,
+      };
     }),
 
   /**

@@ -96,6 +96,39 @@
               </table>
             </div>
           }
+
+          @if (bonusTokens().length > 0) {
+            <div class="session-host__bonus-tokens">
+              <h2 class="session-host__bonus-tokens-title">
+                <mat-icon>card_giftcard</mat-icon>
+                Bonus-Codes
+              </h2>
+              <table class="session-host__bonus-tokens-table" role="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nickname</th>
+                    <th>Code</th>
+                    <th>Punkte</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (t of bonusTokens(); track t.token) {
+                    <tr>
+                      <td>{{ t.rank }}</td>
+                      <td>{{ t.nickname }}</td>
+                      <td class="session-host__bonus-code-cell">{{ t.token }}</td>
+                      <td>{{ t.totalScore | number }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              <button mat-tonal-button class="session-host__bonus-export-btn" (click)="exportBonusTokensCsv()">
+                <mat-icon>download</mat-icon>
+                CSV exportieren
+              </button>
+            </div>
+          }
         } @else {
           @if (showFingerCountdown()) {
             <div class="session-host__finger-countdown">

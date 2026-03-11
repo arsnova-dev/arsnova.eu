@@ -53,6 +53,37 @@ const statements = [
   // Quiz: bonusTokenCount
   `ALTER TABLE "Quiz" ADD COLUMN IF NOT EXISTS "bonusTokenCount" INTEGER`,
 
+  // Story 4.6: BonusToken-Tabelle
+  `CREATE TABLE IF NOT EXISTS "BonusToken" (
+     "id" TEXT NOT NULL,
+     "token" TEXT NOT NULL,
+     "sessionId" TEXT NOT NULL,
+     "participantId" TEXT NOT NULL,
+     "nickname" TEXT NOT NULL,
+     "quizName" TEXT NOT NULL,
+     "totalScore" INTEGER NOT NULL,
+     "rank" INTEGER NOT NULL,
+     "generatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     CONSTRAINT "BonusToken_pkey" PRIMARY KEY ("id")
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "BonusToken_token_key" ON "BonusToken"("token")`,
+  `DO $$ BEGIN
+     IF NOT EXISTS (
+       SELECT 1 FROM pg_constraint WHERE conname = 'BonusToken_sessionId_fkey'
+     ) THEN
+       ALTER TABLE "BonusToken" ADD CONSTRAINT "BonusToken_sessionId_fkey"
+         FOREIGN KEY ("sessionId") REFERENCES "Session"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+     END IF;
+   END $$`,
+  `DO $$ BEGIN
+     IF NOT EXISTS (
+       SELECT 1 FROM pg_constraint WHERE conname = 'BonusToken_participantId_fkey'
+     ) THEN
+       ALTER TABLE "BonusToken" ADD CONSTRAINT "BonusToken_participantId_fkey"
+         FOREIGN KEY ("participantId") REFERENCES "Participant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+     END IF;
+   END $$`,
+
   // Epic 9: AdminAuditLog
   `DO $$ BEGIN
      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AdminAuditAction') THEN

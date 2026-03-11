@@ -12,6 +12,7 @@ import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import type {
+  BonusTokenEntryDTO,
   HostCurrentQuestionDTO,
   LeaderboardEntryDTO,
   SessionInfoDTO,
@@ -68,6 +69,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly exportStatus = signal<string | null>(null);
   readonly leaderboard = signal<LeaderboardEntryDTO[]>([]);
   readonly leaderboardLoading = signal(false);
+  readonly bonusTokens = signal<BonusTokenEntryDTO[]>([]);
   /** Aktuelle Frage für Host (Text + Antwortoptionen), null wenn keine Frage aktiv. */
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
   /** Countdown in Sekunden (null = kein Timer, Story 3.5). */
@@ -369,6 +371,36 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     } finally {
       this.leaderboardLoading.set(false);
     }
+    if (this.effectiveStatus() === 'FINISHED') {
+      this.loadBonusTokens();
+    }
+  }
+
+  async loadBonusTokens(): Promise<void> {
+    if (!this.code) return;
+    try {
+      const result = await trpc.session.getBonusTokens.query({ code: this.code.toUpperCase() });
+      this.bonusTokens.set(result.tokens);
+    } catch {
+      this.bonusTokens.set([]);
+    }
+  }
+
+  exportBonusTokensCsv(): void {
+    const tokens = this.bonusTokens();
+    if (tokens.length === 0) return;
+    const header = 'Rang;Nickname;Code;Punkte;Generiert am';
+    const rows = tokens.map((t) =>
+      `${t.rank};${t.nickname};${t.token};${t.totalScore};${t.generatedAt}`
+    );
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = this.document.createElement('a');
+    a.href = url;
+    a.download = `bonus-codes-${this.code}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async endSession(): Promise<void> {

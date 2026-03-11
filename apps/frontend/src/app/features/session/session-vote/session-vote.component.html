@@ -10,7 +10,25 @@
     <div class="vote-finished">
       <mat-icon class="vote-finished__icon">emoji_events</mat-icon>
       <p class="vote-finished__text">Session beendet</p>
+      @if (personalResultLoaded()) {
+        <p class="vote-finished__rank">
+          Platz {{ personalRank() }} · {{ personalScore() | number }} Punkte
+        </p>
+      }
     </div>
+    @if (bonusToken(); as token) {
+      <div class="vote-bonus">
+        <p class="vote-bonus__label">🎓 Dein Bonus-Code</p>
+        <p class="vote-bonus__code">{{ token }}</p>
+        <button mat-tonal-button class="vote-bonus__copy" (click)="copyBonusCode()">
+          <mat-icon>content_copy</mat-icon>
+          Kopieren
+        </button>
+        <p class="vote-bonus__hint">
+          Sende diesen Code per E-Mail an deinen Dozenten, um Bonuspunkte zu erhalten. Deine Anonymität bleibt gewahrt, solange du den Code nicht einreichst.
+        </p>
+      </div>
+    }
   } @else if (isQuestionOpen()) {
     @if (currentQuestion(); as q) {
       <div class="vote-question">
