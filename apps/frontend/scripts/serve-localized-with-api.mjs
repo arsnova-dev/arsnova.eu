@@ -3,7 +3,7 @@
  * Serviert den lokalisierten Build (dist/browser), leitet /trpc (HTTP) und /trpc-ws (WebSocket) ans Backend weiter.
  * Backend muss separat laufen (z. B. npm run dev -w @arsnova/backend).
  * Aufruf: node scripts/serve-localized-with-api.mjs
- * Dann: http://localhost:4200/ → /de/, /de/ und /en/ mit funktionierender API inkl. Subscriptions.
+ * Dann: http://localhost:4200/ → /de/, /en/, /fr/, /it/, /es/ mit funktionierender API inkl. Subscriptions.
  */
 import express from 'express';
 import path from 'path';
@@ -19,6 +19,7 @@ const WS_PORT = process.env.WS_PORT || '3001';
 const YJS_WS_PORT = process.env.YJS_WS_PORT || '3002';
 const BACKEND_WS_URL = `ws://localhost:${WS_PORT}`;
 const BACKEND_YJS_WS_URL = `ws://localhost:${YJS_WS_PORT}`;
+const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it', 'es'];
 
 const app = express();
 
@@ -46,18 +47,22 @@ app.use('/trpc', express.raw({ type: '*/*' }), async (req, res) => {
 
 // /assets/* aus de/ (lokalisiert: Icons/Manifest unter /de/ nutzen /assets/ absolut)
 app.use('/assets', express.static(path.join(distBrowser, 'de', 'assets')));
-// Locale-prefixed assets (Legal-Seiten laden z. B. /en/assets/legal/imprint.de.md).
+// Locale-prefixed assets (Legal-Seiten laden z. B. /en/assets/legal/imprint.en.md).
 // fallthrough: false → fehlende Dateien liefern 404 (nicht SPA-index.html), damit Fallback auf .de.md funktioniert
-app.use('/de/assets', express.static(path.join(distBrowser, 'de', 'assets'), { fallthrough: false }));
-app.use('/en/assets', express.static(path.join(distBrowser, 'en', 'assets'), { fallthrough: false }));
+for (const locale of SUPPORTED_LOCALES) {
+  app.use(
+    `/${locale}/assets`,
+    express.static(path.join(distBrowser, locale, 'assets'), { fallthrough: false }),
+  );
+}
 app.use(express.static(distBrowser));
 
-app.get('/de', (_, res) => res.sendFile(path.join(distBrowser, 'de', 'index.html')));
-app.get('/de/', (_, res) => res.sendFile(path.join(distBrowser, 'de', 'index.html')));
-app.get(/^\/de\/.+/, (_, res) => res.sendFile(path.join(distBrowser, 'de', 'index.html')));
-app.get('/en', (_, res) => res.sendFile(path.join(distBrowser, 'en', 'index.html')));
-app.get('/en/', (_, res) => res.sendFile(path.join(distBrowser, 'en', 'index.html')));
-app.get(/^\/en\/.+/, (_, res) => res.sendFile(path.join(distBrowser, 'en', 'index.html')));
+for (const locale of SUPPORTED_LOCALES) {
+  const localeIndex = path.join(distBrowser, locale, 'index.html');
+  app.get(`/${locale}`, (_, res) => res.sendFile(localeIndex));
+  app.get(`/${locale}/`, (_, res) => res.sendFile(localeIndex));
+  app.get(new RegExp(`^/${locale}/.+`), (_, res) => res.sendFile(localeIndex));
+}
 
 app.get('/', (_, res) => res.sendFile(path.join(distBrowser, 'index.html')));
 

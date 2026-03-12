@@ -39,12 +39,18 @@ const frontendDistBase = path.resolve(__dirname, '../../frontend/dist');
 const frontendDist = fs.existsSync(path.join(frontendDistBase, 'browser'))
   ? path.join(frontendDistBase, 'browser')
   : frontendDistBase;
+const supportedLocales = ['de', 'en', 'fr', 'it', 'es'] as const;
 if (fs.existsSync(frontendDist)) {
   const rootIndexPath = path.join(frontendDist, 'index.html');
   const csrPath = path.join(frontendDist, 'index.csr.html');
-  const deIndexPath = path.join(frontendDist, 'de', 'index.html');
-  const enIndexPath = path.join(frontendDist, 'en', 'index.html');
-  const hasLocalizedBuild = fs.existsSync(deIndexPath) && fs.existsSync(enIndexPath);
+  const availableLocales = supportedLocales.filter((locale) =>
+    fs.existsSync(path.join(frontendDist, locale, 'index.html')),
+  );
+  const fallbackLocale = availableLocales.includes('de') ? 'de' : (availableLocales[0] ?? null);
+  const fallbackIndexPath = fallbackLocale
+    ? path.join(frontendDist, fallbackLocale, 'index.html')
+    : null;
+  const hasLocalizedBuild = availableLocales.length > 0;
 
   // PWA-Update: ngsw.json und index.html nicht cachen, damit der Service Worker neue Versionen erkennt.
   app.use((req, res, next) => {
@@ -56,32 +62,40 @@ if (fs.existsSync(frontendDist)) {
 
   if (hasLocalizedBuild) {
     // /assets/* aus de/ (lokalisiert: Manifest-Icons werden unter /assets referenziert)
-    app.use('/assets', express.static(path.join(frontendDist, 'de', 'assets')));
+    app.use('/assets', express.static(path.join(frontendDist, fallbackLocale ?? 'de', 'assets')));
     // Locale-prefixed assets: fallthrough false → fehlende Dateien liefern 404 statt SPA-index
-    app.use('/de/assets', express.static(path.join(frontendDist, 'de', 'assets'), { fallthrough: false }));
-    app.use('/en/assets', express.static(path.join(frontendDist, 'en', 'assets'), { fallthrough: false }));
+    for (const locale of availableLocales) {
+      app.use(
+        `/${locale}/assets`,
+        express.static(path.join(frontendDist, locale, 'assets'), { fallthrough: false }),
+      );
+    }
     app.use(express.static(frontendDist));
 
-    app.get('/de', (_, res) => res.sendFile(deIndexPath));
-    app.get('/de/', (_, res) => res.sendFile(deIndexPath));
-    app.get(/^\/de\/.+/, (_, res) => res.sendFile(deIndexPath));
-    app.get('/en', (_, res) => res.sendFile(enIndexPath));
-    app.get('/en/', (_, res) => res.sendFile(enIndexPath));
-    app.get(/^\/en\/.+/, (_, res) => res.sendFile(enIndexPath));
+    for (const locale of availableLocales) {
+      const localeIndexPath = path.join(frontendDist, locale, 'index.html');
+      app.get(`/${locale}`, (_, res) => res.sendFile(localeIndexPath));
+      app.get(`/${locale}/`, (_, res) => res.sendFile(localeIndexPath));
+      app.get(new RegExp(`^/${locale}/.+`), (_, res) => res.sendFile(localeIndexPath));
+    }
 
     app.get('/', (_, res) => {
       if (fs.existsSync(rootIndexPath)) {
         res.sendFile(rootIndexPath);
+      } else if (fallbackIndexPath) {
+        res.sendFile(fallbackIndexPath);
       } else {
-        res.sendFile(deIndexPath);
+        res.status(404).send('Frontend not built');
       }
     });
     // Fallback für nicht-lokalisierte SPA-Routen → Root-Index (leitet auf /de/)
     app.get('*', (_, res) => {
       if (fs.existsSync(rootIndexPath)) {
         res.sendFile(rootIndexPath);
+      } else if (fallbackIndexPath) {
+        res.sendFile(fallbackIndexPath);
       } else {
-        res.sendFile(deIndexPath);
+        res.status(404).send('Frontend not built');
       }
     });
   } else {

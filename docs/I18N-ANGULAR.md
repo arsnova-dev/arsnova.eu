@@ -206,21 +206,21 @@ Die Top-Toolbar liest die aktuelle Locale aus dem **ersten URL-Segment** (`/de/`
 2. **Navigation:** Wenn die aktuelle Pfad-URL bereits eine Locale enthält (z. B. `/en/session/ABC123/host`), wird das erste Segment durch die gewählte Locale ersetzt und die Seite per **vollständigem Reload** geladen (z. B. `/de/session/ABC123/host`). So wird die passende lokalisierte Build-Variante geladen.
 3. **Ohne Locale im Pfad** (z. B. Dev-Server mit `base href="/"`): Redirect auf `/{code}/` bzw. `/{code}{rest}`.
 
-**Hinweis:** Es werden nur die Locales gebaut, die in `angular.json` unter `i18n.locales` eingetragen sind (aktuell: de, en). fr, it, es erscheinen im Menü; wenn Nutzer sie wählen, führt die Navigation zu `/fr/` usw. – dafür müssen später die entsprechenden Builds und Übersetzungsdateien ergänzt werden.
+**Hinweis:** Es werden nur die Locales gebaut, die in `angular.json` unter `i18n.locales` eingetragen sind (aktuell: de, en, fr, it, es). Für `fr/it/es` sind technische Übersetzungsdateien vorhanden; die inhaltliche Übersetzung wird schrittweise ergänzt.
 
-**Dev-Server (`ng serve`):** Es wird nur **eine** Locale gebaut (Quellsprache Deutsch). Die Pfade `/de/` und `/en/` funktionieren (Routing), liefern aber denselben deutschen Inhalt. Um echte Übersetzungen (z. B. Englisch) zu sehen: lokalisierten Build ausführen und mit API-Server starten (siehe Abschnitt **„Lokalisierter Build lokal“** unten). Dann z. B. http://localhost:4200/en/ für die englische Oberfläche.
+**Dev-Server (`ng serve`):** Es wird nur **eine** Locale gebaut (Quellsprache Deutsch). Die Pfade `/de/`, `/en/`, `/fr/`, `/it/`, `/es/` funktionieren (Routing), liefern aber denselben deutschen Inhalt. Um echte Übersetzungen zu sehen: lokalisierten Build ausführen und mit API-Server starten (siehe Abschnitt **„Lokalisierter Build lokal“** unten), z. B. http://localhost:4200/en/.
 
 #### Lokalisierter Build lokal (Schritt für Schritt)
 
-Damit die lokalisierten Builds (de/en) mit **funktionierender API, tRPC-Subscriptions und Yjs-WebSocket** laufen, wird ein **eigener Proxy** genutzt – ein reiner Statik-Serve reicht nicht.
+Damit die lokalisierten Builds (de/en/fr/it/es) mit **funktionierender API, tRPC-Subscriptions und Yjs-WebSocket** laufen, wird ein **eigener Proxy** genutzt – ein reiner Statik-Serve reicht nicht.
 
 | Schritt | Befehl | Erklärung |
 |--------|--------|-----------|
 | 1 | `npm run dev -w @arsnova/backend` | Backend muss laufen: HTTP (3000), tRPC-WS (3001), Yjs-WS (3002). |
-| 2 | `npm run build:localize -w @arsnova/frontend` | Baut `dist/browser/de/`, `dist/browser/en/`, kopiert Root-`index.html` (Redirect → `/de/`). |
+| 2 | `npm run build:localize -w @arsnova/frontend` | Baut `dist/browser/de/`, `dist/browser/en/`, `dist/browser/fr/`, `dist/browser/it/`, `dist/browser/es/`, kopiert Root-`index.html` (Redirect → `/de/`). |
 | 3 | `npm run serve:localize:api -w @arsnova/frontend` | Startet `scripts/serve-localized-with-api.mjs` auf Port 4200. |
 
-**Was der Proxy macht:** Er serviert statische Dateien aus `dist/browser`, liefert für `/`, `/de`, `/de/`, `/de/*` bzw. `/en`… die passende `index.html` aus, und leitet weiter:
+**Was der Proxy macht:** Er serviert statische Dateien aus `dist/browser`, liefert für `/`, `/de`, `/en`, `/fr`, `/it`, `/es` (jeweils inkl. Subpfaden) die passende `index.html` aus, und leitet weiter:
 
 - **`/trpc`** → HTTP an Backend (Port 3000); Response-Header `content-encoding` werden entfernt (sonst ERR_CONTENT_DECODING_FAILED).
 - **`/trpc-ws`** → WebSocket-Proxy nach Port 3001; Nachrichten Backend→Client werden als **Text-Frames** weitergegeben (tRPC erwartet JSON-Text).
@@ -281,8 +281,9 @@ Details: [docs/architecture/decisions/0008-i18n-internationalization.md](archite
 
 | Aspekt | Stand |
 |--------|--------|
-| **Extrahierte Messages** | ~580 (Stand nach `ng extract-i18n`) |
+| **Extrahierte Messages** | 607 (Stand nach `ng extract-i18n`) |
 | **Englisch (en)** | Vollständig: Alle trans-units in `messages.en.xlf` haben ein `<target>`; Build ohne „No translation found“. |
+| **fr/it/es (Technikstatus)** | `messages.fr.xlf`, `messages.it.xlf`, `messages.es.xlf` vorhanden (Startbasis, Source=Target) und in `angular.json` eingebunden; Build erzeugt Locale-Ausgaben für alle fünf Sprachen. |
 | **Legal-Seiten** | DE + EN: `imprint.de.md`, `imprint.en.md`, `privacy.de.md`, `privacy.en.md` in `src/assets/legal/`. |
 | **Markierte Bereiche** | App, Home, Toolbar, Join, Preset-Toast, Session (Host/Vote/Present), Quiz (Liste/New/Edit/Preview/Sync), Help, Feedback, Legal. |
 | **Skripte** | `scripts/merge-missing-i18n-en.mjs`: fehlende EN-Targets aus fester TARGET_MAP einfügen. `scripts/add-missing-en-translations.mjs`: nach neuem Extract fehlende trans-units in `messages.en.xlf` mit EN-Targets ergänzen (ID→Target-Map im Skript). Nach Änderungen an UI-Texten: `ng extract-i18n` ausführen, dann ggf. Skript ausführen und neue IDs in die Map aufnehmen. |

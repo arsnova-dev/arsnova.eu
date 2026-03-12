@@ -232,7 +232,7 @@
       </trans-unit>
       <trans-unit id="1706491855383783836" datatype="html">
         <source>Session-Code, 6 Zeichen</source>
-        <target>Session code, 6 characters</target>
+        <target>Session code (6 characters)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">91,92</context>
@@ -1304,7 +1304,7 @@
       </trans-unit>
       <trans-unit id="573499869972254255" datatype="html">
         <source>Warte auf den Start durch den Dozenten</source>
-        <target>Waiting for the lecturer to start</target>
+        <target>Waiting for the instructor to start</target>
       </trans-unit>
       <trans-unit id="5689929102746781129" datatype="html">
         <source>Die erste Frage erscheint automatisch – Gerät bereithalten.</source>
@@ -1320,7 +1320,7 @@
       </trans-unit>
       <trans-unit id="3763724115719180339" datatype="html">
         <source> Sende diesen Code per E-Mail an deinen Dozenten, um Bonuspunkte zu erhalten. Deine Anonymität bleibt gewahrt, solange du den Code nicht einreichst. </source>
-        <target> Send this code by email to your lecturer to get bonus points. Your anonymity is preserved as long as you don't submit the code. </target>
+        <target> Send this code by email to your instructor to receive bonus points. Your anonymity is preserved as long as you do not submit the code. </target>
       </trans-unit>
       <trans-unit id="8791525614766253586" datatype="html">
         <source>Deine Meinung zählt</source>
@@ -2458,7 +2458,7 @@
       </trans-unit>
       <trans-unit id="6361582957693255944" datatype="html">
         <source>Freitext-Session als CSV exportieren</source>
-        <target>Export freetext session as CSV</target>
+        <target>Export free-text session as CSV</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
           <context context-type="linenumber">576,577</context>
@@ -2466,7 +2466,7 @@
       </trans-unit>
       <trans-unit id="4017389878545296254" datatype="html">
         <source>Warte auf Live-Freitextdaten …</source>
-        <target>Waiting for live freetext data …</target>
+        <target>Waiting for live free-text data…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">77</context>
@@ -2558,7 +2558,7 @@
       </trans-unit>
       <trans-unit id="163495290423277905" datatype="html">
         <source>Live-Freitext wird aktualisiert.</source>
-        <target>Live freetext is being updated.</target>
+        <target>Live free-text is being updated.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">741</context>
@@ -2570,7 +2570,7 @@
       </trans-unit>
       <trans-unit id="5499551582155303933" datatype="html">
         <source>Aktuelle Frage ist keine Freitext-Frage.</source>
-        <target>Current question is not a freetext question.</target>
+        <target>Current question is not a free-text question.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">746</context>
@@ -2594,7 +2594,7 @@
       </trans-unit>
       <trans-unit id="464314562794611731" datatype="html">
         <source>Live-Freitextdaten konnten nicht geladen werden.</source>
-        <target>Live freetext data could not be loaded.</target>
+        <target>Could not load live free-text data.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">752</context>
@@ -3030,7 +3030,7 @@
       <trans-unit id="7763990096257201954" datatype="html">
         <source>Diskussionsphase starten – Austausch vor zweiter Abstimmung
         </source>
-        <target>Start discussion phase - exchange before second vote</target>
+        <target>Start discussion phase — exchange before second vote</target>
       </trans-unit>
       <trans-unit id="1715527181281145600" datatype="html">
         <source>Überspringen
@@ -3100,7 +3100,7 @@
       <trans-unit id="8755717135730514101" datatype="html">
         <source>Frage Nr.;Fragentext;Typ;Teilnehmer;Ø Punkte;Details
         </source>
-        <target>Question no.;Question text;Type;Participants;Avg. points;Details</target>
+        <target>Question #;Question text;Type;Participants;Avg. points;Details</target>
       </trans-unit>
       <trans-unit id="7304749878499794874" datatype="html">
         <source>Frage <x id="questionNumber" equiv-text="data.questionOrder + 1"/>: <x id="questionText" equiv-text="data.questionText ?? &apos;&apos;"/>
@@ -3311,7 +3311,7 @@
       <trans-unit id="850308549833737974" datatype="html">
         <source>Kopf hoch – gleich geht&apos;s weiter! 🚀
         </source>
-        <target>Keep your head up - next one starts soon! 🚀</target>
+        <target>Keep your head up — the next one starts soon! 🚀</target>
       </trans-unit>
       <trans-unit id="3277616416884173208" datatype="html">
         <source>Tick-tock – nächste Chance kommt! ⏰
@@ -3341,7 +3341,7 @@
       <trans-unit id="4012530987621109665" datatype="html">
         <source>Kopf hoch – du liegst noch gut! 🏅
         </source>
-        <target>Keep your head up - you’re still doing well! 🏅</target>
+        <target>Keep your head up — you're still doing well! 🏅</target>
       </trans-unit>
       <trans-unit id="8019084099534088723" datatype="html">
         <source>Weiter so – jede Frage ist eine neue Chance! 🌟
@@ -3411,7 +3411,7 @@
       <trans-unit id="2715446489589386153" datatype="html">
         <source>Server-Status: <x id="PH" equiv-text="statusText"/>. <x id="PH_1" equiv-text="s.activeSessions"/> Quiz live, <x id="PH_2" equiv-text="s.activeBlitzRounds"/> Blitz-Runden, <x id="PH_3" equiv-text="s.totalParticipants"/> Teilnehmende, <x id="PH_4" equiv-text="s.completedSessions"/> Quizzes durchgeführt.
         </source>
-        <target>Server status: <x id="PH" equiv-text="statusText"/>. <x id="PH_1" equiv-text="s.activeSessions"/> quiz live, <x id="PH_2" equiv-text="s.activeBlitzRounds"/> blitz rounds, <x id="PH_3" equiv-text="s.totalParticipants"/> participants, <x id="PH_4" equiv-text="s.completedSessions"/> quizzes completed.</target>
+        <target>Server status: <x id="PH" equiv-text="statusText"/>. <x id="PH_1" equiv-text="s.activeSessions"/> live quizzes, <x id="PH_2" equiv-text="s.activeBlitzRounds"/> blitz rounds, <x id="PH_3" equiv-text="s.totalParticipants"/> participants, <x id="PH_4" equiv-text="s.completedSessions"/> quizzes completed.</target>
       </trans-unit>
     </body>
   </file>
