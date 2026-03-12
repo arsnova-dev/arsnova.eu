@@ -6,7 +6,7 @@
         <span class="preset-toast__head-countdown-wrap">
           <img
             src="assets/images/countdown-fingers.gif"
-            alt="Countdown 5 bis 0 mit Handzeichen"
+            i18n-alt alt="Countdown 5 bis 0 mit Handzeichen"
             class="preset-toast__head-countdown"
           />
         </span>
@@ -23,14 +23,14 @@
         <p class="preset-toast__preset-hint">{{ toastHint() }}</p>
         <button type="button" class="preset-toast__switch-preset" (click)="switchPreset()">
           <mat-icon class="preset-toast__switch-icon">swap_horiz</mat-icon>
-          Zu {{ themePreset.preset() === 'serious' ? 'Spielerisch' : 'Seriös' }} wechseln
+          {{ switchPresetLabel() }}
         </button>
       </div>
-      <button matIconButton type="button" class="preset-toast__close" aria-label="Einstellungen schließen" (click)="closed.emit()">
+      <button matIconButton type="button" class="preset-toast__close" i18n-aria-label aria-label="Einstellungen schließen" (click)="closed.emit()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
-    <p class="preset-toast__subtitle">Tippen zum An- oder Ausschalten. Mit „Speichern“ übernehmen.</p>
+    <p class="preset-toast__subtitle" i18n>Tippen zum An- oder Ausschalten. Mit „Speichern“ übernehmen.</p>
     <div class="preset-toast__categories">
       @for (group of optionsByCategory(); track group.categoryId) {
         <div class="preset-toast__category">
@@ -40,7 +40,7 @@
               [value]="nameMode()"
               (change)="setNameMode($event.value)"
               class="preset-toast__name-mode"
-              aria-label="Namensmodus wählen"
+              i18n-aria-label aria-label="Namensmodus wählen"
             >
               @for (mode of nameModeOptions; track mode.value) {
                 <mat-button-toggle [value]="mode.value">
@@ -61,19 +61,19 @@
                 [attr.tabindex]="isOptionDisabled(opt.id) ? -1 : 0"
                 [attr.aria-pressed]="optionEffective(opt.id)"
                 [attr.aria-disabled]="isOptionDisabled(opt.id)"
-                [attr.aria-label]="opt.label + (optionEffective(opt.id) ? ' an' : ' aus') + (isOptionDisabled(opt.id) ? ', deaktiviert' : '')"
+                [attr.aria-label]="chipAriaLabel(opt.label, optionEffective(opt.id), isOptionDisabled(opt.id))"
                 class="preset-toast__chip"
               >
                 <mat-icon class="preset-toast__chip-icon">{{ opt.icon }}</mat-icon>
                 {{ opt.label }}
-                <span [class.preset-toast__chip-state--on]="optionEffective(opt.id)" [class.preset-toast__chip-state--off]="!optionEffective(opt.id)" class="preset-toast__chip-state">{{ optionEffective(opt.id) ? 'an' : 'aus' }}</span>
+                <span [class.preset-toast__chip-state--on]="optionEffective(opt.id)" [class.preset-toast__chip-state--off]="!optionEffective(opt.id)" class="preset-toast__chip-state">{{ optionEffective(opt.id) ? chipStateOn() : chipStateOff() }}</span>
               </mat-chip>
               }
             }
           </mat-chip-set>
           @if (group.categoryId === 'participation' && nameMode() === 'nicknameTheme') {
             <div class="preset-toast__nickname-theme">
-              <span class="preset-toast__nickname-theme-label">Altersgruppe:</span>
+              <span class="preset-toast__nickname-theme-label" i18n>Altersgruppe:</span>
               <mat-form-field
                 appearance="outline"
                 class="preset-toast__nickname-theme-select"
@@ -81,7 +81,7 @@
               >
                 <mat-select
                   [(ngModel)]="nicknameThemeSelectValue"
-                  aria-label="Altersgruppe wählen"
+                  i18n-aria-label aria-label="Altersgruppe wählen"
                 >
                   <mat-select-trigger>
                     <mat-icon class="preset-toast__option-icon">{{ selectedNicknameTheme().icon }}</mat-icon>
@@ -99,7 +99,7 @@
           }
           @if (group.categoryId === 'team' && optionEffective('teamMode')) {
             <div class="preset-toast__nickname-theme">
-              <span class="preset-toast__nickname-theme-label">Anzahl Teams:</span>
+              <span class="preset-toast__nickname-theme-label" i18n>Anzahl Teams:</span>
               <mat-form-field
                 appearance="outline"
                 class="preset-toast__nickname-theme-select"
@@ -107,6 +107,7 @@
               >
                 <mat-select
                   [(ngModel)]="teamCountSelectValue"
+                  i18n-aria-label
                   aria-label="Anzahl Teams wählen"
                 >
                   <mat-select-trigger>
@@ -137,16 +138,16 @@
     />
     <button mat-button type="button" (click)="exportPresets()">
       <mat-icon>download</mat-icon>
-      Exportieren
+      <span i18n>Exportieren</span>
     </button>
     <button mat-button type="button" (click)="presetImportInput.click()">
       <mat-icon>upload</mat-icon>
-      Importieren
+      <span i18n>Importieren</span>
     </button>
-    <button mat-button type="button" (click)="resetOptions()">Zurücksetzen</button>
+    <button mat-button type="button" (click)="resetOptions()"><span i18n>Zurücksetzen</span></button>
     <button mat-flat-button type="button" color="primary" (click)="saveAndClose()">
       <mat-icon>save</mat-icon>
-      Speichern
+      <span i18n>Speichern</span>
     </button>
   </div>
   @if (importExportStatus()) {

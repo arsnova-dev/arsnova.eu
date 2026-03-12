@@ -1,10 +1,20 @@
-import { type CanDeactivateFn, Routes } from '@angular/router';
+import { type CanDeactivateFn, type UrlSegment, Routes } from '@angular/router';
 import type { SessionHostComponent } from './features/session/session-host/session-host.component';
 
 const canDeactivateHost: CanDeactivateFn<SessionHostComponent> = (component) =>
   component.canDeactivate();
 
-export const routes: Routes = [
+const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it', 'es'];
+
+/** Matcher: nur Pfade wie /de, /en usw. (für Dev mit base href /). */
+function localeMatcher(segments: UrlSegment[]) {
+  if (segments.length > 0 && SUPPORTED_LOCALES.includes(segments[0].path)) {
+    return { consumed: [segments[0]], posParams: { locale: segments[0] } };
+  }
+  return null;
+}
+
+const mainRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
@@ -137,8 +147,11 @@ export const routes: Routes = [
       { path: '', redirectTo: 'imprint', pathMatch: 'full' },
     ],
   },
-  {
-    path: '**',
-    redirectTo: '',
-  },
+];
+
+/** Dev (base /): /de, /en usw. nutzen dieselben Routen. Production (base /de/): nur '' bis **. */
+export const routes: Routes = [
+  ...mainRoutes,
+  { matcher: localeMatcher, children: mainRoutes },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

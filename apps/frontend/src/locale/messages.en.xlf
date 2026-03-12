@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="de" target-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="2685999326867203280" datatype="html">
+        <source>Offline. Verbindung prüfen.</source>
+        <target>Offline. Check connection.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">5,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6449352355631585676" datatype="html">
+        <source>Verbindung erneut prüfen</source>
+        <target>Retry connection</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">6,7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1507385134149353639" datatype="html">
+        <source>Neue Version verfügbar.</source>
+        <target>New version available.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7251239463545714347" datatype="html">
+        <source>App neu laden</source>
+        <target>Reload app</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7984254788472058466" datatype="html">
+        <source>Zum Inhalt springen</source>
+        <target>Skip to content</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">21,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8096063037550497453" datatype="html">
+        <source>Anpassen</source>
+        <target>Customize</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">31,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8183476381446897959" datatype="html">
+        <source>Schließen</source>
+        <target>Close</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="804017840391960536" datatype="html">
+        <source>App installieren und schneller starten</source>
+        <target>Install app and start faster</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6258139510641023810" datatype="html">
+        <source>Installieren</source>
+        <target>Install</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">43,44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1547876271716599756" datatype="html">
+        <source>Impressum</source>
+        <target>Imprint</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">67,68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4082114936887396529" datatype="html">
+        <source>Datenschutz</source>
+        <target>Privacy</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">71,72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="549731773176920248" datatype="html">
+        <source>Kostenlos · 100 % DSGVO-konform · Open Source</source>
+        <target>Free · 100% GDPR compliant · Open Source</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">75,76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7981911571029514989" datatype="html">
+        <source>Jetzt mit mehr Schwung!</source>
+        <target>Now with more energy!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.ts</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1136696335453039978" datatype="html">
+        <source>Preset: Seriös</source>
+        <target>Preset: Serious</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.ts</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6151253518820826531" datatype="html">
+        <source>Preset: Spielerisch</source>
+        <target>Preset: Playful</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4859548675378498878" datatype="html">
+        <source>Quizzen, abstimmen, gemeinsam und live</source>
+        <target>Quiz, vote, together and live</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="309180159916522042" datatype="html">
+        <source>Kita bis Uni – Seriös bis Spielerisch</source>
+        <target>Kindergarten to university – Serious to playful</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6153078738662454958" datatype="html">
+        <source>Bonus für die Besten</source>
+        <target>Bonus for the best</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">6,7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1131898523277791200" datatype="html">
+        <source>Stil wählen</source>
+        <target>Choose style</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7017456685711767471" datatype="html">
+        <source>Stil auswählen</source>
+        <target>Select style</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8330667382540185922" datatype="html">
+        <source>Seriös</source>
+        <target>Serious</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">19,20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">69,70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">118,119</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6088916262905537020" datatype="html">
+        <source>Spielerisch</source>
+        <target>Playful</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">72,73</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">121,122</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7294553524626045238" datatype="html">
+        <source>Kostenlos · DSGVO-konform · Open Source</source>
+        <target>Free · GDPR compliant · Open Source</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">36,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="64331070139954298" datatype="html">
+        <source>Mitmachen</source>
+        <target>Participate</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8867796569409673283" datatype="html">
+        <source>Dabei sein</source>
+        <target>Join session</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6442998532427943414" datatype="html">
+        <source>Letzte Sessions</source>
+        <target>Recent sessions</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1706491855383783836" datatype="html">
+        <source>Session-Code, 6 Zeichen</source>
+        <target>Session code, 6 characters</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">91,92</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3185633903381817414" datatype="html">
+        <source>6 Zeichen, z.B. ABC123</source>
+        <target>6 characters, e.g. ABC123</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">98,99</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1017513650574160613" datatype="html">
+        <source>Session beitreten</source>
+        <target>Join session</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">104,105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2911090466936872230" datatype="html">
+        <source>Verbinde…</source>
+        <target>Connecting…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">106,107</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4260615433025312190" datatype="html">
+        <source>Teilnehmen</source>
+        <target>Join</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">116,117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5443127833205996206" datatype="html">
+        <source>Los geht&apos;s</source>
+        <target>Let&apos;s go</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">119,120</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4819831177672875363" datatype="html">
+        <source>Als Dozent anzeigen</source>
+        <target>Show as presenter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">127,128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8280611929840985852" datatype="html">
+        <source>Veranstalten</source>
+        <target>Host</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">139,140</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6082295614657919630" datatype="html">
+        <source>Quiz starten</source>
+        <target>Start quiz</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2371048119400512024" datatype="html">
+        <source>Demo spielen</source>
+        <target>Play demo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">149,150</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5886792202999625261" datatype="html">
+        <source>Demo</source>
+        <target>Demo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">152,153</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6061822178160426533" datatype="html">
+        <source>Quiz oder Q&amp;A in Sekunden</source>
+        <target>Quiz or Q&amp;A in seconds</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">158,159</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8443252743112048692" datatype="html">
+        <source>Hilfe öffnen</source>
+        <target>Open help</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">164,165</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7842597623910989718" datatype="html">
+        <source>Hilfe</source>
+        <target>Help</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">167,168</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1571519885027613921" datatype="html">
+        <source>Neues Quiz erstellen</source>
+        <target>Create new quiz</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">175,176</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1837569689231991988" datatype="html">
+        <source>Meine Quizze</source>
+        <target>My quizzes</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">187,188</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="898140095577856961" datatype="html">
+        <source>Fragerunden kommen bald</source>
+        <target>Q&amp;A rounds coming soon</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">194,195</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8837644370638292027" datatype="html">
+        <source>Fragerunde</source>
+        <target>Q&amp;A round</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">197,198</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8097951585887089548" datatype="html">
+        <source>Abstimmen</source>
+        <target>Vote</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">209,210</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3945076184928471190" datatype="html">
+        <source>Blitz-Feedback</source>
+        <target>Quick feedback</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">211</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="60633971595148257" datatype="html">
+        <source>Stimmungsbild starten</source>
+        <target>Start mood poll</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">218,219</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1162676483939675955" datatype="html">
+        <source>Ja/Nein-Voting starten</source>
+        <target>Start yes/no vote</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">223,224</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7878529700651699196" datatype="html">
+        <source>ABCD-Voting starten</source>
+        <target>Start ABCD vote</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">228,229</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2188854519574316630" datatype="html">
+        <source>Server</source>
+        <target>Server</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">242,243</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5611592591303869712" datatype="html">
+        <source>Status</source>
+        <target>Status</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">244</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5165752805887441425" datatype="html">
+        <source>Verbunden</source>
+        <target>Connected</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">248,249</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5071208449390129839" datatype="html">
+        <source>Keine Verbindung</source>
+        <target>No connection</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">250,251</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1632524115807344357" datatype="html">
+        <source>Nochmal versuchen</source>
+        <target>Try again</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="homeRemoveSession" datatype="html">
+        <source>Session <x id="PH" equiv-text="code"/> aus Liste entfernen</source>
+        <target>Remove session <x id="PH"/> from list</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7912811044236808389" datatype="html">
+        <source>Feedback konnte nicht gestartet werden. Ist der Server erreichbar?</source>
+        <target>Could not start feedback. Is the server reachable?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">235</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6627607898679527757" datatype="html">
+        <source>Bitte den 6-stelligen Code eingeben.</source>
+        <target>Please enter the 6-character code.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">255</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2422920312042178920" datatype="html">
+        <source>Diese Session ist bereits beendet.</source>
+        <target>This session has already ended.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">273</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6177333666796822326" datatype="html">
+        <source>Session nicht gefunden.</source>
+        <target>Session not found.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
+          <context context-type="linenumber">282</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6963223548875970688" datatype="html">
+        <source>Session wird geladen…</source>
+        <target>Loading session…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">5,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7728817007200398750" datatype="html">
+        <source>Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.</source>
+        <target>Check the code (6 characters) or scan the QR code again.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">18,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1845593921896066049" datatype="html">
+        <source>Session-Info</source>
+        <target>Session info</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="184269825545132912" datatype="html">
+        <source>Dein Name in der Session</source>
+        <target>Your name in the session</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">57,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8512652260420347486" datatype="html">
+        <source>Wähle einen Namen – er wird bei Abstimmungen angezeigt.</source>
+        <target>Choose a name – it will be shown during votes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4362921507905489922" datatype="html">
+        <source>Name wählen</source>
+        <target>Choose name</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1642161175573058778" datatype="html">
+        <source>Namen auswählen</source>
+        <target>Select name</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">45,46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1342587625788309343" datatype="html">
+        <source>— Bitte wählen —</source>
+        <target>— Please choose —</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7442075894264268742" datatype="html">
+        <source>Wird bei Abstimmungen angezeigt.</source>
+        <target>Shown during votes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">58,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1013509252693658906" datatype="html">
+        <source>Dein Name</source>
+        <target>Your name</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9214614307851377083" datatype="html">
+        <source>z. B. Max oder M. Mustermann</source>
+        <target>e.g. Max or M. Smith</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.html</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4390142580215117191" datatype="html">
+        <source>Teilnehmer</source>
+        <target>Participant</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8910738092876515625" datatype="html">
+        <source>Teilnehmende</source>
+        <target>Participants</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="333141918113055287" datatype="html">
+        <source>Wird beigetreten…</source>
+        <target>Joining…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8288752651159122414" datatype="html">
+        <source>Jetzt beitreten</source>
+        <target>Join now</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="275527120808559041" datatype="html">
+        <source>(vergeben)</source>
+        <target>(taken)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1871062137497272770" datatype="html">
+        <source>in der Lobby</source>
+        <target>in the lobby</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7007758554861161679" datatype="html">
+        <source>Ungültiger Session-Code.</source>
+        <target>Invalid session code.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3041751858630266822" datatype="html">
+        <source>Beitritt fehlgeschlagen.</source>
+        <target>Join failed.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">203</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/join/join.component.ts</context>
+          <context context-type="linenumber">227</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6217306908243764073" datatype="html">
+        <source>arsnova.eu Startseite</source>
+        <target>arsnova.eu home</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7070792224026857010" datatype="html">
+        <source>Zur Startseite</source>
+        <target>To home</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6893266805521246911" datatype="html">
+        <source>Einstellungen öffnen</source>
+        <target>Open settings</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6043310746915535897" datatype="html">
+        <source>Preset auswählen</source>
+        <target>Select preset</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">65,66</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">114,115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7103588127254721505" datatype="html">
+        <source>Theme</source>
+        <target>Theme</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="29832309535656200" datatype="html">
+        <source>System</source>
+        <target>System</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">133</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3892161059518616136" datatype="html">
+        <source>Dark</source>
+        <target>Dark</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="413116577994876478" datatype="html">
+        <source>Light</source>
+        <target>Light</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="51574765818008149" datatype="html">
+        <source>Sprache</source>
+        <target>Language</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">144</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5204129527992875094" datatype="html">
+        <source>Session-Code</source>
+        <target>Session code</target>
+      </trans-unit>
+      <trans-unit id="1080394870774492028" datatype="html">
+        <source>Beitreten unter</source>
+        <target>Join at</target>
+      </trans-unit>
+      <trans-unit id="7506202845535656842" datatype="html">
+        <source>Erste Frage starten</source>
+        <target>Start first question</target>
+      </trans-unit>
+      <trans-unit id="882376754672492511" datatype="html">
+        <source>Session beendet</source>
+        <target>Session ended</target>
+      </trans-unit>
+      <trans-unit id="6631038497338763021" datatype="html">
+        <source>Alle Ergebnisse sind gespeichert.</source>
+        <target>All results are saved.</target>
+      </trans-unit>
+      <trans-unit id="6117974931218037637" datatype="html">
+        <source>Ergebnis als CSV exportieren</source>
+        <target>Export result as CSV</target>
+      </trans-unit>
+      <trans-unit id="5049262896046451893" datatype="html">
+        <source>Ergebnis exportieren</source>
+        <target>Export result</target>
+      </trans-unit>
+      <trans-unit id="2074772447572482154" datatype="html">
+        <source>Wird exportiert…</source>
+        <target>Exporting…</target>
+      </trans-unit>
+      <trans-unit id="4564695414369721716" datatype="html">
+        <source>Export für Dokumentation und Evaluation – keine personenbezogenen Daten.</source>
+        <target>Export for documentation and evaluation – no personal data.</target>
+      </trans-unit>
+      <trans-unit id="7139999409916594388" datatype="html">
+        <source>Leaderboard</source>
+        <target>Leaderboard</target>
+      </trans-unit>
+      <trans-unit id="5506569422969383542" datatype="html">
+        <source>Nickname</source>
+        <target>Nickname</target>
+      </trans-unit>
+      <trans-unit id="1327302134726196371" datatype="html">
+        <source>Punkte</source>
+        <target>Points</target>
+      </trans-unit>
+      <trans-unit id="5635631035014464221" datatype="html">
+        <source>Richtig</source>
+        <target>Correct</target>
+      </trans-unit>
+      <trans-unit id="4860691915219781352" datatype="html">
+        <source>Bonus-Codes</source>
+        <target>Bonus codes</target>
+      </trans-unit>
+      <trans-unit id="8186013988289067040" datatype="html">
+        <source>Code</source>
+        <target>Code</target>
+      </trans-unit>
+      <trans-unit id="8709851101339765112" datatype="html">
+        <source>CSV exportieren</source>
+        <target>Export CSV</target>
+      </trans-unit>
+      <trans-unit id="6215465524597168467" datatype="html">
+        <source>Feedback der Teilnehmer</source>
+        <target>Participant feedback</target>
+      </trans-unit>
+      <trans-unit id="1119356355830423969" datatype="html">
+        <source>Gesamtbewertung</source>
+        <target>Overall rating</target>
+      </trans-unit>
+      <trans-unit id="8001707316145308250" datatype="html">
+        <source>Qualität der Fragen</source>
+        <target>Quality of questions</target>
+      </trans-unit>
+      <trans-unit id="6449886389454380276" datatype="html">
+        <source>Nochmal mitmachen?</source>
+        <target>Would participate again?</target>
+      </trans-unit>
+      <trans-unit id="1294687655040145133" datatype="html">
+        <source>Tauscht euch kurz mit eurem Nachbarn aus</source>
+        <target>Briefly discuss with your neighbour</target>
+      </trans-unit>
+      <trans-unit id="4639210698373093703" datatype="html">
+        <source>Gleiche Antwort? Prima. Verschiedene Meinung? Überzeugt euch gegenseitig.</source>
+        <target>Same answer? Great. Different view? Convince each other.</target>
+      </trans-unit>
+      <trans-unit id="4077514667517383076" datatype="html">
+        <source>Zweite Abstimmung folgt gleich.</source>
+        <target>Second vote follows shortly.</target>
+      </trans-unit>
+      <trans-unit id="8116022307556021692" datatype="html">
+        <source>Frage <x id="INTERPOLATION" equiv-text="{{ q.order + 1 }}"/></source>
+        <target>Question <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="1017989655370592681" datatype="html">
+        <source>Letzte Frage</source>
+        <target>Last question</target>
+      </trans-unit>
+      <trans-unit id="7135032209126516357" datatype="html">
+        <source>Alle haben abgestimmt</source>
+        <target>All have voted</target>
+      </trans-unit>
+      <trans-unit id="4209613400308596118" datatype="html">
+        <source>Lesephase</source>
+        <target>Reading phase</target>
+      </trans-unit>
+      <trans-unit id="731504381854376781" datatype="html">
+        <source>Frage ist sichtbar. Antworten noch gesperrt – gleich freigeben.</source>
+        <target>Question is visible. Answers still locked – releasing shortly.</target>
+      </trans-unit>
+      <trans-unit id="241839647344135361" datatype="html">
+        <source>Bewertung</source>
+        <target>Rating</target>
+      </trans-unit>
+      <trans-unit id="1477629611819298713" datatype="html">
+        <source>Bewertungen</source>
+        <target>Ratings</target>
+      </trans-unit>
+      <trans-unit id="6183226753731581202" datatype="html">
+        <source>Abstimmung beendet – warte auf Auswertung</source>
+        <target>Vote ended – waiting for results</target>
+      </trans-unit>
+      <trans-unit id="7334576405532009332" datatype="html">
+        <source>Lobby – Teilnehmende können beitreten</source>
+        <target>Lobby – participants can join</target>
+      </trans-unit>
+      <trans-unit id="3309552751464268959" datatype="html">
+        <source>Lesephase – Frage sichtbar, Antworten noch gesperrt</source>
+        <target>Reading phase – question visible, answers still locked</target>
+      </trans-unit>
+      <trans-unit id="8314358219279011566" datatype="html">
+        <source>Abstimmung läuft</source>
+        <target>Vote in progress</target>
+      </trans-unit>
+      <trans-unit id="3438822305353981453" datatype="html">
+        <source>Pausiert</source>
+        <target>Paused</target>
+      </trans-unit>
+      <trans-unit id="1693990659982068798" datatype="html">
+        <source>Ergebnisse werden angezeigt</source>
+        <target>Results are being shown</target>
+      </trans-unit>
+      <trans-unit id="6318529117726534409" datatype="html">
+        <source>Diskussionsphase – Austausch vor zweiter Runde</source>
+        <target>Discussion – exchange before second round</target>
+      </trans-unit>
+      <trans-unit id="4311861466399153181" datatype="html">
+        <source>Countdown 5 bis 0 mit Handzeichen</source>
+        <target>Countdown 5 to 0 with hand signs</target>
+      </trans-unit>
+      <trans-unit id="4785518769689907579" datatype="html">
+        <source>Einstellungen schließen</source>
+        <target>Close settings</target>
+      </trans-unit>
+      <trans-unit id="7656797609575920375" datatype="html">
+        <source>Tippen zum An- oder Ausschalten. Mit „Speichern“ übernehmen.</source>
+        <target>Tap to turn on or off. Apply with &quot;Save&quot;.</target>
+      </trans-unit>
+      <trans-unit id="4730761511042096701" datatype="html">
+        <source>Namensmodus wählen</source>
+        <target>Choose name mode</target>
+      </trans-unit>
+      <trans-unit id="7618679767641874671" datatype="html">
+        <source>Altersgruppe:</source>
+        <target>Age group:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.html</context>
+          <context context-type="linenumber">76,77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1116197022959746915" datatype="html">
+        <source>Altersgruppe wählen</source>
+        <target>Choose age group</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.html</context>
+          <context context-type="linenumber">84,85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9182051550515919068" datatype="html">
+        <source>Anzahl Teams:</source>
+        <target>Number of teams:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.html</context>
+          <context context-type="linenumber">102,103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1633424123584595190" datatype="html">
+        <source>Anzahl Teams wählen</source>
+        <target>Choose number of teams</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.html</context>
+          <context context-type="linenumber">111,112</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1554339525671560484" datatype="html">
+        <source>Exportieren</source>
+        <target>Export</target>
+      </trans-unit>
+      <trans-unit id="7079158434111612488" datatype="html">
+        <source>Importieren</source>
+        <target>Import</target>
+      </trans-unit>
+      <trans-unit id="4148353123071676032" datatype="html">
+        <source>Zurücksetzen</source>
+        <target>Reset</target>
+      </trans-unit>
+      <trans-unit id="2854123663314832793" datatype="html">
+        <source>Speichern</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="3570378747476250939" datatype="html">
+        <source>Spiel &amp; Auswertung</source>
+        <target>Game &amp; scoring</target>
+      </trans-unit>
+      <trans-unit id="2198730230681840467" datatype="html">
+        <source>Teilnahme &amp; Namen</source>
+        <target>Participation &amp; names</target>
+      </trans-unit>
+      <trans-unit id="3305022433902109133" datatype="html">
+        <source>Ablauf &amp; Zeit</source>
+        <target>Flow &amp; time</target>
+      </trans-unit>
+      <trans-unit id="3724068243287682962" datatype="html">
+        <source>Team</source>
+        <target>Team</target>
+      </trans-unit>
+      <trans-unit id="3995469925892017167" datatype="html">
+        <source>Ton &amp; Musik</source>
+        <target>Sound &amp; music</target>
+      </trans-unit>
+      <trans-unit id="9165341033389409300" datatype="html">
+        <source>Rangliste mit Punkten und Plätzen</source>
+        <target>Leaderboard with points and ranks</target>
+      </trans-unit>
+      <trans-unit id="7482902357186606885" datatype="html">
+        <source>Effekte bei richtiger Antwort</source>
+        <target>Effects on correct answer</target>
+      </trans-unit>
+      <trans-unit id="6436430342978913928" datatype="html">
+        <source>Anfeuerung nach jeder Antwort</source>
+        <target>Encouragement after each answer</target>
+      </trans-unit>
+      <trans-unit id="1010055081059073815" datatype="html">
+        <source>Emoji-Reaktionen</source>
+        <target>Emoji reactions</target>
+      </trans-unit>
+      <trans-unit id="5659757212709725154" datatype="html">
+        <source>Bonus-Code für Top-Plätze</source>
+        <target>Bonus code for top places</target>
+      </trans-unit>
+      <trans-unit id="4846158660227577877" datatype="html">
+        <source>Zeitlimit pro Frage</source>
+        <target>Time limit per question</target>
+      </trans-unit>
+      <trans-unit id="6651038865980107265" datatype="html">
+        <source>Zuerst lesen, dann antworten</source>
+        <target>Read first, then answer</target>
+      </trans-unit>
+      <trans-unit id="4945730206415032826" datatype="html">
+        <source>In Teams spielen</source>
+        <target>Play in teams</target>
+      </trans-unit>
+      <trans-unit id="3080824716395773574" datatype="html">
+        <source>Automatisch oder manuell zuweisen</source>
+        <target>Assign automatically or manually</target>
+      </trans-unit>
+      <trans-unit id="529868125469884091" datatype="html">
+        <source>Sounds bei Aktionen</source>
+        <target>Sounds on actions</target>
+      </trans-unit>
+      <trans-unit id="3186669676361579992" datatype="html">
+        <source>Hintergrundmusik in der Lobby</source>
+        <target>Background music in lobby</target>
+      </trans-unit>
+      <trans-unit id="3284733597105340728" datatype="html">
+        <source>Nobelpreisträger</source>
+        <target>Nobel laureates</target>
+      </trans-unit>
+      <trans-unit id="7626477121022284790" datatype="html">
+        <source>Kita</source>
+        <target>Kindergarten</target>
+      </trans-unit>
+      <trans-unit id="3750722582864738355" datatype="html">
+        <source>Grundschule</source>
+        <target>Primary school</target>
+      </trans-unit>
+      <trans-unit id="7176543650453804262" datatype="html">
+        <source>Mittelstufe</source>
+        <target>Middle school</target>
+      </trans-unit>
+      <trans-unit id="4290010202262796761" datatype="html">
+        <source>Oberstufe</source>
+        <target>Upper secondary</target>
+      </trans-unit>
+      <trans-unit id="presetTeamCount" datatype="html">
+        <source><x id="PH" equiv-text="n"/> Teams</source>
+        <target><x id="PH"/> Teams</target>
+      </trans-unit>
+      <trans-unit id="2345930081838049653" datatype="html">
+        <source>Nicks</source>
+        <target>Nicks</target>
+      </trans-unit>
+      <trans-unit id="2584230744748172806" datatype="html">
+        <source>Eigen</source>
+        <target>Custom</target>
+      </trans-unit>
+      <trans-unit id="3280880869067812336" datatype="html">
+        <source>Anonym</source>
+        <target>Anonymous</target>
+      </trans-unit>
+      <trans-unit id="5248396144494663799" datatype="html">
+        <source>Zu Spielerisch wechseln</source>
+        <target>Switch to playful</target>
+      </trans-unit>
+      <trans-unit id="8198317009587662224" datatype="html">
+        <source>Zu Seriös wechseln</source>
+        <target>Switch to serious</target>
+      </trans-unit>
+      <trans-unit id="7889883122899357105" datatype="html">
+        <source>an</source>
+        <target>on</target>
+      </trans-unit>
+      <trans-unit id="5055717612846127441" datatype="html">
+        <source>aus</source>
+        <target>off</target>
+      </trans-unit>
+      <trans-unit id="7941992196606586313" datatype="html">
+        <source> an</source>
+        <target> on</target>
+      </trans-unit>
+      <trans-unit id="2990917106587572197" datatype="html">
+        <source> aus</source>
+        <target> off</target>
+      </trans-unit>
+      <trans-unit id="7809051863578020887" datatype="html">
+        <source>, deaktiviert</source>
+        <target>, disabled</target>
+      </trans-unit>
+      <trans-unit id="2209022588230388950" datatype="html">
+        <source>Ungültige Preset-Exportdaten.</source>
+        <target>Invalid preset export data.</target>
+      </trans-unit>
+      <trans-unit id="6098527318474110370" datatype="html">
+        <source>Preset-Konfiguration exportiert.</source>
+        <target>Preset configuration exported.</target>
+      </trans-unit>
+      <trans-unit id="8171069958367639768" datatype="html">
+        <source>Preset-Konfiguration konnte nicht exportiert werden.</source>
+        <target>Preset configuration could not be exported.</target>
+      </trans-unit>
+      <trans-unit id="4316214959868569194" datatype="html">
+        <source>Ungültige Preset-Importdatei.</source>
+        <target>Invalid preset import file.</target>
+      </trans-unit>
+      <trans-unit id="2544923638585731897" datatype="html">
+        <source>Preset-Konfiguration importiert.</source>
+        <target>Preset configuration imported.</target>
+      </trans-unit>
+      <trans-unit id="8489835599162382657" datatype="html">
+        <source>Preset-Konfiguration konnte nicht importiert werden.</source>
+        <target>Preset configuration could not be imported.</target>
+      </trans-unit>
+      <trans-unit id="5108046665742011223" datatype="html">
+        <source>Anonym, ohne Wettbewerb, Fokus auf Inhalte.</source>
+        <target>Anonymous, no competition, focus on content.</target>
+      </trans-unit>
+      <trans-unit id="9197926712719486690" datatype="html">
+        <source>Mit Rangliste, Sounds, Anfeuerung und Countdown auf allen Handys – für mehr Motivation.</source>
+        <target>With leaderboard, sounds, encouragement and countdown on all devices – for more motivation.</target>
+      </trans-unit>
+      <trans-unit id="7885117965939465045" datatype="html">
+        <source>Wird geladen…</source>
+        <target>Loading…</target>
+      </trans-unit>
+      <trans-unit id="892942689940357289" datatype="html">
+        <source>Seite nicht gefunden.</source>
+        <target>Page not found.</target>
+      </trans-unit>
+      <trans-unit id="6843072138714030781" datatype="html">
+        <source>Seite konnte nicht geladen werden.</source>
+        <target>Page could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="1570242965373703679" datatype="html">
+        <source>Sprache wechseln?</source>
+        <target>Switch language?</target>
+      </trans-unit>
+      <trans-unit id="4560170132306989675" datatype="html">
+        <source>Ungespeicherte Änderungen gehen verloren.</source>
+        <target>Unsaved changes will be lost.</target>
+      </trans-unit>
+      <trans-unit id="1089697460565909673" datatype="html">
+        <source>Quiz-Entwurf oder -Bearbeitung wird nicht gespeichert.</source>
+        <target>Quiz draft or edits will not be saved.</target>
+      </trans-unit>
+      <trans-unit id="5362664497411471484" datatype="html">
+        <source>Trotzdem wechseln</source>
+        <target>Switch anyway</target>
+      </trans-unit>
+      <trans-unit id="7624133960269641605" datatype="html">
+        <source>Abbrechen</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="4917065994836676067" datatype="html">
+        <source>In der Entwicklung wird nur Deutsch ausgeliefert. Für andere Sprachen: <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>npm run build:localize<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> und <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>serve:localize:api<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/>.</source>
+        <target>In development only German is delivered. For other languages: <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>npm run build:localize<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> and <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>serve:localize:api<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/>.</target>
+      </trans-unit>
+      <trans-unit id="3468357241596821887" datatype="html">
+        <source>Gerade aktiv</source>
+        <target>Currently active</target>
+      </trans-unit>
+      <trans-unit id="8079753747991545814" datatype="html">
+        <source>Server-Status: Keine Verbindung</source>
+        <target>Server status: No connection</target>
+      </trans-unit>
+      <trans-unit id="859548005579069" datatype="html">
+        <source>Server-Status wird geladen</source>
+        <target>Server status loading</target>
+      </trans-unit>
+      <trans-unit id="9053966995979025004" datatype="html">
+        <source>Feedback-Runde nicht gefunden oder abgelaufen.</source>
+        <target>Feedback round not found or expired.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

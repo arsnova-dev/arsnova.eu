@@ -2,7 +2,7 @@
  * Server-Status-Widget (Story 0.4).
  * Zeigt aggregierte Kennzahlen und Status-Indikator; Polling alle 30s.
  */
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { trpc } from '../../core/trpc.client';
 import type { ServerStatsDTO } from '@arsnova/shared-types';
@@ -14,12 +14,16 @@ import type { ServerStatsDTO } from '@arsnova/shared-types';
   styleUrls: ['./server-status-widget.component.scss'],
 })
 export class ServerStatusWidgetComponent implements OnInit, OnDestroy {
+  /** Wenn false, wird „Keine Verbindung“ angezeigt statt „Gerade aktiv“ / „Wird geladen…“. */
+  @Input() connectionOk = true;
+
   stats = signal<ServerStatsDTO | null>(null);
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
   ariaStatusLabel(): string {
+    if (!this.connectionOk) return $localize`Server-Status: Keine Verbindung`;
     const s = this.stats();
-    if (!s) return 'Server-Status wird geladen';
+    if (!s) return $localize`Server-Status wird geladen`;
     const statusText = s.serverStatus === 'healthy' ? 'gesund' : s.serverStatus === 'busy' ? 'ausgelastet' : 'überlastet';
     return `Server-Status: ${statusText}. ${s.activeSessions} Quiz live, ${s.activeBlitzRounds} Blitz-Runden, ${s.totalParticipants} Teilnehmende, ${s.completedSessions} Quizzes durchgeführt.`;
   }

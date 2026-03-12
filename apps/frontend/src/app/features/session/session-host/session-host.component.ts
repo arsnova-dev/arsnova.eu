@@ -417,20 +417,38 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     return su?.status ?? s?.status ?? null;
   }
 
+  /** i18n: Singular label for participant count. */
+  participantLabelSingular(): string {
+    return $localize`Teilnehmer`;
+  }
+  /** i18n: Plural label for participant count. */
+  participantLabelPlural(): string {
+    return $localize`Teilnehmende`;
+  }
+
+  /** i18n: Feedback rating count (singular). */
+  feedbackRatingSingular(): string {
+    return $localize`Bewertung`;
+  }
+  /** i18n: Feedback rating count (plural). */
+  feedbackRatingPlural(): string {
+    return $localize`Bewertungen`;
+  }
+
   /** Lesbare Phasen-Beschreibung für Dozenten-Info und Publikum. */
   phaseLabel(status: SessionInfoDTO['status'] | null, allVoted = false, countdownEnded = false): string {
     if (!status) return '—';
     if (status === 'ACTIVE' && (allVoted || countdownEnded)) {
-      return 'Abstimmung beendet – warte auf Auswertung';
+      return $localize`Abstimmung beendet – warte auf Auswertung`;
     }
     const labels: Record<SessionInfoDTO['status'], string> = {
-      LOBBY: 'Lobby – Teilnehmende können beitreten',
-      QUESTION_OPEN: 'Lesephase – Frage sichtbar, Antworten noch gesperrt',
-      ACTIVE: 'Abstimmung läuft',
-      PAUSED: 'Pausiert',
-      RESULTS: 'Ergebnisse werden angezeigt',
-      DISCUSSION: 'Diskussionsphase – Austausch vor zweiter Runde',
-      FINISHED: 'Session beendet',
+      LOBBY: $localize`Lobby – Teilnehmende können beitreten`,
+      QUESTION_OPEN: $localize`Lesephase – Frage sichtbar, Antworten noch gesperrt`,
+      ACTIVE: $localize`Abstimmung läuft`,
+      PAUSED: $localize`Pausiert`,
+      RESULTS: $localize`Ergebnisse werden angezeigt`,
+      DISCUSSION: $localize`Diskussionsphase – Austausch vor zweiter Runde`,
+      FINISHED: $localize`Session beendet`,
     };
     return labels[status] ?? status;
   }

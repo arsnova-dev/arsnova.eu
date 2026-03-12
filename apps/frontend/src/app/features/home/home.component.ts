@@ -49,11 +49,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ctaReady = signal(false);
   recentSessionCodes = signal<string[]>([]);
   joinError = signal<string | null>(null);
+  /** Set when join failed because session is finished (for showing host link). */
+  joinErrorSessionFinished = signal(false);
   isJoining = signal(false);
 
   readonly themePreset = inject(ThemePresetService);
   private readonly quizStore = inject(QuizStoreService);
   readonly quizCount = computed(() => this.quizStore.quizzes().filter(q => q.id !== DEMO_QUIZ_ID).length);
+  /** i18n: Label for retry button (connecting vs try again). */
+  retryButtonLabel = computed(() =>
+    this.apiRetrying() ? $localize`Verbinde…` : $localize`Nochmal versuchen`,
+  );
   private readonly platformId = inject(PLATFORM_ID);
 
   isValidSessionCode = computed(() => /^[A-Z0-9]{6}$/.test(this.sessionCode()));
@@ -185,6 +191,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.setItem('home-recent-sessions', JSON.stringify(updated));
   }
 
+  /** i18n: aria-label for remove session from list (code is dynamic). */
+  removeSessionAriaLabel(code: string): string {
+    return $localize`:@@homeRemoveSession:Session ${code} aus Liste entfernen`;
+  }
+
   async joinSessionByCode(code: string): Promise<void> {
     this.sessionCode.set(code);
     await this.joinSession();
@@ -221,7 +232,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       await this.router.navigate(['/feedback', result.sessionCode]);
     } catch {
-      this.feedbackError.set('Feedback konnte nicht gestartet werden. Ist der Server erreichbar?');
+      this.feedbackError.set($localize`Feedback konnte nicht gestartet werden. Ist der Server erreichbar?`);
     }
   }
 
@@ -240,11 +251,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isJoining()) return;
     const code = this.sessionCode().trim().toUpperCase();
     if (!/^[A-Z0-9]{6}$/.test(code)) {
-      this.joinError.set('Bitte den 6-stelligen Code eingeben.');
+      this.joinErrorSessionFinished.set(false);
+      this.joinError.set($localize`Bitte den 6-stelligen Code eingeben.`);
       this.triggerShake();
       this.sessionCodeInput?.nativeElement.focus();
       return;
     }
+    this.joinErrorSessionFinished.set(false);
     this.joinError.set(null);
     this.isJoining.set(true);
     try {
@@ -256,7 +269,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       const session = await trpc.session.getInfo.query({ code });
       if (session.status === 'FINISHED') {
-        this.joinError.set('Diese Session ist bereits beendet.');
+        this.joinErrorSessionFinished.set(true);
+        this.joinError.set($localize`Diese Session ist bereits beendet.`);
         this.triggerShake();
         return;
       }
@@ -265,7 +279,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message
-        : 'Session nicht gefunden.';
+        : $localize`Session nicht gefunden.`;
+      this.joinErrorSessionFinished.set(false);
       this.joinError.set(msg);
       this.triggerShake();
     } finally {

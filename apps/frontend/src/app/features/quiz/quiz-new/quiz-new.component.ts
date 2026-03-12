@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
@@ -24,6 +24,7 @@ import {
 } from '@arsnova/shared-types';
 import { QuizStoreService, type QuizSettings } from '../data/quiz-store.service';
 import { ThemePresetService } from '../../../core/theme-preset.service';
+import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
 
@@ -56,12 +57,13 @@ import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util
   templateUrl: './quiz-new.component.html',
   styleUrl: './quiz-new.component.scss',
 })
-export class QuizNewComponent {
+export class QuizNewComponent implements OnInit, OnDestroy {
   private readonly document = inject(DOCUMENT);
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly quizStore = inject(QuizStoreService);
   private readonly themePreset = inject(ThemePresetService);
+  private readonly localeGuard = inject(LocaleSwitchGuardService);
 
   readonly presetOptions: Array<{ value: QuizPreset; label: string }> = [
     { value: 'PLAYFUL', label: 'Spielerisch' },
@@ -125,6 +127,14 @@ export class QuizNewComponent {
   readonly defaultTimerControl = this.form.controls.defaultTimer;
   readonly teamCountControl = this.form.controls.teamCount;
   readonly bonusTokenCountControl = this.form.controls.bonusTokenCount;
+
+  ngOnInit(): void {
+    this.localeGuard.register(() => this.form.dirty);
+  }
+
+  ngOnDestroy(): void {
+    this.localeGuard.unregister();
+  }
 
   isTeamModeEnabled(): boolean {
     return this.form.controls.teamMode.value;

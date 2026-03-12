@@ -16,7 +16,8 @@ Die App soll mehrsprachig nutzbar sein (Backlog Epic 6, Story 6.2). Dafür sind 
 
 ### 1. Technik: @angular/localize (Compile-Time)
 
-- Es wird der **offizielle Angular-Weg** mit **@angular/localize** verwendet.
+- Es wird der **offizielle Angular-Weg** mit **@angular/localize** verwendet. **Wir folgen den Empfehlungen von Angular** (Dokumentation angular.dev, CLI): Technik, Workflow (Extract → Übersetzen → Merge → Build pro Locale) und Standardformate werden wie von Angular vorgegeben genutzt; Abweichungen nur bei zwingendem Grund (z. B. Tooling-Anforderung).
+- **Format Übersetzungsdateien:** Entsprechend der Angular-CLI-Empfehlung wird das **Standardformat XLIFF** verwendet (`ng extract-i18n` ohne `--format` erzeugt `.xlf`, XLIFF 1.2). Damit sind Meaning/Description für Übersetzer:innen voll unterstützt. Abweichung auf JSON oder ARB nur, wenn externes Tooling oder CI das zwingend verlangt.
 - **Locale = Subpfad:** Jede unterstützte Sprache wird unter einem eigenen Pfad ausgeliefert (z. B. `/de/`, `/en/`, `/fr/`). Sprachwechsel = Navigation zu diesem Subpfad (in der Regel mit vollständigem Reload).
 - **Unterstützte Sprachen (Backlog 6.2):** Deutsch (de), Englisch (en), Französisch (fr), Italienisch (it), Spanisch (es). Quellsprache im Code: Deutsch (sourceLocale).
 - **Sprachwahl:** Ein Sprachwähler (z. B. in der Top-Toolbar) ermöglicht die Auswahl; die gewählte Locale wird in der URL abgebildet. Die Auswahl wird in `localStorage` persistiert und beim nächsten Besuch serverseitig oder clientseitig für Redirect genutzt.

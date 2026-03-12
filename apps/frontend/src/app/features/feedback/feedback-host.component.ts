@@ -52,12 +52,25 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.generateQrCode();
+    await this.loadInitialResult();
     this.subscribeToResults();
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription = null;
+  }
+
+  /** Erste Daten per HTTP laden, damit die Seite nicht auf die WebSocket-Subscription warten muss. */
+  private async loadInitialResult(): Promise<void> {
+    try {
+      const data = await trpc.quickFeedback.results.query({ sessionCode: this.code });
+      this.result.set(data);
+      this.locked.set(data.locked);
+      this.error.set(null);
+    } catch {
+      this.error.set($localize`Feedback-Runde nicht gefunden oder abgelaufen.`);
+    }
   }
 
   private subscribeToResults(): void {

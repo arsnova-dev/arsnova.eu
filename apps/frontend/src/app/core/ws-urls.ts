@@ -24,6 +24,10 @@ export function getTrpcWsUrl(): string {
   if (isProductionLike()) {
     return `${wsBaseUrl()}/trpc-ws`;
   }
+  const port = typeof window !== 'undefined' ? window.location.port : '';
+  if (port === '4200') {
+    return `${wsBaseUrl()}:4200/trpc-ws`;
+  }
   return 'ws://localhost:3001';
 }
 
@@ -31,6 +35,10 @@ export function getTrpcWsUrl(): string {
 export function getYjsWsUrl(): string {
   if (isProductionLike()) {
     return `${wsBaseUrl()}/yjs-ws`;
+  }
+  const port = typeof window !== 'undefined' ? window.location.port : '';
+  if (port === '4200') {
+    return `${wsBaseUrl()}:4200/yjs-ws`;
   }
   return 'ws://localhost:3002';
 }

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
 import { Subject, takeUntil } from 'rxjs';
+import { getLocaleFromPath, type SupportedLocale } from '../../core/locale-from-path';
 
 @Component({
   selector: 'app-legal-page',
@@ -34,7 +35,7 @@ export class LegalPageComponent implements OnInit, OnDestroy {
       this.content.set(null);
 
       if (slug !== 'imprint' && slug !== 'privacy') {
-        this.error.set('Seite nicht gefunden.');
+        this.error.set($localize`Seite nicht gefunden.`);
         this.loading.set(false);
         return;
       }
@@ -44,25 +45,32 @@ export class LegalPageComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const lang = 'de';
+      const locale: SupportedLocale = getLocaleFromPath() ?? 'de';
       const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/';
       const baseUrl = `${window.location.origin}${baseHref.endsWith('/') ? baseHref : baseHref + '/'}`;
-      const path = `${baseUrl.replace(/\/$/, '')}/assets/legal/${slug}.${lang}.md`;
 
-      this.http.get(path, { responseType: 'text' }).subscribe({
-        next: (md) => {
-          Promise.resolve(marked.parse(md)).then((html: string) => {
-            this.ngZone.run(() => {
-              this.content.set(this.sanitizer.bypassSecurityTrustHtml(html));
-              this.loading.set(false);
+      const tryLoad = (lang: SupportedLocale) => {
+        const path = `${baseUrl.replace(/\/$/, '')}/assets/legal/${slug}.${lang}.md`;
+        this.http.get(path, { responseType: 'text' }).subscribe({
+          next: (md) => {
+            Promise.resolve(marked.parse(md)).then((html: string) => {
+              this.ngZone.run(() => {
+                this.content.set(this.sanitizer.bypassSecurityTrustHtml(html));
+                this.loading.set(false);
+              });
             });
-          });
-        },
-        error: () => {
-          this.error.set('Seite konnte nicht geladen werden.');
-          this.loading.set(false);
-        },
-      });
+          },
+          error: () => {
+            if (lang !== 'de') {
+              tryLoad('de');
+            } else {
+              this.error.set($localize`Seite konnte nicht geladen werden.`);
+              this.loading.set(false);
+            }
+          },
+        });
+      };
+      tryLoad(locale);
     });
   }
 

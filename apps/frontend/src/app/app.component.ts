@@ -87,9 +87,11 @@ export class AppComponent implements OnInit, OnDestroy {
   );
   presetSnackbarLabel = computed(() => {
     if (this.firstTimePlayfulMessage() && this.themePreset.preset() === 'spielerisch') {
-      return 'Jetzt mit mehr Schwung!';
+      return $localize`Jetzt mit mehr Schwung!`;
     }
-    return this.themePreset.preset() === 'serious' ? 'Preset: Seriös' : 'Preset: Spielerisch';
+    return this.themePreset.preset() === 'serious'
+      ? $localize`Preset: Seriös`
+      : $localize`Preset: Spielerisch`;
   });
 
   ngOnInit(): void {

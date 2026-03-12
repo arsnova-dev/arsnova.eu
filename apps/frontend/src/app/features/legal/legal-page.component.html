@@ -1,6 +1,6 @@
 <div class="legal-page l-page l-section">
   @if (loading()) {
-    <p class="legal-loading">Wird geladen…</p>
+    <p class="legal-loading" i18n>Wird geladen…</p>
   } @else if (error()) {
     <p class="legal-error" role="alert">{{ error() }}</p>
   } @else if (content()) {

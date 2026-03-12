@@ -33,6 +33,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 
   readonly session = signal<SessionInfoDTO | null>(null);
   readonly error = signal<string | null>(null);
+  readonly errorSessionFinished = signal(false);
   readonly loading = signal(true);
   /** Bereits vergebene Nicknames (für Ausgrauen). */
   readonly takenNicknames = signal<Set<string>>(new Set());
@@ -77,9 +78,23 @@ export class JoinComponent implements OnInit, OnDestroy {
     return this.selectedNickname().trim();
   });
 
+  /** i18n: participant count label (singular). */
+  participantSingular = () => $localize`Teilnehmer`;
+  /** i18n: participant count label (plural). */
+  participantPlural = () => $localize`Teilnehmende`;
+  /** i18n: joining in progress. */
+  joiningLabel = () => $localize`Wird beigetreten…`;
+  /** i18n: join now button. */
+  joinNowLabel = () => $localize`Jetzt beitreten`;
+  /** i18n: suffix for taken nickname. */
+  takenSuffix = () => $localize`(vergeben)`;
+  /** i18n: "in der Lobby" suffix. */
+  inLobbyLabel = () => $localize`in der Lobby`;
+
   ngOnInit(): void {
     if (this.code.length !== 6) {
-      this.error.set('Ungültiger Session-Code.');
+      this.errorSessionFinished.set(false);
+      this.error.set($localize`Ungültiger Session-Code.`);
       this.loading.set(false);
       return;
     }
@@ -99,7 +114,8 @@ export class JoinComponent implements OnInit, OnDestroy {
     try {
       const session = await trpc.session.getInfo.query({ code: this.code });
       if (session.status === 'FINISHED') {
-        this.error.set('Diese Session ist bereits beendet.');
+        this.errorSessionFinished.set(true);
+        this.error.set($localize`Diese Session ist bereits beendet.`);
         this.loading.set(false);
         return;
       }
@@ -113,7 +129,8 @@ export class JoinComponent implements OnInit, OnDestroy {
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message
-        : 'Session nicht gefunden.';
+        : $localize`Session nicht gefunden.`;
+      this.errorSessionFinished.set(false);
       this.error.set(msg);
     } finally {
       this.loading.set(false);
@@ -139,7 +156,8 @@ export class JoinComponent implements OnInit, OnDestroy {
       const session = await trpc.session.getInfo.query({ code: this.code });
       if (session.status === 'FINISHED') {
         this.session.set(session);
-        this.error.set('Diese Session ist bereits beendet.');
+        this.errorSessionFinished.set(true);
+        this.error.set($localize`Diese Session ist bereits beendet.`);
         this.stopSessionPoll();
         return;
       }
@@ -182,7 +200,8 @@ export class JoinComponent implements OnInit, OnDestroy {
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message
-        : 'Beitritt fehlgeschlagen.';
+        : $localize`Beitritt fehlgeschlagen.`;
+      this.errorSessionFinished.set(false);
       this.error.set(msg);
     } finally {
       this.joining.set(false);
@@ -205,7 +224,8 @@ export class JoinComponent implements OnInit, OnDestroy {
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message
-        : 'Beitritt fehlgeschlagen.';
+        : $localize`Beitritt fehlgeschlagen.`;
+      this.errorSessionFinished.set(false);
       this.error.set(msg);
     } finally {
       this.joining.set(false);

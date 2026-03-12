@@ -8,12 +8,16 @@
     "build": "ng build",
     "build:prod": "ng build --configuration=production",
     "serve:dist": "npx serve dist/browser -s",
+    "build:localize": "ng build --localize && node -e \"require('fs').copyFileSync('static-root-index.html', 'dist/browser/index.html')\"",
+    "serve:localize": "npx serve dist/browser -p 4200",
+    "serve:localize:api": "node scripts/serve-localized-with-api.mjs",
     "lighthouse:serve": "npm run build:prod && npm run serve:dist",
     "check:viewport": "node scripts/check-viewport-320.mjs",
     "lighthouse:a11y": "node scripts/lighthouse-a11y.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "extract-i18n": "ng extract-i18n --output-path src/locale",
     "screenshots": "node scripts/capture-screenshots.mjs",
     "serve:ssr:frontend": "node dist/server/server.mjs"
   },
@@ -50,6 +54,7 @@
     "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
+    "@angular/localize": "^21.2.0",
     "@types/express": "^5.0.1",
     "@types/katex": "^0.16.8",
     "@types/marked": "^5.0.2",
@@ -60,6 +65,7 @@
     "postcss": "^8.4.0",
     "sharp-ico": "^0.1.5",
     "typescript": "~5.9.0",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "ws": "^8.19.0"
   }
 }

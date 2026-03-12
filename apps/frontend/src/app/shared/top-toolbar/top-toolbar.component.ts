@@ -3,13 +3,21 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
+import { LocaleSwitchGuardService } from '../../core/locale-switch-guard.service';
+import { getLocaleFromPath, SUPPORTED_LOCALES } from '../../core/locale-from-path';
+import {
+  ConfirmLeaveDialogComponent,
+  type ConfirmLeaveDialogData,
+} from '../confirm-leave-dialog/confirm-leave-dialog.component';
 
 const STORAGE_LANG = 'home-language';
 
@@ -35,6 +43,8 @@ export class TopToolbarComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly focusService = inject(PresetSnackbarFocusService);
   private readonly router = inject(Router);
+  private readonly localeGuard = inject(LocaleSwitchGuardService);
+  private readonly dialog = inject(MatDialog);
   readonly showHomeLink = toSignal(
     this.router.events.pipe(map(() => this.router.url !== '/')),
     { initialValue: false },
@@ -50,6 +60,9 @@ export class TopToolbarComponent {
   language = signal<'de' | 'en' | 'fr' | 'it' | 'es'>('de');
   controlsMenuOpen = signal(false);
 
+  /** true wenn URL-Locale ≠ de, aber nur ein Build (z. B. Dev) → Hinweis anzeigen. */
+  showSingleLocaleHint = signal(false);
+
   /** true wenn gescrollt wurde (stärkerer Schatten). */
   @Input() scrolled = false;
   /** Help/Legal: Toolbar fixiert, kann beim Runterscrollen ausgeblendet werden. */
@@ -59,20 +72,61 @@ export class TopToolbarComponent {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      const stored = localStorage.getItem(STORAGE_LANG);
-      if (stored && ['de', 'en', 'fr', 'it', 'es'].includes(stored)) {
-        this.language.set(stored as 'de' | 'en' | 'fr' | 'it' | 'es');
+      const fromPath = getLocaleFromPath();
+      if (fromPath) {
+        this.language.set(fromPath);
+        this.showSingleLocaleHint.set(
+          fromPath !== 'de' && document.documentElement.getAttribute('lang') === 'de',
+        );
+      } else {
+        const stored = localStorage.getItem(STORAGE_LANG);
+        if (stored && SUPPORTED_LOCALES.includes(stored as (typeof SUPPORTED_LOCALES)[number])) {
+          this.language.set(stored as 'de' | 'en' | 'fr' | 'it' | 'es');
+        }
       }
     }
   }
 
   setLanguage(code: 'de' | 'en' | 'fr' | 'it' | 'es'): void {
     this.language.set(code);
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(STORAGE_LANG, code);
+    if (!isPlatformBrowser(this.platformId)) {
+      this.closeControlsMenu();
+      return;
     }
+    localStorage.setItem(STORAGE_LANG, code);
     this.closeControlsMenu();
-    setTimeout(() => this.focusService.refocusInput(), 0);
+
+    const doRedirect = (): void => {
+      const pathname = window.location.pathname;
+      const hasLocale = /^\/(de|en|fr|it|es)(?:\/|$)/.test(pathname);
+      if (hasLocale) {
+        const newPath = pathname.replace(/^\/(de|en|fr|it|es)(?=\/|$)/, `/${code}`);
+        window.location.href = newPath + window.location.search + window.location.hash;
+      } else {
+        const rest = pathname === '/' ? '' : pathname;
+        window.location.href = `/${code}${rest || '/'}` + window.location.search + window.location.hash;
+      }
+    };
+
+    if (this.localeGuard.hasUnsavedChanges()) {
+      const data: ConfirmLeaveDialogData = {
+        title: $localize`Sprache wechseln?`,
+        message: $localize`Ungespeicherte Änderungen gehen verloren.`,
+        consequences: [$localize`Quiz-Entwurf oder -Bearbeitung wird nicht gespeichert.`],
+        confirmLabel: $localize`Trotzdem wechseln`,
+        cancelLabel: $localize`Abbrechen`,
+      };
+      const dialogRef = this.dialog.open(ConfirmLeaveDialogComponent, {
+        data,
+        width: '26rem',
+        autoFocus: 'dialog',
+      });
+      firstValueFrom(dialogRef.afterClosed()).then((confirmed) => {
+        if (confirmed === true) doRedirect();
+      });
+    } else {
+      doRedirect();
+    }
   }
 
   onThemeChange(value: 'system' | 'dark' | 'light'): void {

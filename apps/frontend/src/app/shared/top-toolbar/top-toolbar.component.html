@@ -7,7 +7,7 @@
 >
   <div class="top-toolbar__row">
     <div class="top-toolbar__start">
-      <a routerLink="/" class="top-toolbar__brand" aria-label="arsnova.eu Startseite">
+      <a routerLink="/" class="top-toolbar__brand" i18n-aria-label aria-label="arsnova.eu Startseite">
         <svg
           class="top-toolbar__brand-icon"
         viewBox="0 0 32 32"
@@ -35,7 +35,9 @@
         <a
           routerLink="/"
           class="top-toolbar__home-link"
+          i18n-matTooltip
           matTooltip="Zur Startseite"
+          i18n-aria-label
           aria-label="Zur Startseite"
         >
           <mat-icon>home</mat-icon>
@@ -49,7 +51,7 @@
       class="top-toolbar__menu-btn mobile-only"
       [attr.aria-expanded]="controlsMenuOpen() ? 'true' : 'false'"
       aria-controls="top-toolbar-mobile"
-      aria-label="Einstellungen öffnen"
+      i18n-aria-label aria-label="Einstellungen öffnen"
       (click)="toggleControlsMenu()"
     >
       <mat-icon>menu</mat-icon>
@@ -59,14 +61,15 @@
       <mat-button-toggle-group
         [value]="themePreset.preset()"
         appearance="standard"
+        i18n-aria-label
         aria-label="Preset auswählen"
         class="top-toolbar__toggles"
       >
         <mat-button-toggle value="serious" (click)="setPreset('serious')">
-          <mat-icon>school</mat-icon> Seriös
+          <mat-icon>school</mat-icon> <span i18n>Seriös</span>
         </mat-button-toggle>
         <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch')">
-          <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon> Spielerisch
+          <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon> <span i18n>Spielerisch</span>
         </mat-button-toggle>
       </mat-button-toggle-group>
 
@@ -74,21 +77,21 @@
         [value]="themePreset.theme()"
         (change)="onThemeChange($event.value)"
         appearance="standard"
-        aria-label="Theme"
+        i18n-aria-label aria-label="Theme"
         class="top-toolbar__toggles"
       >
-        <mat-button-toggle value="system" aria-label="System">
+        <mat-button-toggle value="system" i18n-aria-label aria-label="System">
           <mat-icon>contrast</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="dark" aria-label="Dark">
+        <mat-button-toggle value="dark" i18n-aria-label aria-label="Dark">
           <mat-icon>dark_mode</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="light" aria-label="Light">
+        <mat-button-toggle value="light" i18n-aria-label aria-label="Light">
           <mat-icon>light_mode</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
 
-      <button matIconButton [matMenuTriggerFor]="langMenu" aria-label="Sprache" class="top-toolbar__icon-btn">
+      <button matIconButton [matMenuTriggerFor]="langMenu" i18n-aria-label aria-label="Sprache" class="top-toolbar__icon-btn">
         <mat-icon>language</mat-icon>
       </button>
       <mat-menu #langMenu="matMenu">
@@ -107,14 +110,15 @@
       <mat-button-toggle-group
         [value]="themePreset.preset()"
         appearance="standard"
+        i18n-aria-label
         aria-label="Preset auswählen"
         class="top-toolbar__toggles top-toolbar__toggles--full"
       >
         <mat-button-toggle value="serious" (click)="setPreset('serious', true)">
-          <mat-icon>school</mat-icon> Seriös
+          <mat-icon>school</mat-icon> <span i18n>Seriös</span>
         </mat-button-toggle>
         <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch', true)">
-          <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon> Spielerisch
+          <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon> <span i18n>Spielerisch</span>
         </mat-button-toggle>
       </mat-button-toggle-group>
 
@@ -122,22 +126,22 @@
         [value]="themePreset.theme()"
         (change)="onThemeChange($event.value)"
         appearance="standard"
-        aria-label="Theme"
+        i18n-aria-label aria-label="Theme"
         class="top-toolbar__toggles top-toolbar__toggles--full"
       >
-        <mat-button-toggle value="system" aria-label="System">
+        <mat-button-toggle value="system" i18n-aria-label aria-label="System">
           <mat-icon>contrast</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="dark" aria-label="Dark">
+        <mat-button-toggle value="dark" i18n-aria-label aria-label="Dark">
           <mat-icon>dark_mode</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="light" aria-label="Light">
+        <mat-button-toggle value="light" i18n-aria-label aria-label="Light">
           <mat-icon>light_mode</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
 
       <div class="top-toolbar__mobile-lang">
-        <button matIconButton [matMenuTriggerFor]="langMenuMobile" aria-label="Sprache" class="top-toolbar__icon-btn">
+        <button matIconButton [matMenuTriggerFor]="langMenuMobile" i18n-aria-label aria-label="Sprache" class="top-toolbar__icon-btn">
           <mat-icon>language</mat-icon>
         </button>
       </div>
@@ -150,5 +154,12 @@
         }
       </mat-menu>
     </div>
+  }
+
+  @if (showSingleLocaleHint()) {
+    <p class="top-toolbar__locale-hint" role="status">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <span i18n>In der Entwicklung wird nur Deutsch ausgeliefert. Für andere Sprachen: <code>npm run build:localize</code> und <code>serve:localize:api</code>.</span>
+    </p>
   }
 </header>

@@ -6,6 +6,14 @@
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
+      "i18n": {
+        "sourceLocale": "de",
+        "locales": {
+          "en": {
+            "translation": "src/locale/messages.en.xlf"
+          }
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -13,7 +21,7 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [],
+            "polyfills": ["@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
@@ -24,9 +32,7 @@
                 "output": "/"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "inlineStyleLanguage": "scss",
             "server": "src/main.server.ts",
@@ -36,7 +42,8 @@
             },
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "i18nMissingTranslation": "warning"
           },
           "configurations": {
             "production": {

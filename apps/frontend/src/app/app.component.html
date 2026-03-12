@@ -2,8 +2,8 @@
   @if (!isOnline()) {
     <div class="app-offline-banner" role="alert">
       <mat-icon class="app-offline-banner__icon">cloud_off</mat-icon>
-      <span>Offline. Verbindung prüfen.</span>
-      <button matButton class="app-offline-banner__retry" (click)="retryOnline()" aria-label="Verbindung erneut prüfen">
+      <span i18n>Offline. Verbindung prüfen.</span>
+      <button matButton class="app-offline-banner__retry" (click)="retryOnline()" i18n-aria-label aria-label="Verbindung erneut prüfen">
         Nochmal versuchen
       </button>
     </div>
@@ -11,14 +11,14 @@
   @if (updateAvailable()) {
     <div class="app-update-banner" role="status">
       <mat-icon class="app-update-banner__icon">system_update</mat-icon>
-      <span>Neue Version verfügbar.</span>
-      <button matButton class="app-update-banner__action" (click)="reloadWithUpdate()" aria-label="App neu laden">
+      <span i18n>Neue Version verfügbar.</span>
+      <button matButton class="app-update-banner__action" (click)="reloadWithUpdate()" i18n-aria-label aria-label="App neu laden">
         Jetzt laden
       </button>
     </div>
   }
   <app-connection-banner />
-  <a href="#main-content" class="app-skip-link">Zum Inhalt springen</a>
+  <a href="#main-content" class="app-skip-link" i18n>Zum Inhalt springen</a>
 
   <ng-container presetToastHost></ng-container>
 
@@ -28,8 +28,8 @@
         <mat-icon class="app-preset-snackbar__icon">{{ presetSnackbarIcon() }}</mat-icon>
       </span>
       <span class="app-preset-snackbar__text">{{ presetSnackbarLabel() }}</span>
-      <button type="button" class="app-preset-snackbar__action" (click)="openPresetCustomize()">Anpassen</button>
-      <button type="button" class="app-preset-snackbar__close" (click)="dismissPresetSnackbar()" aria-label="Schließen">
+      <button type="button" class="app-preset-snackbar__action" (click)="openPresetCustomize()" i18n>Anpassen</button>
+      <button type="button" class="app-preset-snackbar__close" (click)="dismissPresetSnackbar()" i18n-aria-label aria-label="Schließen">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -39,9 +39,9 @@
       <span class="app-install-snackbar__icon-wrap">
         <mat-icon class="app-install-snackbar__icon">get_app</mat-icon>
       </span>
-      <span class="app-install-snackbar__text">App installieren und schneller starten</span>
-      <button type="button" class="app-install-snackbar__action" (click)="triggerInstall()">Installieren</button>
-      <button type="button" class="app-install-snackbar__close" (click)="dismissInstallSnackbar()" aria-label="Schließen">
+      <span class="app-install-snackbar__text" i18n>App installieren und schneller starten</span>
+      <button type="button" class="app-install-snackbar__action" (click)="triggerInstall()" i18n>Installieren</button>
+      <button type="button" class="app-install-snackbar__close" (click)="dismissInstallSnackbar()" i18n-aria-label aria-label="Schließen">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -64,15 +64,15 @@
         <div class="app-footer__links">
           <a matButton routerLink="/legal/imprint">
             <mat-icon class="app-footer__icon">business</mat-icon>
-            Impressum
+            <span i18n>Impressum</span>
           </a>
           <a matButton routerLink="/legal/privacy">
             <mat-icon class="app-footer__icon">privacy_tip</mat-icon>
-            Datenschutz
+            <span i18n>Datenschutz</span>
           </a>
         </div>
       </div>
-      <p class="app-footer__badges">Kostenlos · 100 % DSGVO-konform · Open Source</p>
+      <p class="app-footer__badges" i18n>Kostenlos · 100 % DSGVO-konform · Open Source</p>
     </div>
   </footer>
   }

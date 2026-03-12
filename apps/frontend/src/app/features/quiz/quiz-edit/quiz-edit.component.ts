@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
+import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
 import {
   FormArray,
   FormControl,
@@ -127,6 +128,7 @@ export class QuizEditComponent implements OnDestroy {
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly quizStore = inject(QuizStoreService);
+  private readonly localeGuard = inject(LocaleSwitchGuardService);
 
   readonly id = this.route.snapshot.paramMap.get('id') ?? '';
   readonly submitError = signal<string | null>(null);
@@ -255,9 +257,14 @@ export class QuizEditComponent implements OnDestroy {
       this.patchSettingsForm(quiz.settings);
     }
     this.scheduleLivePreview();
+    this.localeGuard.register(
+      () =>
+        this.form.dirty || this.settingsForm.dirty || this.metadataForm.dirty,
+    );
   }
 
   ngOnDestroy(): void {
+    this.localeGuard.unregister();
     if (this.previewTimer) {
       clearTimeout(this.previewTimer);
       this.previewTimer = null;

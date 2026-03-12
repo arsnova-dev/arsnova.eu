@@ -1,25 +1,26 @@
     <div class="l-page">
       <main class="home-main">
-        <p class="home-hero">Quizzen, abstimmen, gemeinsam und live</p>
-        <p class="home-hero-usp">Kita bis Uni – Seriös bis Spielerisch</p>
+        <p class="home-hero" i18n>Quizzen, abstimmen, gemeinsam und live</p>
+        <p class="home-hero-usp" i18n>Kita bis Uni – Seriös bis Spielerisch</p>
         @if (themePreset.preset() === 'spielerisch') {
-          <p class="home-hero-usp home-hero-usp--secondary">Bonus für die Besten</p>
+          <p class="home-hero-usp home-hero-usp--secondary" i18n>Bonus für die Besten</p>
         }
 
-        <div class="home-hero-preset-mobile" aria-label="Stil wählen">
+        <div class="home-hero-preset-mobile" i18n-aria-label aria-label="Stil wählen">
           <mat-button-toggle-group
             [value]="themePreset.preset()"
             appearance="standard"
+            i18n-aria-label
             aria-label="Stil auswählen"
             class="home-hero-preset-toggle"
           >
             <mat-button-toggle value="serious" (click)="themePreset.setPreset('serious')">
               <mat-icon>school</mat-icon>
-              Seriös
+              <span i18n>Seriös</span>
             </mat-button-toggle>
             <mat-button-toggle value="spielerisch" (click)="themePreset.setPreset('spielerisch')">
               <mat-icon class="home-preset-icon--playful">celebration</mat-icon>
-              Spielerisch
+              <span i18n>Spielerisch</span>
             </mat-button-toggle>
           </mat-button-toggle-group>
         </div>
@@ -32,27 +33,27 @@
           <div class="home-hero-icon"><mat-icon>how_to_vote</mat-icon></div>
         </div>
 
-        <p class="home-trust-badges">Kostenlos · DSGVO-konform · Open Source</p>
+        <p class="home-trust-badges" i18n>Kostenlos · DSGVO-konform · Open Source</p>
 
         <mat-card appearance="raised" id="participant-entry" class="home-card">
           <mat-card-header>
             <mat-card-subtitle>
               <mat-icon class="home-card__icon">group</mat-icon>
-              Mitmachen
+              <span i18n>Mitmachen</span>
             </mat-card-subtitle>
-            <mat-card-title class="home-card__title">Dabei sein</mat-card-title>
+            <mat-card-title class="home-card__title" i18n>Dabei sein</mat-card-title>
           </mat-card-header>
 
           <mat-card-content class="l-stack l-stack--sm">
             @if (recentSessionCodes().length > 0) {
-              <p class="home-recent-label">Letzte Sessions</p>
+              <p class="home-recent-label" i18n>Letzte Sessions</p>
               <div class="home-recent-codes">
                 @for (code of recentSessionCodes(); track code) {
                   <span class="home-recent-code-row">
                     <button matButton="outlined" class="home-recent-code" (click)="joinSessionByCode(code)">
                       {{ code }}
                     </button>
-                    <button mat-icon-button type="button" class="home-recent-code-remove" (click)="removeRecentSessionCode(code); $event.stopPropagation()" [attr.aria-label]="'Session ' + code + ' aus Liste entfernen'">
+                    <button mat-icon-button type="button" class="home-recent-code-remove" (click)="removeRecentSessionCode(code); $event.stopPropagation()" [attr.aria-label]="removeSessionAriaLabel(code)">
                       <mat-icon>close</mat-icon>
                     </button>
                   </span>
@@ -87,22 +88,22 @@
                 autocapitalize="characters"
                 autocomplete="off"
                 spellcheck="false"
-                aria-label="Session-Code, 6 Zeichen"
+                i18n-aria-label aria-label="Session-Code, 6 Zeichen"
               />
             </div>
             <div class="home-code-meta">
               @if (sessionCode().length > 0) {
                 <span class="home-code-counter">{{ sessionCode().length }}/6</span>
               }
-              <span class="home-code-help">6 Zeichen, z.B. ABC123</span>
+              <span class="home-code-help" i18n>6 Zeichen, z.B. ABC123</span>
             </div>
           </mat-card-content>
 
           <mat-card-actions class="l-stack l-stack--sm">
             @if (isJoining()) {
-              <button matButton="filled" class="home-cta" disabled aria-label="Session beitreten">
+              <button matButton="filled" class="home-cta" disabled i18n-aria-label aria-label="Session beitreten">
                 <mat-icon class="home-cta__icon home-spin">sync</mat-icon>
-                Verbinde…
+                <span i18n>Verbinde…</span>
               </button>
             } @else {
               <button
@@ -111,18 +112,19 @@
                 [class.home-cta--ready]="ctaReady()"
                 (click)="joinSession()"
                 [disabled]="!isValidSessionCode()"
+                i18n-aria-label
                 aria-label="Teilnehmen"
               >
                 <mat-icon class="home-cta__icon">login</mat-icon>
-                Los geht's
+                <span i18n>Los geht's</span>
               </button>
             }
             @if (joinError()) {
               <p class="home-error" role="alert">{{ joinError() }}</p>
-              @if (joinError() === 'Diese Session ist bereits beendet.' && sessionCode().length === 6) {
+              @if (joinErrorSessionFinished() && sessionCode().length === 6) {
                 <a [routerLink]="['/session', sessionCode().toUpperCase(), 'host']" mat-button class="home-error-link">
                   <mat-icon>admin_panel_settings</mat-icon>
-                  Als Dozent anzeigen
+                  <span i18n>Als Dozent anzeigen</span>
                 </a>
               }
             }
@@ -134,33 +136,35 @@
             <div class="home-card__header-text">
               <mat-card-subtitle>
                 <mat-icon class="home-card__icon">school</mat-icon>
-                Veranstalten
+                <span i18n>Veranstalten</span>
               </mat-card-subtitle>
-              <mat-card-title class="home-card__title">Quiz starten</mat-card-title>
+              <mat-card-title class="home-card__title" i18n>Quiz starten</mat-card-title>
             </div>
             <a
               mat-button
               [routerLink]="['/quiz', demoQuizId, 'preview']"
               class="home-card__demo-btn"
               (mouseenter)="preloadQuiz()"
+              i18n-aria-label
               aria-label="Demo spielen"
             >
               <mat-icon class="home-card__demo-btn-icon">play_circle</mat-icon>
-              Demo
+              <span i18n>Demo</span>
             </a>
           </mat-card-header>
 
           <mat-card-content>
             <div class="home-card__meta">
-              <p class="home-card__copy">Quiz oder Q&amp;A in Sekunden</p>
+              <p class="home-card__copy" i18n>Quiz oder Q&amp;A in Sekunden</p>
               <a
                 matButton
                 routerLink="/help"
                 class="home-help-btn"
+                i18n-aria-label
                 aria-label="Hilfe öffnen"
               >
                 <mat-icon>help</mat-icon>
-                Hilfe
+                <span i18n>Hilfe</span>
               </a>
             </div>
           </mat-card-content>
@@ -168,7 +172,7 @@
           <mat-card-actions class="l-stack l-stack--sm">
             <a matButton="filled" routerLink="/quiz/new" class="home-cta" (mouseenter)="preloadQuiz()">
               <mat-icon class="home-cta__icon">add_circle</mat-icon>
-              Neues Quiz erstellen
+              <span i18n>Neues Quiz erstellen</span>
             </a>
             <div class="home-cta-row">
               <a
@@ -180,15 +184,17 @@
                 [matBadgeHidden]="quizCount() === 0"
               >
                 <mat-icon class="home-cta__icon">quiz</mat-icon>
-                Meine Quizze              </a>
+                <span i18n>Meine Quizze</span>
+              </a>
               <button
                 matButton="tonal"
                 class="home-cta home-cta--secondary"
                 disabled
+                i18n-matTooltip
                 matTooltip="Fragerunden kommen bald"
               >
                 <mat-icon class="home-cta__icon">question_answer</mat-icon>
-                Fragerunde
+                <span i18n>Fragerunde</span>
               </button>
             </div>
           </mat-card-actions>
@@ -200,26 +206,26 @@
           <mat-card-header>
             <mat-card-subtitle>
               <mat-icon class="home-card__icon">bolt</mat-icon>
-              Abstimmen
+              <span i18n>Abstimmen</span>
             </mat-card-subtitle>
-            <mat-card-title class="home-card__title">Blitz-Feedback</mat-card-title>
+            <mat-card-title class="home-card__title" i18n>Blitz-Feedback</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             @if (feedbackError(); as fbErr) {
               <p class="home-feedback-error" role="alert">{{ fbErr }}</p>
             }
             <div class="home-feedback-row">
-              <button class="home-feedback-btn" type="button" (click)="startQuickFeedback('MOOD')" aria-label="Stimmungsbild starten">
+              <button class="home-feedback-btn" type="button" (click)="startQuickFeedback('MOOD')" i18n-aria-label aria-label="Stimmungsbild starten">
                 <span class="home-feedback-btn__icon">😊</span>
                 <span class="home-feedback-btn__icon">😐</span>
                 <span class="home-feedback-btn__icon">😟</span>
               </button>
-              <button class="home-feedback-btn" type="button" (click)="startQuickFeedback('YESNO')" aria-label="Ja/Nein-Voting starten">
+              <button class="home-feedback-btn" type="button" (click)="startQuickFeedback('YESNO')" i18n-aria-label aria-label="Ja/Nein-Voting starten">
                 <span class="home-feedback-btn__icon">👍</span>
                 <span class="home-feedback-btn__icon">👎</span>
                 <span class="home-feedback-btn__icon">🤷</span>
               </button>
-              <button class="home-feedback-btn" type="button" (click)="startQuickFeedback('ABCD')" aria-label="ABCD-Voting starten">
+              <button class="home-feedback-btn" type="button" (click)="startQuickFeedback('ABCD')" i18n-aria-label aria-label="ABCD-Voting starten">
                 <span class="home-feedback-btn__letter">A</span>
                 <span class="home-feedback-btn__letter">B</span>
                 <span class="home-feedback-btn__letter">C</span>
@@ -233,21 +239,21 @@
           <mat-card-header>
             <mat-card-subtitle>
               <mat-icon class="home-card__icon">sensors</mat-icon>
-              Server
+              <span i18n>Server</span>
             </mat-card-subtitle>
-            <mat-card-title class="home-card__title">Status</mat-card-title>
+            <mat-card-title class="home-card__title" i18n>Status</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             @if (apiStatus()) {
-              <p class="home-subcard__body">Verbunden</p>
+              <p class="home-subcard__body" i18n>Verbunden</p>
             } @else {
-              <p class="home-subcard__body">Keine Verbindung</p>
+              <p class="home-subcard__body" i18n>Keine Verbindung</p>
               <button matButton="outlined" class="home-retry-btn" (click)="retryConnection()" [disabled]="apiRetrying()">
-                {{ apiRetrying() ? 'Verbinde…' : 'Nochmal versuchen' }}
+                {{ retryButtonLabel() }}
               </button>
             }
             @defer (on viewport) {
-              <app-server-status-widget />
+              <app-server-status-widget [connectionOk]="!!apiStatus()" />
             } @placeholder {
               <div class="home-status-placeholder" aria-hidden="true"><span></span></div>
             }

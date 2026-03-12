@@ -26,45 +26,45 @@ const HOME_THEME_STORAGE_KEY = 'home-theme';
 const HOME_PRESET_STORAGE_KEY = 'home-preset';
 
 const PRESET_CATEGORIES = [
-  { id: 'gamification', label: 'Spiel & Auswertung', order: 0 },
-  { id: 'participation', label: 'Teilnahme & Namen', order: 1 },
-  { id: 'flow', label: 'Ablauf & Zeit', order: 2 },
-  { id: 'team', label: 'Team', order: 3 },
-  { id: 'audio', label: 'Ton & Musik', order: 4 },
+  { id: 'gamification', label: $localize`Spiel & Auswertung`, order: 0 },
+  { id: 'participation', label: $localize`Teilnahme & Namen`, order: 1 },
+  { id: 'flow', label: $localize`Ablauf & Zeit`, order: 2 },
+  { id: 'team', label: $localize`Team`, order: 3 },
+  { id: 'audio', label: $localize`Ton & Musik`, order: 4 },
 ] as const;
 
 type CategoryId = (typeof PRESET_CATEGORIES)[number]['id'];
 
 export const PRESET_OPTION_IDS = [
-  { id: 'showLeaderboard', label: 'Rangliste mit Punkten und Plätzen', icon: 'leaderboard', categoryId: 'gamification' as CategoryId },
-  { id: 'enableRewardEffects', label: 'Effekte bei richtiger Antwort', icon: 'auto_awesome', categoryId: 'gamification' as CategoryId },
-  { id: 'enableMotivationMessages', label: 'Anfeuerung nach jeder Antwort', icon: 'campaign', categoryId: 'gamification' as CategoryId },
-  { id: 'enableEmojiReactions', label: 'Emoji-Reaktionen', icon: 'emoji_emotions', categoryId: 'gamification' as CategoryId },
-  { id: 'bonusTokenCount', label: 'Bonus-Code für Top-Plätze', icon: 'emoji_events', categoryId: 'gamification' as CategoryId },
-  { id: 'defaultTimer', label: 'Zeitlimit pro Frage', icon: 'timer', categoryId: 'flow' as CategoryId },
-  { id: 'readingPhaseEnabled', label: 'Zuerst lesen, dann antworten', icon: 'menu_book', categoryId: 'flow' as CategoryId },
-  { id: 'teamMode', label: 'In Teams spielen', icon: 'groups', categoryId: 'team' as CategoryId },
-  { id: 'teamAssignment', label: 'Automatisch oder manuell zuweisen', icon: 'shuffle', categoryId: 'team' as CategoryId },
-  { id: 'enableSoundEffects', label: 'Sounds bei Aktionen', icon: 'volume_up', categoryId: 'audio' as CategoryId },
-  { id: 'backgroundMusic', label: 'Hintergrundmusik in der Lobby', icon: 'music_note', categoryId: 'audio' as CategoryId },
+  { id: 'showLeaderboard', label: $localize`Rangliste mit Punkten und Plätzen`, icon: 'leaderboard', categoryId: 'gamification' as CategoryId },
+  { id: 'enableRewardEffects', label: $localize`Effekte bei richtiger Antwort`, icon: 'auto_awesome', categoryId: 'gamification' as CategoryId },
+  { id: 'enableMotivationMessages', label: $localize`Anfeuerung nach jeder Antwort`, icon: 'campaign', categoryId: 'gamification' as CategoryId },
+  { id: 'enableEmojiReactions', label: $localize`Emoji-Reaktionen`, icon: 'emoji_emotions', categoryId: 'gamification' as CategoryId },
+  { id: 'bonusTokenCount', label: $localize`Bonus-Code für Top-Plätze`, icon: 'emoji_events', categoryId: 'gamification' as CategoryId },
+  { id: 'defaultTimer', label: $localize`Zeitlimit pro Frage`, icon: 'timer', categoryId: 'flow' as CategoryId },
+  { id: 'readingPhaseEnabled', label: $localize`Zuerst lesen, dann antworten`, icon: 'menu_book', categoryId: 'flow' as CategoryId },
+  { id: 'teamMode', label: $localize`In Teams spielen`, icon: 'groups', categoryId: 'team' as CategoryId },
+  { id: 'teamAssignment', label: $localize`Automatisch oder manuell zuweisen`, icon: 'shuffle', categoryId: 'team' as CategoryId },
+  { id: 'enableSoundEffects', label: $localize`Sounds bei Aktionen`, icon: 'volume_up', categoryId: 'audio' as CategoryId },
+  { id: 'backgroundMusic', label: $localize`Hintergrundmusik in der Lobby`, icon: 'music_note', categoryId: 'audio' as CategoryId },
 ] as const;
 
 export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon: string }[] = [
-  { value: 'NOBEL_LAUREATES', label: 'Nobelpreisträger', icon: 'military_tech' },
-  { value: 'KINDERGARTEN', label: 'Kita', icon: 'child_care' },
-  { value: 'PRIMARY_SCHOOL', label: 'Grundschule', icon: 'abc' },
-  { value: 'MIDDLE_SCHOOL', label: 'Mittelstufe', icon: 'calculate' },
-  { value: 'HIGH_SCHOOL', label: 'Oberstufe', icon: 'school' },
+  { value: 'NOBEL_LAUREATES', label: $localize`Nobelpreisträger`, icon: 'military_tech' },
+  { value: 'KINDERGARTEN', label: $localize`Kita`, icon: 'child_care' },
+  { value: 'PRIMARY_SCHOOL', label: $localize`Grundschule`, icon: 'abc' },
+  { value: 'MIDDLE_SCHOOL', label: $localize`Mittelstufe`, icon: 'calculate' },
+  { value: 'HIGH_SCHOOL', label: $localize`Oberstufe`, icon: 'school' },
 ];
 
-export const TEAM_COUNT_OPTIONS = [2, 3, 4, 5, 6, 7, 8].map((n) => ({ value: n, label: `${n} Teams` }));
+export const TEAM_COUNT_OPTIONS = [2, 3, 4, 5, 6, 7, 8].map((n) => ({ value: n, label: $localize`:@@presetTeamCount:${n} Teams` }));
 
 export type NameMode = PresetNameMode;
 
 export const NAME_MODE_OPTIONS: { value: NameMode; label: string; icon: string }[] = [
-  { value: 'nicknameTheme', label: 'Nicks', icon: 'theater_comedy' },
-  { value: 'allowCustomNicknames', label: 'Eigen', icon: 'edit' },
-  { value: 'anonymousMode', label: 'Anonym', icon: 'visibility_off' },
+  { value: 'nicknameTheme', label: $localize`Nicks`, icon: 'theater_comedy' },
+  { value: 'allowCustomNicknames', label: $localize`Eigen`, icon: 'edit' },
+  { value: 'anonymousMode', label: $localize`Anonym`, icon: 'visibility_off' },
 ];
 
 export type PresetOptionState = Record<string, boolean>;
@@ -127,6 +127,28 @@ export class PresetToastComponent implements OnInit {
   toastIcon = signal('school');
   toastHint = signal('');
   importExportStatus = signal<string | null>(null);
+
+  /** i18n: "Zu Spielerisch wechseln" / "Zu Seriös wechseln". */
+  switchPresetLabel(): string {
+    return this.themePreset.preset() === 'serious'
+      ? $localize`Zu Spielerisch wechseln`
+      : $localize`Zu Seriös wechseln`;
+  }
+
+  /** i18n: Chip state "an" / "aus". */
+  chipStateOn(): string {
+    return $localize`an`;
+  }
+  chipStateOff(): string {
+    return $localize`aus`;
+  }
+
+  /** i18n: Aria-label for preset chip (label + state + optional disabled). */
+  chipAriaLabel(label: string, on: boolean, disabled: boolean): string {
+    const state = on ? $localize` an` : $localize` aus`;
+    const suffix = disabled ? $localize`, deaktiviert` : '';
+    return label + state + suffix;
+  }
 
   selectedNicknameTheme = computed(() => {
     const val = this.nicknameThemeValue();
@@ -245,7 +267,7 @@ export class PresetToastComponent implements OnInit {
       };
       const parsed = PresetConfigExportSchema.safeParse(payload);
       if (!parsed.success) {
-        throw new Error(parsed.error.issues[0]?.message ?? 'Ungültige Preset-Exportdaten.');
+        throw new Error(parsed.error.issues[0]?.message ?? $localize`Ungültige Preset-Exportdaten.`);
       }
 
       const blob = new Blob([JSON.stringify(parsed.data, null, 2)], {
@@ -258,12 +280,12 @@ export class PresetToastComponent implements OnInit {
       anchor.download = `arsnova-presets_${date}.json`;
       anchor.click();
       URL.revokeObjectURL(url);
-      this.importExportStatus.set('Preset-Konfiguration exportiert.');
+      this.importExportStatus.set($localize`Preset-Konfiguration exportiert.`);
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
-          : 'Preset-Konfiguration konnte nicht exportiert werden.';
+          : $localize`Preset-Konfiguration konnte nicht exportiert werden.`;
       this.importExportStatus.set(message);
     }
   }
@@ -279,7 +301,7 @@ export class PresetToastComponent implements OnInit {
       const parsedJson = JSON.parse(raw) as unknown;
       const parsed = PresetConfigExportSchema.safeParse(parsedJson);
       if (!parsed.success) {
-        const message = parsed.error.issues[0]?.message ?? 'Ungültige Preset-Importdatei.';
+        const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Preset-Importdatei.`;
         throw new Error(message);
       }
 
@@ -298,13 +320,13 @@ export class PresetToastComponent implements OnInit {
       this.themePreset.setTheme(parsed.data.theme);
       this.themePreset.setPreset(parsed.data.activePreset);
       this.loadPreset(this.themePreset.preset());
-      this.importExportStatus.set('Preset-Konfiguration importiert.');
+      this.importExportStatus.set($localize`Preset-Konfiguration importiert.`);
       target.value = '';
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
-          : 'Preset-Konfiguration konnte nicht importiert werden.';
+          : $localize`Preset-Konfiguration konnte nicht importiert werden.`;
       this.importExportStatus.set(message);
       target.value = '';
     }
@@ -317,12 +339,12 @@ export class PresetToastComponent implements OnInit {
   }
 
   private loadPreset(preset: 'serious' | 'spielerisch'): void {
-    this.toastTitle.set(preset === 'serious' ? 'Seriös' : 'Spielerisch');
+    this.toastTitle.set(preset === 'serious' ? $localize`Seriös` : $localize`Spielerisch`);
     this.toastIcon.set(preset === 'serious' ? 'school' : 'celebration');
     this.toastHint.set(
       preset === 'serious'
-        ? 'Anonym, ohne Wettbewerb, Fokus auf Inhalte.'
-        : 'Mit Rangliste, Sounds, Anfeuerung und Countdown auf allen Handys – für mehr Motivation.'
+        ? $localize`Anonym, ohne Wettbewerb, Fokus auf Inhalte.`
+        : $localize`Mit Rangliste, Sounds, Anfeuerung und Countdown auf allen Handys – für mehr Motivation.`
     );
 
     const data = this.readStoredPreset(preset);

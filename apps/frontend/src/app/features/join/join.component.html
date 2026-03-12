@@ -2,51 +2,51 @@
   @if (loading()) {
     <mat-card appearance="outlined" class="join-card">
       <mat-card-content>
-        <p class="join-card__text">Session wird geladen…</p>
+        <p class="join-card__text" i18n>Session wird geladen…</p>
       </mat-card-content>
     </mat-card>
   } @else if (error()) {
     <mat-card appearance="outlined" class="join-card join-card--error">
       <mat-card-content>
         <p class="join-card__text" role="alert">{{ error() }}</p>
-        @if (error() === 'Diese Session ist bereits beendet.') {
+        @if (errorSessionFinished()) {
           <a [routerLink]="['/session', code, 'host']" mat-button class="join-card__host-link">
             <mat-icon>admin_panel_settings</mat-icon>
-            Als Dozent anzeigen
+            <span i18n>Als Dozent anzeigen</span>
           </a>
         } @else {
-          <p class="join-card__hint">Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.</p>
+          <p class="join-card__hint" i18n>Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.</p>
         }
       </mat-card-content>
     </mat-card>
   } @else if (session(); as s) {
     <mat-card appearance="outlined" class="join-card join-card--lobby">
       <mat-card-content>
-        <h1 class="join-card__title">Session beitreten</h1>
+        <h1 class="join-card__title" i18n>Session beitreten</h1>
 
         <div class="join-card__session" role="group" aria-labelledby="join-session-heading">
-          <p class="join-card__session-heading" id="join-session-heading">Session-Info</p>
+          <p class="join-card__session-heading" id="join-session-heading" i18n>Session-Info</p>
           <p class="join-card__code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
           @if (s.quizName) {
             <p class="join-card__quiz">{{ s.quizName }}</p>
           }
           <p class="join-card__participants">
             <span class="join-card__participants-count">{{ s.participantCount }}</span>
-            {{ s.participantCount === 1 ? 'Teilnehmer' : 'Teilnehmende' }} in der Lobby
+            {{ s.participantCount === 1 ? participantSingular() : participantPlural() }} {{ inLobbyLabel() }}
           </p>
         </div>
 
         @if (showNicknameList()) {
           <div class="join-card__nickname-group" role="group" aria-labelledby="join-nickname-heading">
-            <p class="join-card__nickname-heading" id="join-nickname-heading">Dein Name in der Session</p>
-            <p class="join-card__nickname-hint">Wähle einen Namen – er wird bei Abstimmungen angezeigt.</p>
+            <p class="join-card__nickname-heading" id="join-nickname-heading" i18n>Dein Name in der Session</p>
+            <p class="join-card__nickname-hint" i18n>Wähle einen Namen – er wird bei Abstimmungen angezeigt.</p>
             <mat-form-field appearance="outline" class="join-card__field">
-              <mat-label>Name wählen</mat-label>
-              <mat-select [value]="selectedNickname()" (valueChange)="selectedNickname.set($event)" placeholder="Namen auswählen">
-                <mat-option value="">— Bitte wählen —</mat-option>
+              <mat-label i18n>Name wählen</mat-label>
+              <mat-select [value]="selectedNickname()" (valueChange)="selectedNickname.set($event)" i18n-placeholder placeholder="Namen auswählen">
+                <mat-option value="" i18n>— Bitte wählen —</mat-option>
                 @for (opt of nicknameOptions(); track opt) {
                   <mat-option [value]="opt" [disabled]="isTaken(opt)" [class.join-card__option--taken]="isTaken(opt)">
-                    {{ opt }}{{ isTaken(opt) ? ' (vergeben)' : '' }}
+                    {{ opt }}{{ isTaken(opt) ? (' ' + takenSuffix()) : '' }}
                   </mat-option>
                 }
               </mat-select>
@@ -54,11 +54,11 @@
           </div>
         } @else if (showCustomNickname()) {
           <div class="join-card__nickname-group" role="group" aria-labelledby="join-nickname-heading">
-            <p class="join-card__nickname-heading" id="join-nickname-heading">Dein Name in der Session</p>
-            <p class="join-card__nickname-hint">Wird bei Abstimmungen angezeigt.</p>
+            <p class="join-card__nickname-heading" id="join-nickname-heading" i18n>Dein Name in der Session</p>
+            <p class="join-card__nickname-hint" i18n>Wird bei Abstimmungen angezeigt.</p>
             <mat-form-field appearance="outline" class="join-card__field">
-              <mat-label>Dein Name</mat-label>
-              <input matInput type="text" [value]="customNickname()" (input)="customNickname.set($any($event.target).value)" placeholder="z. B. Max oder M. Mustermann" maxlength="30" />
+              <mat-label i18n>Dein Name</mat-label>
+              <input matInput type="text" [value]="customNickname()" (input)="customNickname.set($any($event.target).value)" i18n-placeholder placeholder="z. B. Max oder M. Mustermann" maxlength="30" />
             </mat-form-field>
           </div>
         }
@@ -67,7 +67,7 @@
           <p class="join-card__error" role="alert">{{ error() }}</p>
         }
         <button mat-flat-button color="primary" class="join-card__submit" [disabled]="!canSubmit() || joining()" (click)="submitJoin()">
-          {{ joining() ? 'Wird beigetreten…' : 'Jetzt beitreten' }}
+          {{ joining() ? joiningLabel() : joinNowLabel() }}
         </button>
       </mat-card-content>
     </mat-card>

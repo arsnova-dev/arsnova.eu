@@ -114,7 +114,7 @@ Beispiele siehe [Prepare component for translation](https://angular.dev/guide/i1
 ng extract-i18n
 ```
 
-- Erzeugt standardmäßig `messages.xlf` (XLIFF 1.2) im Projektroot.
+- Erzeugt standardmäßig `messages.xlf` (XLIFF 1.2) im Projektroot. **Angular CLI (inkl. v22):** Default-Format ist `xlf`; erlaubt sind `xlf`, `xlf2`, `xliff`, `xliff2`, `json`, `arb`, `xmb`, `legacy-migrate`. Es gibt keine explizite „Empfehlung für v22“; der Default XLIFF unterstützt alle Metadaten.
 - **Optionen (Auszug):**
   - `--format=xlf` | `xlf2` | `json` | `arb` (z. B. `--format=json` für JSON).
   - `--output-path src/locale` — Ablage in `src/locale`.
@@ -198,6 +198,26 @@ ng build --localize
 
 Dokumentation: [Deploy multiple locales](https://angular.dev/guide/i18n/deploy) (inkl. Nginx-/Apache-Beispiele).
 
+### 7a. Sprachwähler → Locale-URL (implementiert)
+
+Die Top-Toolbar liest die aktuelle Locale aus dem **ersten URL-Segment** (`/de/`, `/en/`, …) und zeigt sie im Sprachmenü an. Beim Wechsel der Sprache (`setLanguage(code)`):
+
+1. **Präferenz** wird in `localStorage` (`home-language`) gespeichert.
+2. **Navigation:** Wenn die aktuelle Pfad-URL bereits eine Locale enthält (z. B. `/en/session/ABC123/host`), wird das erste Segment durch die gewählte Locale ersetzt und die Seite per **vollständigem Reload** geladen (z. B. `/de/session/ABC123/host`). So wird die passende lokalisierte Build-Variante geladen.
+3. **Ohne Locale im Pfad** (z. B. Dev-Server mit `base href="/"`): Redirect auf `/{code}/` bzw. `/{code}{rest}`.
+
+**Hinweis:** Es werden nur die Locales gebaut, die in `angular.json` unter `i18n.locales` eingetragen sind (aktuell: de, en). fr, it, es erscheinen im Menü; wenn Nutzer sie wählen, führt die Navigation zu `/fr/` usw. – dafür müssen später die entsprechenden Builds und Übersetzungsdateien ergänzt werden.
+
+**Dev-Server (`ng serve`):** Es wird nur **eine** Locale gebaut (Quellsprache Deutsch). Die Pfade `/de/` und `/en/` funktionieren (Routing), liefern aber denselben deutschen Inhalt. Um echte Übersetzungen (z. B. Englisch) zu sehen: lokalisierten Build ausführen und mit API-Server starten: `npm run build:localize && npm run serve:localize:api` (Backend separat auf Port 3000). Dann z. B. http://localhost:4200/en/ für die englische Oberfläche.
+
+### 7b. Hinweis bei Sprachwechsel auf Quiz Edit/New (implementiert)
+
+Auf den Routen **Quiz bearbeiten** (`/quiz/:id`) und **Quiz neu** (`/quiz/new`) kann ein Sprachwechsel ungespeicherte Änderungen verwerfen. Dafür gibt es den **LocaleSwitchGuardService** (`core/locale-switch-guard.service.ts`):
+
+- **Quiz-Edit** und **Quiz-New** registrieren beim Aktivwerden einen Getter für „Formular dirty“ und melden sich in `ngOnDestroy` wieder ab.
+- Beim Klick auf eine andere Sprache in der Toolbar prüft `setLanguage()` vor dem Redirect, ob `localeGuard.hasUnsavedChanges()` true ist (nur auf diesen Routen).
+- Wenn ja, öffnet sich ein Bestätigungsdialog („Sprache wechseln? Ungespeicherte Änderungen gehen verloren.“) mit **Abbrechen** / **Trotzdem wechseln**; nur bei „Trotzdem wechseln“ erfolgt der Reload auf die neue Locale-URL.
+
 ---
 
 ## 8. Datum, Zahlen, Währung (Backlog: „Datums- und Zahlenformate“)
@@ -214,6 +234,8 @@ Dokumentation: [Deploy multiple locales](https://angular.dev/guide/i18n/deploy) 
 - **Inhalte** können pro Locale unterschiedlich sein:
   - Entweder: Pro Locale eigene Markdown-Dateien (z. B. `imprint.de.md`, `imprint.en.md`) und im Frontend die aktuelle Locale (z. B. aus Pfad oder einer Locale-Service) verwenden, um die richtige Datei zu laden.
   - Oder: Inhalte in die jeweilige Übersetzungsdatei (XLIFF/JSON) legen und über `$localize`/Template ausgeben.
+
+**Umsetzung (Phase 5.1):** `LegalPageComponent` liest die Locale über `getLocaleFromPath()` (aus `core/locale-from-path.ts`) und lädt `assets/legal/{slug}.{locale}.md`. Bei 404 wird auf `{slug}.de.md` zurückgefallen. Vorhanden: `imprint.de.md`, `privacy.de.md`; für en/fr/it/es können weitere Dateien ergänzt werden.
 
 ---
 

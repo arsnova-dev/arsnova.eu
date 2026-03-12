@@ -3,23 +3,23 @@
     @if (effectiveStatus() === 'LOBBY') {
       <!-- Lobby: Code, QR (Story 2.1b), Beitritts-URL, Teilnehmerzahl. -->
       <div class="session-lobby">
-        <p class="session-lobby__label" aria-hidden="true">Session-Code</p>
+        <p class="session-lobby__label" aria-hidden="true" i18n>Session-Code</p>
         <p class="session-lobby__code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
         @if (qrDataUrl()) {
           <div class="session-lobby__qr">
             <img [src]="qrDataUrl()" alt="QR-Code: Beitritts-Link {{ joinUrl }}" width="320" height="320" />
           </div>
         }
-        <p class="session-lobby__join-hint">Beitreten unter</p>
+        <p class="session-lobby__join-hint" i18n>Beitreten unter</p>
         <p class="session-lobby__join-url"><a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a></p>
         @let payload = participantsPayload();
         @let count = payload ? payload.participantCount : s.participantCount;
         <p class="session-lobby__participants">
           <span class="session-lobby__participants-count">{{ count }}</span>
-          {{ count === 1 ? 'Teilnehmer' : 'Teilnehmende' }}
+          {{ count === 1 ? participantLabelSingular() : participantLabelPlural() }}
         </p>
         @if (!s.anonymousMode && payload && payload.participants.length > 0) {
-          <ul class="session-lobby__list" role="list" aria-label="Teilnehmende">
+          <ul class="session-lobby__list" role="list" i18n-aria-label aria-label="Teilnehmende">
             @for (p of payload.participants; track p.id) {
               <li class="session-lobby__list-item">{{ p.nickname }}</li>
             }
@@ -36,7 +36,7 @@
             [disabled]="controlPending()"
             (click)="nextQuestion()"
           >
-            Erste Frage starten
+            <span i18n>Erste Frage starten</span>
           </button>
         </div>
       </div>
@@ -46,7 +46,7 @@
         <!-- Code, Teilnehmerzahl, Phase und Quiz-Name für alle sichtbar (Dozent und Publikum). -->
         <header class="session-host__meta">
           <span class="session-host__meta-code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</span>
-          <span class="session-host__meta-participants">{{ s.participantCount }} Teilnehmende</span>
+          <span class="session-host__meta-participants">{{ s.participantCount }} {{ participantLabelPlural() }}</span>
           <span class="session-host__meta-status">{{ phaseLabel(effectiveStatus(), allHaveVoted(), countdownEnded()) }}</span>
           @if (s.quizName) {
             <span class="session-host__meta-quiz">{{ s.quizName }}</span>
@@ -57,25 +57,25 @@
           <div class="session-host__results">
             <header class="session-host__finished">
               <mat-icon class="session-host__finished-icon" aria-hidden="true">verified</mat-icon>
-              <h1 class="session-host__finished-text" id="session-finished-heading">Session beendet</h1>
-              <p class="session-host__finished-sub">Alle Ergebnisse sind gespeichert.</p>
+              <h1 class="session-host__finished-text" id="session-finished-heading" i18n>Session beendet</h1>
+              <p class="session-host__finished-sub" i18n>Alle Ergebnisse sind gespeichert.</p>
               <div class="session-host__export-actions">
                 <button matButton="tonal"
                   type="button"
                   (click)="exportSessionResultsCsv()"
                   [disabled]="exportExporting()"
                   [attr.aria-busy]="exportExporting()"
-                  aria-label="Ergebnis als CSV exportieren">
+                  i18n-aria-label aria-label="Ergebnis als CSV exportieren">
                   <mat-icon>download</mat-icon>
-                  Ergebnis exportieren
+                  <span i18n>Ergebnis exportieren</span>
                 </button>
                 @if (exportExporting()) {
-                  <p class="session-host__export-hint" role="status">Wird exportiert…</p>
+                  <p class="session-host__export-hint" role="status" i18n>Wird exportiert…</p>
                 }
                 @if (exportStatus(); as status) {
                   <p class="session-host__export-hint" role="status">{{ status }}</p>
                 }
-                <p class="session-host__export-dsgvo">Export für Dokumentation und Evaluation – keine personenbezogenen Daten.</p>
+                <p class="session-host__export-dsgvo" i18n>Export für Dokumentation und Evaluation – keine personenbezogenen Daten.</p>
               </div>
             </header>
 
@@ -83,16 +83,16 @@
             <section class="session-host__leaderboard-card" aria-labelledby="leaderboard-heading">
               <h2 class="session-host__leaderboard-title" id="leaderboard-heading">
                 <mat-icon aria-hidden="true">leaderboard</mat-icon>
-                Leaderboard
+                <span i18n>Leaderboard</span>
               </h2>
               <div class="session-host__leaderboard-wrap">
               <table class="session-host__leaderboard-table" role="table">
                 <thead>
                   <tr>
                     <th class="session-host__lb-col--rank">#</th>
-                    <th class="session-host__lb-col--name">Nickname</th>
-                    <th class="session-host__lb-col--score">Punkte</th>
-                    <th class="session-host__lb-col--correct">Richtig</th>
+                    <th class="session-host__lb-col--name" i18n>Nickname</th>
+                    <th class="session-host__lb-col--score" i18n>Punkte</th>
+                    <th class="session-host__lb-col--correct" i18n>Richtig</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -119,15 +119,15 @@
             <section class="session-host__bonus-card" aria-labelledby="bonus-heading">
               <h2 class="session-host__bonus-tokens-title" id="bonus-heading">
                 <mat-icon aria-hidden="true">card_giftcard</mat-icon>
-                Bonus-Codes
+                <span i18n>Bonus-Codes</span>
               </h2>
               <table class="session-host__bonus-tokens-table" role="table">
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Nickname</th>
-                    <th>Code</th>
-                    <th>Punkte</th>
+                    <th i18n>Nickname</th>
+                    <th i18n>Code</th>
+                    <th i18n>Punkte</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -143,7 +143,7 @@
               </table>
               <button matButton="tonal" type="button" class="session-host__bonus-export-btn" (click)="exportBonusTokensCsv()">
                 <mat-icon>download</mat-icon>
-                CSV exportieren
+                <span i18n>CSV exportieren</span>
               </button>
             </section>
           }
@@ -152,17 +152,17 @@
             <section class="session-host__feedback-card" aria-labelledby="feedback-heading">
               <h2 class="session-host__feedback-summary-title" id="feedback-heading">
                 <mat-icon aria-hidden="true">rate_review</mat-icon>
-                Feedback der Teilnehmer
+                <span i18n>Feedback der Teilnehmer</span>
               </h2>
               <div class="session-host__feedback-hero">
-                <span class="session-host__feedback-hero-label">Gesamtbewertung</span>
+                <span class="session-host__feedback-hero-label" i18n>Gesamtbewertung</span>
                 <p class="session-host__feedback-avg" aria-label="Durchschnitt {{ fb.overallAverage | number:'1.1-1' }} von 5 Sternen">
                   <span class="session-host__feedback-avg-number">{{ fb.overallAverage | number:'1.1-1' }}</span>
                   <span class="session-host__feedback-avg-of">/ 5</span>
                   <span class="session-host__feedback-avg-stars" aria-hidden="true">★</span>
                 </p>
                 <p class="session-host__feedback-count">
-                  {{ fb.totalResponses }} {{ fb.totalResponses === 1 ? 'Bewertung' : 'Bewertungen' }}
+                  {{ fb.totalResponses }} {{ fb.totalResponses === 1 ? feedbackRatingSingular() : feedbackRatingPlural() }}
                 </p>
                 @if (getFeedbackDistributionLine(fb.overallDistribution); as distLine) {
                   <p class="session-host__feedback-distribution">{{ distLine }}</p>
@@ -173,7 +173,7 @@
                   <div class="session-host__feedback-detail-row">
                     <span class="session-host__feedback-detail-label">
                       <mat-icon class="session-host__feedback-detail-icon" aria-hidden="true">star</mat-icon>
-                      Qualität der Fragen
+                      <span i18n>Qualität der Fragen</span>
                     </span>
                     <span class="session-host__feedback-detail-value">Ø {{ fb.questionQualityAverage | number:'1.1-1' }} ★</span>
                   </div>
@@ -182,7 +182,7 @@
                   <div class="session-host__feedback-detail-row session-host__feedback-detail-row--repeat">
                     <span class="session-host__feedback-detail-label">
                       <mat-icon class="session-host__feedback-detail-icon" aria-hidden="true">thumb_up</mat-icon>
-                      Nochmal mitmachen?
+                      <span i18n>Nochmal mitmachen?</span>
                     </span>
                     <span class="session-host__feedback-repeat-badges">
                       <span class="session-host__feedback-badge session-host__feedback-badge--yes">
@@ -211,9 +211,9 @@
           @if (effectiveStatus() === 'DISCUSSION') {
             <div class="session-host__discussion-banner" role="status" aria-live="polite">
               <mat-icon class="session-host__discussion-banner-icon" aria-hidden="true">groups</mat-icon>
-              <p class="session-host__discussion-banner-text">Tauscht euch kurz mit eurem Nachbarn aus</p>
-              <p class="session-host__discussion-banner-hint">Gleiche Antwort? Prima. Verschiedene Meinung? Überzeugt euch gegenseitig.</p>
-              <p class="session-host__discussion-banner-next">Zweite Abstimmung folgt gleich.</p>
+              <p class="session-host__discussion-banner-text" i18n>Tauscht euch kurz mit eurem Nachbarn aus</p>
+              <p class="session-host__discussion-banner-hint" i18n>Gleiche Antwort? Prima. Verschiedene Meinung? Überzeugt euch gegenseitig.</p>
+              <p class="session-host__discussion-banner-next" i18n>Zweite Abstimmung folgt gleich.</p>
             </div>
           }
 
@@ -222,14 +222,14 @@
             <mat-card appearance="outlined" class="session-host__question-card">
               <mat-card-header>
                 <mat-card-subtitle class="session-host__question-subtitle">
-                  <span>Frage {{ q.order + 1 }}</span>
+                  <span i18n>Frage {{ q.order + 1 }}</span>
                   @if (q.totalQuestions != null && q.order + 1 === q.totalQuestions) {
-                    <span class="session-host__question-last-badge">Letzte Frage</span>
+                    <span class="session-host__question-last-badge" i18n>Letzte Frage</span>
                   }
                   @if (allHaveVoted()) {
                     <span class="session-host__all-voted" role="status" aria-live="polite">
                       <mat-icon>how_to_vote</mat-icon>
-                      Alle haben abgestimmt
+                      <span i18n>Alle haben abgestimmt</span>
                     </span>
                   } @else if (countdownSeconds() !== null && effectiveStatus() === 'ACTIVE') {
                     <span class="session-host__countdown" [class.session-host__countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownSeconds() + ' Sekunden verbleibend'">
@@ -245,8 +245,8 @@
                 <mat-card-content>
                   <div class="session-host__reading-banner" role="status" aria-live="polite">
                     <mat-icon class="session-host__reading-banner-icon" aria-hidden="true">menu_book</mat-icon>
-                    <p class="session-host__reading-banner-title">Lesephase</p>
-                    <p class="session-host__reading-banner-hint">Frage ist sichtbar. Antworten noch gesperrt – gleich freigeben.</p>
+                    <p class="session-host__reading-banner-title" i18n>Lesephase</p>
+                    <p class="session-host__reading-banner-hint" i18n>Frage ist sichtbar. Antworten noch gesperrt – gleich freigeben.</p>
                   </div>
                 </mat-card-content>
               }
