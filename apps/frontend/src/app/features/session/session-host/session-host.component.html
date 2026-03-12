@@ -4,7 +4,7 @@
       <!-- Lobby: Code, QR (Story 2.1b), Beitritts-URL, Teilnehmerzahl. -->
       <div class="session-lobby">
         <p class="session-lobby__label" aria-hidden="true" i18n>Session-Code</p>
-        <p class="session-lobby__code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
+        <p class="session-lobby__code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
         @if (qrDataUrl()) {
           <div class="session-lobby__qr">
             <img [src]="qrDataUrl()" alt="QR-Code: Beitritts-Link {{ joinUrl }}" width="320" height="320" />
@@ -45,7 +45,7 @@
       <div class="session-host__run l-page">
         <!-- Code, Teilnehmerzahl, Phase und Quiz-Name für alle sichtbar (Dozent und Publikum). -->
         <header class="session-host__meta">
-          <span class="session-host__meta-code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</span>
+          <span class="session-host__meta-code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</span>
           <span class="session-host__meta-participants">{{ s.participantCount }} {{ participantLabelPlural() }}</span>
           <span class="session-host__meta-status">{{ phaseLabel(effectiveStatus(), allHaveVoted(), countdownEnded()) }}</span>
           @if (s.quizName) {
@@ -450,7 +450,7 @@
             <div class="session-host__emoji-reactions" aria-labelledby="emoji-reactions-heading">
               <p class="session-host__emoji-reactions-title" id="emoji-reactions-heading">
                 <mat-icon aria-hidden="true">emoji_emotions</mat-icon>
-                Reaktionen der Teilnehmer
+                <span i18n>Reaktionen der Teilnehmer</span>
               </p>
               @if (reactions.total > 0) {
                 <div class="session-host__emoji-reactions-list" role="list">
@@ -463,9 +463,9 @@
                     }
                   }
                 </div>
-                <p class="session-host__emoji-reactions-total">{{ reactions.total }} {{ reactions.total === 1 ? 'Reaktion' : 'Reaktionen' }}</p>
+                <p class="session-host__emoji-reactions-total">{{ emojiReactionsTotalLabel(reactions.total) }}</p>
               } @else {
-                <p class="session-host__emoji-reactions-empty">Noch keine Reaktionen.</p>
+                <p class="session-host__emoji-reactions-empty" i18n>Noch keine Reaktionen.</p>
               }
             </div>
           }
@@ -474,7 +474,7 @@
             <div class="session-host__interim-leaderboard">
               <p class="session-host__interim-title">
                 <mat-icon>emoji_events</mat-icon>
-                Top 5
+                <span i18n>Top 5</span>
               </p>
               <ol class="session-host__interim-list" role="list">
                 @for (entry of leaderboard().slice(0, 5); track entry.rank) {
@@ -486,7 +486,7 @@
                       @else { {{ entry.rank }}. }
                     </span>
                     <span class="session-host__interim-name">{{ entry.nickname }}</span>
-                    <span class="session-host__interim-score">{{ entry.totalScore | number }} Pkt.</span>
+                    <span class="session-host__interim-score" i18n>{{ entry.totalScore | number }} Pkt.</span>
                   </li>
                 }
               </ol>
@@ -503,7 +503,7 @@
                 [disabled]="controlPending()"
                 (click)="revealAnswers()"
               >
-                Antworten freigeben
+                <span i18n>Antworten freigeben</span>
               </button>
             }
             @if (effectiveStatus() === 'ACTIVE') {
@@ -514,7 +514,7 @@
                 [disabled]="controlPending()"
                 (click)="revealResults()"
               >
-                Ergebnis zeigen
+                <span i18n>Ergebnis zeigen</span>
               </button>
               @if (currentQuestionForHost()?.currentRound === 1 && (currentQuestionForHost()?.totalVotes ?? 0) > 0) {
                 <button
@@ -523,10 +523,10 @@
                   class="session-host__btn-discussion"
                   [disabled]="controlPending()"
                   (click)="startDiscussion()"
-                  aria-label="Diskussionsphase starten – Austausch vor zweiter Abstimmung"
+                  i18n-aria-label aria-label="Diskussionsphase starten – Austausch vor zweiter Abstimmung"
                 >
                   <mat-icon aria-hidden="true">groups</mat-icon>
-                  Diskussionsphase
+                  <span i18n>Diskussionsphase</span>
                 </button>
               }
             }
@@ -539,7 +539,7 @@
                 (click)="startSecondRound()"
               >
                 <mat-icon>replay</mat-icon>
-                Zweite Abstimmung
+                <span i18n>Zweite Abstimmung</span>
               </button>
               <button
                 matButton="tonal"
@@ -547,7 +547,7 @@
                 [disabled]="controlPending()"
                 (click)="nextQuestion()"
               >
-                Überspringen
+                <span i18n>Überspringen</span>
               </button>
             }
             @if (effectiveStatus() === 'PAUSED' || effectiveStatus() === 'RESULTS') {
@@ -559,9 +559,9 @@
                 (click)="nextQuestion()"
               >
                 @if (isLastQuestion()) {
-                  Session beenden
+                  <span i18n>Session beenden</span>
                 } @else {
-                  Nächste Frage
+                  <span i18n>Nächste Frage</span>
                 }
               </button>
             }
@@ -588,7 +588,7 @@
                 (click)="endSession()"
               >
                 <mat-icon>stop_circle</mat-icon>
-                Session beenden
+                <span i18n>Session beenden</span>
               </button>
             </div>
           </details>

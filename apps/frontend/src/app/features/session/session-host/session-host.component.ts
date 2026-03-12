@@ -296,23 +296,23 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const participants = this.participantsPayload()?.participantCount ?? 0;
 
     const consequences: string[] = [
-      'Die Session läuft im Hintergrund weiter – Teilnehmende bleiben verbunden.',
-      'Du verlierst die Steuerung (nächste Frage, Timer, Ergebnisse zeigen).',
+      $localize`Die Session läuft im Hintergrund weiter – Teilnehmende bleiben verbunden.`,
+      $localize`Du verlierst die Steuerung (nächste Frage, Timer, Ergebnisse zeigen).`,
     ];
     if (participants > 0) {
-      consequences.push(`${participants} Teilnehmende warten auf deine Steuerung.`);
+      consequences.push($localize`${participants} Teilnehmende warten auf deine Steuerung.`);
     }
     if (status === 'ACTIVE' || status === 'QUESTION_OPEN') {
-      consequences.push('Die aktuelle Frage bleibt offen – kein automatisches Weiterschalten.');
+      consequences.push($localize`Die aktuelle Frage bleibt offen – kein automatisches Weiterschalten.`);
     }
 
     const dialogRef = this.dialog.open(ConfirmLeaveDialogComponent, {
       data: {
-        title: 'Session verlassen?',
-        message: 'Deine Session ist noch aktiv.',
+        title: $localize`Session verlassen?`,
+        message: $localize`Deine Session ist noch aktiv.`,
         consequences,
-        confirmLabel: 'Trotzdem verlassen',
-        cancelLabel: 'Zurück zur Session',
+        confirmLabel: $localize`Trotzdem verlassen`,
+        cancelLabel: $localize`Zurück zur Session`,
       } satisfies ConfirmLeaveDialogData,
       width: '26rem',
       autoFocus: 'dialog',
@@ -456,6 +456,10 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       return $localize`${count} von ${totalStr} hat geantwortet`;
     }
     return $localize`${count} von ${totalStr} haben geantwortet`;
+  }
+
+  emojiReactionsTotalLabel(total: number): string {
+    return total === 1 ? $localize`${total} Reaktion` : $localize`${total} Reaktionen`;
   }
 
   /** Lesbare Phasen-Beschreibung für Dozenten-Info und Publikum. */
@@ -648,7 +652,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     try {
       const data = await trpc.session.getExportData.query({ sessionId: sid });
       const rows: string[] = [
-        'Frage Nr.;Fragentext;Typ;Teilnehmer;Ø Punkte;Details',
+        $localize`Frage Nr.;Fragentext;Typ;Teilnehmer;Ø Punkte;Details`,
       ];
 
       for (const q of data.questions) {
@@ -736,12 +740,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
       if (data.questionType === 'FREETEXT') {
         this.currentQuestionLabel.set(
-          data.questionOrder !== null ? `Frage ${data.questionOrder + 1}: ${data.questionText ?? ''}` : null,
+          data.questionOrder !== null
+            ? $localize`Frage ${data.questionOrder + 1}:questionNumber:: ${data.questionText ?? ''}:questionText:`
+            : null,
         );
         this.wordCloudInfo.set($localize`Live-Freitext wird aktualisiert.`);
       } else if (data.questionType) {
         this.currentQuestionLabel.set(
-          data.questionOrder !== null ? `Frage ${data.questionOrder + 1}: ${data.questionText ?? ''}` : null,
+          data.questionOrder !== null
+            ? $localize`Frage ${data.questionOrder + 1}:questionNumber:: ${data.questionText ?? ''}:questionText:`
+            : null,
         );
         this.wordCloudInfo.set($localize`Aktuelle Frage ist keine Freitext-Frage.`);
       } else {

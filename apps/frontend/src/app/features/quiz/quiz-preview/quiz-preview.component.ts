@@ -72,18 +72,18 @@ export class QuizPreviewComponent implements OnDestroy {
             question.type === 'SURVEY') &&
           question.answers.length < 2
         ) {
-          return { index, message: `Frage ${index + 1}: weniger als 2 Antworten` };
+          return { index, message: $localize`Frage ${index + 1}:questionNumber:: weniger als 2 Antworten` };
         }
         if (question.type === 'SINGLE_CHOICE') {
           const count = question.answers.filter((answer) => answer.isCorrect).length;
           if (count !== 1) {
-            return { index, message: `Frage ${index + 1}: keine richtige Antwort gewählt` };
+            return { index, message: $localize`Frage ${index + 1}:questionNumber:: keine richtige Antwort gewählt` };
           }
         }
         if (question.type === 'MULTIPLE_CHOICE') {
           const count = question.answers.filter((answer) => answer.isCorrect).length;
           if (count < 1) {
-            return { index, message: `Frage ${index + 1}: keine richtige Antwort gewählt` };
+            return { index, message: $localize`Frage ${index + 1}:questionNumber:: keine richtige Antwort gewählt` };
           }
         }
         return null;
@@ -138,6 +138,10 @@ export class QuizPreviewComponent implements OnDestroy {
     if (index < 0 || index >= total) return;
     this.commitInlineEdits();
     this.currentIndex.set(index);
+  }
+
+  questionAriaLabel(index: number): string {
+    return $localize`Frage ${index + 1}`;
   }
 
   goFirst(): void {

@@ -5,22 +5,22 @@ export interface FeedbackOption {
 }
 
 export const MOOD_OPTIONS: FeedbackOption[] = [
-  { value: 'POSITIVE', label: 'Gut', icon: '😊' },
-  { value: 'NEUTRAL', label: 'Okay', icon: '😐' },
-  { value: 'NEGATIVE', label: 'Schlecht', icon: '😟' },
+  { value: 'POSITIVE', label: $localize`Gut`, icon: '😊' },
+  { value: 'NEUTRAL', label: $localize`Okay`, icon: '😐' },
+  { value: 'NEGATIVE', label: $localize`Schlecht`, icon: '😟' },
 ];
 
 export const YESNO_OPTIONS: FeedbackOption[] = [
-  { value: 'YES', label: 'Ja', icon: '👍' },
-  { value: 'NO', label: 'Nein', icon: '👎' },
-  { value: 'MAYBE', label: 'Vielleicht', icon: '🤷' },
+  { value: 'YES', label: $localize`Ja`, icon: '👍' },
+  { value: 'NO', label: $localize`Nein`, icon: '👎' },
+  { value: 'MAYBE', label: $localize`Vielleicht`, icon: '🤷' },
 ];
 
 export const ABCD_OPTIONS: FeedbackOption[] = [
-  { value: 'A', label: 'Antwort A' },
-  { value: 'B', label: 'Antwort B' },
-  { value: 'C', label: 'Antwort C' },
-  { value: 'D', label: 'Antwort D' },
+  { value: 'A', label: $localize`Antwort A` },
+  { value: 'B', label: $localize`Antwort B` },
+  { value: 'C', label: $localize`Antwort C` },
+  { value: 'D', label: $localize`Antwort D` },
 ];
 
 export function feedbackDisplayLabel(key: string, type: string): string {
@@ -37,9 +37,9 @@ export function feedbackDisplayLabel(key: string, type: string): string {
 
 export function feedbackTitle(type: string): string {
   switch (type) {
-    case 'MOOD': return 'Stimmungsbild';
-    case 'YESNO': return 'ja · nein · vielleicht';
-    case 'ABCD': return 'ABCD-Voting';
-    default: return 'Feedback';
+    case 'MOOD': return $localize`Stimmungsbild`;
+    case 'YESNO': return $localize`ja · nein · vielleicht`;
+    case 'ABCD': return $localize`ABCD-Voting`;
+    default: return $localize`Feedback`;
   }
 }

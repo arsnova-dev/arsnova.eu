@@ -117,6 +117,14 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
     }
   }
 
+  lockToggleLabel(): string {
+    return this.locked() ? $localize`Fortsetzen` : $localize`Stopp`;
+  }
+
+  lockToggleAriaLabel(): string {
+    return this.locked() ? $localize`Abstimmung fortsetzen` : $localize`Abstimmung einfrieren`;
+  }
+
   readonly isDiscussion = computed(() => !!this.result()?.discussion);
   readonly isRound2 = computed(() => (this.result()?.currentRound ?? 1) === 2);
   readonly hasComparison = computed(() => !!this.result()?.round1Distribution && this.isRound2());
@@ -237,6 +245,10 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
 
   percentage(key: string): string {
     return this.percentages()[key] ?? '0';
+  }
+
+  resultsAriaLabel(type: string): string {
+    return $localize`Ergebnisse: ${feedbackTitle(type)}`;
   }
 
   barWidth(count: number): number {

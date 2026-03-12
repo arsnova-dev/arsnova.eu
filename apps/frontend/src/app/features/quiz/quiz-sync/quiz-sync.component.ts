@@ -63,12 +63,12 @@ export class QuizSyncComponent {
     try {
       const clipboard = this.document.defaultView?.navigator.clipboard;
       if (!clipboard) {
-        throw new Error('Clipboard API nicht verfügbar.');
+        throw new Error($localize`Clipboard API nicht verfügbar.`);
       }
       await clipboard.writeText(value);
       this.copyStatus.set(successMessage);
     } catch {
-      this.copyStatus.set('Kopieren nicht möglich. Bitte manuell markieren und kopieren.');
+      this.copyStatus.set($localize`Kopieren nicht möglich. Bitte manuell markieren und kopieren.`);
     }
   }
 }

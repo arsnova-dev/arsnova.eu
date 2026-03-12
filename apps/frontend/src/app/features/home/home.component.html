@@ -11,7 +11,7 @@
             [value]="themePreset.preset()"
             appearance="standard"
             i18n-aria-label
-            aria-label="Stil auswählen"
+            i18n-aria-label aria-label="Stil auswählen"
             class="home-hero-preset-toggle"
           >
             <mat-button-toggle value="serious" (click)="themePreset.setPreset('serious')">
@@ -161,7 +161,7 @@
                 routerLink="/help"
                 class="home-help-btn"
                 i18n-aria-label
-                aria-label="Hilfe öffnen"
+                i18n-aria-label aria-label="Hilfe öffnen"
               >
                 <mat-icon>help</mat-icon>
                 <span i18n>Hilfe</span>

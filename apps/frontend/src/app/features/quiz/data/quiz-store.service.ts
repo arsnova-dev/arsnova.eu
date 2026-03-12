@@ -195,7 +195,7 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
     ctx.addIssue({
       code: 'custom',
       path: ['answers'],
-      message: 'Freitext-Fragen dürfen keine Antwortoptionen enthalten.',
+      message: $localize`Freitext-Fragen dürfen keine Antwortoptionen enthalten.`,
     });
     return;
   }
@@ -207,7 +207,7 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
       ctx.addIssue({
         code: 'custom',
         path: ['answers'],
-        message: 'Rating-Fragen dürfen keine Antwortoptionen enthalten.',
+        message: $localize`Rating-Fragen dürfen keine Antwortoptionen enthalten.`,
       });
     }
 
@@ -234,7 +234,7 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
       ctx.addIssue({
         code: 'custom',
         path: ['ratingMax'],
-        message: 'Das Rating-Maximum muss größer als das Minimum sein.',
+        message: $localize`Das Rating-Maximum muss größer als das Minimum sein.`,
       });
     }
 
@@ -255,7 +255,7 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
     ctx.addIssue({
       code: 'custom',
       path: ['answers'],
-      message: 'Umfrage-Fragen dürfen keine korrekten Antworten markieren.',
+      message: $localize`Umfrage-Fragen dürfen keine korrekten Antworten markieren.`,
     });
   }
 
@@ -279,7 +279,7 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
     ctx.addIssue({
       code: 'custom',
       path: ['ratingMin'],
-      message: 'Rating-Grenzen sind nur für Rating-Fragen erlaubt.',
+      message: $localize`Rating-Grenzen sind nur für Rating-Fragen erlaubt.`,
     });
   }
 });
@@ -340,7 +340,7 @@ export class QuizStoreService {
     });
 
     if (!parsed.success) {
-      const message = parsed.error.issues[0]?.message ?? 'Ungültige Quiz-Daten.';
+      const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Daten.`;
       throw new Error(message);
     }
 
@@ -370,7 +370,7 @@ export class QuizStoreService {
       description: normalizeDescription(input.description),
     });
     if (!parsed.success) {
-      const message = parsed.error.issues[0]?.message ?? 'Ungültige Quiz-Metadaten.';
+      const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Metadaten.`;
       throw new Error(message);
     }
 
@@ -558,7 +558,7 @@ export class QuizStoreService {
 
     const parsed = QuizUploadInputSchema.safeParse(payload);
     if (!parsed.success) {
-      const message = parsed.error.issues[0]?.message ?? 'Ungültige Quiz-Daten für Live-Start.';
+      const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Daten für Live-Start.`;
       throw new Error(message);
     }
     return parsed.data;
@@ -570,7 +570,7 @@ export class QuizStoreService {
       const issue = parsed.error.issues[0];
       const message = issue
         ? `${formatQuizImportIssuePath(issue.path)}: ${issue.message}`
-        : 'Ungültige Import-Datei.';
+        : $localize`Ungültige Import-Datei.`;
       throw new Error(`Import fehlgeschlagen: ${message}`);
     }
 
@@ -787,7 +787,7 @@ export class QuizStoreService {
   activateSyncRoom(roomId: string): void {
     const normalizedRoomId = normalizeSyncRoomId(roomId);
     if (!normalizedRoomId) {
-      throw new Error('Ungültige Sync-ID.');
+      throw new Error($localize`Ungültige Sync-ID.`);
     }
     if (this.syncRoomId() === normalizedRoomId) return;
 
@@ -1091,7 +1091,7 @@ function parseQuizSettings(input: Partial<QuizSettings>): QuizSettings {
   });
 
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? 'Ungültige Quiz-Einstellungen.';
+    const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Einstellungen.`;
     throw new Error(message);
   }
 
@@ -1168,7 +1168,7 @@ function validateQuestionInput(input: AddQuizQuestionInput): ValidatedQuestionIn
   });
 
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? 'Ungültige Frage.';
+    const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Frage.`;
     throw new Error(message);
   }
 

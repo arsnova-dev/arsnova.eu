@@ -27,12 +27,12 @@ export function renderMarkdownWithKatex(source: string): MarkdownRenderResult {
       );
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Ungültige KaTeX-Syntax.';
+        error instanceof Error ? error.message : $localize`Ungültige KaTeX-Syntax.`;
       if (!katexError) {
         katexError = message;
       }
       return storeRenderedMath(
-        `<span class="markdown-katex-error">KaTeX-Fehler: ${escapeHtml(message)}</span>`,
+        `<span class="markdown-katex-error">${$localize`KaTeX-Fehler`}: ${escapeHtml(message)}</span>`,
       );
     }
   };

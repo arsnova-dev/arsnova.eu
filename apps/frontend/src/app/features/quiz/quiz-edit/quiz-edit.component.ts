@@ -151,16 +151,16 @@ export class QuizEditComponent implements OnDestroy {
   @ViewChild('questionFormElement') private questionFormElement?: ElementRef<HTMLFormElement>;
 
   readonly questionTypeOptions: Array<{ value: SupportedQuestionType; label: string }> = [
-    { value: 'SINGLE_CHOICE', label: 'Single Choice' },
-    { value: 'MULTIPLE_CHOICE', label: 'Multiple Choice' },
-    { value: 'FREETEXT', label: 'Freitext' },
-    { value: 'SURVEY', label: 'Umfrage' },
-    { value: 'RATING', label: 'Bewertung (1–5 / 1–10)' },
+    { value: 'SINGLE_CHOICE', label: $localize`Single Choice` },
+    { value: 'MULTIPLE_CHOICE', label: $localize`Multiple Choice` },
+    { value: 'FREETEXT', label: $localize`Freitext` },
+    { value: 'SURVEY', label: $localize`Umfrage` },
+    { value: 'RATING', label: $localize`Bewertung (1–5 / 1–10)` },
   ];
 
   readonly presetOptions: Array<{ value: QuizPreset; label: string }> = [
-    { value: 'PLAYFUL', label: 'Spielerisch' },
-    { value: 'SERIOUS', label: 'Seriös' },
+    { value: 'PLAYFUL', label: $localize`Spielerisch` },
+    { value: 'SERIOUS', label: $localize`Seriös` },
   ];
 
   readonly scFormatOptions: Array<{ value: ScFormat; label: string }> = Object.entries(
@@ -171,21 +171,21 @@ export class QuizEditComponent implements OnDestroy {
   }));
 
   readonly difficultyOptions: Array<{ value: Difficulty; label: string }> = [
-    { value: 'EASY', label: 'Leicht' },
-    { value: 'MEDIUM', label: 'Mittel' },
-    { value: 'HARD', label: 'Schwer' },
+    { value: 'EASY', label: $localize`Leicht` },
+    { value: 'MEDIUM', label: $localize`Mittel` },
+    { value: 'HARD', label: $localize`Schwer` },
   ];
 
   readonly nicknameThemeOptions: Array<{ value: NicknameTheme; label: string }> = [
-    { value: 'NOBEL_LAUREATES', label: 'Nobelpreisträger:innen' },
-    { value: 'KINDERGARTEN', label: 'Kita' },
-    { value: 'PRIMARY_SCHOOL', label: 'Grundschule' },
-    { value: 'MIDDLE_SCHOOL', label: 'Mittelstufe' },
-    { value: 'HIGH_SCHOOL', label: 'Oberstufe' },
+    { value: 'NOBEL_LAUREATES', label: $localize`Nobelpreisträger:innen` },
+    { value: 'KINDERGARTEN', label: $localize`Kita` },
+    { value: 'PRIMARY_SCHOOL', label: $localize`Grundschule` },
+    { value: 'MIDDLE_SCHOOL', label: $localize`Mittelstufe` },
+    { value: 'HIGH_SCHOOL', label: $localize`Oberstufe` },
   ];
 
   readonly backgroundMusicOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: 'Keine Musik' },
+    { value: '', label: $localize`Keine Musik` },
     { value: 'CALM_LOFI', label: 'Calm LoFi' },
     { value: 'UPBEAT_POP', label: 'Upbeat Pop' },
     { value: 'FOCUS_AMBIENT', label: 'Focus Ambient' },
@@ -326,9 +326,9 @@ export class QuizEditComponent implements OnDestroy {
   }
 
   settingsPresetLabel(): string {
-    if (this.matchesSettingsPreset('PLAYFUL')) return 'Spielerisch';
-    if (this.matchesSettingsPreset('SERIOUS')) return 'Seriös';
-    return 'Benutzerdefiniert';
+    if (this.matchesSettingsPreset('PLAYFUL')) return $localize`Spielerisch`;
+    if (this.matchesSettingsPreset('SERIOUS')) return $localize`Seriös`;
+    return $localize`Benutzerdefiniert`;
   }
 
   applySettingsPreset(preset: QuizPreset): void {
@@ -456,11 +456,11 @@ export class QuizEditComponent implements OnDestroy {
     ).length;
 
     if (this.typeControl.value === 'SINGLE_CHOICE' && correctCount !== 1) {
-      return 'Wähle genau eine richtige Antwort aus.';
+      return $localize`Wähle genau eine richtige Antwort aus.`;
     }
 
     if (this.typeControl.value === 'MULTIPLE_CHOICE' && correctCount < 1) {
-      return 'Wähle mindestens eine richtige Antwort aus.';
+      return $localize`Wähle mindestens eine richtige Antwort aus.`;
     }
 
     return null;
@@ -516,7 +516,7 @@ export class QuizEditComponent implements OnDestroy {
       this.scheduleLivePreview();
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Speichern fehlgeschlagen.';
+        error instanceof Error ? error.message : $localize`Speichern fehlgeschlagen.`;
       this.submitError.set(message);
     }
   }
@@ -539,7 +539,7 @@ export class QuizEditComponent implements OnDestroy {
       const message =
         error instanceof Error
           ? error.message
-          : 'Einstellungen konnten nicht gespeichert werden.';
+          : $localize`Einstellungen konnten nicht gespeichert werden.`;
       this.settingsSubmitError.set(message);
     }
   }
@@ -637,7 +637,7 @@ export class QuizEditComponent implements OnDestroy {
       }
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Löschen fehlgeschlagen.';
+        error instanceof Error ? error.message : $localize`Löschen fehlgeschlagen.`;
       this.submitError.set(message);
     }
   }

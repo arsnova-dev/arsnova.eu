@@ -56,7 +56,7 @@ export class WordCloudComponent {
   exportCsv(): void {
     const rows = ['word,count', ...this.words().map((entry) => `${entry.word},${entry.count}`)];
     this.downloadBlob(rows.join('\n'), `wordcloud_${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv;charset=utf-8');
-    this.statusMessage.set('CSV exportiert.');
+    this.statusMessage.set($localize`CSV exportiert.`);
   }
 
   async exportPng(): Promise<void> {
@@ -65,7 +65,7 @@ export class WordCloudComponent {
     canvas.height = 720;
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-      this.statusMessage.set('PNG-Export nicht möglich.');
+      this.statusMessage.set($localize`PNG-Export nicht möglich.`);
       return;
     }
 
@@ -96,12 +96,12 @@ export class WordCloudComponent {
       canvas.toBlob((value) => resolve(value), 'image/png'),
     );
     if (!blob) {
-      this.statusMessage.set('PNG-Export nicht möglich.');
+      this.statusMessage.set($localize`PNG-Export nicht möglich.`);
       return;
     }
 
     this.downloadBlob(blob, `wordcloud_${new Date().toISOString().slice(0, 10)}.png`, 'image/png');
-    this.statusMessage.set('PNG exportiert.');
+    this.statusMessage.set($localize`PNG exportiert.`);
   }
 
   private downloadBlob(data: Blob | string, filename: string, mimeType: string): void {

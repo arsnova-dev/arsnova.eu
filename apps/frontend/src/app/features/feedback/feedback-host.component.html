@@ -21,9 +21,9 @@
             <span i18n>Zweite Abstimmung</span>
           </button>
         } @else if (!isRound2()) {
-          <button mat-button type="button" (click)="toggleLock()" [attr.aria-label]="locked() ? 'Abstimmung fortsetzen' : 'Abstimmung einfrieren'">
+          <button mat-button type="button" (click)="toggleLock()" [attr.aria-label]="lockToggleAriaLabel()">
             <mat-icon>{{ locked() ? 'play_arrow' : 'stop' }}</mat-icon>
-            {{ locked() ? 'Fortsetzen' : 'Stopp' }}
+            {{ lockToggleLabel() }}
           </button>
           @if (data.totalVotes > 0) {
             <button mat-button type="button" (click)="startDiscussion()" i18n-aria-label aria-label="Diskussionsphase starten">
@@ -32,9 +32,9 @@
             </button>
           }
         } @else {
-          <button mat-button type="button" (click)="toggleLock()" [attr.aria-label]="locked() ? 'Abstimmung fortsetzen' : 'Abstimmung einfrieren'">
+          <button mat-button type="button" (click)="toggleLock()" [attr.aria-label]="lockToggleAriaLabel()">
             <mat-icon>{{ locked() ? 'play_arrow' : 'stop' }}</mat-icon>
-            {{ locked() ? 'Fortsetzen' : 'Stopp' }}
+            {{ lockToggleLabel() }}
           </button>
         }
         <button mat-button type="button" (click)="copyLink()" i18n-aria-label aria-label="Beitrittslink kopieren">
@@ -74,14 +74,14 @@
                 <span class="feedback-host__bar-label" aria-hidden="true">{{ displayLabel(entry.key, data.type) }}</span>
                 <div class="feedback-host__comparison-tracks">
                   <div class="feedback-host__comparison-track">
-                    <span class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r1">R1</span>
+                    <span class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r1" i18n>R1</span>
                     <div class="feedback-host__bar-track">
                       <div class="feedback-host__bar-fill feedback-host__bar-fill--r1" [style.width.%]="round1Percentage(entry.key)"></div>
                     </div>
                     <span class="feedback-host__comparison-pct feedback-host__comparison-pct--r1">{{ round1Percentage(entry.key) }}&nbsp;%</span>
                   </div>
                   <div class="feedback-host__comparison-track">
-                    <span class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r2">R2</span>
+                    <span class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r2" i18n>R2</span>
                     <div class="feedback-host__bar-track">
                       <div class="feedback-host__bar-fill feedback-host__bar-fill--r2" [style.width.%]="round2Percentage(entry.key)"></div>
                     </div>
@@ -116,7 +116,7 @@
           <span i18n>{data.totalVotes, plural, =1 {1 Stimme} other {{{ data.totalVotes }} Stimmen}}</span>
         </p>
 
-        <div class="feedback-host__bars" role="list" [attr.aria-label]="'Ergebnisse: ' + feedbackTitle(data.type)">
+        <div class="feedback-host__bars" role="list" [attr.aria-label]="resultsAriaLabel(data.type)">
           @for (entry of orderedEntries(); track entry.key) {
             <div
               class="feedback-host__bar-row"

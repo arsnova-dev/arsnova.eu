@@ -66,20 +66,20 @@ export class QuizNewComponent implements OnInit, OnDestroy {
   private readonly localeGuard = inject(LocaleSwitchGuardService);
 
   readonly presetOptions: Array<{ value: QuizPreset; label: string }> = [
-    { value: 'PLAYFUL', label: 'Spielerisch' },
-    { value: 'SERIOUS', label: 'Seriös' },
+    { value: 'PLAYFUL', label: $localize`Spielerisch` },
+    { value: 'SERIOUS', label: $localize`Seriös` },
   ];
 
   readonly nicknameThemeOptions: Array<{ value: NicknameTheme; label: string }> = [
-    { value: 'NOBEL_LAUREATES', label: 'Nobelpreisträger:innen' },
-    { value: 'KINDERGARTEN', label: 'Kita' },
-    { value: 'PRIMARY_SCHOOL', label: 'Grundschule' },
-    { value: 'MIDDLE_SCHOOL', label: 'Mittelstufe' },
-    { value: 'HIGH_SCHOOL', label: 'Oberstufe' },
+    { value: 'NOBEL_LAUREATES', label: $localize`Nobelpreisträger:innen` },
+    { value: 'KINDERGARTEN', label: $localize`Kita` },
+    { value: 'PRIMARY_SCHOOL', label: $localize`Grundschule` },
+    { value: 'MIDDLE_SCHOOL', label: $localize`Mittelstufe` },
+    { value: 'HIGH_SCHOOL', label: $localize`Oberstufe` },
   ];
 
   readonly backgroundMusicOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: 'Keine Musik' },
+    { value: '', label: $localize`Keine Musik` },
     { value: 'CALM_LOFI', label: 'Calm LoFi' },
     { value: 'UPBEAT_POP', label: 'Upbeat Pop' },
     { value: 'FOCUS_AMBIENT', label: 'Focus Ambient' },
@@ -141,9 +141,9 @@ export class QuizNewComponent implements OnInit, OnDestroy {
   }
 
   presetBadgeLabel(): string {
-    if (this.matchesPreset('PLAYFUL')) return 'Spielerisch';
-    if (this.matchesPreset('SERIOUS')) return 'Seriös';
-    return 'Benutzerdefiniert';
+    if (this.matchesPreset('PLAYFUL')) return $localize`Spielerisch`;
+    if (this.matchesPreset('SERIOUS')) return $localize`Seriös`;
+    return $localize`Benutzerdefiniert`;
   }
 
   applyPreset(preset: QuizPreset): void {
@@ -173,12 +173,12 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     try {
       const clipboard = this.document.defaultView?.navigator.clipboard;
       if (!clipboard) {
-        throw new Error('Clipboard API nicht verfügbar.');
+        throw new Error($localize`Clipboard API nicht verfügbar.`);
       }
       await clipboard.writeText(prompt);
-      this.promptStatus.set('KI-Prompt kopiert.');
+      this.promptStatus.set($localize`KI-Prompt kopiert.`);
     } catch {
-      this.promptStatus.set('Kopieren nicht möglich. Prüfe die Browser-Berechtigung.');
+      this.promptStatus.set($localize`Kopieren nicht möglich. Prüfe die Browser-Berechtigung.`);
     }
   }
 
@@ -210,7 +210,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
   async importAiJson(): Promise<void> {
     const raw = this.aiJsonInput().trim();
     if (!raw) {
-      this.aiImportError.set('Füge zuerst das KI-JSON ein.');
+      this.aiImportError.set($localize`Füge zuerst das KI-JSON ein.`);
       return;
     }
     await this.importAiPayload(raw);
@@ -262,7 +262,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     try {
       const payload = JSON.parse(raw) as unknown;
       const imported = this.quizStore.importQuiz(payload);
-      this.aiImportStatus.set(`KI-Quiz „${imported.name}“ importiert.`);
+      this.aiImportStatus.set($localize`KI-Quiz „${imported.name}“ importiert.`);
       this.aiJsonInput.set('');
       this.showAiImport.set(false);
       await this.router.navigate(['/quiz', imported.id]);

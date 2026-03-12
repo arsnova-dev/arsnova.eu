@@ -17,7 +17,7 @@
           formControlName="name"
           maxlength="200"
           autocomplete="off"
-          aria-label="Quiz-Name"
+          i18n-aria-label aria-label="Quiz-Name"
         />
         <mat-hint align="end">{{ nameControl.value.length }}/200</mat-hint>
         @if (nameControl.hasError('required') && (nameControl.touched || submitted())) {
@@ -35,7 +35,7 @@
           formControlName="description"
           rows="3"
           maxlength="1000"
-          aria-label="Quiz-Beschreibung"
+          i18n-aria-label aria-label="Quiz-Beschreibung"
         ></textarea>
         <mat-hint align="end">{{ descriptionControl.value.length }}/1000</mat-hint>
         @if (descriptionControl.hasError('maxlength') && (descriptionControl.touched || submitted())) {
@@ -162,7 +162,7 @@
                 formControlName="defaultTimer"
                 min="5"
                 max="300"
-                aria-label="Zeitlimit pro Frage"
+                i18n-aria-label aria-label="Zeitlimit pro Frage"
               />
               <mat-hint i18n>Ohne Wert gibt es kein Zeitlimit.</mat-hint>
               @if (
@@ -189,7 +189,7 @@
                     formControlName="teamCount"
                     min="2"
                     max="8"
-                    aria-label="Anzahl Teams"
+                    i18n-aria-label aria-label="Anzahl Teams"
                   />
                   @if (teamCountControl.hasError('min')) {
                     <mat-error i18n>Mindestens 2 Teams.</mat-error>
@@ -211,7 +211,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label i18n>Altersgruppe für Namen</mat-label>
-              <mat-select formControlName="nicknameTheme" aria-label="Altersgruppe wählen">
+              <mat-select formControlName="nicknameTheme" i18n-aria-label aria-label="Altersgruppe wählen">
                 @for (theme of nicknameThemeOptions; track theme.value) {
                   <mat-option [value]="theme.value">{{ theme.label }}</mat-option>
                 }
@@ -220,7 +220,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label i18n>Hintergrundmusik</mat-label>
-              <mat-select formControlName="backgroundMusic" aria-label="Hintergrundmusik wählen">
+              <mat-select formControlName="backgroundMusic" i18n-aria-label aria-label="Hintergrundmusik wählen">
                 @for (music of backgroundMusicOptions; track music.value) {
                   <mat-option [value]="music.value">{{ music.label }}</mat-option>
                 }
@@ -235,7 +235,7 @@
                 formControlName="bonusTokenCount"
                 min="1"
                 max="50"
-                aria-label="Anzahl Bonus-Codes"
+                i18n-aria-label aria-label="Anzahl Bonus-Codes"
               />
               <mat-hint i18n>Ohne Wert werden keine Bonus-Codes vergeben.</mat-hint>
               @if (bonusTokenCountControl.hasError('min')) {

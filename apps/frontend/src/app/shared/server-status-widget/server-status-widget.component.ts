@@ -24,8 +24,13 @@ export class ServerStatusWidgetComponent implements OnInit, OnDestroy {
     if (!this.connectionOk) return $localize`Server-Status: Keine Verbindung`;
     const s = this.stats();
     if (!s) return $localize`Server-Status wird geladen`;
-    const statusText = s.serverStatus === 'healthy' ? 'gesund' : s.serverStatus === 'busy' ? 'ausgelastet' : 'überlastet';
-    return `Server-Status: ${statusText}. ${s.activeSessions} Quiz live, ${s.activeBlitzRounds} Blitz-Runden, ${s.totalParticipants} Teilnehmende, ${s.completedSessions} Quizzes durchgeführt.`;
+    const statusText =
+      s.serverStatus === 'healthy'
+        ? $localize`gesund`
+        : s.serverStatus === 'busy'
+          ? $localize`ausgelastet`
+          : $localize`überlastet`;
+    return $localize`Server-Status: ${statusText}. ${s.activeSessions} Quiz live, ${s.activeBlitzRounds} Blitz-Runden, ${s.totalParticipants} Teilnehmende, ${s.completedSessions} Quizzes durchgeführt.`;
   }
 
   statusColor(): 'green' | 'yellow' | 'red' | 'gray' {

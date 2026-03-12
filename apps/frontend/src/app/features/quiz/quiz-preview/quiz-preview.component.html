@@ -12,7 +12,7 @@
         @if (questions().length > 0) {
           <p class="quiz-preview__meta" i18n>Frage {{ currentIndex() + 1 }} von {{ questions().length }}</p>
           <mat-progress-bar mode="determinate" [value]="progressValue()"></mat-progress-bar>
-          <nav class="quiz-preview__dots" aria-label="Frage wählen">
+          <nav class="quiz-preview__dots" i18n-aria-label aria-label="Frage wählen">
             @for (q of questions(); track q.id; let i = $index) {
               <button
                 class="quiz-preview__dot"
@@ -20,12 +20,12 @@
                 [class.quiz-preview__dot--warn]="hasWarningAtIndex(i)"
                 type="button"
                 (click)="goToQuestion(i)"
-                [attr.aria-label]="'Frage ' + (i + 1)"
+                [attr.aria-label]="questionAriaLabel(i)"
                 [attr.aria-current]="i === currentIndex() ? 'step' : null"
               ></button>
             }
           </nav>
-          <div class="quiz-preview__shortcuts" aria-label="Tastenkürzel">
+          <div class="quiz-preview__shortcuts" i18n-aria-label aria-label="Tastenkürzel">
             <kbd>←</kbd><kbd>→</kbd>
             <span class="quiz-preview__shortcut-label" i18n>Navigation</span>
             <kbd>E</kbd>
@@ -180,7 +180,7 @@
       </mat-card-content>
     </mat-card>
 
-    <nav class="quiz-preview__nav" aria-label="Fragen-Navigation">
+    <nav class="quiz-preview__nav" i18n-aria-label aria-label="Fragen-Navigation">
       <div class="quiz-preview__nav-paging">
         <button mat-button type="button" (click)="previousQuestion()" [disabled]="currentIndex() === 0">
           <mat-icon>chevron_left</mat-icon>

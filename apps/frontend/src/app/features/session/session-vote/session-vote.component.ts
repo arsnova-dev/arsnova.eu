@@ -20,22 +20,22 @@ type CurrentQuestion = QuestionStudentDTO | QuestionPreviewDTO | QuestionReveale
 const ANSWER_COLORS = ['#1565c0', '#e65100', '#2e7d32', '#6a1b9a', '#c62828', '#00838f', '#4e342e', '#37474f'];
 const ANSWER_SHAPES = ['\u25B3', '\u25CB', '\u25A1', '\u25C7', '\u2606', '\u2B21', '\u2B20', '\u2BC6'];
 const MESSAGES_CORRECT = [
-  'Perfekt! 🎯', 'Richtig! 💪', 'Volltreffer! ⭐', 'Stark! 🔥',
-  'Genau richtig! 🚀', 'Läuft bei dir! 🎸', 'Nailed it! 👏',
+  $localize`Perfekt! 🎯`, $localize`Richtig! 💪`, $localize`Volltreffer! ⭐`, $localize`Stark! 🔥`,
+  $localize`Genau richtig! 🚀`, $localize`Läuft bei dir! 🎸`, $localize`Nailed it! 👏`,
 ];
 const MESSAGES_WRONG = [
-  'Knapp daneben! 🤏', 'Nächstes Mal! 💡', 'Weiter dranbleiben! 🔄',
-  'Das wird schon! 📈', 'Nicht aufgeben! 💪',
+  $localize`Knapp daneben! 🤏`, $localize`Nächstes Mal! 💡`, $localize`Weiter dranbleiben! 🔄`,
+  $localize`Das wird schon! 📈`, $localize`Nicht aufgeben! 💪`,
 ];
 const MESSAGES_NEUTRAL = [
-  'Antwort gespeichert! ✓', 'Danke für deine Antwort! 📝', 'Weiter so! 🚀',
+  $localize`Antwort gespeichert! ✓`, $localize`Danke für deine Antwort! 📝`, $localize`Weiter so! 🚀`,
 ];
 const MESSAGES_TIMEOUT = [
-  'Knapp verpasst – nächste Runde! ⏱️',
-  'Die Zeit war zu kurz – du schaffst das! 💪',
-  "Beim nächsten Mal klappt's! 🔄",
-  "Kopf hoch – gleich geht's weiter! 🚀",
-  'Tick-tock – nächste Chance kommt! ⏰',
+  $localize`Knapp verpasst – nächste Runde! ⏱️`,
+  $localize`Die Zeit war zu kurz – du schaffst das! 💪`,
+  $localize`Beim nächsten Mal klappt's! 🔄`,
+  $localize`Kopf hoch – gleich geht's weiter! 🚀`,
+  $localize`Tick-tock – nächste Chance kommt! ⏰`,
 ];
 function pickRandom(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -47,17 +47,21 @@ function pickRandom(arr: string[]): string {
  */
 function getContextMotivation(sc: PersonalScorecardDTO, totalParticipants: number): string {
   if (sc.wasCorrect === true) {
-    if (sc.streakCount >= 3) return `On fire! 🔥 ${sc.streakCount}er-Serie!`;
-    if (sc.rankChange > 0) return `${sc.rankChange} ${sc.rankChange === 1 ? 'Platz' : 'Plätze'} aufgestiegen! 🚀`;
-    return pickRandom(['Perfekt! 🎯', 'Richtig! 💪', 'Volltreffer! ⭐', 'Stark! 🔥', 'Nailed it! 👏']);
+    if (sc.streakCount >= 3) return $localize`On fire! 🔥 ${sc.streakCount}er-Serie!`;
+    if (sc.rankChange > 0) {
+      return sc.rankChange === 1
+        ? $localize`${sc.rankChange} Platz aufgestiegen! 🚀`
+        : $localize`${sc.rankChange} Plätze aufgestiegen! 🚀`;
+    }
+    return pickRandom([$localize`Perfekt! 🎯`, $localize`Richtig! 💪`, $localize`Volltreffer! ⭐`, $localize`Stark! 🔥`, $localize`Nailed it! 👏`]);
   }
   if (sc.wasCorrect === false) {
     if (sc.streakCount === 0 && sc.previousRank !== null && sc.previousRank < sc.currentRank) {
-      return 'Streak gerissen! Nächste Runde! 💪';
+      return $localize`Streak gerissen! Nächste Runde! 💪`;
     }
     const topThird = Math.ceil(totalParticipants / 3);
-    if (sc.currentRank <= topThird) return 'Kopf hoch – du liegst noch gut! 🏅';
-    return 'Weiter so – jede Frage ist eine neue Chance! 🌟';
+    if (sc.currentRank <= topThird) return $localize`Kopf hoch – du liegst noch gut! 🏅`;
+    return $localize`Weiter so – jede Frage ist eine neue Chance! 🌟`;
   }
   return pickRandom(MESSAGES_NEUTRAL);
 }
@@ -203,6 +207,27 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   getColor(index: number): string { return ANSWER_COLORS[index % ANSWER_COLORS.length]; }
   getShape(index: number): string { return ANSWER_SHAPES[index % ANSWER_SHAPES.length]; }
   getLetter(index: number): string { return String.fromCharCode(65 + index); }
+
+  starsAriaLabel(stars: number): string {
+    return $localize`${stars} von 5 Sternen`;
+  }
+
+  countdownAriaLabel(): string {
+    const seconds = this.countdownSeconds();
+    return $localize`${seconds ?? 0} Sekunden verbleibend`;
+  }
+
+  ratingAriaLabel(): string {
+    return $localize`Bewertung von ${this.ratingLabelMin()} bis ${this.ratingLabelMax()}`;
+  }
+
+  ratingValueAriaLabel(value: number): string {
+    return $localize`Bewertung ${value}`;
+  }
+
+  emojiReactionAriaLabel(emoji: string): string {
+    return $localize`Reagiere mit ${emoji}`;
+  }
 
   renderMarkdown(value: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(renderMarkdownWithKatex(value).html);
@@ -521,7 +546,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         wouldRepeat: this.feedbackRepeat() ?? undefined,
       });
       this.feedbackSubmitted.set(true);
-      this.snackBar.open('Danke für dein Feedback!', '', { duration: 2000 });
+      this.snackBar.open($localize`Danke für dein Feedback!`, '', { duration: 2000 });
       void this.loadFeedbackSummary();
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err

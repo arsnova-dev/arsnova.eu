@@ -1,11 +1,11 @@
 <div class="vote-page">
   @if (!isLobby()) {
-    <p class="vote-session-code" aria-label="Session-Code {{ code }}">{{ code }}</p>
+    <p class="vote-session-code" i18n-aria-label aria-label="Session-Code {{ code }}">{{ code }}</p>
   }
   @if (isLobby()) {
     <div class="vote-lobby">
       <p class="vote-lobby__badge" role="status" i18n>Du bist dabei</p>
-      <p class="vote-lobby__code" aria-label="Session-Code {{ code }}">{{ code }}</p>
+      <p class="vote-lobby__code" i18n-aria-label aria-label="Session-Code {{ code }}">{{ code }}</p>
       @if (sessionSettings().quizName) {
         <p class="vote-lobby__quiz">{{ sessionSettings().quizName }}</p>
       }
@@ -65,14 +65,14 @@
 
           <fieldset class="vote-feedback-card__group">
             <legend class="vote-feedback-card__label" i18n>Wie hat dir das Quiz gefallen?</legend>
-            <div class="vote-feedback-card__stars" role="radiogroup" aria-label="Gesamtbewertung">
+            <div class="vote-feedback-card__stars" role="radiogroup" i18n-aria-label aria-label="Gesamtbewertung">
               @for (s of feedbackStars(); track s) {
                 <button class="vote-feedback-card__star"
                   type="button"
                   [class.vote-feedback-card__star--active]="s <= feedbackOverall()"
                   [attr.aria-pressed]="s <= feedbackOverall()"
                   (click)="setFeedbackOverall(s)"
-                  [attr.aria-label]="s + ' von 5 Sternen'">
+                  [attr.aria-label]="starsAriaLabel(s)">
                   {{ s <= feedbackOverall() ? '★' : '☆' }}
                 </button>
               }
@@ -81,14 +81,14 @@
 
           <fieldset class="vote-feedback-card__group">
             <legend class="vote-feedback-card__label" i18n>Qualität der Fragen?</legend>
-            <div class="vote-feedback-card__stars" role="radiogroup" aria-label="Fragenqualität">
+            <div class="vote-feedback-card__stars" role="radiogroup" i18n-aria-label aria-label="Fragenqualität">
               @for (s of feedbackStars(); track s) {
                 <button class="vote-feedback-card__star"
                   type="button"
                   [class.vote-feedback-card__star--active]="s <= feedbackQuality()"
                   [attr.aria-pressed]="s <= feedbackQuality()"
                   (click)="setFeedbackQuality(s)"
-                  [attr.aria-label]="s + ' von 5 Sternen'">
+                  [attr.aria-label]="starsAriaLabel(s)">
                   {{ s <= feedbackQuality() ? '★' : '☆' }}
                 </button>
               }
@@ -137,9 +137,9 @@
     @if (currentQuestion(); as q) {
       <div class="vote-question">
         <p class="vote-question__label">
-          Frage {{ q.order + 1 }}
+          <span i18n>Frage {{ q.order + 1 }}</span>
           @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
-            <span class="vote-question__last-badge">Letzte Frage</span>
+            <span class="vote-question__last-badge" i18n>Letzte Frage</span>
           }
         </p>
         <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
@@ -154,9 +154,9 @@
     @if (currentQuestion(); as q) {
       <div class="vote-question">
         <p class="vote-question__label">
-          Frage {{ q.order + 1 }}
+          <span i18n>Frage {{ q.order + 1 }}</span>
           @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
-            <span class="vote-question__last-badge">Letzte Frage</span>
+            <span class="vote-question__last-badge" i18n>Letzte Frage</span>
           }
         </p>
         <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
@@ -180,21 +180,21 @@
         }
         <div class="vote-question__header">
           <p class="vote-question__label">
-            Frage {{ q.order + 1 }}
+            <span i18n>Frage {{ q.order + 1 }}</span>
             @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
-              <span class="vote-question__last-badge">Letzte Frage</span>
+              <span class="vote-question__last-badge" i18n>Letzte Frage</span>
             }
             @if (currentRound() === 2) {
-              <span class="vote-question__round-badge">2. Runde</span>
+              <span class="vote-question__round-badge" i18n>2. Runde</span>
             }
           </p>
           @if (allHaveVoted() && isActive()) {
             <span class="vote-all-voted" role="status">
               <mat-icon>how_to_vote</mat-icon>
-              Alle haben abgestimmt
+              <span i18n>Alle haben abgestimmt</span>
             </span>
           } @else if (countdownSeconds() !== null && isActive()) {
-            <span class="vote-countdown" [class.vote-countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownSeconds() + ' Sekunden verbleibend'">
+            <span class="vote-countdown" [class.vote-countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownAriaLabel()">
               {{ countdownSeconds() }}
             </span>
           }
@@ -253,26 +253,26 @@
 
         @if (!voteSent() && isActive()) {
           <button mat-flat-button color="primary" class="vote-submit-mc" [disabled]="selectedAnswerIds().size === 0 || debounced() || timerExpired()" (click)="submitVote()">
-            Absenden
+            <span i18n>Absenden</span>
           </button>
         }
       } @else if ($any(q).type === 'FREETEXT' && isActive()) {
         <div class="vote-freetext">
-          <textarea class="vote-freetext__input" [value]="freeTextValue()" (input)="freeTextValue.set($any($event.target).value)" placeholder="Deine Antwort…" maxlength="500" rows="3" [disabled]="voteSent() || timerExpired()"></textarea>
+          <textarea class="vote-freetext__input" [value]="freeTextValue()" (input)="freeTextValue.set($any($event.target).value)" i18n-placeholder placeholder="Deine Antwort…" maxlength="500" rows="3" [disabled]="voteSent() || timerExpired()"></textarea>
           <button mat-flat-button color="primary" class="vote-freetext__submit" [disabled]="!freeTextValue().trim() || voteSent() || debounced() || timerExpired()" (click)="submitVote()">
-            Absenden
+            <span i18n>Absenden</span>
           </button>
         </div>
       } @else if ($any(q).type === 'FREETEXT' && isResults()) {
         <div class="vote-freetext vote-freetext--result">
           @if (freeTextValue()) {
-            <p class="vote-freetext__own">Deine Antwort: <strong>{{ freeTextValue() }}</strong></p>
+            <p class="vote-freetext__own" i18n>Deine Antwort: <strong>{{ freeTextValue() }}</strong></p>
           } @else {
-            <p class="vote-freetext__own vote-freetext__own--empty">Keine Antwort abgegeben.</p>
+            <p class="vote-freetext__own vote-freetext__own--empty" i18n>Keine Antwort abgegeben.</p>
           }
         </div>
       } @else if (isRating() && isActive()) {
-        <div class="vote-rating" role="radiogroup" [attr.aria-label]="'Bewertung von ' + ratingLabelMin() + ' bis ' + ratingLabelMax()">
+        <div class="vote-rating" role="radiogroup" [attr.aria-label]="ratingAriaLabel()">
           @if (ratingLabelMin() || ratingLabelMax()) {
             <div class="vote-rating__labels">
               <span class="vote-rating__label vote-rating__label--min">{{ ratingLabelMin() }}</span>
@@ -287,7 +287,7 @@
                 [disabled]="voteSent() || debounced() || timerExpired()"
                 role="radio"
                 [attr.aria-checked]="ratingValue() === val"
-                [attr.aria-label]="'Bewertung ' + val"
+                [attr.aria-label]="ratingValueAriaLabel(val)"
                 (click)="selectRating(val)">
                 {{ val }}
               </button>
@@ -295,13 +295,13 @@
           </div>
           @if (!voteSent()) {
             <button mat-flat-button color="primary" class="vote-rating__submit" [disabled]="ratingValue() === null || debounced() || timerExpired()" (click)="submitVote()">
-              Absenden
+              <span i18n>Absenden</span>
             </button>
           }
         </div>
       } @else if (isRating() && isResults()) {
         <div class="vote-rating vote-rating--result">
-          <p class="vote-rating__result-label">Deine Bewertung: <strong>{{ ratingValue() ?? '–' }}</strong></p>
+          <p class="vote-rating__result-label" i18n>Deine Bewertung: <strong>{{ ratingValue() ?? '–' }}</strong></p>
         </div>
       }
 
@@ -312,26 +312,26 @@
       @if (voteSent()) {
         <div class="vote-sent" role="status" aria-live="polite">
           <mat-icon>check_circle</mat-icon>
-          <span>Antwort gesendet</span>
+          <span i18n>Antwort gesendet</span>
         </div>
         @if (motivationMessage()) {
           <p class="vote-motivation" aria-live="polite">{{ motivationMessage() }}</p>
         }
       }
       @if (showRewardEffect()) {
-        <div class="vote-reward" role="status" aria-live="polite">🎉 Richtig!</div>
+        <div class="vote-reward" role="status" aria-live="polite" i18n>🎉 Richtig!</div>
       }
 
       @if (scorecard(); as sc) {
         <div class="vote-scorecard" role="region" aria-labelledby="scorecard-heading" aria-describedby="scorecard-hint">
           <h2 class="vote-scorecard__heading" id="scorecard-heading">
             <mat-icon class="vote-scorecard__heading-icon" aria-hidden="true">person</mat-icon>
-            Dein Ergebnis
+            <span i18n>Dein Ergebnis</span>
           </h2>
           <p class="vote-scorecard__meta" aria-live="polite">
             <span class="vote-scorecard__progress">{{ sc.questionOrder }}/{{ sc.totalQuestions }}</span>
             @if (sc.questionOrder >= sc.totalQuestions) {
-              <span class="vote-scorecard__progress-badge">Letzte Frage</span>
+              <span class="vote-scorecard__progress-badge" i18n>Letzte Frage</span>
             }
             <span class="vote-scorecard__hint" id="scorecard-hint" i18n>Nur für dich sichtbar.</span>
           </p>
@@ -355,18 +355,18 @@
           }
           <div class="vote-scorecard__result">
             @if (sc.wasCorrect === true) {
-              <span class="vote-scorecard__correct">✓ Richtig</span>
+              <span class="vote-scorecard__correct" i18n>✓ Richtig</span>
             } @else if (sc.wasCorrect === false) {
-              <span class="vote-scorecard__wrong">✗ Falsch</span>
+              <span class="vote-scorecard__wrong" i18n>✗ Falsch</span>
             } @else {
-              <span class="vote-scorecard__neutral">Antwort registriert</span>
+              <span class="vote-scorecard__neutral" i18n>Antwort registriert</span>
             }
           </div>
 
           <div class="vote-scorecard__stats">
             <div class="vote-scorecard__stat">
               <span class="vote-scorecard__stat-value">{{ sc.questionScore | number }}</span>
-              <span class="vote-scorecard__stat-label">Punkte</span>
+              <span class="vote-scorecard__stat-label" i18n>Punkte</span>
             </div>
             @if (sc.streakCount >= 2) {
               <div class="vote-scorecard__stat">
@@ -374,7 +374,7 @@
                   @if (sc.streakCount >= 3) { 🔥 }
                   {{ sc.streakCount }}er
                 </span>
-                <span class="vote-scorecard__stat-label">Serie (×{{ sc.streakMultiplier | number:'1.1-1' }})</span>
+                <span class="vote-scorecard__stat-label" i18n>Serie (×{{ sc.streakMultiplier | number:'1.1-1' }})</span>
               </div>
             }
             <div class="vote-scorecard__stat">
@@ -385,13 +385,13 @@
                 } @else if (sc.rankChange < 0) {
                   ↓ {{ sc.rankChange * -1 }}
                 } @else {
-                  Dein Rang
+                  <span i18n>Dein Rang</span>
                 }
               </span>
             </div>
             <div class="vote-scorecard__stat">
               <span class="vote-scorecard__stat-value">{{ sc.totalScore | number }}</span>
-              <span class="vote-scorecard__stat-label">Gesamt</span>
+              <span class="vote-scorecard__stat-label" i18n>Gesamt</span>
             </div>
           </div>
           </div>
@@ -401,13 +401,13 @@
       @if (isResults() && sessionSettings().enableEmojiReactions) {
         @if (!emojiSent()) {
           <div class="vote-emoji-wrap" role="group" aria-labelledby="emoji-bar-label" aria-describedby="emoji-bar-hint">
-            <p class="vote-emoji-bar__label" id="emoji-bar-label">Schnell reagieren</p>
-            <p class="vote-emoji-bar__hint" id="emoji-bar-hint">Tippe auf ein Symbol – deine Reaktion erscheint anonym beim Dozenten (optional).</p>
+            <p class="vote-emoji-bar__label" id="emoji-bar-label" i18n>Schnell reagieren</p>
+            <p class="vote-emoji-bar__hint" id="emoji-bar-hint" i18n>Tippe auf ein Symbol – deine Reaktion erscheint anonym beim Dozenten (optional).</p>
             <div class="vote-emoji-bar">
               @for (emoji of emojiOptions; track emoji) {
                 <button class="vote-emoji-bar__btn" type="button"
                   (click)="sendEmoji(emoji)"
-                  [attr.aria-label]="'Reagiere mit ' + emoji">
+                  [attr.aria-label]="emojiReactionAriaLabel(emoji)">
                   {{ emoji }}
                 </button>
               }
@@ -416,7 +416,7 @@
         } @else {
           <p class="vote-emoji-sent" role="status">
             <span class="vote-emoji-sent__icon" aria-hidden="true">{{ emojiSentEmoji() }}</span>
-            Reaktion gesendet
+            <span i18n>Reaktion gesendet</span>
           </p>
         }
       }
@@ -424,7 +424,7 @@
   } @else {
     <div class="vote-lobby">
       <mat-icon class="vote-lobby__icon">hourglass_empty</mat-icon>
-      <p class="vote-lobby__text">Einen Moment…</p>
+      <p class="vote-lobby__text" i18n>Einen Moment…</p>
     </div>
   }
 </div>

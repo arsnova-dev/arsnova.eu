@@ -50,12 +50,16 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
 
       if (data.questionType === 'FREETEXT') {
         this.currentQuestionLabel.set(
-          data.questionOrder !== null ? `Frage ${data.questionOrder + 1}: ${data.questionText ?? ''}` : null,
+          data.questionOrder !== null
+            ? $localize`Frage ${data.questionOrder + 1}:questionNumber:: ${data.questionText ?? ''}:questionText:`
+            : null,
         );
         this.presenterInfo.set($localize`Live-Freitext wird aktualisiert.`);
       } else if (data.questionType) {
         this.currentQuestionLabel.set(
-          data.questionOrder !== null ? `Frage ${data.questionOrder + 1}: ${data.questionText ?? ''}` : null,
+          data.questionOrder !== null
+            ? $localize`Frage ${data.questionOrder + 1}:questionNumber:: ${data.questionText ?? ''}:questionText:`
+            : null,
         );
         this.presenterInfo.set($localize`Aktuelle Frage ist keine Freitext-Frage.`);
       } else {

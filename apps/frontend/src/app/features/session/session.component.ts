@@ -35,7 +35,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     const code = this.route.snapshot.paramMap.get('code') ?? '';
     if (code.length !== 6) {
-      this.error.set('Ungültiger Code.');
+      this.error.set($localize`Ungültiger Code.`);
       this.loading.set(false);
       return;
     }
@@ -45,7 +45,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       const session = await trpc.session.getInfo.query({ code: code.toUpperCase() });
       this.session.set(session);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Nicht gefunden. Code prüfen oder neu eingeben.';
+      const msg = e instanceof Error ? e.message : $localize`Nicht gefunden. Code prüfen oder neu eingeben.`;
       this.error.set(msg);
     } finally {
       this.loading.set(false);
