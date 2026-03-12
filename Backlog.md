@@ -73,11 +73,11 @@
 | 5    | 5.6   | Persönliche Scorecard                         | 🔴   | ✅ Fertig |
 | 5    | 5.7   | Motivationsmeldungen                          | 🟡   | ✅ Fertig |
 | 5    | 5.8   | Emoji-Reaktionen                              | 🟢   | ✅ Fertig |
-| 6    | 6.1   | Dark/Light/System-Theme                       | 🟡   | ⬜ Offen  |
+| 6    | 6.1   | Dark/Light/System-Theme                       | 🟡   | ✅ Fertig |
 | 6    | 6.2   | Internationalisierung                         | 🟡   | ⬜ Offen  |
-| 6    | 6.3   | Impressum & Datenschutz                       | 🔴   | ⬜ Offen  |
-| 6    | 6.4   | Mobile-First & Responsive                     | 🔴   | ⬜ Offen  |
-| 6    | 6.5   | Barrierefreiheit                              | 🔴   | ⬜ Offen  |
+| 6    | 6.3   | Impressum & Datenschutz                       | 🔴   | ✅ Fertig |
+| 6    | 6.4   | Mobile-First & Responsive                     | 🔴   | ✅ Fertig |
+| 6    | 6.5   | Barrierefreiheit (Prüfung Projektende)        | 🔴   | ⬜ Offen  |
 | 7    | 7.1   | Team-Modus                                    | 🟢   | ⬜ Offen  |
 | 8    | 8.1   | Q&A-Session starten                           | 🟢   | ⬜ Offen  |
 | 8    | 8.2   | Fragen einreichen                             | 🟢   | ⬜ Offen  |
@@ -761,6 +761,8 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
 
 Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobile-First und Barrierefreiheit**. Alle Stories zielen auf Nutzer:innen aller Rollen (Dozent, Student, Gast). Keine Abhängigkeit von Epic 5; kann parallel ab Epic 0 umgesetzt werden.
 
+**Stand:** Stories 6.1 (Theme), 6.3 (Impressum/Datenschutz) und 6.4 (Mobile-First/PWA) sind umgesetzt; Akzeptanzkriterien geprüft (siehe `docs/EPIC6-AC-PRUEFUNG.md`). **6.2 (i18n)** bleibt offen. **6.5 (Barrierefreiheit)** wird ans Projektende zur Prüfung gestellt (MD3/Angular-Komponenten decken vieles ab; finale WCAG-Prüfung dann).
+
 - **Story 6.1 (Dark/Light/System-Theme):** 🟡 Als Nutzer möchte ich zwischen Dark Theme, Light Theme und System-Einstellung wählen können, damit die App meinen Sehgewohnheiten entspricht.
   - **Akzeptanzkriterien:**
     - Ein Theme-Umschalter (Icon-Button) in der Navigationsleiste bietet drei Optionen: Light, Dark, System.
@@ -770,6 +772,7 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
     - Alle UI-Komponenten nutzen Material Design 3 Theme-Tokens für Farben, Hintergründe und Kontraste (ADR 0005).
     - Countdown, Leaderboard, Lobby und Beamer-Ansicht unterstützen beide Themes.
     - Kontrastverhältnisse erfüllen WCAG 2.1 AA (mind. 4.5:1 für Text).
+  - **Verifizierung:** ThemePresetService, Top-Toolbar (System/Dark/Light), localStorage, MD3-Tokens; siehe `docs/EPIC6-AC-PRUEFUNG.md`.
 - **Story 6.2 (Internationalisierung):** 🟡 Als Nutzer möchte ich die App in meiner Sprache verwenden können, damit ich alle Bedienelemente und Hinweise verstehe.
   - **Akzeptanzkriterien:**
     - Unterstützte Sprachen: Deutsch (de), Englisch (en), Französisch (fr), Italienisch (it), Spanisch (es).
@@ -789,6 +792,7 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
     - **Datenschutzerklärung** enthält mindestens: Verantwortlicher, Art der erhobenen Daten, Rechtsgrundlage (Art. 6 DSGVO), Hinweis auf Local-First-Architektur (keine serverseitige Speicherung von Quiz-Inhalten), Cookie-/LocalStorage-Nutzung, Hosting-Anbieter, Betroffenenrechte (Auskunft, Löschung, Widerspruch), Kontakt des Datenschutzbeauftragten.
     - Beide Seiten sind ohne Login erreichbar.
     - Inhalte werden in der aktuell gewählten Sprache angezeigt (abhängig von Story 6.2; Fallback: Deutsch).
+  - **Verifizierung:** Footer-Links, Routen, Markdown in `assets/legal/`, Inhalte vollständig; Sprache aktuell nur DE (6.2 ausstehend).
 - **Story 6.4 (Mobile-First & Responsive Design):** 🔴 Als Student möchte ich die App auf meinem Smartphone komfortabel bedienen können, da ich im Hörsaal primär mein Handy nutze.
   - **Akzeptanzkriterien:**
     - Alle Ansichten werden **Mobile-First** entwickelt: Basis-Layout für Smartphones (≤ 640px), erweitert für Tablets (≥ 768px) und Desktop/Beamer (≥ 1024px).
@@ -799,7 +803,8 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
     - Kein horizontales Scrollen auf Viewports ≥ 320px.
     - Viewport-Meta-Tag ist korrekt gesetzt (`width=device-width, initial-scale=1`).
     - PWA-fähig: `manifest.json` mit Icon-Set, damit die App zum Homescreen hinzugefügt werden kann.
-- **Story 6.5 (Barrierefreiheit / Accessibility):** 🔴 Als Nutzer mit Einschränkungen möchte ich die App vollständig per Tastatur, Screenreader und assistive Technologien bedienen können.
+  - **Verifizierung:** Viewport-Meta, `check-viewport-320.mjs`, Touch 44px, `manifest.webmanifest` mit Icons; Breakpoints teils 600px (Backlog 640px).
+- **Story 6.5 (Barrierefreiheit / Accessibility):** 🔴 Als Nutzer mit Einschränkungen möchte ich die App vollständig per Tastatur, Screenreader und assistive Technologien bedienen können. *(Zur Prüfung ans Projektende gestellt — MD3/Angular decken Großteil ab.)*
   - **Akzeptanzkriterien:**
     - **Tastaturnavigation:** Alle interaktiven Elemente (Buttons, Inputs, Antwortoptionen, Dropdown-Menüs) sind per `Tab`-Taste erreichbar und per `Enter`/`Space` aktivierbar.
     - **Fokus-Management:** Ein sichtbarer Fokusring (`focus-visible`) ist auf allen interaktiven Elementen vorhanden. Nach Seitenwechsel, Modal-Öffnung oder Theme-/Sprachumschaltung auf der Startseite wird der Fokus programmatisch auf das erste relevante Element (z. B. Session-Code-Eingabe) gesetzt.

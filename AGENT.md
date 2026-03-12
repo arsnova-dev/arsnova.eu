@@ -51,3 +51,15 @@ Die folgenden Patterns wurden als verbindlich etabliert und MUESSEN bei Aenderun
 
 ### Wording
 * Nutze aktivierende, rollenunabhaengige Bezeichnungen ("Mitmachen", "Veranstalten", "Los geht's"). Vermeide formelle Rollenbezeichnungen ("Teilnehmer/in", "Lehrperson") und technische Begriffe ("Session erstellen", "Server erreichbar"). Vollstaendige Wording-Referenz in `docs/ui/STYLEGUIDE.md`.
+
+## 🌐 i18n / Übersetzungen (ADR-0008)
+Bei Arbeit an UI-Texten, Übersetzungsdateien oder mehrsprachiger Darstellung gelten die Vorgaben aus **ADR-0008** und `docs/I18N-ANGULAR.md`:
+
+* **Technik:** @angular/localize, Locale als Subpfad; Quellsprache Deutsch. Quiz-Inhalte (Fragen, Antworten) werden NICHT übersetzt – nur UI-Texte.
+* **Sprachstil:** Informelle Anrede (Duzen) und zeitgemäßer Stil in allen Sprachen.
+* **Referenz Deutsch:** Deutscher Quelltext ist Maßstab für Form und Länge; Übersetzungen sollen die vorgegebene Kürze/Struktur wahren.
+* **Visuelle Prüfung, Mobile-First:** Darstellung mit Übersetzungen **zuerst auf Smartphone** prüfen, dann Desktop. Längere Texte können Strukturbrüche verursachen → kürzere Formulierung oder Layout anpassen; bei Bedarf **zwei Varianten** (Mobile kurz / Desktop voll).
+* **Datum, Einheiten, Idiomatik:** Formate und Maßeinheiten nach Zielsprache/Locale; Formulierungen idiomatisch (natürlich in der Zielsprache).
+* **Sprachwechsel mit ungespeichertem Inhalt:** Auf Quiz bearbeiten (`/quiz/:id`) und Quiz neu (`/quiz/new`) muss vor Locale-Wechsel ein Hinweis erscheinen (Dialog oder Deaktivierung der Sprachwahl), wenn ungespeicherte Änderungen vorliegen – siehe ADR-0008 Abschnitt 3.
+
+Vollständige Vorgaben: `docs/architecture/decisions/0008-i18n-internationalization.md`.

@@ -51,6 +51,8 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 * [ADR-0004: Nutzung von Yjs (CRDTs) für Offline-Sync](./decisions/0004-use-yjs-for-local-first-storage.md)
 * [ADR-0005: UI-Strategie mit Angular Material 3 (ohne Tailwind)](./decisions/0005-use-angular-material-design.md)
 * [ADR-0006: Rollen, Routen und Autorisierung (Host, Teilnehmer, Admin)](./decisions/0006-roles-routes-authorization-host-admin.md)
+* [ADR-0007: Promptarchitektur für KI-generierte Quizzes](./decisions/0007-prompt-architecture-ki-quiz.md)
+* [ADR-0008: Internationalisierung (i18n) — Technik, Locale-Strategie und Hinweise bei Inhaltsverlust](./decisions/0008-i18n-internationalization.md)
 
 ---
 

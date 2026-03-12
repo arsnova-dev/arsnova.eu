@@ -1,0 +1,262 @@
+# i18n in Angular (offizieller Weg) — Umsetzungshinweise für Story 6.2
+
+Recherche basierend auf der **offiziellen Angular-Dokumentation** (angular.dev). Der beschriebene Ansatz gilt für **Angular 17+** (inkl. v21/v22); die i18n-API ist stabil.
+
+---
+
+## 1. Zwei Wege: Offiziell vs. Laufzeit
+
+| Aspekt | **@angular/localize (offiziell)** | **ngx-translate / Transloco** |
+|--------|-----------------------------------|-------------------------------|
+| **Sprachwechsel** | Pro Sprache eigener Build; Wechsel = andere URL/Subdirectory (z. B. `/de/`, `/en/`) | Ein Build; Wechsel zur Laufzeit ohne Reload |
+| **Performance** | Optimal (nur eine Sprache pro Bundle) | Alle Sprachen im Bundle oder nachladen |
+| **Workflow** | Extract → Übersetzen → Merge → Build pro Locale | JSON-Dateien, zur Laufzeit geladen |
+| **Empfehlung** | Wenn wenige Sprachen, SEO/Performance wichtig, Deployment mit Subpfaden ok | Wenn dynamischer Sprachwechsel in einer App-Instanz nötig |
+
+**Backlog 6.2** nennt „Angulars eingebautes i18n (`@angular/localize`) oder `ngx-translate`“. Für **de, en, fr, it, es** und typisches Deployment (Subpfade wie `/de/`, `/en/`) ist **@angular/localize** der empfohlene, offizielle Weg.
+
+---
+
+## 1b. Sprachwechsel: Was passiert, wo geht State verloren?
+
+**Aktuell (ohne i18n):** Der Sprachwähler in der Top-Toolbar speichert nur die Präferenz in `localStorage` (`home-language`). Es gibt **keinen** Reload und **keinen** Seitenwechsel – der sichtbare Inhalt ändert sich nicht, es geht **kein** State verloren.
+
+**Mit @angular/localize (Locale = Subpfad):** Sprachwechsel bedeutet in der Regel **Navigation auf eine andere URL** (z. B. `/de/session/ABC123/host` → `/en/session/ABC123/host`). Das wird oft als **vollständiger Seiten-Reload** umgesetzt (neues Dokument, App neu gebootet). Dann gilt:
+
+- **Alles, was nur im Speicher lebt** (Komponenten-State, Service-State, ungespeicherte Formulare), ist weg.
+- **Erhalten bleiben:** `localStorage`, `sessionStorage`, und alles, was die App nach dem Reload wieder vom Server oder aus der URL lädt.
+
+| View / Route | URL enthält | Was bei Reload passiert | Risiko State-Verlust |
+|--------------|-------------|-------------------------|----------------------|
+| **Startseite** `/` | – | Formular (Session-Code) neu | **Niedrig:** Nur eingegebener Code weg; Nutzer tippt neu. |
+| **Join** `/join/:code` | Session-Code | Code bleibt; Formular (Nickname etc.) neu | **Mittel:** Nickname/ausgewählte Optionen weg; Code bleibt, Beitritt schnell wiederholbar. |
+| **Session Host** `/session/:code/host` | Session-Code | Session wird per tRPC wieder geladen | **Niedrig:** Server-State (Frage, Phase) wird neu geholt; nur rein lokale UI-Zustände (z. B. aufgeklapptes Panel) weg. |
+| **Session Vote** `/session/:code/vote` | Session-Code | Session/aktuelle Frage wieder per tRPC | **Niedrig:** Abstimmung/Scorecard vom Server; nur kurz „Neuladen“. |
+| **Session Present** `/session/:code/present` | Session-Code | Wie Host, State vom Server | **Niedrig.** |
+| **Quiz-Liste** `/quiz` | – | Liste aus IndexedDB/Store neu laden | **Niedrig.** |
+| **Quiz bearbeiten** `/quiz/:id` | Quiz-ID | Quiz aus Store laden; **ungespeicherte Änderungen** nicht mehr da | **Hoch:** Ungespeicherte Bearbeitung (Fragen, Antworten, Einstellungen) geht verloren. |
+| **Quiz neu** `/quiz/new` | – | Kein persistierter Entwurf | **Hoch:** Gesamter neuer Quiz-Entwurf weg, wenn noch nicht gespeichert. |
+| **Quiz Preview** `/quiz/:id/preview` | Quiz-ID | Quiz aus Store | **Mittel:** Nur aktueller View-State (z. B. Seite) weg. |
+| **Legal/Help** | – | Nur Inhalt neu geladen | **Keins.** |
+
+**Praktische Konsequenzen:**
+
+- **Kritisch:** Sprachwechsel während **Quiz bearbeiten** oder **Quiz neu** → Hinweis anzeigen (z. B. „Sprache wechseln? Ungespeicherte Änderungen gehen verloren.“) oder Sprachwahl deaktivieren, solange es ungespeicherte Änderungen gibt.
+- **Optional:** Beim Wechsel von einer „kritischen“ Route (Quiz Edit/New) zur anderen Locale die **gleiche Route** in der neuen Locale ansteuern (z. B. `/de/quiz/xyz` → `/en/quiz/xyz`), damit der Nutzer wieder auf derselben fachlichen Seite landet; State muss trotzdem neu geladen werden (Quiz aus Store), nur die Kontext-URL bleibt sinnvoll.
+- **Session-Seiten:** Reload ist akzeptabel; Session-Code in der URL reicht, um den Kontext wiederherzustellen.
+
+**Alternative (ngx-translate/Transloco):** Wenn Sprachwechsel **ohne Reload** gewünscht ist (kein State-Verlust auf keiner Seite), müsste ein **Laufzeit-i18n**-Ansatz gewählt werden (ngx-translate o. Ä.); dann bleibt die App-Instanz erhalten und nur die angezeigten Strings wechseln.
+
+---
+
+## 2. Installation
+
+```bash
+cd apps/frontend
+ng add @angular/localize
+```
+
+- Ergänzt `package.json` und TypeScript-Config (u. a. `types: ["@angular/localize"]`).
+- Fügt in `main.ts` die nötige Referenz für `$localize` ein.
+
+**Option** `--use-at-runtime`: Wenn ihr `$localize` zur Laufzeit nutzen wollt (z. B. für Lazy-Load von Übersetzungen), dann wird `@angular/localize` in `dependencies` statt `devDependencies` eingetragen.
+
+---
+
+## 3. Texte für Übersetzung markieren
+
+### 3.1 Im Template (HTML)
+
+- **Statischer Text:** Attribut `i18n` auf dem Element.
+  ```html
+  <h1 i18n>Willkommen</h1>
+  <p i18n="Beschreibung des Absatzes">Session beitreten</p>
+  ```
+- **Kontext für Übersetzer:** `i18n="Bedeutung|Beschreibung@@customId"`.
+  ```html
+  <h1 i18n="Seitenkopf|Willkommenstitel auf der Startseite@@homeTitle">Willkommen</h1>
+  ```
+- **Attribute:** `i18n-{attributname}`.
+  ```html
+  <input i18n-placeholder placeholder="Session-Code eingeben" />
+  <img [src]="logo" i18n-title title="Logo" i18n-alt alt="Logo" />
+  ```
+
+### 3.2 Im TypeScript-Code
+
+- **Tagged Template Literal** `$localize`:
+  ```ts
+  import { $localize } from '@angular/localize/init';
+
+  title = $localize`Willkommen`;
+  message = $localize`:Button-Label|Beschreibung:Abbrechen`;
+  withVar = $localize`Hallo ${this.name}:name:!`;
+  ```
+- **Bedingt:** z. B. für Aria-Labels.
+  ```ts
+  return this.visible ? $localize`Anzeigen` : $localize`Ausblenden`;
+  ```
+
+### 3.3 Pluralisierung und Alternativen (ICU)
+
+- **Plural:** `{ variable, plural, =0 {...} =1 {...} other {...} }`
+- **Select (z. B. Geschlecht):** `{ variable, select, male {...} female {...} other {...} }`
+
+Beispiele siehe [Prepare component for translation](https://angular.dev/guide/i18n/prepare).
+
+---
+
+## 4. Übersetzungsdateien erzeugen und pflegen
+
+### 4.1 Quelltext extrahieren
+
+```bash
+ng extract-i18n
+```
+
+- Erzeugt standardmäßig `messages.xlf` (XLIFF 1.2) im Projektroot.
+- **Optionen (Auszug):**
+  - `--format=xlf` | `xlf2` | `json` | `arb` (z. B. `--format=json` für JSON).
+  - `--output-path src/locale` — Ablage in `src/locale`.
+  - `--out-file source.xlf` — Dateiname.
+
+Beispiel für strukturierte Ablage (Backlog: „Übersetzungsdateien `i18n/*.json`“):
+
+```bash
+ng extract-i18n --format=json --output-path src/locale --out-file messages.json
+```
+
+**Hinweis:** Bei `--format=json` entfallen in der aktuellen Tool-Version teils Meaning/Description; XLIFF (xlf/xlf2) ist für volle Metadaten die sichere Wahl.
+
+### 4.2 Pro Sprache eine Übersetzungsdatei
+
+- **XLIFF:** Kopie der Quell-XLF pro Locale (z. B. `messages.de.xlf`, `messages.en.xlf`); in jeder Datei die `<target>`-Tags mit den Übersetzungen füllen.
+- **JSON/ARB:** Entsprechend eine JSON-Datei pro Locale (z. B. `messages.de.json`).
+
+Sprachen laut Backlog: **de, en, fr, it, es**.
+
+---
+
+## 5. Build-Konfiguration (angular.json)
+
+Unter dem Projekt (z. B. `apps/frontend`) im **`options`-Block** des **`build`-Targets**:
+
+```json
+"i18n": {
+  "sourceLocale": "de",
+  "locales": {
+    "de": {},
+    "en": {
+      "translation": "src/locale/messages.en.xlf"
+    },
+    "fr": {
+      "translation": "src/locale/messages.fr.xlf"
+    },
+    "it": {
+      "translation": "src/locale/messages.it.xlf"
+    },
+    "es": {
+      "translation": "src/locale/messages.es.xlf"
+    }
+  }
+},
+"localize": true
+```
+
+- **sourceLocale:** Die Sprache, in der der Quellcode geschrieben ist (z. B. `de`).
+- **locales:** Map von Locale-IDs auf Übersetzungsdateien; für die Quellsprache kann `{}` reichen (keine separate Übersetzungsdatei nötig).
+- **localize: true:** Es wird ein Build pro definierter Locale erzeugt.
+
+**Development:** `ng serve` unterstützt nur **eine** Locale. Für lokales Testen z. B.:
+
+```json
+"localize": ["de"]
+```
+
+oder eine Konfiguration z. B. `"fr": { "localize": ["fr"] }` und dann `ng serve --configuration=fr`.
+
+---
+
+## 6. Build und Ausgabe
+
+```bash
+ng build --localize
+```
+
+- Pro Locale entsteht ein eigener Output (z. B. `dist/browser/de`, `dist/browser/en`, …).
+- Der CLI setzt für jede Variante u. a.:
+  - `lang` auf `<html>`
+  - `baseHref` (z. B. `/de/`, `/en/`) über die Locale-Konfiguration (`subPath` o. ä.).
+
+---
+
+## 7. Deployment (mehrere Locales)
+
+- Jede Locale wird aus einem **eigenen Unterpfad** ausgeliefert (z. B. `/de/`, `/en/`).
+- **Spracherkennung:** Serverseitig anhand des `Accept-Language`-Headers auf die passende Locale umleiten (z. B. `/` → `/de/` oder `/en/`).
+- **Sprachwahl in der App:** Navigation zu anderem Subpfad (z. B. von `/de/` zu `/en/`), ggf. mit Reload.
+
+Dokumentation: [Deploy multiple locales](https://angular.dev/guide/i18n/deploy) (inkl. Nginx-/Apache-Beispiele).
+
+---
+
+## 8. Datum, Zahlen, Währung (Backlog: „Datums- und Zahlenformate“)
+
+- **DatePipe, DecimalPipe, PercentPipe, CurrencyPipe** nutzen automatisch **LOCALE_ID**.
+- Pro gebauter Locale ist LOCALE_ID bereits die jeweilige Locale; es sind keine zusätzlichen Schritte nötig, damit Datum/Zahl zur angezeigten Sprache passen.
+- Optional: Locale explizit überschreiben, z. B. `{{ value | date : undefined : undefined : locale }}` bzw. Pipes mit Locale-Parameter.
+
+---
+
+## 9. Rechtliche Seiten (Impressum/Datenschutz) und 6.2
+
+- **Routen** bleiben sprachneutral (`/legal/imprint`, `/legal/privacy`).
+- **Inhalte** können pro Locale unterschiedlich sein:
+  - Entweder: Pro Locale eigene Markdown-Dateien (z. B. `imprint.de.md`, `imprint.en.md`) und im Frontend die aktuelle Locale (z. B. aus Pfad oder einer Locale-Service) verwenden, um die richtige Datei zu laden.
+  - Oder: Inhalte in die jeweilige Übersetzungsdatei (XLIFF/JSON) legen und über `$localize`/Template ausgeben.
+
+---
+
+## 9a. Vorgaben für Übersetzungen (ADR-0008)
+
+Verbindliche Vorgaben für alle Übersetzungen sind in **ADR-0008** (Abschnitt 4) festgehalten. Kurzüberblick:
+
+- **Sprachstil:** Informelle Anrede (Duzen), zeitgemäßer Sprachstil in allen Sprachen.
+- **Referenz Deutsch:** Deutscher Quelltext ist in Form und Länge geprüft und gilt als **Maßstab**; Übersetzungen sollen nicht unnötig länger werden und die vorgegebene Struktur wahren.
+- **Visuelle Prüfung, Mobile-First:** Längere Texte in Zielsprachen können **Strukturbrüche** verursachen. Es muss **stets visuell geprüft** werden – **zuerst auf Smartphone**, danach auf Desktop (Mobile-First). Pro View, pro Locale, ggf. pro Breakpoint. Bei Überlängen: kürzere Formulierung wählen oder Layout anpassen (Umbrüche, Truncation).
+- **Zwei Übersetzungen (Mobile/Desktop):** Wenn ein Text auf Smartphone bricht, auf Desktop aber passt, sind **zwei Varianten** erlaubt (kurz für Mobile, voll für Desktop); Quelltexte (Deutsch) liefern dann ebenfalls zwei Varianten.
+- **Datum, Einheiten, Idiomatik:** Datums- und Zahlenformate sowie Maßeinheiten folgen der **Zielsprache/Locale**. Formulierungen sind **idiomatisch** (natürlich in der Zielsprache, nicht wörtlich).
+
+Details: [docs/architecture/decisions/0008-i18n-internationalization.md](architecture/decisions/0008-i18n-internationalization.md).
+
+---
+
+## 10. Kurz-Checkliste für Story 6.2
+
+| Backlog-Kriterium | Umsetzung |
+|-------------------|-----------|
+| Sprachen de, en, fr, it, es | In `i18n.locales` eintragen + Übersetzungsdateien pflegen |
+| Browser (default) / Fallback Englisch | Server-Redirect per Accept-Language; Fallback z. B. auf `/en/` |
+| Sprachwähler in der Nav | Link/Button zu den Locale-Subpfaden (`/de/`, `/en/`, …) oder Redirect mit Reload |
+| Persistenz der Auswahl | Cookie oder LocalStorage speichern; beim nächsten Besuch serverseitig oder clientseitig auf gespeicherte Locale redirecten |
+| @angular/localize | `ng add @angular/localize`; Templates/Code mit `i18n` und `$localize` markieren |
+| Übersetzungsdateien | `ng extract-i18n`; pro Sprache eine Datei (z. B. in `src/locale/` oder `i18n/`) |
+| Quiz-Inhalte nicht übersetzen | Kein `i18n` an Dozenten-Texten (Fragenstamm, Antworten); nur UI-Texte markieren |
+| Datum/Zahl nach Locale | DatePipe/DecimalPipe nutzen; LOCALE_ID kommt durch Build pro Locale |
+
+---
+
+## 11. Nützliche Links (angular.dev)
+
+- [Internationalization – Overview](https://angular.dev/guide/i18n)
+- [Add the localize package](https://angular.dev/guide/i18n/add-package)
+- [Prepare component for translation](https://angular.dev/guide/i18n/prepare)
+- [Work with translation files](https://angular.dev/guide/i18n/translation-files)
+- [Merge translations into the app](https://angular.dev/guide/i18n/merge)
+- [Deploy multiple locales](https://angular.dev/guide/i18n/deploy)
+- [Format data based on locale](https://angular.dev/guide/i18n/format-data-locale)
+- [CLI: ng extract-i18n](https://angular.dev/cli/extract-i18n)
+
+---
+
+*Stand: Recherche für Angular v21/v22; Dokumentation unter https://angular.dev/guide/i18n.*

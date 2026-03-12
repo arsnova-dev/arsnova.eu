@@ -27,6 +27,13 @@ Du bist der Lead-Architekt. Wir arbeiten in einem **npm Workspaces Monorepo**.
 6. **Conditional Chips:** Abhaengige Optionen (z. B. "Teams zuweisen") nur anzeigen wenn die Eltern-Option aktiv ist (`isOptionVisible`-Pattern).
 7. **Status-Dot:** In Brand-SVG integriert, nicht als separates HTML-Element.
 
+## 🌐 i18n (Story 6.2, ADR-0008)
+- **Quellsprache:** Deutsch; nur UI-Texte übersetzen, Quiz-Inhalte (Fragen/Antworten) nicht.
+- **Stil:** Informell (Duzen), zeitgemäß. Deutsch = Referenz für Form und Länge.
+- **Prüfung:** Darstellung mit Übersetzungen **zuerst auf Smartphone** (Mobile-First), dann Desktop; bei Überlänge Strukturbrüche vermeiden (kürzere Formulierung oder zwei Varianten Mobile/Desktop).
+- **Datum/Einheiten/Idiomatik:** Zielsprache/Locale beachten; Formulierungen idiomatisch.
+- **Sprachwechsel:** Auf Quiz Edit/Quiz New bei ungespeichertem Inhalt Hinweis-Dialog oder Deaktivierung der Sprachwahl (ADR-0008 §3). Details: `docs/architecture/decisions/0008-i18n-internationalization.md`, `docs/I18N-ANGULAR.md`.
+
 ## 📋 Arbeitsweise in Cursor
 - **AGENT.md** gilt als ergänzende KI-Leitplanken: Baby-Steps, Backend-oder-Frontend zuerst, kein `BehaviorSubject` für UI-State, Styling (Material 3, kein Tailwind), Integrationstest vor Story-Fertigstellung. Bei Unklarheiten oder fehlendem Kontext: User bitten, `@AGENT.md` zu laden.
 - Nutze `@Codebase` bzw. das **Backlog** (`Backlog.md` im Repo-Root), um vor Story-Start die Akzeptanzkriterien und DoD zu prüfen.
