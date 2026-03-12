@@ -10,6 +10,7 @@
 - **Backlog:** Epic 6, Story 6.2 (Internationalisierung)
 - **ADR-0008:** [docs/architecture/decisions/0008-i18n-internationalization.md](../architecture/decisions/0008-i18n-internationalization.md) — Technik, Locale-Strategie, Hinweis bei Inhaltsverlust, Vorgaben für Übersetzungen (Duzen, DE-Referenz, Mobile-First-Prüfung, ggf. zwei Varianten Mobile/Desktop)
 - **Umsetzungshinweise:** [docs/I18N-ANGULAR.md](../I18N-ANGULAR.md)
+- **Lokal testen (lokalisierten Build mit API):** [README.md](../../README.md) Abschnitt 4 „Lokalisierter Build (i18n) lokal testen“; Details zum Proxy und typischen Fehlern in [I18N-ANGULAR.md](../I18N-ANGULAR.md) Abschnitt „Lokalisierter Build lokal“.
 
 ---
 

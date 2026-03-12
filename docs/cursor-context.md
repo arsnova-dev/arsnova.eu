@@ -209,4 +209,8 @@ Für einen **lokal production-ähnlichen** Lauf (optimierter Frontend-Build, ein
 4. **Optional – Port bereits belegt:** Zuerst `npm run free-port-3000`, danach `npm run start:prod`. Oder Backend auf anderem Port starten: `PORT=3010 npm run start:prod`, dann **http://localhost:3010**.
 5. **Optional – volle Funktionalität:** Docker Desktop starten und `npm run docker:up` ausführen (PostgreSQL + Redis), danach erneut `npm run start:prod`.
 
+### 18.2 Lokalisierter Build (i18n) lokal testen
+
+Für **mehrsprachige Builds** (de/en) mit funktionierender API und WebSockets: Backend starten (`npm run dev -w @arsnova/backend`), dann `npm run build:localize -w @arsnova/frontend` und `npm run serve:localize:api -w @arsnova/frontend`. Der Proxy (`scripts/serve-localized-with-api.mjs`) auf Port 4200 leitet `/trpc`, `/trpc-ws`, `/yjs-ws` ans Backend (3000, 3001, 3002) weiter. Details: README Abschnitt 4, [docs/I18N-ANGULAR.md](I18N-ANGULAR.md) „Lokalisierter Build lokal“.
+
 - **Cursor/Context Caching:** Dieses Dokument (docs/cursor-context.md) dient als stabiler Kontextblock. Bei Nutzung von Claude Opus 4.6 mit Prompt Caching sollte es als Prefix eingebunden werden (z. B. über .cursor/rules mit alwaysApply). Mindestlänge für Cache bei Opus 4.6: 4096 Tokens; diese Datei ist dafür ausgelegt.

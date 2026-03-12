@@ -208,7 +208,31 @@ Die Top-Toolbar liest die aktuelle Locale aus dem **ersten URL-Segment** (`/de/`
 
 **Hinweis:** Es werden nur die Locales gebaut, die in `angular.json` unter `i18n.locales` eingetragen sind (aktuell: de, en). fr, it, es erscheinen im Menü; wenn Nutzer sie wählen, führt die Navigation zu `/fr/` usw. – dafür müssen später die entsprechenden Builds und Übersetzungsdateien ergänzt werden.
 
-**Dev-Server (`ng serve`):** Es wird nur **eine** Locale gebaut (Quellsprache Deutsch). Die Pfade `/de/` und `/en/` funktionieren (Routing), liefern aber denselben deutschen Inhalt. Um echte Übersetzungen (z. B. Englisch) zu sehen: lokalisierten Build ausführen und mit API-Server starten: `npm run build:localize && npm run serve:localize:api` (Backend separat auf Port 3000). Dann z. B. http://localhost:4200/en/ für die englische Oberfläche.
+**Dev-Server (`ng serve`):** Es wird nur **eine** Locale gebaut (Quellsprache Deutsch). Die Pfade `/de/` und `/en/` funktionieren (Routing), liefern aber denselben deutschen Inhalt. Um echte Übersetzungen (z. B. Englisch) zu sehen: lokalisierten Build ausführen und mit API-Server starten (siehe Abschnitt **„Lokalisierter Build lokal“** unten). Dann z. B. http://localhost:4200/en/ für die englische Oberfläche.
+
+#### Lokalisierter Build lokal (Schritt für Schritt)
+
+Damit die lokalisierten Builds (de/en) mit **funktionierender API, tRPC-Subscriptions und Yjs-WebSocket** laufen, wird ein **eigener Proxy** genutzt – ein reiner Statik-Serve reicht nicht.
+
+| Schritt | Befehl | Erklärung |
+|--------|--------|-----------|
+| 1 | `npm run dev -w @arsnova/backend` | Backend muss laufen: HTTP (3000), tRPC-WS (3001), Yjs-WS (3002). |
+| 2 | `npm run build:localize -w @arsnova/frontend` | Baut `dist/browser/de/`, `dist/browser/en/`, kopiert Root-`index.html` (Redirect → `/de/`). |
+| 3 | `npm run serve:localize:api -w @arsnova/frontend` | Startet `scripts/serve-localized-with-api.mjs` auf Port 4200. |
+
+**Was der Proxy macht:** Er serviert statische Dateien aus `dist/browser`, liefert für `/`, `/de`, `/de/`, `/de/*` bzw. `/en`… die passende `index.html` aus, und leitet weiter:
+
+- **`/trpc`** → HTTP an Backend (Port 3000); Response-Header `content-encoding` werden entfernt (sonst ERR_CONTENT_DECODING_FAILED).
+- **`/trpc-ws`** → WebSocket-Proxy nach Port 3001; Nachrichten Backend→Client werden als **Text-Frames** weitergegeben (tRPC erwartet JSON-Text).
+- **`/yjs-ws`** → WebSocket-Proxy nach Port 3002 (Yjs Quiz-Sync); Pfad-Suffix (z. B. `/quiz-library-room-…`) wird durchgereicht.
+- **`/assets`** → wird aus `dist/browser/de/assets` bedient (damit Manifest-Icons unter absoluten Pfaden funktionieren).
+
+**Häufige Probleme:**
+
+- **„Feedback konnte nicht gestartet werden“ / Health-Check schlägt fehl:** Backend nicht gestartet oder Proxy-Ziel-URL falsch (Proxy baut `/trpc` + Rest-Pfad; Backend muss auf 3000 lauschen).
+- **„jsonEncoder received binary data“:** Proxy muss tRPC-Antworten als Text-Frames an den Browser senden (siehe Skript: Backend→Client immer als Text).
+- **Yjs „ECONNREFUSED“:** Yjs-Server (Port 3002) wird vom Backend als Child-Prozess gestartet; Backend mit `npm run dev -w @arsnova/backend` starten. Der Proxy loggt diesen Fehler nur **einmal** pro Lauf, um die Konsole nicht zu überfluten.
+- **Icons/Manifest 404:** Der Proxy mountet `/assets` auf `dist/browser/de/assets`; ohne diesen Schritt würden Anfragen zu `/assets/icons/…` ins Leere laufen (lokalisierter Build hat keine `dist/browser/assets`).
 
 ### 7b. Hinweis bei Sprachwechsel auf Quiz Edit/New (implementiert)
 

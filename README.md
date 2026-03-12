@@ -121,7 +121,34 @@ npm run dev
 
 **Reload / Deployment:** Damit Reload auf Unterseiten (z. B. `/legal/imprint`) nicht zu einer leeren Seite führt, muss der Server bei allen Client-Routen `index.html` ausliefern (SPA-Fallback). Beim lokalen `ng serve` ist das Standard. Für Production: Bei Vercel wird `apps/frontend/vercel.json` genutzt; bei Nginx/Apache/anderen Hosts eine Rewrite-Regel auf `index.html` setzen.
 
-### 4. Production-ähnlich lokal (optional)
+### 4. Lokalisierter Build (i18n) lokal testen (optional)
+
+Die App unterstützt **mehrere Sprachen** (de, en) über Angular i18n; jede Locale hat einen eigenen Build (z. B. `dist/browser/de`, `dist/browser/en`). Damit du die lokalisierten Varianten **mit funktionierender API und WebSockets** testen kannst, ist ein **eigener Proxy-Server** nötig (nicht nur `npx serve`):
+
+1. **Backend laufen lassen** (HTTP auf 3000, tRPC-WebSocket auf 3001, Yjs auf 3002):
+   ```bash
+   npm run dev -w @arsnova/backend
+   ```
+   Oder mit Frontend im anderen Terminal: `npm run dev` (dann Backend + Frontend-Dev-Server).
+
+2. **Lokalisierten Build erzeugen** (aus Repo-Root oder `apps/frontend`):
+   ```bash
+   npm run build:localize -w @arsnova/frontend
+   ```
+   Das baut alle in `angular.json` konfigurierten Locales und legt `dist/browser/de/`, `dist/browser/en/` sowie eine Root-`index.html` (Redirect nach `/de/`) an.
+
+3. **Proxy starten** (serviert den Build auf Port 4200 und leitet API/WebSockets ans Backend weiter):
+   ```bash
+   npm run serve:localize:api -w @arsnova/frontend
+   ```
+
+4. Im Browser: **http://localhost:4200** (→ Redirect auf `/de/`), **http://localhost:4200/de/** oder **http://localhost:4200/en/**.
+
+**Wichtig:** Nur **`serve:localize:api`** liefert tRPC (HTTP + WebSocket) und Yjs-WebSocket mit aus. Ein reines `npm run serve:localize` (statischer Serve ohne Proxy) liefert keine API – Health-Check, Subscriptions und Blitz-Feedback würden fehlschlagen. Details (Proxy-Skript, Ports, Fallstricke) siehe [docs/I18N-ANGULAR.md](./docs/I18N-ANGULAR.md) Abschnitt „Lokalisierter Build lokal“.
+
+**Dev-Server (`ng serve`):** Es wird nur **eine** Locale (Deutsch) gebaut. Die Pfade `/de/` und `/en/` funktionieren im Routing, zeigen aber denselben deutschen Inhalt. Für echte englische Oberfläche: lokalisierten Build + `serve:localize:api` wie oben.
+
+### 5. Production-ähnlich lokal (optional)
 
 Für einen **lokal production-ähnlichen** Lauf (optimierter Build, ein Prozess liefert alles aus, Gzip, Pre-Render) sollten Postgres und Redis laufen (wie in Schritt 2, z. B. `docker compose up -d redis postgres`).
 
@@ -132,7 +159,7 @@ npm run start:prod    # Backend starten (gibt Port 3000 ggf. automatisch frei)
 
 Die App ist dann unter **http://localhost:3000** erreichbar (Backend liefert das gebaute Frontend aus). Bei hartnäckig belegtem Port vorher: `npm run free-port-3000`. Anderen Port nutzen: `PORT=3010 npm run start:prod` → dann **http://localhost:3010**. Details (Gzip, Pre-Render, Fallbacks) siehe [docs/cursor-context.md](./docs/cursor-context.md) Abschnitt 18.1.
 
-### 5. Screenshots für die PWA-Manifest (optional)
+### 6. Screenshots für die PWA-Manifest (optional)
 
 Die PWA-Manifest-Datei referenziert zwei Screenshots (Desktop 1280×720, Mobile 390×844). Um sie neu zu erzeugen, muss die App unter einer URL laufen; das Skript wartet auf die gerenderte Startseite (nicht auf eine Verzeichnisliste).
 
@@ -151,7 +178,7 @@ cd apps/frontend && SCREENSHOT_URL=http://localhost:3000 npm run screenshots
 
 Die PNGs landen in `apps/frontend/src/assets/icons/` (`screenshot-wide.png`, `screenshot-narrow.png`).
 
-### 6. Tests ausführen
+### 7. Tests ausführen
 
 Alle Tests (Backend + Frontend) auf einen Schlag:
 
