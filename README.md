@@ -98,7 +98,7 @@ Ohne diesen Schritt startet das Backend beim ersten `npm run dev` ggf. nicht (fe
 
 **Alles in einem Durchgang (z. B. nach Fork):** `npm run setup:dev` startet Postgres + Redis (`docker:up:dev`), wendet das Schema an (`prisma:push`), generiert den Prisma-Client und baut die shared-types. Danach nur noch `npm run dev`.
 
-**Kurzfassung vor dem ersten Start:** `install` → `.env` + `docker:up` → `prisma:push` → `prisma:generate` → `build -w @arsnova/shared-types` → `npm run dev`
+**Kurzfassung vor dem ersten Start:** `install` → `.env` + `docker:up:dev` → `prisma:push` → `prisma:generate` → `build -w @arsnova/shared-types` → `npm run dev`
 
 ### 3. Server starten
 
@@ -205,6 +205,45 @@ npm run test:watch -w @arsnova/frontend
 ```
 
 > **Hinweis:** Die Frontend-Tests laufen in einer jsdom-Umgebung. Angular-Material-Stylesheets können dort nicht vollständig geparst werden – die resultierende Warnung wird im Test-Setup automatisch unterdrückt.
+
+### 8. Änderungen in Produktion bringen (GitHub-Flow)
+
+Der produktive Rollout läuft über **GitHub Actions** (`.github/workflows/ci.yml`):
+
+1. Änderungen auf Branch umsetzen, lokal prüfen (mind. `npm test`, bei i18n zusätzlich `npm run build:localize -w @arsnova/frontend`).
+2. PR nach `main` erstellen und mergen.
+3. Push auf `main` startet automatisch die CI (Build/Lint/Test/Docker).
+4. Wenn Repository-Variable `DEPLOY_ENABLED=true` gesetzt ist, läuft danach automatisch **Deploy to Server** via SSH.
+
+**Erstmalige Server-/Repo-Konfiguration (einmalig):**
+
+- Repository Variables:
+  - `DEPLOY_ENABLED` = `true`
+  - optional: `DEPLOY_BRANCH` (Default `main`)
+  - optional: `DEPLOY_DIR` (Default `/home/deploy/arsnova.eu`)
+- Repository Secrets:
+  - `DEPLOY_HOST`
+  - `DEPLOY_USER`
+  - `DEPLOY_SSH_KEY`
+  - optional: `DEPLOY_SSH_PORT`
+- Auf dem Server:
+  - Repo liegt unter `DEPLOY_DIR`
+  - `.env.production` ist vorhanden
+  - Docker/Compose ist installiert
+
+**Was im Deploy passiert:**
+
+- Git sync auf Ziel-Branch
+- `docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache`
+- `docker compose ... up -d`
+- Healthcheck der App (`/trpc/health.check`)
+
+**Manueller Fallback auf dem Server (wenn CI-Deploy deaktiviert):**
+
+```bash
+cd /home/deploy/arsnova.eu
+DEPLOY_BRANCH=main ./scripts/deploy.sh
+```
 
 ## 🤖 Vibe Coding & KI-Assistenz
 

@@ -13,15 +13,18 @@ cd "$REPO_ROOT"
 
 COMPOSE_FILE="docker-compose.prod.yml"
 ENV_FILE=".env.production"
+DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
 
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "Fehler: $ENV_FILE nicht gefunden. Bitte anlegen (siehe .env.production.example)."
   exit 1
 fi
 
-echo ">>> Schritt 1: Neuesten Code von GitHub holen …"
-git pull --ff-only origin main
-echo ">>> Git pull abgeschlossen ($(git log -1 --format='%h %s'))"
+echo ">>> Schritt 1: Neuesten Code von GitHub holen (Branch: $DEPLOY_BRANCH) …"
+git fetch origin
+git checkout "$DEPLOY_BRANCH"
+git reset --hard "origin/$DEPLOY_BRANCH"
+echo ">>> Git sync abgeschlossen ($(git log -1 --format='%h %s'))"
 
 echo ""
 echo ">>> Schritt 2: Docker Compose – Build ohne Cache & Start (Produktion)"
