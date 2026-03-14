@@ -266,6 +266,14 @@
   padding: 2rem 1.5rem;
 }
 
+/* Team-Lobby kann auf Mobile deutlich höher werden: nicht zentrieren/clippen, damit App-Main normal scrollt. */
+@media (max-width: 839.98px) {
+  .session-host--lobby.session-host--team-mode {
+    justify-content: flex-start;
+    max-height: none;
+  }
+}
+
 .session-host--lobby.session-host--with-channel-tabs {
   padding-top: 5rem;
 }
@@ -592,6 +600,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.session-host__meta-sound-toggle {
+  margin-left: auto;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 /* --- Ergebnisseite (FINISHED) – Container & Hero --- */
@@ -1298,6 +1311,10 @@ button.session-host__btn-discussion {
   margin-top: 0.75rem;
 }
 
+.session-host__btn-end-secondary {
+  margin-left: auto;
+}
+
 .session-host__export-status {
   margin: 0.5rem 0 0;
   font: var(--mat-sys-body-small);
@@ -1511,7 +1528,7 @@ button.session-host__btn-discussion {
 
 .session-host__vote-dist-correct {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   font: var(--mat-sys-title-large);
   font-weight: 700;
@@ -1521,6 +1538,16 @@ button.session-host__btn-discussion {
   border-radius: 0.75rem;
   padding: 0.5rem 1rem;
   margin-bottom: 0.75rem;
+  white-space: normal;
+}
+
+.session-host__vote-dist-correct > mat-icon {
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 1.35rem;
+  line-height: 1.35rem;
+  margin-top: 0.05rem;
 }
 
 .session-host__vote-dist-list {

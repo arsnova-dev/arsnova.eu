@@ -1,6 +1,7 @@
 <section
   class="session-host"
   [class.session-host--lobby]="effectiveStatus() === 'LOBBY'"
+  [class.session-host--team-mode]="session()?.teamMode === true"
   [class.session-host--with-channel-tabs]="showChannelTabs()"
 >
   @if (session(); as s) {
@@ -155,6 +156,35 @@
           <span class="session-host__meta-status">{{ phaseLabel(effectiveStatus(), allHaveVoted(), countdownEnded()) }}</span>
           @if (sessionHeading(); as heading) {
             <span class="session-host__meta-quiz">{{ heading }}</span>
+          }
+          @if (isBackgroundMusicEnabled()) {
+            <button
+              mat-icon-button
+              type="button"
+              class="session-host__meta-sound-toggle"
+              [attr.aria-pressed]="true"
+              (click)="toggleBackgroundMusic()"
+              i18n-title="@@sessionHost.musicToggleTitleOn"
+              title="Musik aus"
+              i18n-aria-label="@@sessionHost.musicToggleAriaOn"
+              aria-label="Hintergrundmusik ausschalten"
+            >
+              <mat-icon aria-hidden="true">volume_up</mat-icon>
+            </button>
+          } @else {
+            <button
+              mat-icon-button
+              type="button"
+              class="session-host__meta-sound-toggle"
+              [attr.aria-pressed]="false"
+              (click)="toggleBackgroundMusic()"
+              i18n-title="@@sessionHost.musicToggleTitleOff"
+              title="Musik an"
+              i18n-aria-label="@@sessionHost.musicToggleAriaOff"
+              aria-label="Hintergrundmusik einschalten"
+            >
+              <mat-icon aria-hidden="true">volume_off</mat-icon>
+            </button>
           }
         </header>
 
@@ -731,6 +761,18 @@
                   <span i18n>Nächste Frage</span>
                 }
               </button>
+              @if (!isLastQuestion()) {
+                <button
+                  matButton="tonal"
+                  type="button"
+                  class="session-host__btn-end-secondary"
+                  [disabled]="controlPending()"
+                  (click)="endSession()"
+                >
+                  <mat-icon aria-hidden="true">stop_circle</mat-icon>
+                  <span i18n>Session beenden</span>
+                </button>
+              }
             }
           </div>
 
@@ -748,17 +790,6 @@
                 }
                 <app-word-cloud [responses]="freetextResponses()" />
               }
-              <button
-                mat-button
-                color="warn"
-                type="button"
-                class="session-host__end-btn"
-                [disabled]="controlPending()"
-                (click)="endSession()"
-              >
-                <mat-icon>stop_circle</mat-icon>
-                <span i18n>Session beenden</span>
-              </button>
             </div>
           </details>
         }

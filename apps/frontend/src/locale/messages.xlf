@@ -5639,6 +5639,39 @@
       <trans-unit id="sessionPresent.quickFeedbackVotes" datatype="html">
         <source>Stimmen</source>
       </trans-unit>
+      <trans-unit id="app.footer.statusHelpTriggerAria" datatype="html">
+        <source>Hilfe zur Server-Statusanzeige</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpTitle" datatype="html">
+        <source>Server-Status erklärt</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpDot" datatype="html">
+        <source>Der Punkt zeigt den Zustand: grün = gesund, gelb = ausgelastet, rot = überlastet, grau = keine Live-Daten.</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpLiveSessions" datatype="html">
+        <source>Live-Sessions (aktuell aktive Veranstaltungen)</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpBlitz" datatype="html">
+        <source>Blitz-Runden (laufende Quick-Feedback-Runden)</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpParticipants" datatype="html">
+        <source>Teilnehmende (derzeit verbunden)</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpCompleted" datatype="html">
+        <source>Abgeschlossene Sessions (gesamt)</source>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleTitleOn" datatype="html">
+        <source>Musik aus</source>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleAriaOn" datatype="html">
+        <source>Hintergrundmusik ausschalten</source>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleTitleOff" datatype="html">
+        <source>Musik an</source>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleAriaOff" datatype="html">
+        <source>Hintergrundmusik einschalten</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

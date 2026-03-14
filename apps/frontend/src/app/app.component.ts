@@ -18,6 +18,7 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { filter } from 'rxjs/operators';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { SwUpdate } from '@angular/service-worker';
 import { ThemePresetService } from './core/theme-preset.service';
 import { PresetSnackbarFocusService } from './core/preset-snackbar-focus.service';
@@ -44,7 +45,18 @@ class PresetToastHostDirective {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MatButton, MatIcon, TopToolbarComponent, PresetToastHostDirective, ConnectionBannerComponent, ServerStatusWidgetComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatButton,
+    MatIcon,
+    MatMenu,
+    MatMenuTrigger,
+    TopToolbarComponent,
+    PresetToastHostDirective,
+    ConnectionBannerComponent,
+    ServerStatusWidgetComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

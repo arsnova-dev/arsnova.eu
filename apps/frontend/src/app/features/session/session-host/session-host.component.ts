@@ -158,6 +158,13 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   });
   readonly isQaSession = computed(() => this.session()?.type === 'Q_AND_A');
   readonly isPlayfulPreset = computed(() => this.session()?.preset === 'PLAYFUL');
+  /** Live-Override durch den Dozenten: null = Quiz-Setting, true/false = manuelle Erzwingung. */
+  readonly musicOverrideEnabled = signal<boolean | null>(null);
+  readonly isBackgroundMusicEnabled = computed(() => {
+    const forced = this.musicOverrideEnabled();
+    if (forced !== null) return forced;
+    return this.resolveMusicTrack(this.session()?.backgroundMusic) !== null;
+  });
   readonly sessionHeading = computed(() => {
     const session = this.session();
     if (!session) {
@@ -246,11 +253,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         this.stopCountdown();
         this.countdownSeconds.set(null);
         this.sound.stopAllSfx();
-      }
-    });
-    effect(() => {
-      if (this.countdownEnded()) {
-        this.sound.stopMusic();
       }
     });
     effect(() => {
@@ -561,15 +563,40 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private stopCountdown(): void {
     if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
     if (this.fingerHideTimeout) { clearTimeout(this.fingerHideTimeout); this.fingerHideTimeout = null; }
-    this.sound.stopMusic();
   }
 
   /**
-   * Stoppt Hintergrundmusik (Hintergrundmusik im Host deaktiviert).
-   * Wird vom Poll-Timer alle 2s und beim Init aufgerufen.
+   * Synchronisiert Host-Hintergrundmusik:
+   * - Dozenten-Override hat Vorrang vor Quiz-Setting.
+   * - Während FINISHED ist Musik immer aus.
    */
   private syncMusic(): void {
-    this.sound.stopMusic();
+    const session = this.session();
+    if (!session || this.effectiveStatus() === 'FINISHED' || !this.isBackgroundMusicEnabled()) {
+      this.sound.stopMusic();
+      return;
+    }
+    const track = this.resolveMusicTrack(session.backgroundMusic) ?? 'CALM_LOFI';
+    void this.sound.playMusic(track);
+  }
+
+  toggleBackgroundMusic(): void {
+    this.sound.unlock();
+    this.musicOverrideEnabled.set(!this.isBackgroundMusicEnabled());
+    this.syncMusic();
+  }
+
+  private resolveMusicTrack(raw: string | null | undefined): 'CALM_LOFI' | 'UPBEAT_POP' | 'FOCUS_AMBIENT' | null {
+    if (raw === 'CALM_LOFI' || raw === 'UPBEAT_POP' || raw === 'FOCUS_AMBIENT') {
+      return raw;
+    }
+    if (raw === 'UPBEAT') {
+      return 'UPBEAT_POP';
+    }
+    if (raw === 'CHILL') {
+      return 'CALM_LOFI';
+    }
+    return null;
   }
 
   async exportFreetextSessionCsv(): Promise<void> {

@@ -224,6 +224,63 @@
   width: auto;
 }
 
+.app-footer__status-help-trigger {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.app-footer__status-help-trigger mat-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+.app-footer__status-help {
+  width: min(20rem, 84vw);
+  padding: 0.25rem 0.2rem;
+}
+
+.app-footer__status-help-title {
+  margin: 0 0 0.5rem;
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface);
+}
+
+.app-footer__status-help-copy {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.45;
+}
+
+.app-footer__status-help-list {
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.app-footer__status-help-list li {
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  align-items: start;
+  gap: 0.5rem;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface);
+  line-height: 1.4;
+}
+
+.app-footer__status-help-list mat-icon {
+  margin-top: 0.05rem;
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  color: var(--mat-sys-primary);
+}
+
 /* Preset-Snackbar (global): Pill, inverse-surface, Blur/Refocus über PresetSnackbarFocusService */
 .app-preset-snackbar {
   position: fixed;

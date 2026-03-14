@@ -74,6 +74,41 @@
       </div>
       <div class="app-footer__status-line" [class.app-footer__status-line--offline]="!apiStatus()">
         <app-server-status-widget class="app-footer__status-widget" [connectionOk]="!!apiStatus()" [compact]="true" />
+        <button
+          mat-icon-button
+          class="app-footer__status-help-trigger"
+          [matMenuTriggerFor]="serverStatusHelpMenu"
+          i18n-aria-label="@@app.footer.statusHelpTriggerAria"
+          aria-label="Hilfe zur Server-Statusanzeige"
+        >
+          <mat-icon>help</mat-icon>
+        </button>
+        <mat-menu #serverStatusHelpMenu="matMenu" xPosition="before" yPosition="above">
+          <div class="app-footer__status-help" (click)="$event.stopPropagation()">
+            <p class="app-footer__status-help-title" i18n="@@app.footer.statusHelpTitle">Server-Status erklärt</p>
+            <p class="app-footer__status-help-copy" i18n="@@app.footer.statusHelpDot">
+              Der Punkt zeigt den Zustand: grün = gesund, gelb = ausgelastet, rot = überlastet, grau = keine Live-Daten.
+            </p>
+            <ul class="app-footer__status-help-list" role="list">
+              <li>
+                <mat-icon aria-hidden="true">play_circle</mat-icon>
+                <span i18n="@@app.footer.statusHelpLiveSessions">Live-Sessions (aktuell aktive Veranstaltungen)</span>
+              </li>
+              <li>
+                <mat-icon aria-hidden="true">bolt</mat-icon>
+                <span i18n="@@app.footer.statusHelpBlitz">Blitz-Runden (laufende Quick-Feedback-Runden)</span>
+              </li>
+              <li>
+                <mat-icon aria-hidden="true">group</mat-icon>
+                <span i18n="@@app.footer.statusHelpParticipants">Teilnehmende (derzeit verbunden)</span>
+              </li>
+              <li>
+                <mat-icon aria-hidden="true">check_circle</mat-icon>
+                <span i18n="@@app.footer.statusHelpCompleted">Abgeschlossene Sessions (gesamt)</span>
+              </li>
+            </ul>
+          </div>
+        </mat-menu>
         @if (!apiStatus()) {
           <button matButton class="app-footer__status-action" (click)="retryApiConnection()" [disabled]="apiRetrying()">
             {{ footerRetryLabel() }}

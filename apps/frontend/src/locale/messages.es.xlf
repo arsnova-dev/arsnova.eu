@@ -6201,6 +6201,50 @@
         <source>Stimmen</source>
         <target>Votos</target>
       </trans-unit>
+      <trans-unit id="app.footer.statusHelpTriggerAria" datatype="html">
+        <source>Hilfe zur Server-Statusanzeige</source>
+        <target>Ayuda sobre el estado del servidor</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpTitle" datatype="html">
+        <source>Server-Status erklärt</source>
+        <target>Estado del servidor explicado</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpDot" datatype="html">
+        <source>Der Punkt zeigt den Zustand: grün = gesund, gelb = ausgelastet, rot = überlastet, grau = keine Live-Daten.</source>
+        <target>El punto muestra el estado: verde = saludable, amarillo = cargado, rojo = sobrecargado, gris = sin datos en vivo.</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpLiveSessions" datatype="html">
+        <source>Live-Sessions (aktuell aktive Veranstaltungen)</source>
+        <target>Sesiones en vivo (eventos activos actualmente)</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpBlitz" datatype="html">
+        <source>Blitz-Runden (laufende Quick-Feedback-Runden)</source>
+        <target>Rondas Blitz (rondas de feedback rápido en curso)</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpParticipants" datatype="html">
+        <source>Teilnehmende (derzeit verbunden)</source>
+        <target>Participantes (actualmente conectados)</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusHelpCompleted" datatype="html">
+        <source>Abgeschlossene Sessions (gesamt)</source>
+        <target>Sesiones completadas (total)</target>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleTitleOn" datatype="html">
+        <source>Musik aus</source>
+        <target>Música desactivada</target>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleAriaOn" datatype="html">
+        <source>Hintergrundmusik ausschalten</source>
+        <target>Desactivar música de fondo</target>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleTitleOff" datatype="html">
+        <source>Musik an</source>
+        <target>Música activada</target>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicToggleAriaOff" datatype="html">
+        <source>Hintergrundmusik einschalten</source>
+        <target>Activar música de fondo</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

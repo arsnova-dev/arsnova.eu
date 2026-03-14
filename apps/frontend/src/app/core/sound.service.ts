@@ -13,7 +13,15 @@ const SOUND_PATHS: Record<SoundKey, string> = {
   countdownEnd: 'assets/sound/countdownEnd/Song1.mp3',
 };
 
-export type MusicTrack = 'CALM_LOFI' | 'UPBEAT' | 'EPIC' | 'CHILL';
+export type MusicTrack = 'CALM_LOFI' | 'UPBEAT_POP' | 'FOCUS_AMBIENT' | 'UPBEAT' | 'EPIC' | 'CHILL';
+const MUSIC_PATHS: Record<string, string> = {
+  CALM_LOFI: 'assets/sound/lobby/Song0.mp3',
+  UPBEAT_POP: 'assets/sound/lobby/Song1.mp3',
+  FOCUS_AMBIENT: 'assets/sound/lobby/Song2.mp3',
+  UPBEAT: 'assets/sound/lobby/Song1.mp3',
+  CHILL: 'assets/sound/lobby/Song0.mp3',
+  EPIC: 'assets/sound/lobby/Song3.mp3',
+};
 
 /**
  * Zentraler Audio-Service (Story 5.1). Nutzt die Web Audio API und
@@ -32,6 +40,7 @@ export class SoundService {
   /** Story 5.3: Hintergrundmusik (Stopp-Logik bleibt für setMusicVolume/stopMusic) */
   private musicGain: GainNode | null = null;
   private musicGeneration = 0;
+  private currentMusicTrack: string | null = null;
   private readonly activeMusicNodes = new Set<AudioBufferSourceNode>();
   readonly musicPlaying = signal(false);
   readonly musicVolume = signal(80);
@@ -89,12 +98,51 @@ export class SoundService {
     this.activeSfxNodes.clear();
   }
 
-  /**
-   * Story 5.3: Hintergrundmusik – aktuell deaktiviert.
-   * Verhindert, dass irgendwo Musik gestartet wird; stoppt ggf. laufende.
-   */
-  async playMusic(_track: MusicTrack): Promise<void> {
+  /** Startet (oder hält) loopende Hintergrundmusik für den gewünschten Track. */
+  async playMusic(track: MusicTrack | string): Promise<void> {
+    const ctx = this.getContext();
+    if (!ctx || ctx.state === 'suspended') return;
+    const path = MUSIC_PATHS[track];
+    if (!path) {
+      this.stopMusic();
+      return;
+    }
+    if (this.musicPlaying() && this.currentMusicTrack === track && this.activeMusicNodes.size > 0) {
+      return;
+    }
+
     this.stopMusic();
+    const generation = this.musicGeneration;
+
+    let buffer = this.buffers.get(path);
+    if (!buffer) {
+      try {
+        const response = await fetch(path);
+        const arrayBuffer = await response.arrayBuffer();
+        buffer = await ctx.decodeAudioData(arrayBuffer);
+        this.buffers.set(path, buffer);
+      } catch {
+        return;
+      }
+    }
+    if (generation !== this.musicGeneration || !buffer) {
+      return;
+    }
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    const gain = ctx.createGain();
+    gain.gain.value = this.musicVolume() / 100;
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+
+    this.musicGain = gain;
+    this.currentMusicTrack = track;
+    this.activeMusicNodes.add(source);
+    this.musicPlaying.set(true);
+    source.onended = () => this.activeMusicNodes.delete(source);
   }
 
   stopMusic(): void {
@@ -107,6 +155,7 @@ export class SoundService {
       try { this.musicGain.disconnect(); } catch { /* noop */ }
     }
     this.musicGain = null;
+    this.currentMusicTrack = null;
     this.musicPlaying.set(false);
   }
 
