@@ -97,6 +97,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   private qaSub: Unsubscribable | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private lastSessionInfoRetryAt = 0;
+  private lastAnswerToggleAt = 0;
+  private lastVoteSubmitAt = 0;
+  private lastQaSubmitAt = 0;
 
   readonly code = (this.route.parent?.snapshot.paramMap.get('code') ?? '').toUpperCase();
   readonly sessionId = signal('');
@@ -699,15 +702,19 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const context = await this.ensureQaSubmitContext();
-    if (!context) {
+    const now = Date.now();
+    if (now - this.lastQaSubmitAt < 450) {
       return;
     }
-
+    this.lastQaSubmitAt = now;
     this.qaSubmitting.set(true);
     this.qaError.set(null);
     this.qaInfo.set(null);
     try {
+      const context = await this.ensureQaSubmitContext();
+      if (!context) {
+        return;
+      }
       await trpc.qa.submit.mutate({
         sessionId: context.sessionId,
         participantId: context.participantId,
@@ -891,6 +898,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
 
   toggleAnswer(answerId: string): void {
     if (this.voteSent() || this.debounced() || !this.isActive() || this.timerExpired()) return;
+    const now = Date.now();
+    if (now - this.lastAnswerToggleAt < 90) return;
+    this.lastAnswerToggleAt = now;
     const q = this.currentQuestion();
     if (!q || !('type' in q)) return;
     const set = new Set(this.selectedAnswerIds());
@@ -906,6 +916,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
 
   async submitVote(overrideIds?: string[]): Promise<void> {
     if (this.voteSending() || this.voteSent() || this.debounced() || this.timerExpired()) return;
+    const now = Date.now();
+    if (now - this.lastVoteSubmitAt < 450) return;
+    this.lastVoteSubmitAt = now;
     const q = this.currentQuestion();
     if (!q || !('id' in q)) return;
 
@@ -916,6 +929,8 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     this.debounced.set(true);
     this.voteSending.set(true);
     this.voteError.set(null);
+    this.voteSent.set(true);
+    this.cdr.detectChanges();
 
     try {
       await trpc.vote.submit.mutate({
@@ -927,9 +942,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         ratingValue: rating,
         round: this.currentRound(),
       });
-      this.voteSent.set(true);
       try { navigator.vibrate?.(10); } catch { /* unsupported */ }
     } catch (err: unknown) {
+      this.voteSent.set(false);
       const msg = err && typeof err === 'object' && 'message' in err
         ? (err as { message: string }).message
         : 'Abstimmung fehlgeschlagen.';

@@ -171,6 +171,10 @@
   font: var(--mat-sys-body-small);
 }
 
+.session-qa-form__submit {
+  min-height: 2.5rem;
+}
+
 .session-qa-list {
   display: grid;
   gap: 0.75rem;
@@ -588,6 +592,16 @@
   margin-top: 1.25rem;
   width: 100%;
   min-height: 48px;
+}
+
+.vote-submit--pending {
+  position: relative;
+  pointer-events: none;
+  filter: saturate(0.9);
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: vote-submit-pending 900ms ease-in-out infinite;
+  }
 }
 
 // Freetext
@@ -1104,6 +1118,17 @@
   0% { opacity: 0; transform: scale(0.5); }
   60% { transform: scale(1.2); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes vote-submit-pending {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  50% {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--mat-sys-primary) 18%, transparent);
+  }
 }
 
 .vote-rating {

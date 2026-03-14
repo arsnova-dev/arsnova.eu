@@ -372,14 +372,28 @@
         </ul>
 
         @if (!voteSent() && isActive()) {
-          <button mat-flat-button color="primary" class="vote-submit-mc" [disabled]="selectedAnswerIds().size === 0 || debounced() || timerExpired()" (click)="submitVote()">
+          <button
+            mat-flat-button
+            color="primary"
+            class="vote-submit-mc"
+            [class.vote-submit--pending]="voteSending()"
+            [disabled]="selectedAnswerIds().size === 0 || voteSending() || debounced() || timerExpired()"
+            (click)="submitVote()"
+          >
             <span i18n>Absenden</span>
           </button>
         }
       } @else if ($any(q).type === 'FREETEXT' && isActive()) {
         <div class="vote-freetext">
           <textarea class="vote-freetext__input" [value]="freeTextValue()" (input)="freeTextValue.set($any($event.target).value)" i18n-placeholder placeholder="Deine Antwort…" maxlength="500" rows="3" [disabled]="voteSent() || timerExpired()"></textarea>
-          <button mat-flat-button color="primary" class="vote-freetext__submit" [disabled]="!freeTextValue().trim() || voteSent() || debounced() || timerExpired()" (click)="submitVote()">
+          <button
+            mat-flat-button
+            color="primary"
+            class="vote-freetext__submit"
+            [class.vote-submit--pending]="voteSending()"
+            [disabled]="!freeTextValue().trim() || voteSent() || voteSending() || debounced() || timerExpired()"
+            (click)="submitVote()"
+          >
             <span i18n>Absenden</span>
           </button>
         </div>
@@ -414,7 +428,14 @@
             }
           </div>
           @if (!voteSent()) {
-            <button mat-flat-button color="primary" class="vote-rating__submit" [disabled]="ratingValue() === null || debounced() || timerExpired()" (click)="submitVote()">
+            <button
+              mat-flat-button
+              color="primary"
+              class="vote-rating__submit"
+              [class.vote-submit--pending]="voteSending()"
+              [disabled]="ratingValue() === null || voteSending() || debounced() || timerExpired()"
+              (click)="submitVote()"
+            >
               <span i18n>Absenden</span>
             </button>
           }
@@ -649,7 +670,14 @@
       ></textarea>
       <div class="session-qa-form__meta">
         <span>{{ qaDraft().trim().length }}/500</span>
-        <button mat-flat-button type="button" [disabled]="!qaCanSubmit()" (click)="submitQaQuestion()">
+        <button
+          mat-flat-button
+          type="button"
+          class="session-qa-form__submit"
+          [class.vote-submit--pending]="qaSubmitting()"
+          [disabled]="!qaCanSubmit()"
+          (click)="submitQaQuestion()"
+        >
           <span i18n="@@sessionQa.askSubmit">Frage senden</span>
         </button>
       </div>
