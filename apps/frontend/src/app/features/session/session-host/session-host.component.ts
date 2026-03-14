@@ -132,6 +132,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly countdownEnded = signal(false);
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
   private fingerHideTimeout: ReturnType<typeof setTimeout> | null = null;
+  private countdownIntroSoundPlayed = false;
+  private countdownFinalSoundPlayed = false;
+  private lastCountdownSoundSecond: number | null = null;
   readonly Math = Math;
   readonly teamLeaderboardMaxScore = computed(() =>
     Math.max(1, ...this.teamLeaderboard().map((entry) => entry.totalScore)),
@@ -561,6 +564,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private startCountdown(timerSeconds: number | null | undefined, activeAt?: string): void {
     this.stopCountdown();
     this.countdownEnded.set(false);
+    this.countdownIntroSoundPlayed = false;
+    this.countdownFinalSoundPlayed = false;
+    this.lastCountdownSoundSecond = null;
     if (!timerSeconds || timerSeconds <= 0) {
       this.countdownSeconds.set(null);
       return;
@@ -571,14 +577,27 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const tick = (): void => {
       const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
       this.countdownSeconds.set(remaining);
-      if (remaining > 0 && remaining <= 5 && this.session()?.enableSoundEffects) {
-        if (remaining === 1) {
-          void this.sound.play('countdownEnd');
-        } else {
+      if (remaining <= 5 && this.session()?.enableSoundEffects) {
+        if (remaining === 5 && !this.countdownIntroSoundPlayed) {
+          // Finger-Countdown einläuten: Gong zu Beginn.
+          void this.sound.play('sessionEnd');
+          this.countdownIntroSoundPlayed = true;
+          this.lastCountdownSoundSecond = remaining;
+        } else if (remaining > 1 && remaining < 5 && remaining !== this.lastCountdownSoundSecond) {
+          this.lastCountdownSoundSecond = remaining;
           void this.sound.play('countdownTick');
+        } else if (remaining <= 0 && !this.countdownFinalSoundPlayed) {
+          // Finale: Pfiff ganz zuletzt.
+          void this.sound.play('countdownEnd');
+          this.countdownFinalSoundPlayed = true;
         }
       }
       if (remaining <= 0) {
+        if (this.session()?.enableSoundEffects && !this.countdownFinalSoundPlayed) {
+          // Fallback bei Timing-Sprüngen: Pfiff trotzdem sicher auslösen.
+          void this.sound.play('countdownEnd');
+          this.countdownFinalSoundPlayed = true;
+        }
         this.stopCountdown();
         this.countdownSeconds.set(0);
         this.countdownEnded.set(true);
@@ -596,6 +615,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private stopCountdown(): void {
     if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
     if (this.fingerHideTimeout) { clearTimeout(this.fingerHideTimeout); this.fingerHideTimeout = null; }
+    this.lastCountdownSoundSecond = null;
   }
 
   /**
