@@ -311,10 +311,26 @@ export class QuizListComponent implements OnInit {
           const parsed = raw ? (JSON.parse(raw) as unknown) : null;
           const entry = PresetStorageEntrySchema.safeParse(parsed);
           if (entry.success) {
+            const options = entry.data.options;
+            const optionEnabled = (id: string) => options[id] === true;
+            const nameMode = entry.data.nameMode;
             payload = {
               ...payload,
               nicknameTheme: entry.data.nicknameThemeValue,
-              allowCustomNicknames: entry.data.nameMode === 'allowCustomNicknames',
+              allowCustomNicknames: nameMode === 'allowCustomNicknames',
+              anonymousMode: nameMode === 'anonymousMode',
+              showLeaderboard: optionEnabled('showLeaderboard'),
+              enableRewardEffects: optionEnabled('enableRewardEffects'),
+              enableMotivationMessages: optionEnabled('enableMotivationMessages'),
+              enableEmojiReactions: optionEnabled('enableEmojiReactions'),
+              enableSoundEffects: optionEnabled('enableSoundEffects'),
+              readingPhaseEnabled: optionEnabled('readingPhaseEnabled'),
+              teamMode: optionEnabled('teamMode'),
+              teamAssignment: optionEnabled('teamAssignment') ? 'MANUAL' : 'AUTO',
+              teamCount: optionEnabled('teamMode') ? entry.data.teamCountValue : payload.teamCount,
+              bonusTokenCount: optionEnabled('bonusTokenCount') ? payload.bonusTokenCount ?? 3 : null,
+              defaultTimer: optionEnabled('defaultTimer') ? payload.defaultTimer ?? 60 : null,
+              backgroundMusic: optionEnabled('backgroundMusic') ? payload.backgroundMusic : null,
             };
           }
         } catch {

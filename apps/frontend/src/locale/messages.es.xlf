@@ -5949,6 +5949,10 @@
         <source>Fragerunde beendet</source>
         <target>Ronda de preguntas finalizada</target>
       </trans-unit>
+      <trans-unit id="sessionHost.emojiBadgeNew" datatype="html">
+        <source>neu</source>
+        <target>nuevo</target>
+      </trans-unit>
       <trans-unit id="sessionVote.qaLobbyHint" datatype="html">
         <source>Die Fragerunde startet automatisch. Halte diese Seite offen.</source>
         <target>La ronda de preguntas se inicia automáticamente. Mantén esta página abierta.</target>

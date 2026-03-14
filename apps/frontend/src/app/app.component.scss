@@ -1,12 +1,23 @@
+:host {
+  display: block;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .app-layout {
   position: relative;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app-main {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Platz für fixierte Toolbar (Top-Inset 0.5rem/0.75rem/1rem + Toolbar-Höhe). */
@@ -79,6 +90,7 @@
 }
 
 .app-footer {
+  flex: 0 0 auto;
   padding: 1.25rem 1rem;
   border-top: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface-container-low);

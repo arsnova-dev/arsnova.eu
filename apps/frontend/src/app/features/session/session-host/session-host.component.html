@@ -1,28 +1,34 @@
-<section class="session-host" [class.session-host--lobby]="effectiveStatus() === 'LOBBY'">
+<section
+  class="session-host"
+  [class.session-host--lobby]="effectiveStatus() === 'LOBBY'"
+  [class.session-host--with-channel-tabs]="showChannelTabs()"
+>
   @if (session(); as s) {
     @if (showChannelTabs()) {
-      <mat-button-toggle-group
-        class="session-channel-tabs"
-        [value]="activeChannel()"
-        (valueChange)="selectChannel($event)"
-        i18n-aria-label="@@sessionTabs.hostAria"
-        aria-label="Live-Bereich wählen"
-      >
-        @for (channel of visibleChannels(); track channel) {
-          <mat-button-toggle [value]="channel">
-            <span class="session-channel-tabs__label">{{ channelLabel(channel) }}</span>
-            @if (channelTabMetaLabel(channel); as metaLabel) {
-              <span
-                class="session-channel-tabs__badge"
-                [class.session-channel-tabs__badge--alert]="isChannelBadgeAlert(channel)"
-                [class.session-channel-tabs__badge--status]="channel === 'quickFeedback' && !isChannelBadgeAlert(channel)"
-              >
-                {{ metaLabel }}
-              </span>
-            }
-          </mat-button-toggle>
-        }
-      </mat-button-toggle-group>
+      <div class="session-channel-tabs-shell">
+        <mat-button-toggle-group
+          class="session-channel-tabs"
+          [value]="activeChannel()"
+          (valueChange)="selectChannel($event)"
+          i18n-aria-label="@@sessionTabs.hostAria"
+          aria-label="Live-Bereich wählen"
+        >
+          @for (channel of visibleChannels(); track channel) {
+            <mat-button-toggle [value]="channel">
+              <span class="session-channel-tabs__label">{{ channelLabel(channel) }}</span>
+              @if (channelTabMetaLabel(channel); as metaLabel) {
+                <span
+                  class="session-channel-tabs__badge"
+                  [class.session-channel-tabs__badge--alert]="isChannelBadgeAlert(channel)"
+                  [class.session-channel-tabs__badge--status]="channel === 'quickFeedback' && !isChannelBadgeAlert(channel)"
+                >
+                  {{ metaLabel }}
+                </span>
+              }
+            </mat-button-toggle>
+          }
+        </mat-button-toggle-group>
+      </div>
     }
 
     @if (showPrimaryLiveView()) {
@@ -47,7 +53,13 @@
             @if (qrDataUrl()) {
               <div class="session-lobby__hero-qr">
                 <div class="session-lobby__qr session-lobby__qr--compact">
-                  <img [src]="qrDataUrl()" alt="QR-Code: Beitritts-Link {{ joinUrl }}" width="320" height="320" />
+                  <img
+                    [src]="qrDataUrl()"
+                    alt="QR-Code: Beitritts-Link {{ joinUrl }}"
+                    class="app-qr-image"
+                    width="320"
+                    height="320"
+                  />
                 </div>
                 <p class="session-lobby__join-url session-lobby__join-url--compact">
                   <a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a>
@@ -98,7 +110,13 @@
           }
           @if (qrDataUrl()) {
             <div class="session-lobby__qr">
-              <img [src]="qrDataUrl()" alt="QR-Code: Beitritts-Link {{ joinUrl }}" width="320" height="320" />
+              <img
+                [src]="qrDataUrl()"
+                alt="QR-Code: Beitritts-Link {{ joinUrl }}"
+                class="app-qr-image"
+                width="320"
+                height="320"
+              />
             </div>
           }
           <p class="session-lobby__join-hint" i18n>Beitreten unter</p>
@@ -363,7 +381,8 @@
                       <mat-icon>how_to_vote</mat-icon>
                       <span i18n>Alle haben abgestimmt</span>
                     </span>
-                  } @else if (countdownSeconds() !== null && effectiveStatus() === 'ACTIVE') {
+                  }
+                  @if (countdownSeconds() !== null && effectiveStatus() === 'ACTIVE') {
                     <span class="session-host__countdown" [class.session-host__countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownSeconds() + ' Sekunden verbleibend'">
                       {{ countdownSeconds() }}
                     </span>
@@ -578,11 +597,16 @@
             <p class="session-host__no-question" i18n>Keine Frage aktiv. Mit „Nächste Frage“ starten.</p>
           }
 
-          @if (effectiveStatus() === 'RESULTS' && session()?.enableEmojiReactions && emojiReactions(); as reactions) {
+          @if ((effectiveStatus() === 'RESULTS' || effectiveStatus() === 'ACTIVE') && session()?.enableEmojiReactions && emojiReactions(); as reactions) {
             <div class="session-host__emoji-reactions" aria-labelledby="emoji-reactions-heading">
               <p class="session-host__emoji-reactions-title" id="emoji-reactions-heading">
                 <mat-icon aria-hidden="true">emoji_emotions</mat-icon>
                 <span i18n>Reaktionen der Teilnehmer</span>
+                @if (emojiNewCount() > 0) {
+                  <span class="session-host__emoji-new-badge" [class.session-host__emoji-new-badge--pulse]="emojiBadgePulse()">
+                    +{{ emojiNewCount() }} <span i18n="@@sessionHost.emojiBadgeNew">neu</span>
+                  </span>
+                }
               </p>
               @if (reactions.total > 0) {
                 <div class="session-host__emoji-reactions-list" role="list">
@@ -741,7 +765,7 @@
       </div>
     }
     } @else if (activeChannel() === 'qa') {
-      <mat-card appearance="outlined" class="session-channel-card session-channel-card--qa">
+      <mat-card appearance="outlined" class="session-channel-card session-channel-card--qa app-live-channel-shell">
         <mat-card-content class="session-channel-card__content session-channel-card__content--left">
           <div class="session-channel-card__header">
             <div>

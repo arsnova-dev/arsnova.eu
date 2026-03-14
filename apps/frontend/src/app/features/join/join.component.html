@@ -96,11 +96,8 @@
         }
 
         @if (showNicknameList()) {
-          <div class="join-card__nickname-group" role="group" aria-labelledby="join-nickname-heading">
-            <p class="join-card__nickname-heading" id="join-nickname-heading" i18n>Dein Name in der Session</p>
-            <p class="join-card__nickname-hint" i18n>Wähle einen Namen – er wird bei Abstimmungen angezeigt.</p>
+          <div class="join-card__nickname-group">
             <mat-form-field appearance="outline" class="join-card__field">
-              <mat-label i18n>Name wählen</mat-label>
               <mat-select [value]="selectedNickname()" (valueChange)="selectedNickname.set($event)" i18n-placeholder placeholder="Namen auswählen">
                 <mat-option value="" i18n>— Bitte wählen —</mat-option>
                 @for (opt of nicknameOptions(); track opt) {
@@ -112,11 +109,8 @@
             </mat-form-field>
           </div>
         } @else if (showCustomNickname()) {
-          <div class="join-card__nickname-group" role="group" aria-labelledby="join-nickname-heading">
-            <p class="join-card__nickname-heading" id="join-nickname-heading" i18n>Dein Name in der Session</p>
-            <p class="join-card__nickname-hint" i18n>Wird bei Abstimmungen angezeigt.</p>
+          <div class="join-card__nickname-group">
             <mat-form-field appearance="outline" class="join-card__field">
-              <mat-label i18n>Dein Name</mat-label>
               <input matInput type="text" [value]="customNickname()" (input)="customNickname.set($any($event.target).value)" i18n-placeholder placeholder="z. B. Max oder M. Mustermann" maxlength="30" />
             </mat-form-field>
           </div>

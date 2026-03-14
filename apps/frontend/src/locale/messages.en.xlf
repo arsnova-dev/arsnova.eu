@@ -3757,6 +3757,10 @@
         <source>Fragerunde beendet</source>
         <target>Q&amp;A round ended</target>
       </trans-unit>
+      <trans-unit id="sessionHost.emojiBadgeNew" datatype="html">
+        <source>neu</source>
+        <target>new</target>
+      </trans-unit>
       <trans-unit id="sessionVote.qaLobbyHint" datatype="html">
         <source>Die Fragerunde startet automatisch. Halte diese Seite offen.</source>
         <target>The Q&amp;A round starts automatically. Keep this page open.</target>

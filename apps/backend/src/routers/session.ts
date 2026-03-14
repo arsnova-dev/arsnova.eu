@@ -62,6 +62,7 @@ import {
   checkSessionCreateRate,
   isSessionCodeLockedOut,
   recordFailedSessionCodeAttempt,
+  shouldBypassSessionCreateRate,
 } from '../lib/rateLimit';
 import { randomBytes } from 'crypto';
 
@@ -190,6 +191,22 @@ function buildSessionChannels(session: {
       enabled: session.quickFeedbackEnabled === true,
     },
   };
+}
+
+const PLAYFUL_FALLBACK_TIMER_SECONDS = 60;
+
+function resolveQuestionTimer(
+  questionTimer: number | null | undefined,
+  defaultTimer: number | null | undefined,
+  preset: 'PLAYFUL' | 'SERIOUS' | null | undefined,
+): number | null {
+  if (typeof questionTimer === 'number' && questionTimer > 0) {
+    return questionTimer;
+  }
+  if (typeof defaultTimer === 'number' && defaultTimer > 0) {
+    return defaultTimer;
+  }
+  return preset === 'PLAYFUL' ? PLAYFUL_FALLBACK_TIMER_SECONDS : null;
 }
 
 async function buildRoundComparison(
@@ -380,13 +397,15 @@ export const sessionRouter = router({
     .output(CreateSessionOutputSchema)
     .mutation(async ({ ctx, input }) => {
       const ip = getClientIp(ctx);
-      const limit = await checkSessionCreateRate(ip);
-      if (!limit.allowed) {
-        throw new TRPCError({
-          code: 'TOO_MANY_REQUESTS',
-          message: `Maximal ${limit.remaining === 0 ? '0' : '10'} Sessions pro Stunde. Bitte später erneut versuchen.`,
-          cause: { retryAfterSeconds: limit.retryAfterSeconds },
-        });
+      if (!shouldBypassSessionCreateRate(ip)) {
+        const limit = await checkSessionCreateRate(ip);
+        if (!limit.allowed) {
+          throw new TRPCError({
+            code: 'TOO_MANY_REQUESTS',
+            message: `Maximal ${limit.remaining === 0 ? '0' : '10'} Sessions pro Stunde. Bitte später erneut versuchen.`,
+            cause: { retryAfterSeconds: limit.retryAfterSeconds },
+          });
+        }
       }
       const code = await ensureUniqueSessionCode();
       const isQaOnlySession = input.type === 'Q_AND_A';
@@ -663,6 +682,7 @@ export const sessionRouter = router({
             quiz: {
               select: {
                 preset: true,
+                defaultTimer: true,
                 questions: { orderBy: { order: 'asc' }, select: { timer: true } },
               },
             },
@@ -673,7 +693,11 @@ export const sessionRouter = router({
         }
         const isActive = session.status === 'ACTIVE';
         const currentTimer = isActive && session.currentQuestion !== null
-          ? session.quiz?.questions[session.currentQuestion]?.timer ?? null
+          ? resolveQuestionTimer(
+            session.quiz?.questions[session.currentQuestion]?.timer,
+            session.quiz?.defaultTimer,
+            session.quiz?.preset as 'PLAYFUL' | 'SERIOUS' | undefined,
+          )
           : null;
         const payload: { status: string; currentQuestion: number | null; activeAt?: string; timer?: number | null; preset?: string; currentRound?: number } = {
           status: session.status,
@@ -742,7 +766,9 @@ export const sessionRouter = router({
         return { status: 'FINISHED' as const, currentQuestion: null, currentRound: 1 };
       }
 
-      const readingPhase = session.quiz.readingPhaseEnabled;
+      const nextQuestion = session.quiz.questions[nextIdx];
+      const skipReadingPhaseForType = nextQuestion?.type === 'SURVEY' || nextQuestion?.type === 'RATING';
+      const readingPhase = session.quiz.readingPhaseEnabled && !skipReadingPhaseForType;
       const newStatus = readingPhase ? ('QUESTION_OPEN' as const) : ('ACTIVE' as const);
       await prisma.session.update({
         where: { id: session.id },
@@ -896,6 +922,8 @@ export const sessionRouter = router({
                   answers: { select: { id: true, text: true, isCorrect: true } },
                 },
               },
+              defaultTimer: true,
+              preset: true,
             },
           },
         },
@@ -913,7 +941,11 @@ export const sessionRouter = router({
         totalQuestions: questions.length,
         text: question.text,
         type: question.type as 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREETEXT' | 'RATING' | 'SURVEY',
-        timer: question.timer ?? null,
+        timer: resolveQuestionTimer(
+          question.timer,
+          session.quiz.defaultTimer,
+          session.quiz.preset as 'PLAYFUL' | 'SERIOUS' | undefined,
+        ),
         answers: question.answers.map((a) => ({ id: a.id, text: a.text, isCorrect: a.isCorrect })),
         ratingMin: question.ratingMin ?? null,
         ratingMax: question.ratingMax ?? null,
@@ -1014,6 +1046,8 @@ export const sessionRouter = router({
                 orderBy: { order: 'asc' },
                 include: { answers: { select: { id: true, text: true, isCorrect: true } } },
               },
+              defaultTimer: true,
+              preset: true,
             },
           },
           _count: { select: { votes: true, participants: true } },
@@ -1066,7 +1100,11 @@ export const sessionRouter = router({
           id: question.id,
           text: question.text,
           type: question.type,
-          timer: question.timer,
+          timer: resolveQuestionTimer(
+            question.timer,
+            session.quiz.defaultTimer,
+            session.quiz.preset as 'PLAYFUL' | 'SERIOUS' | undefined,
+          ),
           difficulty: question.difficulty,
           order: question.order,
           totalQuestions,
@@ -2124,8 +2162,8 @@ export const sessionRouter = router({
       if (!session) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
-      if (session.status !== 'RESULTS') {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen nur in der Ergebnis-Phase.' });
+      if (session.status !== 'ACTIVE' && session.status !== 'RESULTS') {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen nur während Abstimmung oder Ergebnis-Phase.' });
       }
 
       const quiz = session.quizId ? await prisma.quiz.findUnique({

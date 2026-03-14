@@ -118,6 +118,10 @@ html {
 
   --app-bg-root: var(--mat-sys-surface);
   --app-shadow-accent: none;
+  --app-live-channel-max-width: 36rem;
+  --app-live-channel-inline: 1rem;
+  --app-qr-size: 6rem;
+  --app-qr-size-compact: 6rem;
 }
 
 html.preset-playful {
@@ -362,6 +366,43 @@ html.dark .cdk-overlay-pane.live-session-dialog-panel .mat-mdc-dialog-surface {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.app-qr-image {
+  display: block;
+  width: min(var(--app-qr-size), 100%);
+  height: min(var(--app-qr-size), 100%);
+  max-width: 100%;
+  padding: 0.35rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: #fff;
+  margin-inline: auto;
+  border-radius: var(--mat-sys-corner-small);
+  object-fit: contain;
+  box-sizing: border-box;
+}
+
+html.dark .app-qr-image {
+  border-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) .app-qr-image {
+    border-color: #fff;
+  }
+}
+
+.app-live-channel-shell {
+  width: min(100%, var(--app-live-channel-max-width));
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px), (max-height: 700px) {
+  .app-qr-image {
+    width: min(var(--app-qr-size-compact), 100%);
+    height: min(var(--app-qr-size-compact), 100%);
+  }
 }
 
 // ---------------------------------------------------------------------------

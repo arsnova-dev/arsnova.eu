@@ -96,6 +96,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   private statusSub: Unsubscribable | null = null;
   private qaSub: Unsubscribable | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private lastSessionInfoRetryAt = 0;
 
   readonly code = (this.route.parent?.snapshot.paramMap.get('code') ?? '').toUpperCase();
   readonly sessionId = signal('');
@@ -221,9 +222,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     this.sessionSettings().channels?.qa.title ?? this.sessionSettings().title ?? $localize`:@@sessionTabs.questions:Fragen`,
   );
   readonly qaCanSubmit = computed(() =>
-    this.participantId().length > 0
-    && this.sessionId().length > 0
-    && this.qaDraft().trim().length > 0
+    this.qaDraft().trim().length > 0
     && this.qaDraft().trim().length <= 500
     && !this.qaSubmitting(),
   );
@@ -457,23 +456,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.participantId.set(localStorage.getItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`) ?? '');
     }
 
-    try {
-      const session = await trpc.session.getInfo.query({ code: this.code });
-      this.sessionId.set(session.id);
-      this.status.set(session.status as SessionStatus);
-      this.sessionSettings.set(session);
-      await this.refreshQaQuestions();
-      await this.refreshQuickFeedbackResult();
-      if (session.preset === 'PLAYFUL' || session.preset === 'SERIOUS') {
-        this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', { silent: true });
-      }
-      if (session.teamMode) {
-        await this.loadParticipantTeam();
-        if (session.status === 'RESULTS' || session.status === 'FINISHED') {
-          await this.loadTeamLeaderboard();
-        }
-      }
-    } catch { /* Parent-Shell hat schon validiert */ }
+    await this.loadSessionInfo();
 
     this.statusSub = trpc.session.onStatusChanged.subscribe(
       { code: this.code },
@@ -514,25 +497,87 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       },
     );
 
-    if (this.channels().qa && this.sessionId()) {
-      this.qaSub = trpc.qa.onQuestionsUpdated.subscribe(
-        { sessionId: this.sessionId(), participantId: this.participantId() || undefined },
-        {
-          onData: (data) => {
-            this.qaQuestions.set(data);
-            this.qaError.set(null);
-          },
-          onError: () => {},
-        },
-      );
-    }
+    this.ensureQaSubscription();
 
     void this.refreshQuestion();
     this.pollTimer = setInterval(() => {
+      void this.refreshSessionInfoFallback();
       void this.refreshQuestion();
       void this.refreshQuickFeedbackResult();
     }, 1000);
   }
+  private async loadSessionInfo(): Promise<void> {
+    try {
+      const session = await trpc.session.getInfo.query({ code: this.code });
+      this.sessionId.set(session.id);
+      this.status.set(session.status as SessionStatus);
+      this.sessionSettings.set(session);
+      this.ensureQaSubscription();
+      await this.refreshQaQuestions();
+      await this.refreshQuickFeedbackResult();
+      if (session.preset === 'PLAYFUL' || session.preset === 'SERIOUS') {
+        this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', { silent: true });
+      }
+      if (session.teamMode) {
+        await this.loadParticipantTeam();
+        if (session.status === 'RESULTS' || session.status === 'FINISHED') {
+          await this.loadTeamLeaderboard();
+        }
+      }
+    } catch {
+      // Parent-Shell validiert bereits; Retry läuft über Polling.
+    }
+  }
+
+  private ensureQaSubscription(): void {
+    if (this.qaSub || !this.channels().qa || !this.sessionId()) {
+      return;
+    }
+
+    this.qaSub = trpc.qa.onQuestionsUpdated.subscribe(
+      { sessionId: this.sessionId(), participantId: this.participantId() || undefined },
+      {
+        onData: (data) => {
+          this.qaQuestions.set(data);
+          this.qaError.set(null);
+        },
+        onError: () => {},
+      },
+    );
+  }
+
+  private async refreshSessionInfoFallback(): Promise<void> {
+    const now = Date.now();
+    if (now - this.lastSessionInfoRetryAt < 3000) {
+      return;
+    }
+    this.lastSessionInfoRetryAt = now;
+    try {
+      const session = await trpc.session.getInfo.query({ code: this.code });
+      const nextStatus = session.status as SessionStatus;
+      const prevStatus = this.status();
+      this.sessionId.set(session.id);
+      this.sessionSettings.set(session);
+      this.status.set(nextStatus);
+      this.ensureQaSubscription();
+      if (session.preset === 'PLAYFUL' || session.preset === 'SERIOUS') {
+        this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', { silent: true });
+      }
+      if (prevStatus !== nextStatus && session.teamMode) {
+        if (nextStatus === 'RESULTS' || nextStatus === 'FINISHED') {
+          void this.loadTeamRewardState();
+        } else {
+          this.teamLeaderboard.set([]);
+        }
+      }
+      if (nextStatus === 'ACTIVE' && this.countdownSeconds() === null) {
+        this.startCountdown(this.currentQuestion());
+      }
+    } catch {
+      // best-effort fallback, WebSocket bleibt primärer Kanal
+    }
+  }
+
 
   ngOnDestroy(): void {
     this.statusSub?.unsubscribe();
@@ -599,6 +644,21 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       && this.currentQuestion() === null
     ) {
       this.activeChannel.set('qa');
+      return;
+    }
+
+    if (
+      active !== 'quiz'
+      && visible.includes('quiz')
+      && this.currentQuestion() !== null
+      && (
+        this.status() === 'QUESTION_OPEN'
+        || this.status() === 'ACTIVE'
+        || this.status() === 'DISCUSSION'
+        || this.status() === 'RESULTS'
+      )
+    ) {
+      this.activeChannel.set('quiz');
     }
   }
 
@@ -639,13 +699,18 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const context = await this.ensureQaSubmitContext();
+    if (!context) {
+      return;
+    }
+
     this.qaSubmitting.set(true);
     this.qaError.set(null);
     this.qaInfo.set(null);
     try {
       await trpc.qa.submit.mutate({
-        sessionId: this.sessionId(),
-        participantId: this.participantId(),
+        sessionId: context.sessionId,
+        participantId: context.participantId,
         text: this.qaDraft().trim(),
       });
       this.qaDraft.set('');
@@ -660,6 +725,59 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     } finally {
       this.qaSubmitting.set(false);
     }
+  }
+
+  private async ensureQaSubmitContext(): Promise<{ sessionId: string; participantId: string } | null> {
+    let sessionId = this.sessionId();
+    if (!sessionId && this.code) {
+      try {
+        const session = await trpc.session.getInfo.query({ code: this.code });
+        sessionId = session.id;
+        this.sessionId.set(session.id);
+        this.sessionSettings.set(session);
+      } catch {
+        this.qaError.set($localize`:@@sessionQa.submitError:Frage konnte nicht gesendet werden.`);
+        return null;
+      }
+    }
+
+    let participantId = this.participantId();
+    if (!participantId && typeof localStorage !== 'undefined' && this.code) {
+      participantId = localStorage.getItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`) ?? '';
+      if (participantId) {
+        this.participantId.set(participantId);
+      }
+    }
+
+    if (!participantId && this.code) {
+      try {
+        const join = await trpc.session.join.mutate({
+          code: this.code,
+          nickname: `Teilnehmer #${Math.floor(Math.random() * 9000) + 1000}`,
+        });
+        participantId = join.participantId;
+        sessionId = join.id;
+        this.participantId.set(participantId);
+        this.sessionId.set(sessionId);
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`, participantId);
+        }
+      } catch (error) {
+        const message =
+          error && typeof error === 'object' && 'message' in error
+            ? String((error as { message: string }).message)
+            : $localize`:@@sessionQa.submitError:Frage konnte nicht gesendet werden.`;
+        this.qaError.set(message);
+        return null;
+      }
+    }
+
+    if (!sessionId || !participantId) {
+      this.qaError.set($localize`:@@sessionQa.submitError:Frage konnte nicht gesendet werden.`);
+      return null;
+    }
+
+    return { sessionId, participantId };
   }
 
   async toggleQaUpvote(questionId: string): Promise<void> {
@@ -767,6 +885,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         this.stopCountdown();
         this.countdownSeconds.set(null);
       }
+
     } catch { /* noop */ }
   }
 

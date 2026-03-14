@@ -14,6 +14,26 @@ export const RATE_LIMIT_ENV = {
   sessionCreatePerHour: Number(process.env['RATE_LIMIT_SESSION_CREATE_PER_HOUR']) || 10,
 } as const;
 
+function isLoopbackIp(ip: string): boolean {
+  return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || ip === 'localhost';
+}
+
+/**
+ * Lokaler Dev-Bypass für Session-Erstellung:
+ * Auf localhost darf das Limit in Nicht-Produktionsumgebungen standardmäßig übersprungen werden.
+ * Über RATE_LIMIT_SESSION_CREATE_BYPASS_LOCALHOST=true|false kann das Verhalten explizit gesetzt werden.
+ */
+export function shouldBypassSessionCreateRate(ip: string): boolean {
+  const override = process.env['RATE_LIMIT_SESSION_CREATE_BYPASS_LOCALHOST'];
+  if (override === 'true') {
+    return isLoopbackIp(ip);
+  }
+  if (override === 'false') {
+    return false;
+  }
+  return process.env['NODE_ENV'] !== 'production' && isLoopbackIp(ip);
+}
+
 /**
  * Prüft Sliding-Window für einen Key: Anzahl Aufrufe in den letzten windowSeconds Sekunden.
  * Gibt { allowed, remaining, retryAfterSeconds } zurück.

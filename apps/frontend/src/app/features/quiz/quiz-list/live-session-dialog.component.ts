@@ -107,62 +107,66 @@ export interface LiveSessionDialogResult {
           </div>
 
           <div class="live-session-dialog__channel-grid" role="group" [attr.aria-label]="channelGroupAriaLabel()">
-            <button
-              type="button"
-              class="live-session-dialog__channel-card"
-              [class.live-session-dialog__channel-card--selected]="enableQuiz()"
-              [class.live-session-dialog__channel-card--locked]="startMode() === 'QUIZ'"
-              [disabled]="!data.quizCanStart"
-              [attr.aria-pressed]="enableQuiz()"
-              (click)="toggleQuizCard()"
-            >
-              <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">quiz</mat-icon>
-              <span class="live-session-dialog__channel-copy">
-                <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQuiz">Quiz</span>
-                <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQuizHint">
-                  Fragen und Ergebnisse
-                </span>
-              </span>
-              @if (channelStateLabel('quiz'); as stateLabel) {
-                <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
-              }
-              <span
-                class="live-session-dialog__channel-toggle"
-                [class.live-session-dialog__channel-toggle--selected]="enableQuiz()"
-                [class.live-session-dialog__channel-toggle--locked]="startMode() === 'QUIZ'"
-                aria-hidden="true"
+            @if (startMode() !== 'QUIZ') {
+              <button
+                type="button"
+                class="live-session-dialog__channel-card"
+                [class.live-session-dialog__channel-card--selected]="enableQuiz()"
+                [class.live-session-dialog__channel-card--locked]="startMode() === 'QUIZ'"
+                [disabled]="!data.quizCanStart"
+                [attr.aria-pressed]="enableQuiz()"
+                (click)="toggleQuizCard()"
               >
-                <span class="live-session-dialog__channel-toggle-thumb"></span>
-              </span>
-            </button>
+                <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">quiz</mat-icon>
+                <span class="live-session-dialog__channel-copy">
+                  <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQuiz">Quiz</span>
+                  <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQuizHint">
+                    Fragen und Ergebnisse
+                  </span>
+                </span>
+                @if (channelStateLabel('quiz'); as stateLabel) {
+                  <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
+                }
+                <span
+                  class="live-session-dialog__channel-toggle"
+                  [class.live-session-dialog__channel-toggle--selected]="enableQuiz()"
+                  [class.live-session-dialog__channel-toggle--locked]="startMode() === 'QUIZ'"
+                  aria-hidden="true"
+                >
+                  <span class="live-session-dialog__channel-toggle-thumb"></span>
+                </span>
+              </button>
+            }
 
-            <button
-              type="button"
-              class="live-session-dialog__channel-card"
-              [class.live-session-dialog__channel-card--selected]="enableQa()"
-              [class.live-session-dialog__channel-card--locked]="startMode() === 'Q_AND_A'"
-              [attr.aria-pressed]="enableQa()"
-              (click)="toggleQaCard()"
-            >
-              <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">forum</mat-icon>
-              <span class="live-session-dialog__channel-copy">
-                <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQa">Fragen</span>
-                <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQaHint">
-                  Fragen aus dem Raum
-                </span>
-              </span>
-              @if (channelStateLabel('qa'); as stateLabel) {
-                <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
-              }
-              <span
-                class="live-session-dialog__channel-toggle"
-                [class.live-session-dialog__channel-toggle--selected]="enableQa()"
-                [class.live-session-dialog__channel-toggle--locked]="startMode() === 'Q_AND_A'"
-                aria-hidden="true"
+            @if (startMode() !== 'Q_AND_A') {
+              <button
+                type="button"
+                class="live-session-dialog__channel-card"
+                [class.live-session-dialog__channel-card--selected]="enableQa()"
+                [class.live-session-dialog__channel-card--locked]="startMode() === 'Q_AND_A'"
+                [attr.aria-pressed]="enableQa()"
+                (click)="toggleQaCard()"
               >
-                <span class="live-session-dialog__channel-toggle-thumb"></span>
-              </span>
-            </button>
+                <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">forum</mat-icon>
+                <span class="live-session-dialog__channel-copy">
+                  <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQa">Fragen</span>
+                  <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQaHint">
+                    Fragen aus dem Raum
+                  </span>
+                </span>
+                @if (channelStateLabel('qa'); as stateLabel) {
+                  <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
+                }
+                <span
+                  class="live-session-dialog__channel-toggle"
+                  [class.live-session-dialog__channel-toggle--selected]="enableQa()"
+                  [class.live-session-dialog__channel-toggle--locked]="startMode() === 'Q_AND_A'"
+                  aria-hidden="true"
+                >
+                  <span class="live-session-dialog__channel-toggle-thumb"></span>
+                </span>
+              </button>
+            }
 
             <button
               type="button"

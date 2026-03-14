@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock, checkSessionCreateRateMock } = vi.hoisted(() => ({
+const { prismaMock, checkSessionCreateRateMock, shouldBypassSessionCreateRateMock } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
@@ -12,6 +12,7 @@ const { prismaMock, checkSessionCreateRateMock } = vi.hoisted(() => ({
     },
   },
   checkSessionCreateRateMock: vi.fn(),
+  shouldBypassSessionCreateRateMock: vi.fn(),
 }));
 
 vi.mock('../db', () => ({
@@ -20,6 +21,7 @@ vi.mock('../db', () => ({
 
 vi.mock('../lib/rateLimit', () => ({
   checkSessionCreateRate: checkSessionCreateRateMock,
+  shouldBypassSessionCreateRate: shouldBypassSessionCreateRateMock,
 }));
 
 import { sessionRouter } from '../routers/session';
@@ -33,6 +35,7 @@ describe('session.create (Story 2.1a)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     checkSessionCreateRateMock.mockResolvedValue({ allowed: true });
+    shouldBypassSessionCreateRateMock.mockReturnValue(false);
     prismaMock.session.findUnique.mockResolvedValue(null);
     prismaMock.session.create.mockResolvedValue({
       id: SESSION_ID,
@@ -162,5 +165,16 @@ describe('session.create (Story 2.1a)', () => {
     });
 
     expect(prismaMock.session.create).not.toHaveBeenCalled();
+  });
+
+  it('umgeht das Session-Rate-Limit lokal in der Entwicklung', async () => {
+    shouldBypassSessionCreateRateMock.mockReturnValue(true);
+    checkSessionCreateRateMock.mockResolvedValue({ allowed: false, remaining: 0 });
+
+    const result = await caller.create({ quizId: QUIZ_ID });
+
+    expect(result.sessionId).toBe(SESSION_ID);
+    expect(checkSessionCreateRateMock).not.toHaveBeenCalled();
+    expect(prismaMock.session.create).toHaveBeenCalled();
   });
 });

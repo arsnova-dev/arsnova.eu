@@ -109,6 +109,10 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
   /** Emoji-Reaktionen der Teilnehmer in der Ergebnis-Phase (Story 5.8). */
   readonly emojiReactions = signal<{ reactions: Record<string, number>; total: number } | null>(null);
+  readonly emojiNewCount = signal(0);
+  readonly emojiBadgePulse = signal(false);
+  private emojiPulseTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastEmojiQuestionId = '';
   /** Countdown in Sekunden (null = kein Timer, Story 3.5). */
   readonly countdownSeconds = signal<number | null>(null);
   /** true, sobald der Countdown 0 erreicht hat (bis zum nächsten Start). */
@@ -460,6 +464,10 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     }
     this.stopCountdown();
     this.sound.stopAll();
+    if (this.emojiPulseTimer) {
+      clearTimeout(this.emojiPulseTimer);
+      this.emojiPulseTimer = null;
+    }
     this.document.removeEventListener('click', this.unlockListener);
     this.document.removeEventListener('keydown', this.unlockListener);
   }
@@ -888,6 +896,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.clearEmojiNewBadge();
       this.stopCountdown();
       this.countdownSeconds.set(null);
       const result = await trpc.session.nextQuestion.mutate({ code: this.code.toUpperCase() });
@@ -1017,6 +1026,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.clearEmojiNewBadge();
       const result = await trpc.session.revealAnswers.mutate({ code: this.code.toUpperCase() });
       this.currentQuestionForHost.set(null);
       this.statusUpdate.set(result);
@@ -1031,6 +1041,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.clearEmojiNewBadge();
       this.stopCountdown();
       this.countdownSeconds.set(null);
       const result = await trpc.session.revealResults.mutate({ code: this.code.toUpperCase() });
@@ -1045,6 +1056,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.clearEmojiNewBadge();
       this.stopCountdown();
       this.countdownSeconds.set(null);
       const result = await trpc.session.startDiscussion.mutate({ code: this.code.toUpperCase() });
@@ -1059,6 +1071,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (this.controlPending() || !this.code) return;
     this.controlPending.set(true);
     try {
+      this.clearEmojiNewBadge();
       const result = await trpc.session.startSecondRound.mutate({ code: this.code.toUpperCase() });
       this.currentQuestionForHost.set(null);
       this.statusUpdate.set(result);
@@ -1070,7 +1083,10 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   }
 
   async refreshEmojiReactions(): Promise<void> {
-    if (this.effectiveStatus() !== 'RESULTS' || !this.session()?.enableEmojiReactions) {
+    if (
+      (this.effectiveStatus() !== 'RESULTS' && this.effectiveStatus() !== 'ACTIVE')
+      || !this.session()?.enableEmojiReactions
+    ) {
       this.emojiReactions.set(null);
       return;
     }
@@ -1078,13 +1094,42 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const qid = this.currentQuestionForHost()?.questionId;
     if (!sid || !qid) {
       this.emojiReactions.set(null);
+      this.clearEmojiNewBadge();
+      this.lastEmojiQuestionId = '';
       return;
     }
+    if (this.lastEmojiQuestionId !== qid) {
+      this.lastEmojiQuestionId = qid;
+      this.clearEmojiNewBadge();
+    }
     try {
+      const previousTotal = this.emojiReactions()?.total ?? 0;
       const data = await trpc.session.getReactions.query({ sessionId: sid, questionId: qid });
       this.emojiReactions.set(data);
+      const delta = data.total - previousTotal;
+      if (delta > 0) {
+        this.emojiNewCount.update((count) => count + delta);
+        this.emojiBadgePulse.set(true);
+        if (this.emojiPulseTimer) {
+          clearTimeout(this.emojiPulseTimer);
+        }
+        this.emojiPulseTimer = setTimeout(() => {
+          this.emojiBadgePulse.set(false);
+          this.emojiPulseTimer = null;
+        }, 700);
+      }
     } catch {
       this.emojiReactions.set(null);
+      this.clearEmojiNewBadge();
+    }
+  }
+
+  private clearEmojiNewBadge(): void {
+    this.emojiNewCount.set(0);
+    this.emojiBadgePulse.set(false);
+    if (this.emojiPulseTimer) {
+      clearTimeout(this.emojiPulseTimer);
+      this.emojiPulseTimer = null;
     }
   }
 

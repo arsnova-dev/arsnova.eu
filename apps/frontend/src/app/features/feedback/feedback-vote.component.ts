@@ -40,6 +40,10 @@ function hasAlreadyVoted(code: string): boolean {
   imports: [MatFabButton, MatCard, MatCardContent, MatIcon],
   templateUrl: './feedback-vote.component.html',
   styleUrl: './feedback-vote.component.scss',
+  host: {
+    'class': 'feedback-vote-shell',
+    '[class.feedback-vote-shell--embedded]': 'embeddedInSession()',
+  },
 })
 export class FeedbackVoteComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);

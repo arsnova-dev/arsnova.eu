@@ -1,18 +1,93 @@
+:host {
+  display: block;
+}
+
+:host(.feedback-host-shell--embedded) {
+  display: block;
+}
+
 .feedback-host {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1.5rem;
-  max-width: 40rem;
+  width: 100%;
+  padding: 2rem var(--app-live-channel-inline) 1.5rem;
+  max-width: var(--app-live-channel-max-width);
   margin: 0 auto;
   min-height: 100vh;
   min-height: 100dvh;
   box-sizing: border-box;
 }
 
+.feedback-host--embedded {
+  min-height: auto;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 0;
+}
+
+.feedback-host--embedded .feedback-host__wrapper {
+  gap: 1rem;
+}
+
+.feedback-host--embedded .feedback-host__join {
+  gap: 0.35rem;
+}
+
+.feedback-host--embedded .feedback-host__code {
+  font-size: 1.35rem;
+  letter-spacing: 0.14rem;
+  margin-top: 0.1rem;
+}
+
+.feedback-host--embedded .feedback-host__url {
+  display: none;
+}
+
+.feedback-host--embedded .feedback-host__actions {
+  gap: 0.35rem 0.5rem;
+  margin-top: 0;
+}
+
+.feedback-host--embedded .feedback-host__title {
+  margin-bottom: 0.25rem;
+}
+
+.feedback-host--embedded .feedback-host__votes {
+  margin-bottom: 0.5rem;
+}
+
+.feedback-host--embedded .feedback-host__bars {
+  gap: 0.35rem;
+  margin-bottom: 0;
+}
+
+.feedback-host--embedded .feedback-host__bar-row {
+  gap: 0.35rem;
+}
+
+.feedback-host--embedded .feedback-host__bar-label {
+  width: 2rem;
+  font-size: 1.35rem;
+}
+
+.feedback-host--embedded .feedback-host__bar-track {
+  height: 1.25rem;
+}
+
+.feedback-host--embedded .feedback-host__bar-count {
+  min-width: 3rem;
+  font-size: 0.75rem;
+}
+
+.session-channel-card--embedded-feedback {
+  margin-top: 0;
+}
+
 .session-channel-card {
-  max-width: 42rem;
+  width: 100%;
+  max-width: var(--app-live-channel-max-width);
   margin: 0 auto;
 }
 
@@ -51,18 +126,18 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 3rem;
+  gap: 1.5rem;
 }
 
 /* Smartphone: ohne Scrollen sichtbar – QR verkleinern, Abstände reduzieren */
 @media (max-width: 600px), (max-height: 700px) {
   .feedback-host {
-    padding: 1rem 1rem;
-    min-height: 100dvh;
-    max-height: 100dvh;
+    padding: 1rem var(--app-live-channel-inline) 1.25rem;
+    min-height: auto;
+    max-height: none;
   }
   .feedback-host__wrapper {
-    gap: 1.25rem;
+    gap: 1rem;
   }
 }
 
@@ -83,24 +158,6 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-}
-
-.feedback-host__qr {
-  width: 280px;
-  height: 280px;
-  max-width: 100%;
-  max-height: 40vmin;
-  object-fit: contain;
-  border-radius: var(--mat-sys-corner-large);
-}
-
-@media (max-width: 600px), (max-height: 700px) {
-  .feedback-host__qr {
-    width: 140px;
-    height: 140px;
-    max-width: 140px;
-    max-height: 140px;
-  }
 }
 
 .feedback-host__code {
@@ -138,7 +195,24 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.feedback-host__template-switch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.feedback-host__template-action {
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.feedback-host__template-action--active {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+  color: var(--mat-sys-primary);
 }
 
 @media (max-width: 600px), (max-height: 700px) {

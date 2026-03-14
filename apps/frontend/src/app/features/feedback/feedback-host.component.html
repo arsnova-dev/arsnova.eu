@@ -1,5 +1,5 @@
 @if (showEmbeddedEmptyState()) {
-  <mat-card appearance="outlined" class="session-channel-card">
+  <mat-card appearance="outlined" class="session-channel-card app-live-channel-shell" [class.session-channel-card--embedded-feedback]="embeddedInSession()">
     <mat-card-content class="session-channel-card__content">
       <mat-icon class="session-channel-card__icon" aria-hidden="true">bolt</mat-icon>
       <p class="session-channel-card__eyebrow" i18n="@@sessionTabs.quickFeedback">Blitz-Feedback</p>
@@ -22,11 +22,18 @@
     </mat-card-content>
   </mat-card>
 } @else if (result(); as data) {
-  <div class="feedback-host">
+  <div class="feedback-host app-live-channel-shell" [class.feedback-host--embedded]="embeddedInSession()">
     <div class="feedback-host__wrapper">
     <section class="feedback-host__join">
       @if (qrDataUrl()) {
-        <img [src]="qrDataUrl()" i18n-alt alt="QR-Code zum Beitreten" class="feedback-host__qr" />
+        <img
+          [src]="qrDataUrl()"
+          i18n-alt
+          alt="QR-Code zum Beitreten"
+          class="feedback-host__qr app-qr-image"
+          width="320"
+          height="320"
+        />
       }
       <p class="feedback-host__code">{{ code() }}</p>
       <p class="feedback-host__url">{{ joinUrl }}</p>
@@ -61,10 +68,38 @@
           <mat-icon>restart_alt</mat-icon>
           <span i18n>Zurücksetzen</span>
         </button>
-        <button mat-button type="button" (click)="newRound()" i18n-aria-label aria-label="Neue Runde starten">
-          <mat-icon>add</mat-icon>
-          <span i18n>Neue Runde</span>
-        </button>
+        <div class="feedback-host__template-switch">
+          <button
+            mat-button
+            type="button"
+            class="feedback-host__template-action"
+            [class.feedback-host__template-action--active]="data.type === 'MOOD'"
+            [disabled]="data.type === 'MOOD'"
+            (click)="startRound('MOOD')"
+          >
+            {{ feedbackTitle('MOOD') }}
+          </button>
+          <button
+            mat-button
+            type="button"
+            class="feedback-host__template-action"
+            [class.feedback-host__template-action--active]="data.type === 'YESNO'"
+            [disabled]="data.type === 'YESNO'"
+            (click)="startRound('YESNO')"
+          >
+            {{ feedbackTitle('YESNO') }}
+          </button>
+          <button
+            mat-button
+            type="button"
+            class="feedback-host__template-action"
+            [class.feedback-host__template-action--active]="data.type === 'ABCD'"
+            [disabled]="data.type === 'ABCD'"
+            (click)="startRound('ABCD')"
+          >
+            {{ feedbackTitle('ABCD') }}
+          </button>
+        </div>
       </div>
     </section>
 

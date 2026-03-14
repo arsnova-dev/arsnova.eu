@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
@@ -23,7 +23,7 @@ const SESSION_POLL_MS = 3000;
 @Component({
   selector: 'app-join',
   standalone: true,
-  imports: [MatCard, MatCardContent, MatButton, MatIcon, RouterLink, MatFormField, MatLabel, MatInput, MatSelect, MatOption],
+  imports: [MatCard, MatCardContent, MatButton, MatIcon, RouterLink, MatFormField, MatInput, MatSelect, MatOption],
   templateUrl: './join.component.html',
   styleUrl: './join.component.scss',
 })

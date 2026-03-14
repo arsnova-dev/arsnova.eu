@@ -5450,6 +5450,9 @@
       <trans-unit id="sessionHost.phaseQaFinished" datatype="html">
         <source>Fragerunde beendet</source>
       </trans-unit>
+      <trans-unit id="sessionHost.emojiBadgeNew" datatype="html">
+        <source>neu</source>
+      </trans-unit>
       <trans-unit id="sessionVote.qaLobbyHint" datatype="html">
         <source>Die Fragerunde startet automatisch. Halte diese Seite offen.</source>
       </trans-unit>

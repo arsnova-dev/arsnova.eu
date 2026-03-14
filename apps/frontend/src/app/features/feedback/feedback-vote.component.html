@@ -1,4 +1,4 @@
-<div class="feedback-vote">
+<div class="feedback-vote app-live-channel-shell" [class.feedback-vote--embedded]="embeddedInSession()">
   @if (showSessionCode()) {
     <p class="feedback-vote__session-code" aria-label="Session-Code {{ code() }}">{{ code() }}</p>
   }
@@ -10,7 +10,7 @@
       </mat-card-content>
     </mat-card>
   } @else if (embeddedInSession() && !feedbackType() && !loading()) {
-    <mat-card appearance="outlined" class="session-channel-card">
+    <mat-card appearance="outlined" class="session-channel-card app-live-channel-shell" [class.session-channel-card--embedded-feedback]="embeddedInSession()">
       <mat-card-content class="session-channel-card__content">
         <mat-icon class="session-channel-card__icon" aria-hidden="true">bolt</mat-icon>
         <p class="session-channel-card__eyebrow" i18n="@@sessionTabs.quickFeedback">Blitz-Feedback</p>

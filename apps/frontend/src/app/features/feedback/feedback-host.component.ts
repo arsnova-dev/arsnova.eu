@@ -16,6 +16,10 @@ import QRCode from 'qrcode';
   imports: [MatCard, MatCardContent, MatButton, MatIcon],
   templateUrl: './feedback-host.component.html',
   styleUrl: './feedback-host.component.scss',
+  host: {
+    'class': 'feedback-host-shell',
+    '[class.feedback-host-shell--embedded]': 'embeddedInSession()',
+  },
 })
 export class FeedbackHostComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -35,7 +39,6 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   readonly copied = signal(false);
   readonly resetting = signal(false);
   readonly locked = signal(false);
-  readonly selectedType = signal<'MOOD' | 'ABCD' | 'YESNO'>('MOOD');
   readonly showEmbeddedEmptyState = computed(() => this.embeddedInSession() && this.result() === null);
 
   constructor() {
@@ -49,12 +52,6 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
           theme,
           preset,
         }).catch(() => {});
-      }
-    });
-    effect(() => {
-      const currentType = this.result()?.type;
-      if (currentType === 'MOOD' || currentType === 'ABCD' || currentType === 'YESNO') {
-        this.selectedType.set(currentType);
       }
     });
   }
@@ -255,7 +252,6 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.selectedType.set(type);
     try {
       const res = await trpc.quickFeedback.create.mutate({
         type,
@@ -274,10 +270,6 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
     } catch {
       // best-effort
     }
-  }
-
-  async newRound(): Promise<void> {
-    await this.startRound(this.selectedType());
   }
 
   readonly orderedEntries = computed(() => {

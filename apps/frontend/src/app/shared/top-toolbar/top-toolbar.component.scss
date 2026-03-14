@@ -223,6 +223,14 @@
   }
 }
 
+.top-toolbar__toggles--preset {
+  .top-toolbar__preset-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+}
+
 .top-toolbar__preset-icon-playful {
   /* Spielerisch-Icon */
 }

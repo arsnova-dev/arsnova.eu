@@ -1,16 +1,39 @@
+:host {
+  display: block;
+}
+
+:host(.feedback-vote-shell--embedded) {
+  display: block;
+}
+
 .feedback-vote {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 3rem 1.5rem;
+  max-width: var(--app-live-channel-max-width);
+  padding: 2rem var(--app-live-channel-inline) 1.5rem;
   position: relative;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.feedback-vote--embedded {
+  min-height: auto;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.session-channel-card--embedded-feedback {
+  margin-top: 0;
 }
 
 .session-channel-card {
-  max-width: 28rem;
+  width: 100%;
+  max-width: var(--app-live-channel-max-width);
   text-align: left;
 }
 
@@ -61,7 +84,8 @@
 }
 
 .feedback-vote__card {
-  max-width: 24rem;
+  width: 100%;
+  max-width: var(--app-live-channel-max-width);
   text-align: center;
   overflow: hidden;
 }

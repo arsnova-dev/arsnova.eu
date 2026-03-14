@@ -1,23 +1,33 @@
-<div class="vote-page">
+<div class="vote-page" [class.vote-page--with-channel-tabs]="showChannelTabs()">
   @if (showChannelTabs()) {
-    <mat-button-toggle-group
-      class="session-channel-tabs"
-      [value]="activeChannel()"
-      (valueChange)="selectChannel($event)"
-      i18n-aria-label="@@sessionTabs.voteAria"
-      aria-label="Live-Bereich wählen"
-    >
-      @for (channel of visibleChannels(); track channel) {
-        <mat-button-toggle [value]="channel">
-          <span class="session-channel-tabs__label">{{ channelLabel(channel) }}</span>
-          @if (channelTabMetaLabel(channel); as metaLabel) {
-            <span class="session-channel-tabs__badge session-channel-tabs__badge--status">
-              {{ metaLabel }}
-            </span>
-          }
-        </mat-button-toggle>
-      }
-    </mat-button-toggle-group>
+    <div class="session-channel-tabs-shell">
+      <mat-button-toggle-group
+        class="session-channel-tabs"
+        [value]="activeChannel()"
+        (valueChange)="selectChannel($event)"
+        i18n-aria-label="@@sessionTabs.voteAria"
+        aria-label="Live-Bereich wählen"
+      >
+        @for (channel of visibleChannels(); track channel) {
+          <mat-button-toggle [value]="channel">
+            <span class="session-channel-tabs__label">{{ channelLabel(channel) }}</span>
+            @if (channelTabMetaLabel(channel); as metaLabel) {
+              <span class="session-channel-tabs__badge session-channel-tabs__badge--status">
+                {{ metaLabel }}
+              </span>
+            }
+          </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </div>
+  }
+
+  @if (countdownSeconds() !== null && isActive()) {
+    <div class="vote-countdown-floating" [class.vote-countdown-floating--with-tabs]="showChannelTabs()">
+      <span class="vote-countdown" [class.vote-countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownAriaLabel()">
+        {{ countdownSeconds() }}
+      </span>
+    </div>
   }
 
   @if (showPrimaryLiveView()) {
@@ -307,10 +317,6 @@
               <mat-icon>how_to_vote</mat-icon>
               <span i18n>Alle haben abgestimmt</span>
             </span>
-          } @else if (countdownSeconds() !== null && isActive()) {
-            <span class="vote-countdown" [class.vote-countdown--urgent]="countdownSeconds()! <= 5" role="timer" [attr.aria-label]="countdownAriaLabel()">
-              {{ countdownSeconds() }}
-            </span>
           }
         </div>
         <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
@@ -419,7 +425,7 @@
         </div>
       }
 
-      @if (showFingerCountdown() && !allHaveVoted()) {
+      @if (showFingerCountdown()) {
         <app-countdown-fingers [seconds]="countdownSeconds()!" size="small" />
       }
 
@@ -591,7 +597,7 @@
         </section>
       }
 
-      @if (isResults() && sessionSettings().enableEmojiReactions) {
+      @if (sessionSettings().enableEmojiReactions && voteSent() && (isActive() || isResults())) {
         @if (!emojiSent()) {
           <div class="vote-emoji-wrap" role="group" aria-labelledby="emoji-bar-label" aria-describedby="emoji-bar-hint">
             <p class="vote-emoji-bar__label" id="emoji-bar-label" i18n>Schnell reagieren</p>
@@ -621,7 +627,7 @@
     </div>
   }
   } @else if (activeChannel() === 'qa') {
-    <section class="session-channel-card session-channel-card--qa" aria-labelledby="vote-qa-heading">
+    <section class="session-channel-card session-channel-card--qa app-live-channel-shell" aria-labelledby="vote-qa-heading">
       <div class="session-channel-card__header">
         <div>
           <p class="session-channel-card__eyebrow">{{ channelLabel('qa') }}</p>

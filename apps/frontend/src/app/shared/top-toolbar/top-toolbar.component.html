@@ -62,13 +62,19 @@
         [value]="themePreset.preset()"
         appearance="standard"
         i18n-aria-label aria-label="Preset auswählen"
-        class="top-toolbar__toggles"
+        class="top-toolbar__toggles top-toolbar__toggles--preset"
       >
         <mat-button-toggle value="serious" (click)="setPreset('serious')">
-          <mat-icon>school</mat-icon> <span i18n>Seriös</span>
+          <span class="top-toolbar__preset-option">
+            <mat-icon>school</mat-icon>
+            <span i18n>Seriös</span>
+          </span>
         </mat-button-toggle>
         <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch')">
-          <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon> <span i18n>Spielerisch</span>
+          <span class="top-toolbar__preset-option">
+            <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon>
+            <span i18n>Spielerisch</span>
+          </span>
         </mat-button-toggle>
       </mat-button-toggle-group>
 
@@ -110,13 +116,19 @@
         [value]="themePreset.preset()"
         appearance="standard"
         i18n-aria-label aria-label="Preset auswählen"
-        class="top-toolbar__toggles top-toolbar__toggles--full"
+        class="top-toolbar__toggles top-toolbar__toggles--full top-toolbar__toggles--preset"
       >
         <mat-button-toggle value="serious" (click)="setPreset('serious', true)">
-          <mat-icon>school</mat-icon> <span i18n>Seriös</span>
+          <span class="top-toolbar__preset-option">
+            <mat-icon>school</mat-icon>
+            <span i18n>Seriös</span>
+          </span>
         </mat-button-toggle>
         <mat-button-toggle value="spielerisch" (click)="setPreset('spielerisch', true)">
-          <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon> <span i18n>Spielerisch</span>
+          <span class="top-toolbar__preset-option">
+            <mat-icon class="top-toolbar__preset-icon-playful">celebration</mat-icon>
+            <span i18n>Spielerisch</span>
+          </span>
         </mat-button-toggle>
       </mat-button-toggle-group>
 
