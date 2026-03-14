@@ -37,8 +37,8 @@ Falls die Integration in die Markdown-Vorschau nicht funktioniert:
 
 | Datei | Inhalt |
 |-------|--------|
-| `diagrams.md` | Backend-, Frontend-, DB-Schema, Kommunikation Dozent/Student/**Admin**, Aktivität inkl. Admin (Stand: 2026-03-04, Epic 9) |
-| `architecture-overview.md` | System-Architektur, Datenfluss inkl. Admin, Komponenten-Hierarchie inkl. Admin, Sicherheit inkl. Rollen-Autorisierung (Stand: 2026-03-04) |
+| `diagrams.md` | Backend-, Frontend-, DB-Schema, Kommunikation Dozent/Student/**Admin**, Aktivität inkl. Admin (Stand: 2026-03-14) |
+| `architecture-overview.md` | System-Architektur, Datenfluss inkl. Admin, Komponenten-Hierarchie inkl. Admin, Sicherheit inkl. Rollen-Autorisierung (Stand: 2026-03-14) |
 | `diagram-consistency-check.md` | Konsistenzprüfung Diagramme vs. Handbuch/Backlog/ADR-0006 (Epic 9 Admin ergänzt) |
 
 ## Online-Rendering

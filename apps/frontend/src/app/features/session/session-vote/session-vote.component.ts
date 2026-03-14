@@ -27,6 +27,7 @@ import type { Unsubscribable } from '@trpc/server/observable';
 import { FeedbackVoteComponent } from '../../feedback/feedback-vote.component';
 
 const PARTICIPANT_STORAGE_KEY = 'arsnova-participant';
+const VOTE_FALLBACK_POLL_MS = 2000;
 
 type CurrentQuestion = QuestionStudentDTO | QuestionPreviewDTO | QuestionRevealedDTO;
 type SessionChannelTab = 'quiz' | 'qa' | 'quickFeedback';
@@ -507,7 +508,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       void this.refreshSessionInfoFallback();
       void this.refreshQuestion();
       void this.refreshQuickFeedbackResult();
-    }, 1000);
+    }, VOTE_FALLBACK_POLL_MS);
   }
   private async loadSessionInfo(): Promise<void> {
     try {

@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('../redis', () => ({
   pingRedis: vi.fn(),
   getRedis: vi.fn(() => ({
-    keys: vi.fn().mockResolvedValue([]),
+    scan: vi.fn().mockResolvedValue(['0', []]),
   })),
 }));
 

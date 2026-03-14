@@ -67,6 +67,10 @@ import {
 import { randomBytes } from 'crypto';
 
 const QUESTION_TEXT_SHORT_MAX = 100;
+const PARTICIPANT_SUBSCRIPTION_POLL_MS = 2000;
+const STATUS_SUBSCRIPTION_FAST_POLL_MS = 1000;
+const STATUS_SUBSCRIPTION_SLOW_POLL_MS = 2000;
+const FAST_STATUS_POLL_SET = new Set(['ACTIVE', 'QUESTION_OPEN', 'DISCUSSION']);
 const TEAM_COLORS = [
   '#1E88E5',
   '#43A047',
@@ -644,7 +648,7 @@ export const sessionRouter = router({
           lastJson = json;
           yield payload;
         }
-        await new Promise((r) => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, PARTICIPANT_SUBSCRIPTION_POLL_MS));
       }
     }),
 
@@ -714,7 +718,10 @@ export const sessionRouter = router({
           lastJson = json;
           yield payload;
         }
-        await new Promise((r) => setTimeout(r, 500));
+        const pollMs = FAST_STATUS_POLL_SET.has(session.status)
+          ? STATUS_SUBSCRIPTION_FAST_POLL_MS
+          : STATUS_SUBSCRIPTION_SLOW_POLL_MS;
+        await new Promise((r) => setTimeout(r, pollMs));
       }
     }),
 
@@ -960,13 +967,14 @@ export const sessionRouter = router({
 
       if (session.status === 'RESULTS' || session.status === 'ACTIVE') {
         const currentRound = session.currentRound;
-        const votesForCurrentRound = await prisma.vote.findMany({
-          where: { sessionId: session.id, questionId: question.id, round: currentRound },
-          include: { selectedAnswers: true },
-        });
+        const voteWhere = { sessionId: session.id, questionId: question.id, round: currentRound };
 
         if (question.type === 'RATING') {
-          const values = votesForCurrentRound.map((v) => v.ratingValue).filter((v): v is number => v !== null && v !== undefined);
+          const ratingVotes = await prisma.vote.findMany({
+            where: voteWhere,
+            select: { ratingValue: true },
+          });
+          const values = ratingVotes.map((v) => v.ratingValue).filter((v): v is number => v !== null && v !== undefined);
           const count = values.length;
           const avg = count > 0 ? Math.round((values.reduce((s, v) => s + v, 0) / count) * 10) / 10 : null;
           const dist: Record<string, number> = {};
@@ -978,15 +986,24 @@ export const sessionRouter = router({
         }
 
         if (question.type === 'FREETEXT') {
-          const texts = votesForCurrentRound
+          const freeTextVotes = await prisma.vote.findMany({
+            where: voteWhere,
+            select: { freeText: true },
+          });
+          const texts = freeTextVotes
             .map((v) => v.freeText?.trim())
             .filter((t): t is string => !!t);
-          return { ...base, freeTextResponses: texts, totalVotes: votesForCurrentRound.length };
+          return { ...base, freeTextResponses: texts, totalVotes: freeTextVotes.length };
         }
 
-        const totalVotes = votesForCurrentRound.length;
+        const choiceVotes = await prisma.vote.findMany({
+          where: voteWhere,
+          select: { selectedAnswers: { select: { answerOptionId: true } } },
+        });
+
+        const totalVotes = choiceVotes.length;
         const answerVoteCounts = new Map<string, number>();
-        for (const v of votesForCurrentRound) {
+        for (const v of choiceVotes) {
           for (const sa of v.selectedAnswers) {
             answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
           }
@@ -996,7 +1013,7 @@ export const sessionRouter = router({
           question.answers.filter((a) => a.isCorrect).map((a) => a.id),
         );
         const correctVoterCount = correctIds.size > 0
-          ? votesForCurrentRound.filter((v) => {
+          ? choiceVotes.filter((v) => {
               const selected = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
               if (selected.size !== correctIds.size) return false;
               for (const id of correctIds) { if (!selected.has(id)) return false; }
@@ -1050,7 +1067,7 @@ export const sessionRouter = router({
               preset: true,
             },
           },
-          _count: { select: { votes: true, participants: true } },
+          _count: { select: { participants: true } },
         },
       });
       if (!session?.quiz) return null;
@@ -1121,15 +1138,28 @@ export const sessionRouter = router({
       }
 
       if (session.status === 'RESULTS') {
-        const votes = await prisma.vote.findMany({
-          where: { sessionId: session.id, questionId: question.id },
-          include: { selectedAnswers: true },
-        });
-        const totalVotes = votes.length;
+        const voteWhere = { sessionId: session.id, questionId: question.id };
+        let totalVotes = 0;
         const answerVoteCounts = new Map<string, number>();
-        for (const v of votes) {
-          for (const sa of v.selectedAnswers) {
-            answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
+        let freeTextResponses: string[] | undefined;
+
+        if (question.type === 'FREETEXT') {
+          const votes = await prisma.vote.findMany({
+            where: voteWhere,
+            select: { freeText: true },
+          });
+          totalVotes = votes.length;
+          freeTextResponses = votes.map((v) => v.freeText?.trim()).filter((t): t is string => !!t);
+        } else {
+          const votes = await prisma.vote.findMany({
+            where: voteWhere,
+            select: { selectedAnswers: { select: { answerOptionId: true } } },
+          });
+          totalVotes = votes.length;
+          for (const v of votes) {
+            for (const sa of v.selectedAnswers) {
+              answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
+            }
           }
         }
         return QuestionRevealedDTOSchema.parse({
@@ -1146,9 +1176,7 @@ export const sessionRouter = router({
             voteCount: answerVoteCounts.get(a.id) ?? 0,
             votePercentage: totalVotes > 0 ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100) : 0,
           })),
-          freeTextResponses: question.type === 'FREETEXT'
-            ? votes.map((v) => v.freeText?.trim()).filter((t): t is string => !!t)
-            : undefined,
+          freeTextResponses,
           totalVotes,
         });
       }

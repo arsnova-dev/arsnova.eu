@@ -14,6 +14,13 @@
 > **Quizzen, abstimmen – gemeinsam und live.**  
 > Ein modernes, kostenloses und 100 % DSGVO-konformes Audience-Response-System – ohne Anmeldung, Open Source. Entwickelt im Rahmen des Hochschul-Moduls „Software Engineering & Vibe Coding“.
 
+## ✅ Aktueller Entwicklungsstand (März 2026)
+
+- **Produktionsreif umgesetzt:** Epics **0–5** und **8**, sowie **Epic 9 (Admin)**.
+- **Plattform-Qualität:** Epic **6** ist weitgehend umgesetzt; **6.5 Barrierefreiheit (Abschlussprüfung)** bleibt offen.
+- **In Arbeit:** Epic **7.1 Team-Modus**.
+- **Neu in Epic 9:** Admin-Inspektion, rechtssichere Löschung, Behördenexport (PDF/JSON) inkl. Audit-Log und Admin-Flow-Dokumentation.
+
 ## 📖 Über das Projekt
 
 **arsnova.eu** ist die architektonische Neuerfindung einer etablierten Hörsaal-Quiz-App (Live-Quiz, Q&amp;A, Abstimmungen). Sie richtet sich an Lehrpersonen und Teilnehmende von der Kita bis zur Hochschule.
@@ -23,6 +30,7 @@
 * **Stil-Auswahl:** Die Lehrperson wählt beim Start der Session den Stil (**Seriös** oder **Spielerisch**) und kann Optionen anpassen (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer). So passt sich die Session an – Kita bis Uni. Teilnehmende können den Stil nicht ändern. Im Preset **Spielerisch** pulsieren auf der Startseite Logo und Hero-Icons (nur bei normaler Bewegungspräferenz); im Team-Modus kommen zusätzlich farbige Teamkarten, motivierende Effekte im Join-/Lobby-Flow, ein teamzentrierter Lobby-Moment auf dem Beamer sowie ein klar fokussiertes Team-Finale auf Teilnehmergerät und Beamer dazu.
 * **Bonus-Option für die Besten:** Top-Platzierte erhalten einen **einlösbaren Code**, den sie bei der Quizleitung einlösen können (z. B. für Bonuspunkte oder Anerkennung). Die App dient nicht als autorisiertes Prüfungsinstrument; die Einlösung liegt bei der Lehrperson.
 * **Zero-Knowledge / Local-First:** Keine Accounts nötig. Quiz-Inhalte werden lokal im Browser des Erstellers gespeichert; beim Start einer Live-Session wird nur temporär eine Kopie an den Server übertragen. Nach Ende der Session werden die Daten bereinigt. Der Server ist reiner Relay für Echtzeit-Abstimmungen.
+* **Admin-Kontrollpfad für Recht & Betrieb (Epic 9):** Betreiber können Sessions über `/admin` inspizieren, rechtlich begründet löschen und Behördenauszüge erzeugen (PDF/JSON, mit Audit-Log und ohne unnötige PII).
 
 Weitere Details zu Ablauf, Presets und Datenschutz stehen in der **Hilfe-Seite** der App (`/help`) sowie im [Backlog](./Backlog.md).
 
@@ -44,7 +52,9 @@ Dieses Projekt ist als Monorepo (npm Workspaces) strukturiert, damit Frontend un
 arsnova.eu/
 ├── AGENT.md                 # 🤖 Leitplanken für euren KI-Assistenten
 ├── docs/
-│   └── architecture/        # 🏛️ Architecture Decision Records (ADRs) & Handbuch
+│   ├── architecture/        # 🏛️ Architecture Decision Records (ADRs) & Handbuch
+│   ├── implementation/      # 🛠️ Umsetzungs-/Betriebsdokus (z. B. Admin-Flow)
+│   └── ui/                  # 🎨 UI/UX-Guides und Audits
 ├── prisma/
 │   └── schema.prisma        # 🗄️ Die Single Source of Truth (Datenbank)
 ├── apps/
@@ -61,6 +71,7 @@ Folge diesen Schritten, um das Projekt lokal auf deiner Maschine zum Laufen zu b
 ### 1. Voraussetzungen
 
 * Node.js (v20 oder neuer)
+* npm (v10 oder neuer empfohlen)
 * Docker Desktop (für die lokale Datenbank)
 
 ### 2. Infrastruktur & Installation
@@ -79,6 +90,12 @@ npm install
 cp .env.example .env
 npm run docker:up:dev
 # → Startet nur PostgreSQL (5432) und Redis (6379). Volles Stack inkl. App-Container: npm run docker:up
+```
+
+Für den Admin-Bereich (`/admin`) muss lokal zusätzlich ein Admin-Schlüssel gesetzt sein:
+
+```dotenv
+ADMIN_SECRET="set-a-strong-admin-secret"
 ```
 
 Pushe das Datenbankschema und generiere den Prisma-Client:
@@ -123,7 +140,7 @@ npm run dev
 
 ### 4. Lokalisierter Build (i18n) lokal testen (optional)
 
-Die App unterstützt **mehrere Sprachen** (de, en) über Angular i18n; jede Locale hat einen eigenen Build (z. B. `dist/browser/de`, `dist/browser/en`). Die englische Übersetzung ist vollständig (UI + Legal-Seiten Impressum/Datenschutz). Damit du die lokalisierten Varianten **mit funktionierender API und WebSockets** testen kannst, ist ein **eigener Proxy-Server** nötig (nicht nur `npx serve`):
+Die App unterstützt **fünf Sprachen** (`de`, `en`, `fr`, `es`, `it`) über Angular i18n; jede Locale hat einen eigenen Build (z. B. `dist/browser/de`, `dist/browser/en`, ...). Deutsch ist Referenzsprache; UI-Texte werden in allen Zielsprachen synchron gepflegt. Damit du die lokalisierten Varianten **mit funktionierender API und WebSockets** testen kannst, ist ein **eigener Proxy-Server** nötig (nicht nur `npx serve`):
 
 1. **Backend laufen lassen** (HTTP auf 3000, tRPC-WebSocket auf 3001, Yjs auf 3002):
    ```bash
@@ -135,24 +152,24 @@ Die App unterstützt **mehrere Sprachen** (de, en) über Angular i18n; jede Loca
    ```bash
    npm run build:localize -w @arsnova/frontend
    ```
-   Das baut alle in `angular.json` konfigurierten Locales und legt `dist/browser/de/`, `dist/browser/en/` sowie eine Root-`index.html` (Redirect nach `/de/`) an.
+   Das baut alle in `angular.json` konfigurierten Locales und legt die Locale-Ordner in `dist/browser/` sowie eine Root-`index.html` (Redirect nach `/de/`) an.
 
 3. **Proxy starten** (serviert den Build auf Port 4200 und leitet API/WebSockets ans Backend weiter):
    ```bash
    npm run serve:localize:api -w @arsnova/frontend
    ```
 
-4. Im Browser: **http://localhost:4200** (→ Redirect auf `/de/`), **http://localhost:4200/de/** oder **http://localhost:4200/en/**.
+4. Im Browser: **http://localhost:4200** (→ Redirect auf `/de/`), z. B. **http://localhost:4200/de/**, **/en/**, **/fr/**, **/es/** oder **/it/**.
 
 **Wichtig:** Nur **`serve:localize:api`** liefert tRPC (HTTP + WebSocket) und Yjs-WebSocket mit aus. Ein reines `npm run serve:localize` (statischer Serve ohne Proxy) liefert keine API – Health-Check, Subscriptions und Blitz-Feedback würden fehlschlagen. Details (Proxy-Skript, Ports, Fallstricke) siehe [docs/I18N-ANGULAR.md](./docs/I18N-ANGULAR.md) Abschnitt „Lokalisierter Build lokal“.
 
-**Dev-Server (`ng serve`):** Es wird nur **eine** Locale (Deutsch) gebaut. Die Pfade `/de/` und `/en/` funktionieren im Routing, zeigen aber denselben deutschen Inhalt. Für echte englische Oberfläche: lokalisierten Build + `serve:localize:api` wie oben.
+**Dev-Server (`ng serve`):** Es wird nur **eine** Locale (Deutsch) gebaut. Locale-Pfade wie `/de/`, `/en/`, `/fr/`, `/es/`, `/it/` funktionieren im Routing, zeigen aber denselben deutschen Inhalt. Für echte Übersetzungen: lokalisierten Build + `serve:localize:api` wie oben.
 
 ### 5. Production-ähnlich lokal (optional)
 
 Für einen **lokal production-ähnlichen** Lauf (optimierter Build, ein Prozess liefert alles aus, Gzip, Pre-Render) sollten Postgres und Redis laufen (wie in Schritt 2, z. B. `docker compose up -d redis postgres`).
 
-`npm run build:prod` erzeugt dabei den **lokalisierten Frontend-Build** (`de`/`en`) und kopiert die Root-`index.html` für den Redirect auf `/de/`.
+`npm run build:prod` erzeugt dabei den **lokalisierten Frontend-Build** (`de`/`en`/`fr`/`es`/`it`) und kopiert die Root-`index.html` für den Redirect auf `/de/`.
 
 ```bash
 npm run build:prod    # shared-types + Backend + Frontend (Production) bauen
@@ -180,7 +197,7 @@ cd apps/frontend && SCREENSHOT_URL=http://localhost:3000 npm run screenshots
 
 Die PNGs landen in `apps/frontend/src/assets/icons/` (`screenshot-wide.png`, `screenshot-narrow.png`).
 
-### 7. Tests ausführen
+### 7. Qualitätssicherung (Tests, Lint, Typen)
 
 Alle Tests (Backend + Frontend) auf einen Schlag:
 
@@ -206,6 +223,13 @@ npm run test:watch -w @arsnova/frontend
 
 > **Hinweis:** Die Frontend-Tests laufen in einer jsdom-Umgebung. Angular-Material-Stylesheets können dort nicht vollständig geparst werden – die resultierende Warnung wird im Test-Setup automatisch unterdrückt.
 
+Zusätzlich empfohlen vor Push/PR:
+
+```bash
+npm run lint
+npm run build
+```
+
 ### 8. Änderungen in Produktion bringen (GitHub-Flow)
 
 Der produktive Rollout läuft über **GitHub Actions** (`.github/workflows/ci.yml`):
@@ -213,7 +237,7 @@ Der produktive Rollout läuft über **GitHub Actions** (`.github/workflows/ci.ym
 1. Änderungen auf Branch umsetzen, lokal prüfen (mind. `npm test`, bei i18n zusätzlich `npm run build:localize -w @arsnova/frontend`).
 2. PR nach `main` erstellen und mergen.
 3. Push auf `main` startet automatisch die CI (Build/Lint/Test/Docker).
-4. Wenn Repository-Variable `DEPLOY_ENABLED=true` gesetzt ist, läuft danach automatisch **Deploy to Server** via SSH.
+4. Wenn Repository-Variable `DEPLOY_ENABLED=true` gesetzt ist, läuft danach automatisch **Deploy to Server** via SSH (mit GitHub-Environment `production` als Freigabe-Gate).
 
 **Erstmalige Server-/Repo-Konfiguration (einmalig):**
 
@@ -234,9 +258,11 @@ Der produktive Rollout läuft über **GitHub Actions** (`.github/workflows/ci.ym
 **Was im Deploy passiert:**
 
 - Git sync auf Ziel-Branch
-- `docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache`
-- `docker compose ... up -d`
-- Healthcheck der App (`/trpc/health.check`)
+- Docker-Build der App (`docker compose ... build --pull app`)
+- Start von PostgreSQL + Redis
+- `npx prisma migrate deploy` im App-Container
+- Start/Update der App (`docker compose ... up -d app`)
+- Healthcheck-Loop auf Container-Health + HTTP-Checks (`/trpc/health.check` und Frontend-Shell auf `/`)
 
 **Manueller Fallback auf dem Server (wenn CI-Deploy deaktiviert):**
 
@@ -257,6 +283,15 @@ Dieses Projekt wird im "Vibe Coding"-Modus entwickelt. Du agierst als Architekt,
 
 Wir leben **"Documentation as Code"**. Bevor du große Features implementierst, lies das [Architektur-Handbuch](./docs/architecture/handbook.md). Jede architektonische Entscheidung muss als ADR im Ordner `docs/architecture/decisions/` dokumentiert werden.
 
+Wichtige Einstiege:
+
+- [Backlog](./Backlog.md) (Story-Status, Prioritäten, DoD)
+- [Admin-Flow](./docs/implementation/ADMIN-FLOW.md) (Login/Token/Delete/Export/Troubleshooting)
+- [Routes & Stories](./docs/ROUTES_AND_STORIES.md) (Routenmodell inkl. Admin-Absicherung)
+- [i18n-Leitfaden](./docs/I18N-ANGULAR.md) (Locale-Flow, lokale Builds, Fallstricke)
+- [Architektur-Handbuch](./docs/architecture/handbook.md)
+- [ADRs](./docs/architecture/decisions/)
+
 ## 🗺️ Nächste Schritte (Onboarding)
 
 Nachdem die App lokal läuft, empfiehlt sich diese Lesereihenfolge:
@@ -270,7 +305,7 @@ Nachdem die App lokal läuft, empfiehlt sich diese Lesereihenfolge:
 7. **[ADRs](./docs/architecture/decisions/)** – bisherige Architekturentscheidungen (Signals, tRPC, Yjs)
 8. **[Vibe-Coding-Szenario](./docs/vibe-coding/vibe-coding-szenario.md)** – so funktioniert die Zusammenarbeit mit der KI
 
-> **Tipp:** **Epic 0 (Infrastruktur) ist abgeschlossen** (Redis, tRPC WebSocket, Yjs, Server-Status, Rate-Limiting, CI/CD). Starte mit einer 🔴 Must-Story aus Epic 1 oder 2, die noch ⬜ Offen ist (z.B. Story 1.1 Quiz erstellen). Lies erst den Story-Text im Backlog, dann prompte deine KI mit dem Kontext aus `AGENT.md`.
+> **Tipp (aktueller Fokus):** Epics **0–5**, **8** und **9** sind umgesetzt. Für die nächste Iteration liegt der Schwerpunkt auf **6.5 Barrierefreiheit (Abschlussprüfung)** und **7.1 Team-Modus**. Vor Umsetzung erst Story im [Backlog](./Backlog.md) prüfen, dann mit `AGENT.md` und `docs/cursor-context.md` arbeiten.
 
 ## 🔄 Zurücksetzen auf einen bekannten Zustand
 
@@ -281,6 +316,7 @@ Falls etwas schiefgeht oder du komplett neu anfangen möchtest, setze auf den R�
 | Tag | Beschreibung |
 |-----|--------------|
 | **`v0-epic0`** | Stand nach Epic 0, Routen für Epic 1 vorstrukturiert (empfohlener Rücksprungpunkt) |
+| **`epic-9`** | Aktueller Stand inkl. Admin-Flow (Stories 9.1–9.3) |
 
 ```bash
 git fetch --tags

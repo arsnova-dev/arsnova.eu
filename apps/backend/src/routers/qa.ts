@@ -11,6 +11,8 @@ import {
 import { prisma } from '../db';
 import { publicProcedure, router } from '../trpc';
 
+const QA_SUBSCRIPTION_POLL_MS = 1000;
+
 function sortQuestions<T extends { status: string; upvoteCount: number; createdAt: Date | string }>(questions: T[]): T[] {
   const statusOrder = new Map([
     ['PINNED', 0],
@@ -386,7 +388,7 @@ export const qaRouter = router({
           yield payload;
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, QA_SUBSCRIPTION_POLL_MS));
       }
     }),
 });

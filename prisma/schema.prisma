@@ -53,6 +53,8 @@ model Question {
   answers    AnswerOption[]
   votes      Vote[]
   order      Int            // Sortierung
+
+  @@index([quizId, order])
 }
 
 // Die Antwortmöglichkeiten
@@ -95,6 +97,10 @@ model Session {
   legalHoldUntil  DateTime?                         // Epic 9: schützt vor Purge bis Zeitpunkt
   legalHoldReason String?                           // Epic 9: Begründung für Legal Hold
   legalHoldSetAt  DateTime?                         // Epic 9: Zeitpunkt des letzten Hold-Setzens
+
+  @@index([status, startedAt, id])
+  @@index([status, endedAt])
+  @@index([legalHoldUntil])
 }
 
 // Ein Teilnehmer in einer Live-Session (Story 3.1, 3.2)
@@ -147,6 +153,8 @@ model Vote {
   votedAt        DateTime     @default(now())
 
   @@unique([sessionId, participantId, questionId, round]) // Nur eine Stimme pro Frage pro Runde
+  @@index([sessionId, questionId, round])
+  @@index([participantId, votedAt])
 }
 
 // Zuordnung Vote ↔ ausgewählte Antwortoptionen (n:m für MC-Mehrfachauswahl)
@@ -219,6 +227,8 @@ model BonusToken {
   totalScore    Int         // Erreichte Gesamtpunktzahl
   rank          Int         // Platzierung im Leaderboard (1-basiert)
   generatedAt   DateTime    @default(now())
+
+  @@index([generatedAt])
 }
 
 // Story 4.8: Session-Bewertung durch Teilnehmende
@@ -250,6 +260,9 @@ model QaQuestion {
   participant   Participant      @relation(fields: [participantId], references: [id], onDelete: Cascade)
   upvotes       QaUpvote[]       // Story 8.3: Einzelne Upvotes
   createdAt     DateTime         @default(now())
+
+  @@index([sessionId, status, createdAt])
+  @@index([sessionId, participantId])
 }
 
 // Upvote-Tracking für Q&A-Fragen (Story 8.3)
@@ -283,6 +296,9 @@ model AdminAuditLog {
   adminIdentifier  String?          // z. B. Token-ID oder "system" (MVP: ein gemeinsamer Schlüssel)
   reason           String?          // Optionaler Löschgrund (Story 9.2)
   createdAt        DateTime         @default(now())
+
+  @@index([createdAt])
+  @@index([sessionCode, createdAt])
 }
 
 enum AdminAuditAction {

@@ -85,8 +85,11 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
       return;
     }
     this.pollTimer = setInterval(() => {
+      if (this.subscription) {
+        return;
+      }
       void this.loadInitialResult();
-    }, 1500);
+    }, 3000);
   }
 
   /** Erste Daten per HTTP laden, damit die Seite nicht auf die WebSocket-Subscription warten muss. */
@@ -101,6 +104,9 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
       this.result.set(data);
       this.locked.set(data.locked);
       this.error.set(null);
+      if (!this.subscription) {
+        this.subscribeToResults();
+      }
     } catch {
       this.result.set(null);
       this.locked.set(false);

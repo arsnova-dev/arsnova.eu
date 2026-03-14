@@ -39,6 +39,7 @@ import { FeedbackHostComponent } from '../../feedback/feedback-host.component';
 
 const ANSWER_COLORS = ['#1565c0', '#e65100', '#2e7d32', '#6a1b9a', '#c62828', '#00838f', '#4e342e', '#37474f'];
 const ANSWER_SHAPES = ['\u25B3', '\u25CB', '\u25A1', '\u25C7', '\u2606', '\u2B21', '\u2B20', '\u2BC6'];
+const HOST_FALLBACK_POLL_MS = 3000;
 type SessionChannelTab = 'quiz' | 'qa' | 'quickFeedback';
 type HostMusicTrack =
   | 'LOBBY_0'
@@ -429,10 +430,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       void this.refreshCurrentQuestionForHost();
       void this.refreshEmojiReactions();
       void this.refreshLobbyTeams();
-      void this.refreshQaQuestions();
       void this.refreshQuickFeedbackResult();
       this.syncMusic();
-    }, 2000);
+    }, HOST_FALLBACK_POLL_MS);
     this.syncMusic();
 
     if (this.code.length === 6) {

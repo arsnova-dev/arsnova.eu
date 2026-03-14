@@ -1,7 +1,7 @@
 # Diagramme: arsnova.eu
 
 Alle Diagramme sind in Mermaid geschrieben und werden von GitHub nativ gerendert.  
-**Stand:** 2026-03-04 · **Epic 0 abgeschlossen;** **Epic 9 (Admin):** Rollen/Routen/Autorisierung siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
+**Stand:** 2026-03-14 · **Epics 0–5, 8, 9 umgesetzt;** **Epic 7.1 in Arbeit;** **Epic 6.5 offen.** Rollen/Routen/Autorisierung siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 > **VS Code:** Mermaid wird in der Standard-Markdown-Vorschau nicht gerendert. Bitte die Erweiterung **„Markdown Preview Mermaid Support“** (`bierner.markdown-mermaid`) installieren. Siehe [README.md](./README.md) in diesem Ordner.
 
@@ -11,8 +11,11 @@ Alle Diagramme sind in Mermaid geschrieben und werden von GitHub nativ gerendert
 
 Express · tRPC · Prisma 7 · Redis · WebSocket · Yjs (Epic 0 umgesetzt; health, stats, ping, Rate-Limit, y-websocket)
 
+### 1.1 Entry, Router und Module
+
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 64, 'rankSpacing': 92, 'padding': 20}}}%%
+graph LR
     subgraph Entry["Entry Point"]
         express[Express Server - Port 3000]
         cors[CORS Middleware]
@@ -25,16 +28,15 @@ graph TB
         session[sessionRouter]
         vote[voteRouter]
         qa[qaRouter]
+        quickfb[quickFeedbackRouter]
         admin[adminRouter - Epic 9]
     end
 
-    subgraph Services["Services"]
-        scoring[ScoringService]
-        streak[StreakService]
-        codegen[SessionCodeService]
-        cleanup[CleanupService]
-        ratelimit[RateLimitService]
-        tokenservice[BonusTokenService]
+    subgraph Modules["Domain/Infra-Module"]
+        scoring[quizScoring lib]
+        cleanup[sessionCleanup lib]
+        ratelimit[rateLimit lib]
+        adminauth[adminAuth lib]
     end
 
     subgraph DTO["DTO Layer - Data-Stripping"]
@@ -52,28 +54,22 @@ graph TB
         quizupload[QuizUploadInputSchema]
     end
 
-    pg[(PostgreSQL - Prisma 7)]
-    redis[(Redis PubSub + Rate-Limit)]
-    wss[WebSocket Server]
-    yws["y-websocket Relay"]
-
     express --> cors --> trpcmw
     trpcmw --> health
     trpcmw --> quiz
     trpcmw --> session
     trpcmw --> vote
     trpcmw --> qa
+    trpcmw --> quickfb
     trpcmw --> admin
 
     session --> scoring
-    session --> streak
-    session --> codegen
     session --> cleanup
-    session --> tokenservice
     vote --> scoring
-    vote --> streak
     vote --> ratelimit
     qa --> ratelimit
+    quickfb --> ratelimit
+    admin --> adminauth
 
     session --> prevdto
     session --> studdto
@@ -84,179 +80,183 @@ graph TB
     vote --> submitvote
     quiz --> quizupload
     session --> createsession
+```
 
-    scoring --> pg
-    streak --> pg
-    tokenservice --> pg
-    cleanup --> pg
-    cleanup --> redis
-    ratelimit --> redis
-    session --> redis
-    session --> wss
-    express --> yws
+### 1.2 Persistenz und Realtime
 
-    admin --> pg
-    admin --> cleanup
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 64, 'rankSpacing': 92, 'padding': 20}}}%%
+graph LR
+    BACKEND_PROC[Backend-Prozess]
+    SESSION[sessionRouter]
+    VOTE[voteRouter]
+    QA[qaRouter]
+    QUICKFB[quickFeedbackRouter]
+    ADMIN[adminRouter]
+    CLEANUP[sessionCleanup]
+    RATELIMIT[rateLimit]
+    SCORING[quizScoring]
+
+    PG[(PostgreSQL - Prisma 7)]
+    REDIS[(Redis PubSub + Rate-Limit)]
+    WSS[WebSocket Server :3001]
+    YWS[y-websocket Relay :3002]
+
+    SESSION --> SCORING
+    SESSION --> CLEANUP
+    VOTE --> SCORING
+    VOTE --> RATELIMIT
+    QA --> RATELIMIT
+    QUICKFB --> RATELIMIT
+
+    SCORING --> PG
+    CLEANUP --> PG
+    CLEANUP --> REDIS
+    RATELIMIT --> REDIS
+    SESSION --> REDIS
+    SESSION --> WSS
+    ADMIN --> PG
+    ADMIN --> CLEANUP
+    REDIS --> WSS
+    BACKEND_PROC -.-> YWS
+
 ```
 
 ---
 
 ## 2. Frontend-Architektur (Komponenten)
 
-Angular 19 · Standalone Components · Signals · Angular Material 3 + SCSS-Patterns
+Angular 21 · Standalone Components · Signals · Angular Material 3 + SCSS-Patterns
+
+### 2.1 App-Shell und globale Bausteine
 
 ```mermaid
-graph TB
-    subgraph Root["Root"]
-        app[AppComponent]
-        routes[app.routes.ts]
-        config[app.config.ts]
-    end
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 64, 'rankSpacing': 96, 'padding': 20}}}%%
+graph LR
+    APP[AppComponent]
+    ROUTES[app.routes.ts]
 
     subgraph Shared["Shared Components"]
-        header[HeaderComponent]
-        footer[FooterComponent]
-        theme[ThemeSwitcherComponent]
-        lang[LanguageSwitcherComponent]
-        countdown[CountdownComponent]
-        mdkatex[MarkdownKatexComponent]
-        confirm[ConfirmDialogComponent]
+        TOOLBAR[TopToolbarComponent]
+        STATUS[ServerStatusWidgetComponent]
+        PRESET[PresetToastComponent]
+        BANNER[ConnectionBannerComponent]
+        CONFIRM[ConfirmLeaveDialogComponent]
     end
 
-    subgraph Home["Home (Root)"]
-        home[HomePageComponent]
-        status[ServerStatusWidget]
-        join[JoinInputComponent]
+    subgraph Core["Core Services"]
+        TRPC[trpcClient - httpBatchLink + wsLink]
+        WSCONN[ws-connection.service]
+        THEME[theme-preset.service]
+        LOCALE[locale-switch-guard.service]
+        SOUND[sound.service]
     end
 
-    subgraph Quiz["Quiz-Verwaltung (Route quiz)"]
-        quizlist[QuizListComponent]
-        editor[QuizEditorComponent]
-        quizconfig[QuizConfigComponent]
-        questionedit[QuestionEditorComponent]
-        answeredit[AnswerEditorComponent]
-        preview[QuizPreviewComponent]
-        importexport[ImportExportComponent]
+    BACKEND[Backend tRPC]
+    WS[WebSocket - tRPC Subscriptions]
+    YWS[y-websocket - Port 3002]
+    IDB[(IndexedDB - Yjs CRDT)]
+
+    APP --> ROUTES
+    APP --> TOOLBAR
+    APP --> BANNER
+    APP --> STATUS
+    APP --> PRESET
+    TOOLBAR --> CONFIRM
+
+    TRPC --> BACKEND
+    TRPC --> WS
+    WSCONN --> WS
+    THEME --> TOOLBAR
+    LOCALE --> TOOLBAR
+    SOUND --> ROUTES
+    YWS --> IDB
+```
+
+### 2.2 Feature-Routen (kompakt)
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 66, 'rankSpacing': 100, 'padding': 20}}}%%
+graph LR
+    ROUTES[app.routes.ts]
+    HOME[HomeComponent]
+    QUIZ[QuizComponent]
+    SESSION[SessionComponent]
+    JOIN[JoinComponent]
+    FBHOST[FeedbackHostComponent]
+    FBVOTE[FeedbackVoteComponent]
+    ADMIN[AdminComponent]
+    HELP[HelpComponent]
+    LEGAL[LegalPageComponent]
+
+    ROUTES --> HOME
+    ROUTES --> QUIZ
+    ROUTES --> SESSION
+    ROUTES --> JOIN
+    ROUTES --> FBHOST
+    ROUTES --> FBVOTE
+    ROUTES --> ADMIN
+    ROUTES --> HELP
+    ROUTES --> LEGAL
+```
+
+### 2.3 Detail-Hierarchie (Quiz, Session, Admin)
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 60, 'rankSpacing': 90, 'padding': 18}}}%%
+graph LR
+    subgraph Quiz["Quiz"]
+        QSHELL[QuizComponent]
+        QLIST[QuizListComponent]
+        QNEW[QuizNewComponent]
+        QEDIT[QuizEditComponent]
+        PREVIEW[QuizPreviewComponent]
+        QSYNC[QuizSyncComponent]
+        QSHELL --> QLIST
+        QSHELL --> QNEW
+        QSHELL --> QEDIT
+        QEDIT --> PREVIEW
+        QSHELL --> QSYNC
     end
 
-    subgraph Session["Session-Steuerung Dozent (/session/:code/host)"]
-        lobby[LobbyComponent]
-        control[QuizControlComponent]
-        qamoderator[QaModeratorComponent]
-        tokenlist[BonusTokenListComponent]
+    subgraph Session["Session"]
+        SROOT[SessionComponent]
+        SHOST[SessionHostComponent]
+        SPRESENT[SessionPresentComponent]
+        SVOTE[SessionVoteComponent]
+        WCLOUD[WordCloudComponent]
+        COUNTDOWN[CountdownFingersComponent]
+        SROOT --> SHOST
+        SROOT --> SPRESENT
+        SROOT --> SVOTE
+        SPRESENT --> WCLOUD
+        SHOST --> COUNTDOWN
+        SVOTE --> COUNTDOWN
     end
 
-    subgraph Beamer["Beamer (/session/:code/present)"]
-        beamer[BeamerViewComponent]
-        chart[ResultChartComponent]
-        wordcloud[WordcloudComponent]
-        histogram[RatingHistogramComponent]
-        leaderboard[LeaderboardComponent]
-        emojioverlay[EmojiOverlayComponent]
-        qrcode[QrCodeComponent]
+    subgraph Admin["Admin"]
+        AROOT[AdminComponent]
+        ALOGIN[Login-View]
+        ALIST[Session-Liste + Lookup]
+        ADETAIL[Session-Detail]
+        ADELETE[Delete-Flow]
+        AEXPORT[Export PDF/JSON]
+        AROOT --> ALOGIN
+        AROOT --> ALIST
+        ALIST --> ADETAIL
+        ADETAIL --> ADELETE
+        ADETAIL --> AEXPORT
     end
-
-    subgraph Student["Student (/join/:code → /session/:code/vote)"]
-        nickname[NicknameSelectComponent]
-        voting[VotingViewComponent]
-        buttons[AnswerButtonsComponent]
-        mctoggle[McToggleButtonsComponent]
-        ratingscale[RatingScaleComponent]
-        freetext[FreetextInputComponent]
-        scorecard[ScorecardComponent]
-        tokendisplay[BonusTokenDisplay]
-        motivation[MotivationMessageComponent]
-        emojibar[EmojiBarComponent]
-        qastudent[QaStudentComponent]
-    end
-
-    subgraph Admin["Admin (/admin) - Epic 9"]
-        adminlogin[AdminLoginComponent]
-        admindash[AdminDashboardComponent]
-        admincode[SessionCodeInputComponent]
-        adminlist[SessionListComponent]
-        admindetail[SessionDetailComponent]
-        adminexport[ExportForAuthoritiesComponent]
-    end
-
-    subgraph Legal["Legal (/legal/imprint, /legal/privacy)"]
-        imprint[ImprintComponent]
-        privacy[PrivacyComponent]
-    end
-
-    subgraph Services["Services"]
-        trpc[trpcClient - httpBatchLink + wsLink]
-        yjs["YjsService (IndexedDB + y-websocket)"]
-        themesvc[ThemeService]
-        i18nsvc[I18nService]
-    end
-
-    backend[Backend tRPC]
-    idb[(IndexedDB - Yjs CRDT)]
-    ws[WebSocket - tRPC Subscriptions]
-
-    app --> routes
-    app --> header
-    app --> footer
-    header --> theme
-    header --> lang
-
-    home --> status
-    home --> join
-
-    quizlist --> editor
-    editor --> quizconfig
-    editor --> questionedit
-    editor --> preview
-    editor --> importexport
-    questionedit --> answeredit
-    questionedit --> mdkatex
-    preview --> mdkatex
-
-    lobby --> control
-    control --> beamer
-    control --> qamoderator
-    control --> tokenlist
-
-    beamer --> chart
-    beamer --> wordcloud
-    beamer --> histogram
-    beamer --> leaderboard
-    beamer --> emojioverlay
-    beamer --> qrcode
-    beamer --> countdown
-
-    nickname --> voting
-    voting --> buttons
-    voting --> mctoggle
-    voting --> ratingscale
-    voting --> freetext
-    voting --> scorecard
-    voting --> countdown
-    voting --> emojibar
-    voting --> qastudent
-    scorecard --> tokendisplay
-    scorecard --> motivation
-
-    adminlogin --> admindash
-    admindash --> admincode
-    admindash --> adminlist
-    adminlist --> admindetail
-    admindetail --> adminexport
-
-    footer --> imprint
-    footer --> privacy
-
-    trpc --> backend
-    trpc --> ws
-    yjs --> idb
 ```
 
 ---
 
 ## 3. Datenbank-Schema (PostgreSQL / Prisma)
 
+### 3.1 Kernsicht (Quiz, Session, Votes)
+
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 48, 'rankSpacing': 72, 'padding': 14}}}%%
 erDiagram
     Quiz ||--o{ Question : enthaelt
     Quiz ||--o{ Session : verwendet_in
@@ -264,18 +264,9 @@ erDiagram
     Question ||--o{ Vote : erhaelt
     Session ||--o{ Participant : hat
     Session ||--o{ Vote : sammelt
-    Session ||--o{ Team : hat
-    Session ||--o{ BonusToken : generiert
-    Session ||--o{ QaQuestion : enthaelt
-    Session ||--o{ AdminAuditLog : protokolliert
     Participant ||--o{ Vote : gibt_ab
-    Participant ||--o{ BonusToken : erhaelt
-    Participant ||--o{ QaQuestion : stellt
-    Team ||--o{ Participant : besteht_aus
     Vote ||--o{ VoteAnswer : waehlt
     AnswerOption ||--o{ VoteAnswer : wird_gewaehlt
-    QaQuestion ||--o{ QaUpvote : erhaelt
-    Participant ||--o{ QaUpvote : votet
 
     Quiz {
         string id PK
@@ -309,9 +300,34 @@ erDiagram
         int score
         int streakCount
     }
+    VoteAnswer {
+        string voteId FK
+        string answerOptionId FK
+    }
+```
+
+### 3.2 Erweiterungen (Team, Bonus, Q&A, Admin-Audit)
+
+```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 48, 'rankSpacing': 72, 'padding': 14}}}%%
+erDiagram
+    Session ||--o{ Team : hat
+    Team ||--o{ Participant : besteht_aus
+    Session ||--o{ BonusToken : generiert
+    Participant ||--o{ BonusToken : erhaelt
+    Session ||--o{ QaQuestion : enthaelt
+    Participant ||--o{ QaQuestion : stellt
+    QaQuestion ||--o{ QaUpvote : erhaelt
+    Participant ||--o{ QaUpvote : votet
+    Session ||--o{ AdminAuditLog : protokolliert
+
+    Team {
+        string id PK
+        string name
+        string color
+    }
     BonusToken {
         string token UK
-        string nickname
         int totalScore
         int rank
     }
@@ -320,11 +336,14 @@ erDiagram
         string text
         int upvoteCount
     }
+    QaUpvote {
+        string qaQuestionId FK
+        string participantId FK
+    }
     AdminAuditLog {
         string id PK
-        string sessionId FK
         string action
-        string createdAt
+        string sessionId FK
     }
 ```
 
@@ -335,7 +354,7 @@ erDiagram
 
 ## 4. Kommunikation Dozent-Client ↔ Backend
 
-Vereinfachtes Sequenzdiagramm (tRPC HTTP + WebSocket).
+### 4.1 Vorbereitung und Session-Start
 
 ```mermaid
 sequenceDiagram
@@ -346,7 +365,7 @@ sequenceDiagram
     participant PG as PostgreSQL
     participant R as Redis
 
-    Note over D,R: Phase 1: Quiz erstellen (Local-First)
+    Note over D,R: Phase 1 - Quiz erstellen (Local-First)
     D->>FE: Quiz anlegen, Fragen hinzufügen
     FE->>YJS: Yjs-Doc speichern
     YJS->>YJS: IndexedDB persistieren
@@ -359,7 +378,7 @@ sequenceDiagram
         YJS->>FE: Quiz synchronisiert
     end
 
-    Note over D,R: Phase 2: Quiz live schalten
+    Note over D,R: Phase 2 - Quiz live schalten
     D->>FE: Live schalten
     FE->>YJS: Quiz-Daten lesen
     FE->>BE: quiz.upload (QuizUploadInputSchema)
@@ -370,11 +389,22 @@ sequenceDiagram
     BE-->>FE: sessionId, code A3F7K2
     FE->>BE: Subscribe session.onParticipantJoined, onStatusChanged, onQuestionRevealed, onAnswersRevealed
 
-    Note over D,R: Phase 3: Lobby – Teilnehmer treten bei
+    Note over D,R: Phase 3 - Lobby
     BE->>FE: Event onParticipantJoined (ParticipantDTO)
     FE->>D: Lobby: Teilnehmer anzeigen
+```
 
-    Note over D,R: Phase 4a: Frage freigeben (Lesephase, Story 2.6)
+### 4.2 Fragezyklus (Lesephase, ACTIVE, RESULTS)
+
+```mermaid
+sequenceDiagram
+    participant D as Dozent
+    participant FE as Browser Angular
+    participant BE as Backend tRPC
+    participant PG as PostgreSQL
+    participant R as Redis
+
+    Note over D,R: Phase 4a - Lesephase
     D->>FE: Nächste Frage
     FE->>BE: session.nextQuestion
     BE->>PG: currentQuestion++, Status = QUESTION_OPEN (oder ACTIVE wenn readingPhaseEnabled=false)
@@ -382,7 +412,7 @@ sequenceDiagram
     BE->>R: PUBLISH questionRevealed
     BE->>FE: Broadcast an alle Clients
 
-    Note over D,R: Phase 4b: Antworten freigeben (optional)
+    Note over D,R: Phase 4b - ACTIVE
     D->>FE: Antworten freigeben
     FE->>BE: session.revealAnswers
     BE->>PG: Status = ACTIVE
@@ -390,7 +420,7 @@ sequenceDiagram
     BE->>R: PUBLISH answersRevealed
     BE->>FE: Broadcast an alle Clients
 
-    Note over D,R: Phase 5: Ergebnis auflösen
+    Note over D,R: Phase 5 - RESULTS
     D->>FE: Ergebnis zeigen
     FE->>BE: session.revealResults
     BE->>PG: Status = RESULTS, Scores berechnen
@@ -398,8 +428,19 @@ sequenceDiagram
     BE->>FE: onResultsRevealed
     FE->>D: Ergebnis-Diagramm auf Beamer
     BE->>PG: Status = PAUSED (zwischen Fragen)
+```
 
-    Note over D,R: Phase 6: Quiz beenden + Bonus-Token
+### 4.3 Session-Ende, Bonus und Export
+
+```mermaid
+sequenceDiagram
+    participant D as Dozent
+    participant FE as Browser Angular
+    participant BE as Backend tRPC
+    participant PG as PostgreSQL
+    participant R as Redis
+
+    Note over D,R: Phase 6 - Session-Ende
     D->>FE: Quiz beenden
     FE->>BE: session.end
     BE->>PG: Status = FINISHED
@@ -422,7 +463,7 @@ sequenceDiagram
 
 ## 5. Kommunikation Student-Client ↔ Backend
 
-Vereinfachtes Sequenzdiagramm (tRPC HTTP + WebSocket).
+### 5.1 Join und Fragezyklus
 
 ```mermaid
 sequenceDiagram
@@ -456,7 +497,7 @@ sequenceDiagram
     S->>FE: Antwort wählen (SC, MC, Freitext, Rating)
     FE->>BE: vote.submit (SubmitVoteInputSchema)
     BE->>PG: Vote INSERT, VoteAnswer INSERT
-    BE->>BE: ScoringService, StreakService
+    BE->>BE: quizScoring (Punkte/Streak)
     BE->>R: PUBLISH voteReceived
     BE-->>FE: success
 
@@ -464,11 +505,20 @@ sequenceDiagram
     BE->>FE: Event onResultsRevealed (QuestionRevealedDTO, mit isCorrect)
     FE->>S: Richtig oder Falsch anzeigen
 
-    Note over S,R: Phase 5: Persönliche Scorecard
+    Note over S,R: Phase 5 - Persönliche Scorecard
     BE->>FE: Event onPersonalResult (PersonalScorecardDTO)
     FE->>S: Scorecard Overlay (Punkte, Streak, Rang)
+```
 
-    Note over S,R: Phase 6: Session beendet, Bonus-Token
+### 5.2 Session-Ende, Bonus und Ranking
+
+```mermaid
+sequenceDiagram
+    participant S as Student
+    participant FE as Browser Angular
+    participant BE as Backend tRPC
+
+    Note over S,BE: Phase 6 - Session-Ende
     BE->>FE: onStatusChanged FINISHED
     opt Top-X
         BE->>FE: onPersonalResult mit bonusToken
@@ -485,6 +535,8 @@ sequenceDiagram
 
 Admin-Rolle: Inspektion, Löschen, Auszug für Behörden. Autorisierung über Admin-Schlüssel (ADMIN_SECRET), dann Session-Token. Siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md).
 
+### 5b.1 Login und Recherche
+
 ```mermaid
 sequenceDiagram
     participant A as Admin
@@ -500,8 +552,10 @@ sequenceDiagram
     BE->>BE: Prüfung gegen ADMIN_SECRET
     BE-->>FE: Admin-Session-Token
     FE->>FE: Token in sessionStorage
+    FE->>BE: admin.whoami (Token)
+    BE-->>FE: authenticated=true
 
-    Note over A,PG: Session per Code abrufen
+    Note over A,PG: Session per Code abrufen (Fenster A/B)
     A->>FE: 6-stelligen Session-Code eingeben
     FE->>BE: admin.getSessionByCode (code) + Token
     BE->>BE: adminProcedure – Token prüfen
@@ -509,16 +563,27 @@ sequenceDiagram
     BE-->>FE: SessionDetailDTO (inkl. Quiz-Inhalt)
     FE->>A: Session-Detail + Quiz anzeigen
 
-    Note over A,PG: Optional: Liste aller Sessions
+    Note over A,PG: Session-Liste (optional)
     A->>FE: Session-Liste anzeigen
     FE->>BE: admin.listSessions + Token
     BE->>PG: Sessions abfragen
     BE-->>FE: SessionListDTO
     FE->>A: Liste (Code, Status, Quiz-Name, …)
+```
+
+### 5b.2 Rechtsaktionen: Delete und Export
+
+```mermaid
+sequenceDiagram
+    participant A as Admin
+    participant FE as Browser Angular
+    participant BE as Backend tRPC
+    participant PG as PostgreSQL
 
     opt Story 9.2: Löschen (rechtlich)
-        A->>FE: Session endgültig löschen
+        A->>FE: Session endgültig löschen (Code bestätigen)
         FE->>BE: admin.deleteSession (sessionId) + Token + Grund
+        BE->>BE: Retention prüfen (PURGED -> reject)
         BE->>PG: Session + zugehörige Daten löschen
         BE->>PG: AdminAuditLog INSERT
         BE-->>FE: success
@@ -527,9 +592,10 @@ sequenceDiagram
     opt Story 9.3: Auszug für Behörden
         A->>FE: Auszug exportieren
         FE->>BE: admin.exportForAuthorities (sessionId) + Token
+        BE->>BE: Retention prüfen (PURGED -> reject)
         BE->>PG: Session + Quiz + aggregierte Daten lesen
         BE->>PG: AdminAuditLog INSERT (Export)
-        BE-->>FE: SessionExportDTO (anonym)
+        BE-->>FE: ExportOutput (PDF/JSON, base64, sha256)
         FE->>A: JSON/PDF-Download
     end
 ```
@@ -538,10 +604,11 @@ sequenceDiagram
 
 ## 6. Aktivitätsablauf: Dozent · Student · Server · Admin
 
-Vereinfachtes Aktivitätsdiagramm (Quiz-Lifecycle inkl. Admin, Epic 9).
+### 6.1 Quiz-Lifecycle (Dozent, Student, Server)
 
 ```mermaid
-flowchart TB
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 64, 'rankSpacing': 96, 'padding': 20}}}%%
+flowchart LR
     subgraph Dozent["Dozent"]
         D1[Quiz erstellen - Yjs IndexedDB]
         D1a[Sync-Link/Key für anderes Gerät anzeigen - Story 1.6a]
@@ -565,10 +632,6 @@ flowchart TB
         S5["Status RESULTS, QuestionRevealedDTO mit isCorrect"]
         S5b["Status PAUSED - zwischen Fragen"]
         S6["Status FINISHED, ggf. BonusToken generieren"]
-        S7["admin.login - Token ausgeben"]
-        S8["admin.listSessions / getSessionByCode"]
-        S9["admin.deleteSession + AuditLog"]
-        S10["admin.exportForAuthorities + AuditLog"]
     end
 
     subgraph Student["Student"]
@@ -579,14 +642,6 @@ flowchart TB
         ST4[Abstimmung vote.submit]
         ST5[Ergebnis + Scorecard anzeigen]
         ST6["Finales Ranking, ggf. Bonus-Token kopieren"]
-    end
-
-    subgraph Admin["Admin (Epic 9)"]
-        A1["/admin - Login mit Admin-Schlüssel"]
-        A2[Session-Code eingeben oder Liste anzeigen]
-        A3[Session-Detail + Quiz-Inhalt einsehen]
-        A4[Optional: Session löschen - rechtlich]
-        A5[Optional: Auszug für Behörden exportieren]
     end
 
     D1 --> D1a
@@ -611,6 +666,27 @@ flowchart TB
     D8 --> S6
     S6 --> ST6
     ST6 --> D9
+```
+
+### 6.2 Admin-Lifecycle (Epic 9)
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 64, 'rankSpacing': 96, 'padding': 20}}}%%
+flowchart LR
+    subgraph Admin["Admin (Epic 9)"]
+        A1["/admin - Login mit Admin-Schlüssel"]
+        A2[Session-Code eingeben oder Liste anzeigen]
+        A3[Session-Detail + Quiz-Inhalt einsehen]
+        A4[Optional: Session löschen - rechtlich]
+        A5[Optional: Auszug für Behörden exportieren]
+    end
+
+    subgraph Server["Server"]
+        S7["admin.login - Token ausgeben"]
+        S8["admin.listSessions / getSessionByCode"]
+        S9["admin.deleteSession + AuditLog"]
+        S10["admin.exportForAuthorities + AuditLog"]
+    end
 
     A1 --> S7
     S7 --> A2 --> S8 --> A3

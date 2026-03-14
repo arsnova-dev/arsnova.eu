@@ -11,6 +11,15 @@ const FINISHED_SESSION_RETENTION_HOURS = 24;
 const BONUS_TOKEN_RETENTION_DAYS = 90;
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // 1h
 
+const ACTIVE_SESSION_STATUSES = [
+  'LOBBY',
+  'QUESTION_OPEN',
+  'ACTIVE',
+  'PAUSED',
+  'RESULTS',
+  'DISCUSSION',
+] as const;
+
 let cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
 export async function cleanupStaleSessions(): Promise<number> {
@@ -19,7 +28,7 @@ export async function cleanupStaleSessions(): Promise<number> {
 
   const result = await prisma.session.updateMany({
     where: {
-      status: { not: 'FINISHED' },
+      status: { in: [...ACTIVE_SESSION_STATUSES] },
       startedAt: { lt: cutoff },
     },
     data: {

@@ -1,28 +1,29 @@
 # 🏗️ Architektur-Übersicht: arsnova.eu
 
 **Erstellt:** 2026-02-20  
-**Zuletzt aktualisiert:** 2026-03-04  
+**Zuletzt aktualisiert:** 2026-03-14  
 **Zweck:** Visualisierung der gesamten Codebasis-Struktur und Architektur  
 
-**Epic 0 abgeschlossen;** **Epic 9 (Admin):** Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
+**Status:** Epics 0–5, 8, 9 umgesetzt · Epic 7.1 in Arbeit · Epic 6.5 offen. Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 ## System-Architektur-Diagramm
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 58, 'rankSpacing': 84, 'padding': 18}}}%%
+graph LR
     subgraph "Monorepo (npm Workspaces)"
-        subgraph "Frontend - Angular 17+ (aktuell 19)"
+        subgraph "Frontend - Angular (aktuell 21)"
             FE[Angular App<br/>Port 4200]
             FE_COMP[Standalone Components<br/>Signals · Angular Material 3]
-            FE_ROUTES["Routing<br/>/quiz /session/:code host, present, vote<br/>/join/:code /admin"]
-            FE_SERVICES[Services<br/>tRPC Client · Yjs · Theme · i18n]
+            FE_ROUTES["Routing<br/>/quiz<br/>/session/:code/(host|present|vote)<br/>/join/:code · /feedback/:code<br/>/admin · /help · /legal/*<br/>optional locale prefix:<br/>/de /en /fr /es /it"]
+            FE_SERVICES[Core Services<br/>tRPC Client · ws-connection · theme-preset<br/>locale guard · sound]
         end
         
         subgraph "Backend - Node.js + tRPC (Epic 0 ✅)"
             BE[Express Server<br/>Port 3000]
             TRPC["tRPC Router<br/>/trpc"]
-            ROUTERS[Router Layer<br/>health · quiz · session · vote · qa · admin]
-            SERVICES[Service Layer<br/>Scoring · Streak · SessionCode<br/>RateLimit · BonusToken]
+            ROUTERS[Router Layer<br/>health · quiz · session · vote · qa · quickFeedback · admin]
+            SERVICES[Domain/Infra Layer<br/>quizScoring · rateLimit · sessionCleanup · adminAuth]
             DTO[DTO Layer<br/>Data Stripping<br/>QuestionPreviewDTO<br/>QuestionStudentDTO<br/>QuestionRevealedDTO]
         end
         
@@ -173,6 +174,8 @@ sequenceDiagram
     A->>FE: /admin – Login
     FE->>BE: admin.login (Admin-Schlüssel)
     BE-->>FE: Session-Token
+    FE->>BE: admin.whoami (Token)
+    BE-->>FE: authenticated=true
     A->>FE: Session-Code eingeben
     FE->>BE: admin.getSessionByCode (code) + Token
     BE->>PG: Session + Quiz lesen
@@ -181,6 +184,7 @@ sequenceDiagram
     opt Löschen / Export
         A->>FE: Löschen oder Auszug
         FE->>BE: admin.deleteSession / exportForAuthorities + Token
+        BE->>BE: Retention prüfen (PURGED -> reject)
         BE->>PG: Löschen oder Lesen + AuditLog
         BE-->>FE: success / Export-Daten
     end
@@ -188,96 +192,118 @@ sequenceDiagram
 
 ## Komponenten-Hierarchie
 
+### 1) App-Shell und globale Bausteine
+
 ```mermaid
-graph TD
-    subgraph "Frontend Komponenten"
-        APP[AppComponent]
-        
-        subgraph "Home Route"
-            HOME[HomePageComponent]
-            STATUS[ServerStatusWidget]
-            JOIN[JoinInputComponent]
-        end
-        
-        subgraph "Quiz-Verwaltung"
-            QLIST[QuizListComponent]
-            QEDIT[QuizEditorComponent]
-            QCONFIG[QuizConfigComponent]
-            QEDITOR[QuestionEditorComponent]
-            AEDITOR[AnswerEditorComponent]
-            PREVIEW[QuizPreviewComponent]
-        end
-        
-        subgraph "Session-Steuerung (Dozent)"
-            LOBBY[LobbyComponent]
-            CONTROL[QuizControlComponent]
-            BEAMER[BeamerViewComponent]
-            CHART[ResultChartComponent]
-            LEADERBOARD[LeaderboardComponent]
-        end
-        
-        subgraph "Student-Ansicht (/join → /session/:code/vote)"
-            NICK[NicknameSelectComponent]
-            VOTING[VotingViewComponent]
-            BUTTONS[AnswerButtonsComponent]
-            SCORECARD[ScorecardComponent]
-        end
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 62, 'rankSpacing': 92, 'padding': 20}}}%%
+graph LR
+    APP[AppComponent]
+    ROUTES[app.routes.ts]
 
-        subgraph "Admin - /admin (Epic 9)"
-            ADMIN_LOGIN[AdminLoginComponent]
-            ADMIN_DASH[AdminDashboardComponent]
-            ADMIN_CODE[SessionCodeInputComponent]
-            ADMIN_LIST[SessionListComponent]
-            ADMIN_DETAIL[SessionDetailComponent]
-        end
-
-        subgraph "Legal - /legal"
-            IMPRINT[ImprintComponent]
-            PRIVACY[PrivacyComponent]
-        end
-        
-        subgraph "Shared Components"
-            HEADER[HeaderComponent]
-            FOOTER[FooterComponent]
-            THEME[ThemeSwitcherComponent]
-            COUNTDOWN[CountdownComponent]
-            MARKDOWN[MarkdownKatexComponent]
-        end
+    subgraph "Shared UI"
+        TOOLBAR[TopToolbarComponent]
+        BANNER[ConnectionBannerComponent]
+        PRESET[PresetToastComponent]
+        STATUS[ServerStatusWidgetComponent]
+        CONFIRM[ConfirmLeaveDialogComponent]
     end
-    
-    APP --> HOME
-    APP --> HEADER
-    APP --> FOOTER
-    
-    HOME --> STATUS
-    HOME --> JOIN
-    
-    QLIST --> QEDIT
-    QEDIT --> QCONFIG
-    QEDIT --> QEDITOR
-    QEDIT --> PREVIEW
-    QEDITOR --> AEDITOR
-    
-    LOBBY --> CONTROL
-    CONTROL --> BEAMER
-    BEAMER --> CHART
-    BEAMER --> LEADERBOARD
-    
-    NICK --> VOTING
-    VOTING --> BUTTONS
-    VOTING --> SCORECARD
 
-    ADMIN_LOGIN --> ADMIN_DASH
-    ADMIN_DASH --> ADMIN_CODE
-    ADMIN_DASH --> ADMIN_LIST
-    ADMIN_LIST --> ADMIN_DETAIL
-    
-    HEADER --> THEME
-    FOOTER --> IMPRINT
-    FOOTER --> PRIVACY
-    BEAMER --> COUNTDOWN
-    VOTING --> COUNTDOWN
-    QEDITOR --> MARKDOWN
+    subgraph "Core Services"
+        TRPC[trpc.client]
+        WSCONN[ws-connection.service]
+        THEME[theme-preset.service]
+        LOCALE[locale-switch-guard.service]
+        SOUND[sound.service]
+    end
+
+    APP --> ROUTES
+    APP --> TOOLBAR
+    APP --> BANNER
+    APP --> PRESET
+    APP --> STATUS
+
+    TOOLBAR --> CONFIRM
+    THEME --> TOOLBAR
+    LOCALE --> TOOLBAR
+    WSCONN --> TRPC
+    SOUND --> ROUTES
+```
+
+### 2) Feature-Routen (grober Zuschnitt)
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 64, 'rankSpacing': 96, 'padding': 20}}}%%
+graph LR
+    ROUTES[app.routes.ts]
+
+    HOME[HomeComponent]
+    QUIZ[QuizComponent]
+    SESSION[SessionComponent]
+    JOIN[JoinComponent]
+    FEEDBACK_HOST[FeedbackHostComponent]
+    FEEDBACK_VOTE[FeedbackVoteComponent]
+    ADMIN[AdminComponent]
+    HELP[HelpComponent]
+    LEGAL[LegalPageComponent]
+
+    ROUTES --> HOME
+    ROUTES --> QUIZ
+    ROUTES --> SESSION
+    ROUTES --> JOIN
+    ROUTES --> FEEDBACK_HOST
+    ROUTES --> FEEDBACK_VOTE
+    ROUTES --> ADMIN
+    ROUTES --> HELP
+    ROUTES --> LEGAL
+```
+
+### 3) Detail-Hierarchie: Quiz, Session, Admin
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 60, 'rankSpacing': 90, 'padding': 18}}}%%
+graph LR
+    subgraph "Quiz"
+        QSHELL[QuizComponent]
+        QLIST[QuizListComponent]
+        QNEW[QuizNewComponent]
+        QEDIT[QuizEditComponent]
+        PREVIEW[QuizPreviewComponent]
+        QSYNC[QuizSyncComponent]
+        QSHELL --> QLIST
+        QSHELL --> QNEW
+        QSHELL --> QEDIT
+        QEDIT --> PREVIEW
+        QSHELL --> QSYNC
+    end
+
+    subgraph "Session"
+        SROOT[SessionComponent]
+        SHOST[SessionHostComponent]
+        SPRESENT[SessionPresentComponent]
+        SVOTE[SessionVoteComponent]
+        WCLOUD[WordCloudComponent]
+        COUNTDOWN[CountdownFingersComponent]
+        SROOT --> SHOST
+        SROOT --> SPRESENT
+        SROOT --> SVOTE
+        SPRESENT --> WCLOUD
+        SHOST --> COUNTDOWN
+        SVOTE --> COUNTDOWN
+    end
+
+    subgraph "Admin"
+        AROOT[AdminComponent]
+        ALOGIN[Login-View]
+        ALIST[Session-Liste + Lookup]
+        ADETAIL[Session-Detail]
+        AEXPORT[Export PDF/JSON]
+        ADELETE[Delete-Flow]
+        AROOT --> ALOGIN
+        AROOT --> ALIST
+        ALIST --> ADETAIL
+        ADETAIL --> AEXPORT
+        ADETAIL --> ADELETE
+    end
 ```
 
 ## Technologie-Stack Übersicht
@@ -337,7 +363,10 @@ mindmap
 
 Session-Status (Story 2.6): `LOBBY`, `QUESTION_OPEN` (Lesephase), `ACTIVE`, `RESULTS`, `PAUSED`, `FINISHED`.
 
+### Kernsicht (Quiz, Session, Votes)
+
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 46, 'rankSpacing': 70, 'padding': 14}}}%%
 erDiagram
     Quiz ||--o{ Question : enthaelt
     Quiz ||--o{ Session : verwendet_in
@@ -345,17 +374,9 @@ erDiagram
     Question ||--o{ Vote : erhaelt
     Session ||--o{ Participant : hat
     Session ||--o{ Vote : sammelt
-    Session ||--o{ Team : hat
-    Session ||--o{ BonusToken : generiert
-    Session ||--o{ QaQuestion : enthaelt
     Participant ||--o{ Vote : gibt_ab
-    Participant ||--o{ BonusToken : erhaelt
-    Participant ||--o{ QaQuestion : stellt
-    Participant ||--o{ QaUpvote : votet
-    Team ||--o{ Participant : besteht_aus
     Vote ||--o{ VoteAnswer : waehlt
     AnswerOption ||--o{ VoteAnswer : wird_gewaehlt
-    QaQuestion ||--o{ QaUpvote : erhaelt
 
     Quiz {
         string id PK
@@ -386,47 +407,87 @@ erDiagram
     }
 ```
 
-## Sicherheits-Architektur
+### Erweiterungen (Team, Bonus, Q&A, Admin)
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 46, 'rankSpacing': 70, 'padding': 14}}}%%
+erDiagram
+    Session ||--o{ Team : hat
+    Team ||--o{ Participant : besteht_aus
+    Session ||--o{ BonusToken : generiert
+    Participant ||--o{ BonusToken : erhaelt
+    Session ||--o{ QaQuestion : enthaelt
+    Participant ||--o{ QaQuestion : stellt
+    QaQuestion ||--o{ QaUpvote : erhaelt
+    Participant ||--o{ QaUpvote : votet
+    Session ||--o{ AdminAuditLog : protokolliert
+```
+
+## Sicherheits-Architektur
+
+### 1) Zero-Knowledge / Local-First
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 60, 'rankSpacing': 80, 'padding': 18}}}%%
 graph LR
-    subgraph "Zero-Knowledge Prinzip"
-        Q[Quiz-Daten]
-        Q -->|Nur lokal| IDB[IndexedDB<br/>Yjs CRDT]
-        Q -.->|Nur Deltas| YWS[y-websocket<br/>Multi-Device Sync]
-    end
-    
-    subgraph "Data Stripping Pattern"
-        PG[(PostgreSQL<br/>isCorrect = true)]
-        PG -->|Laden| BE[Backend]
-        BE -->|DTO Filter| PREVIEW_DTO[QuestionPreviewDTO<br/>Lesephase – nur Fragenstamm]
-        BE -->|DTO Filter| STUDENT_DTO[QuestionStudentDTO<br/>⚠️ KEIN isCorrect]
-        BE -->|DTO Filter| REVEALED_DTO[QuestionRevealedDTO<br/>✅ MIT isCorrect]
-        
-        PREVIEW_DTO -->|Status: QUESTION_OPEN| STUDENT[Student Client]
-        STUDENT_DTO -->|Status: ACTIVE| STUDENT
-        REVEALED_DTO -->|Status: RESULTS| STUDENT
-    end
-    
-    subgraph "Rollen-Autorisierung (ADR-0006)"
-        HOST[Host-Token<br/>nur bei session.create]
-        HOST -->|host/* Prozeduren| BE
-        ADMIN_SEC[ADMIN_SECRET<br/>Server-Env]
-        ADMIN_SEC -->|admin.login| BE
-        BE -->|Session-Token| ADMIN_CL[Admin Client]
-        ADMIN_CL -->|admin.* + Token| BE
-    end
-    
-    subgraph "Rate Limiting"
-        CLIENT[Client Request]
-        CLIENT -->|Sliding Window| REDIS[(Redis)]
-        REDIS -->|Allow/Deny| BE
-    end
-    
+    AUTHOR[Dozent erstellt Quiz]
+    IDB[Lokale Speicherung<br/>IndexedDB + Yjs]
+    YWS[y-websocket Relay<br/>nur Sync-Deltas]
+    LIVE[Live-Schalten]
+    PG[(PostgreSQL<br/>flüchtige Session-Kopie)]
+
+    AUTHOR --> IDB
+    IDB -.->|CRDT-Deltas| YWS
+    IDB -->|quiz.upload bei Session-Start| LIVE
+    LIVE --> PG
+
+    style IDB fill:#4dabf7
+```
+
+### 2) Data-Stripping entlang des Session-Status
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 60, 'rankSpacing': 80, 'padding': 18}}}%%
+graph LR
+    PG[(PostgreSQL<br/>mit isCorrect)]
+    BE[Backend DTO-Layer]
+    PREVIEW_DTO[QuestionPreviewDTO<br/>QUESTION_OPEN<br/>nur Fragenstamm]
+    STUDENT_DTO[QuestionStudentDTO<br/>ACTIVE<br/>ohne isCorrect]
+    REVEALED_DTO[QuestionRevealedDTO<br/>RESULTS<br/>mit isCorrect]
+    CLIENT[Student-Client]
+
+    PG -->|laden| BE
+    BE --> PREVIEW_DTO
+    BE --> STUDENT_DTO
+    BE --> REVEALED_DTO
+    PREVIEW_DTO --> CLIENT
+    STUDENT_DTO --> CLIENT
+    REVEALED_DTO --> CLIENT
+
     style PREVIEW_DTO fill:#ffd43b
     style STUDENT_DTO fill:#ff6b6b
     style REVEALED_DTO fill:#51cf66
-    style IDB fill:#4dabf7
+```
+
+### 3) Rollen-Autorisierung und Rate-Limiting
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'basis', 'nodeSpacing': 60, 'rankSpacing': 80, 'padding': 18}}}%%
+graph LR
+    HOST[Host-Token<br/>aus session.create]
+    ADMIN_SEC[ADMIN_SECRET<br/>Server-Env]
+    ADMIN_TOKEN[Admin-Session-Token<br/>Redis + TTL]
+    CLIENT[Client-Request]
+    REDIS[(Redis)]
+    BE[Backend tRPC]
+
+    HOST -->|host/* Procedures| BE
+    ADMIN_SEC -->|admin.login| BE
+    BE -->|issue token| ADMIN_TOKEN
+    ADMIN_TOKEN -->|admin.* Procedures| BE
+
+    CLIENT -->|Sliding Window Check| REDIS
+    REDIS -->|Allow / Deny| BE
 ```
 
 ---

@@ -20,7 +20,8 @@ import { getRedis } from '../redis';
 import { prisma } from '../db';
 
 const FEEDBACK_TTL_SECONDS = 30 * 60;
-const POLL_INTERVAL_MS = 300;
+const QUICK_FEEDBACK_POLL_ACTIVE_MS = 500;
+const QUICK_FEEDBACK_POLL_IDLE_MS = 1200;
 
 function feedbackKey(code: string): string {
   return `qf:${code}`;
@@ -319,6 +320,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
+      let lastJson = '';
 
       while (true) {
         const raw = await redis.get(key);
@@ -326,8 +328,16 @@ export const quickFeedbackRouter = router({
 
         const result = JSON.parse(raw) as QuickFeedbackResult;
         await enrichOpinionShift(result, code);
-        yield QuickFeedbackResultSchema.parse(result);
-        await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+        const payload = QuickFeedbackResultSchema.parse(result);
+        const json = JSON.stringify(payload);
+        if (json !== lastJson) {
+          lastJson = json;
+          yield payload;
+        }
+        const pollMs = payload.locked || payload.discussion
+          ? QUICK_FEEDBACK_POLL_IDLE_MS
+          : QUICK_FEEDBACK_POLL_ACTIVE_MS;
+        await new Promise((r) => setTimeout(r, pollMs));
       }
     }),
 });

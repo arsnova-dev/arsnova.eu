@@ -16,10 +16,42 @@ const SERVER_STATUS_THRESHOLDS = {
   busy: 200,
 } as const;
 
+const ACTIVE_SESSION_STATUSES = [
+  'LOBBY',
+  'QUESTION_OPEN',
+  'ACTIVE',
+  'PAUSED',
+  'RESULTS',
+  'DISCUSSION',
+] as const;
+
 function getServerStatus(activeSessions: number): 'healthy' | 'busy' | 'overloaded' {
   if (activeSessions < SERVER_STATUS_THRESHOLDS.healthy) return 'healthy';
   if (activeSessions < SERVER_STATUS_THRESHOLDS.busy) return 'busy';
   return 'overloaded';
+}
+
+/**
+ * Zählt aktive Quick-Feedback-Runden ohne blockierendes Redis KEYS.
+ * Nutzt cursor-basiertes SCAN und ignoriert interne voter-Sets.
+ */
+async function countActiveBlitzRounds(): Promise<number> {
+  const redis = getRedis();
+  let cursor = '0';
+  const rounds = new Set<string>();
+
+  do {
+    const result = await redis.scan(cursor, 'MATCH', 'qf:*', 'COUNT', 200);
+    cursor = result[0];
+    const keys = result[1];
+    for (const key of keys) {
+      if (!key.includes(':voters:')) {
+        rounds.add(key);
+      }
+    }
+  } while (cursor !== '0');
+
+  return rounds.size;
 }
 
 /** Async-Generator für Heartbeat-Subscription (exportiert für Unit-Tests). */
@@ -47,18 +79,18 @@ export const healthRouter = router({
   stats: publicProcedure.output(ServerStatsDTOSchema).query(async () => {
     try {
       const [activeSessions, completedSessions, totalParticipants, blitzKeys] = await Promise.all([
-        prisma.session.count({ where: { status: { not: 'FINISHED' } } }),
+        prisma.session.count({ where: { status: { in: [...ACTIVE_SESSION_STATUSES] } } }),
         prisma.session.count({ where: { status: 'FINISHED' } }),
         prisma.participant.count({
-          where: { session: { status: { not: 'FINISHED' } } },
+          where: { session: { status: { in: [...ACTIVE_SESSION_STATUSES] } } },
         }),
-        getRedis().keys('qf:*').then((keys) => keys.filter((k) => !k.includes(':voters:'))),
+        countActiveBlitzRounds(),
       ]);
       return {
         activeSessions,
         totalParticipants,
         completedSessions,
-        activeBlitzRounds: blitzKeys.length,
+        activeBlitzRounds: blitzKeys,
         serverStatus: getServerStatus(activeSessions),
       };
     } catch {
