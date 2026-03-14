@@ -82,10 +82,10 @@ else
   exit 1
 fi
 
-if curl -fsS "http://127.0.0.1:3000/" | grep -qi "<app-root"; then
-  echo ">>> Frontend-Shell wird ausgeliefert."
+if curl -fsS "http://127.0.0.1:3000/de/" | grep -qi "<app-root"; then
+  echo ">>> Frontend-Shell wird unter /de/ ausgeliefert."
 else
-  echo "Fehler: Frontend-Shell fehlt auf /."
+  echo "Fehler: Frontend-Shell fehlt unter /de/."
   compose logs app --tail 80 || true
   exit 1
 fi
