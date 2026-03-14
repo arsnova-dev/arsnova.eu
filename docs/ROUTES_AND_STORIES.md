@@ -55,6 +55,9 @@
 
 **Ergebnis:** Die URL `/admin` kennzeichnet nur die **Admin-Ansicht**. Ob der Nutzer berechtigt ist, entscheidet die **Admin-Authentifizierung** (Token/Login), nicht die URL. Passt zur bestehenden Architektur: Host = Token bei Session-Erstellung; Admin = separates, betreiberseitiges Credential.
 
+Technische Ablauf- und Betriebsdetails (Login, Token, Delete/Export, Troubleshooting):  
+[`docs/implementation/ADMIN-FLOW.md`](./implementation/ADMIN-FLOW.md)
+
 ### Absicherung der Admin-Route (technisch)
 
 | Ebene | Maßnahme |
