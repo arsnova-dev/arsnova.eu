@@ -18,7 +18,7 @@
 
 - **Produktionsreif umgesetzt:** Epics **0–5** und **8**, sowie **Epic 9 (Admin)**.
 - **Plattform-Qualität:** Epic **6** ist weitgehend umgesetzt; **6.5 Barrierefreiheit (Abschlussprüfung)** bleibt offen.
-- **In Arbeit:** Epic **7.1 Team-Modus**.
+- **In Arbeit:** Epic **6.5 Barrierefreiheit (Abschlussprüfung)**.
 - **Neu in Epic 9:** Admin-Inspektion, rechtssichere Löschung, Behördenexport (PDF/JSON) inkl. Audit-Log und Admin-Flow-Dokumentation.
 
 ## 📖 Über das Projekt
@@ -305,7 +305,7 @@ Nachdem die App lokal läuft, empfiehlt sich diese Lesereihenfolge:
 7. **[ADRs](./docs/architecture/decisions/)** – bisherige Architekturentscheidungen (Signals, tRPC, Yjs)
 8. **[Vibe-Coding-Szenario](./docs/vibe-coding/vibe-coding-szenario.md)** – so funktioniert die Zusammenarbeit mit der KI
 
-> **Tipp (aktueller Fokus):** Epics **0–5**, **8** und **9** sind umgesetzt. Für die nächste Iteration liegt der Schwerpunkt auf **6.5 Barrierefreiheit (Abschlussprüfung)** und **7.1 Team-Modus**. Vor Umsetzung erst Story im [Backlog](./Backlog.md) prüfen, dann mit `AGENT.md` und `docs/cursor-context.md` arbeiten.
+> **Tipp (aktueller Fokus):** Epics **0–5**, **7.1**, **8** und **9** sind umgesetzt. Für die nächste Iteration liegt der Schwerpunkt auf **6.5 Barrierefreiheit (Abschlussprüfung)**. Vor Umsetzung erst Story im [Backlog](./Backlog.md) prüfen, dann mit `AGENT.md` und `docs/cursor-context.md` arbeiten.
 
 ## 🔄 Zurücksetzen auf einen bekannten Zustand
 

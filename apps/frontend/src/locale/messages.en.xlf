@@ -134,6 +134,14 @@
           <context context-type="linenumber">3,4</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="homeHero.line1" datatype="html">
+        <source>Quiz, Q&amp;A und Feedback –</source>
+        <target>Quiz, Q&amp;A and feedback -</target>
+      </trans-unit>
+      <trans-unit id="homeHero.line2" datatype="html">
+        <source>live in einer App</source>
+        <target>live in one app</target>
+      </trans-unit>
       <trans-unit id="4642582109589985725" datatype="html">
         <source>Für Schulen, Unis, Events &amp; Business</source>
         <target>For schools, universities, events &amp; business</target>
@@ -3941,10 +3949,6 @@
         <source>Veranstaltung starten</source>
         <target>Start event</target>
       </trans-unit>
-      <trans-unit id="homeHostCard.copy" datatype="html">
-        <source>Quiz, Fragen und Feedback mit einem Code</source>
-        <target>Quiz, questions and feedback with one code</target>
-      </trans-unit>
       <trans-unit id="homeHostCard.primaryCta" datatype="html">
         <source>Veranstaltung starten</source>
         <target>Start event</target>
@@ -4018,8 +4022,24 @@
         <target>Server status explained</target>
       </trans-unit>
       <trans-unit id="app.footer.statusHelpDot" datatype="html">
-        <source>Der Punkt zeigt den Zustand: grün = gesund, gelb = ausgelastet, rot = überlastet, grau = keine Live-Daten.</source>
-        <target>The dot shows status: green = healthy, yellow = busy, red = overloaded, gray = no live data.</target>
+        <source>Der Status wird über farbige Punkte angezeigt.</source>
+        <target>Status is shown using colored dots.</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendHealthy" datatype="html">
+        <source>Gesund</source>
+        <target>Healthy</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendBusy" datatype="html">
+        <source>Ausgelastet</source>
+        <target>Busy</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendOverloaded" datatype="html">
+        <source>Überlastet</source>
+        <target>Overloaded</target>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendUnknown" datatype="html">
+        <source>Keine Live-Daten</source>
+        <target>No live data</target>
       </trans-unit>
       <trans-unit id="app.footer.statusHelpLiveSessions" datatype="html">
         <source>Live-Sessions (aktuell aktive Veranstaltungen)</source>
@@ -4068,10 +4088,6 @@
       <trans-unit id="sessionHost.musicLabelOff" datatype="html">
         <source>Musik aus</source>
         <target>Music off</target>
-      </trans-unit>
-      <trans-unit id="homeHostCard.docHint" datatype="html">
-        <source>Neu in Epic 8: Ein Session-Code, drei Live-Bereiche, inklusive Live-Soundsteuerung im Host.</source>
-        <target>New in Epic 8: one session code, three live areas, including live sound controls in the host view.</target>
       </trans-unit>
       <trans-unit id="help.epic8Title" datatype="html">
         <source>Neu seit Epic 8</source>

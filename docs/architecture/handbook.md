@@ -1,9 +1,12 @@
 # 🏛️ Architektur-Handbuch: arsnova.eu
 
-**Zuletzt aktualisiert:** 2026-03-06  
+**Zuletzt aktualisiert:** 2026-03-14  
 **Rolle:** Living Documentation (Documentation as Code)  
 
-**Epic 0 (Infrastruktur) abgeschlossen:** Redis (Docker + Health-Check), tRPC WebSocket (Subscriptions), Yjs WebSocket-Provider, Server-Status (health.stats, Widget), Rate-Limiting (Redis Sliding-Window), CI/CD (GitHub Actions).
+**Produktstatus (Stand 2026-03):**
+- Produktionsreif umgesetzt: Epics 0-5, 8 und 9.
+- Plattform: Epic 6 weitgehend umgesetzt, 6.5 (Abschlusspruefung Barrierefreiheit) offen.
+- Ebenfalls umgesetzt: Epic 7.1 Team-Modus.
 
 ## 1. Einleitung & Philosophie
 Dieses Handbuch beschreibt die Softwarearchitektur von **arsnova.eu**. Wir folgen dem Prinzip der **"Living Documentation"**. Dieses Dokument und alle dazugehörigen Architekturentscheidungen (ADRs) leben direkt im Git-Repository. Sie entwickeln sich parallel zum Code weiter. 
@@ -15,7 +18,7 @@ Das Hauptziel dieses Systems ist es, ein hochperformantes Audience-Response-Syst
 ## 2. Der Technologie-Stack (High-Level)
 Wir setzen auf einen modernen, stark typisierten TypeScript-Stack (Full-Stack), der auf Typsicherheit, Entwicklererfahrung (DX) und Echtzeit-Performance optimiert ist.
 
-* **Frontend:** Angular (v17+, aktuell 19) mit **Signals** (Zustandsverwaltung), **Standalone Components** und **Angular Material 3** (tokenbasiert, ohne Tailwind).
+* **Frontend:** Angular (v21) mit **Signals** (Zustandsverwaltung), **Standalone Components** und **Angular Material 3** (tokenbasiert, ohne Tailwind).
 * **Backend:** Node.js API mit **tRPC** (für typsichere Aufrufe und WebSocket-Subscriptions).
 * **Datenbank (Persistenz):** **PostgreSQL** angebunden über **Prisma ORM**.
 * **Echtzeit-Broker (Flüchtig):** **Redis** (Pub/Sub für Abstimmungen).
@@ -53,6 +56,7 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 * [ADR-0006: Rollen, Routen und Autorisierung (Host, Teilnehmer, Admin)](./decisions/0006-roles-routes-authorization-host-admin.md)
 * [ADR-0007: Promptarchitektur für KI-generierte Quizzes](./decisions/0007-prompt-architecture-ki-quiz.md)
 * [ADR-0008: Internationalisierung (i18n) — Technik, Locale-Strategie und Hinweise bei Inhaltsverlust](./decisions/0008-i18n-internationalization.md)
+* [ADR-0009: Unified Live-Session Channels (Quiz, Q&A, Blitz-Feedback)](./decisions/0009-unified-live-session-channels.md)
 
 ---
 
@@ -60,3 +64,47 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 Unser relationales Datenmodell (für flüchtige Live-Sessions, Quiz-Session-Kopien, Teilnehmer, Votes, Bonus-Token, Q&A) wird zentral über Prisma verwaltet. Das aktuelle Schema findet sich in: `prisma/schema.prisma`.
 
 **Hinweis zur Anonymität:** Die App ist bewusst **accountfrei** – es gibt kein User-/Account-Modell. Dozenten und Studierende nutzen die App ohne Registrierung. Die Zuordnung Quiz ↔ Dozent erfolgt ausschließlich über Local-First (Yjs/IndexedDB) im Browser; der Server speichert keine Nutzerkonten.
+
+---
+
+## 6. Betrieb, CI/CD und Production-Deployment
+
+Der produktive Rollout erfolgt ueber GitHub Actions (`.github/workflows/ci.yml`) mit klaren Gates:
+
+1. Build & Validate
+2. Lint
+3. Tests
+4. Docker-Build
+5. Deploy-Job (nur bei Push auf Deploy-Branch und `DEPLOY_ENABLED=true`)
+
+Der Deploy-Job ist auf **production** als GitHub Environment gebunden und fuehrt serverseitig `scripts/deploy.sh` aus.
+
+### 6.1 Deploy-Ablauf (serverseitig)
+
+- Git sync auf Ziel-Branch
+- App-Image Build (`docker compose ... build --pull app`)
+- Start von Postgres/Redis
+- Prisma-Migrationen (`npx prisma migrate deploy`)
+- App-Start/Update (`docker compose ... up -d app`)
+- Health-Wait + HTTP-Verifikation (`/trpc/health.check`, Frontend-Shell unter `/de/`)
+
+### 6.2 Betriebsdokumente
+
+- Admin-Betriebsfluss: `docs/implementation/ADMIN-FLOW.md`
+- Post-Deploy Go/No-Go Checkliste: `docs/implementation/POST-DEPLOY-CHECKLIST.md`
+
+---
+
+## 7. Performance-Leitplanken (Produktionsbetrieb)
+
+Die wichtigsten umgesetzten Produktionsoptimierungen:
+
+- **Redis-Hotpath entschärft:** `health.stats` nutzt SCAN statt blockierendem KEYS.
+- **DB-Indexierung nach Query-Mustern:** gezielte Indizes für Session-, Vote-, Q&A-, Bonus- und Admin-Audit-Queries.
+- **Polling-Reduktion / WebSocket-first:** Subscription-Intervalle entschärft und dedupliziert; Frontend-Fallback-Polling reduziert.
+- **Query-Payload-Reduktion:** Hotpaths (`getCurrentQuestionForHost/Student`) laden nur noch benötigte Felder.
+
+Grundprinzip fuer neue Features:
+- erst bestehende Subscription-Pfade nutzen,
+- Polling nur als Fallback,
+- bei Last-Hotspots selektive Prisma-`select` statt breiter `include`.

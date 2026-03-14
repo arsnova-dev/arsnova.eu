@@ -55,7 +55,7 @@
 }
 
 .server-status__icon--busy {
-  color: var(--mat-sys-tertiary);
+  color: var(--app-status-busy);
 }
 
 .server-status__icon--overloaded {
@@ -79,7 +79,7 @@
 }
 
 .server-status__dot--busy {
-  background: var(--mat-sys-tertiary);
+  background: var(--app-status-busy);
 }
 
 .server-status__dot--overloaded {

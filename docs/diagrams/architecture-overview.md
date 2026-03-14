@@ -4,7 +4,7 @@
 **Zuletzt aktualisiert:** 2026-03-14  
 **Zweck:** Visualisierung der gesamten Codebasis-Struktur und Architektur  
 
-**Status:** Epics 0–5, 8, 9 umgesetzt · Epic 7.1 in Arbeit · Epic 6.5 offen. Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
+**Status:** Epics 0–5, 7.1, 8, 9 umgesetzt · Epic 6.5 offen. Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 ## System-Architektur-Diagramm
 

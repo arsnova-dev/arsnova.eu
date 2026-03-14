@@ -8,7 +8,6 @@ import { ThemePresetService } from '../../core/theme-preset.service';
 import { feedbackDisplayLabel, feedbackTitle, MOOD_OPTIONS, YESNO_OPTIONS, ABCD_OPTIONS } from './feedback.config';
 import type { QuickFeedbackResult } from '@arsnova/shared-types';
 import type { Unsubscribable } from '@trpc/server/observable';
-import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-feedback-host',
@@ -141,7 +140,19 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
 
   private async generateQrCode(): Promise<void> {
     try {
-      const url = await QRCode.toDataURL(this.joinUrl, { width: 280, margin: 2 });
+      const qrcodeModule = await import('qrcode-generator');
+      const qrcodeFactory = (qrcodeModule.default ?? qrcodeModule) as unknown as (
+        typeNumber: 0,
+        errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H',
+      ) => {
+        addData(data: string): void;
+        make(): void;
+        createDataURL(cellSize?: number, margin?: number): string;
+      };
+      const qr = qrcodeFactory(0, 'M');
+      qr.addData(this.joinUrl);
+      qr.make();
+      const url = qr.createDataURL(8, 2);
       this.qrDataUrl.set(url);
     } catch {
       // best-effort

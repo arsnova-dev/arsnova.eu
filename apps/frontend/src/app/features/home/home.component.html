@@ -1,6 +1,9 @@
     <div class="l-page">
       <main class="home-main">
-        <p class="home-hero" i18n>Quiz, Q&amp;A und Feedback – live in einer App</p>
+        <p class="home-hero">
+          <span i18n="@@homeHero.line1">Quiz, Q&amp;A und Feedback –</span>
+          <span class="home-hero-break-mobile" i18n="@@homeHero.line2">live in einer App</span>
+        </p>
         <p class="home-hero-usp" i18n>Für Schulen, Unis, Events &amp; Business</p>
         @if (themePreset.preset() === 'spielerisch') {
           <p class="home-hero-usp home-hero-usp--secondary" i18n>Bonus für die Besten</p>
@@ -28,9 +31,9 @@
         <div class="home-hero-icons" aria-hidden="true">
           <div class="home-hero-icon"><mat-icon>quiz</mat-icon></div>
           <span class="home-hero-icon-dot"></span>
-          <div class="home-hero-icon"><mat-icon>forum</mat-icon></div>
+          <div class="home-hero-icon"><mat-icon>question_answer</mat-icon></div>
           <span class="home-hero-icon-dot"></span>
-          <div class="home-hero-icon"><mat-icon>how_to_vote</mat-icon></div>
+          <div class="home-hero-icon"><mat-icon>poll</mat-icon></div>
         </div>
 
         <mat-card appearance="raised" id="participant-entry" class="home-card">
@@ -59,41 +62,43 @@
               </div>
             }
 
-            <div
-              class="home-code-segments"
-              [class.home-code-segments--focused]="codeInputFocused()"
-              [class.home-code-segments--valid]="isValidSessionCode()"
-              [class.home-code-segments--shake]="codeShaking()"
-              (click)="focusCodeInput()"
-            >
-              @for (slot of codeSlots; track slot) {
-                <span
-                  class="home-code-segment"
-                  [class.home-code-segment--active]="codeInputFocused() && sessionCode().length === slot"
-                  [class.home-code-segment--filled]="sessionCode().length > slot"
-                >{{ sessionCode()[slot] }}</span>
-              }
-              <input
-                #sessionCodeInput
-                class="home-code-segments__input"
-                type="text"
-                maxlength="6"
-                [value]="sessionCode()"
-                (input)="onSessionCodeInput($event)"
-                (keydown.enter)="joinSession()"
-                (focus)="codeInputFocused.set(true)"
-                (blur)="codeInputFocused.set(false)"
-                autocapitalize="characters"
-                autocomplete="off"
-                spellcheck="false"
-                i18n-aria-label aria-label="Session-Code, 6 Zeichen"
-              />
-            </div>
-            <div class="home-code-meta">
-              @if (sessionCode().length > 0) {
-                <span class="home-code-counter">{{ sessionCode().length }}/6</span>
-              }
-              <span class="home-code-help" i18n>6 Zeichen, z.B. ABC123</span>
+            <div class="home-code-entry">
+              <div
+                class="home-code-segments"
+                [class.home-code-segments--focused]="codeInputFocused()"
+                [class.home-code-segments--valid]="isValidSessionCode()"
+                [class.home-code-segments--shake]="codeShaking()"
+                (click)="focusCodeInput()"
+              >
+                @for (slot of codeSlots; track slot) {
+                  <span
+                    class="home-code-segment"
+                    [class.home-code-segment--active]="codeInputFocused() && sessionCode().length === slot"
+                    [class.home-code-segment--filled]="sessionCode().length > slot"
+                  >{{ sessionCode()[slot] }}</span>
+                }
+                <input
+                  #sessionCodeInput
+                  class="home-code-segments__input"
+                  type="text"
+                  maxlength="6"
+                  [value]="sessionCode()"
+                  (input)="onSessionCodeInput($event)"
+                  (keydown.enter)="joinSession()"
+                  (focus)="codeInputFocused.set(true)"
+                  (blur)="codeInputFocused.set(false)"
+                  autocapitalize="characters"
+                  autocomplete="off"
+                  spellcheck="false"
+                  i18n-aria-label aria-label="Session-Code, 6 Zeichen"
+                />
+              </div>
+              <div class="home-code-meta">
+                @if (sessionCode().length > 0) {
+                  <span class="home-code-counter">{{ sessionCode().length }}/6</span>
+                }
+                <span class="home-code-help" i18n>6 Zeichen, z.B. ABC123</span>
+              </div>
             </div>
           </mat-card-content>
 
@@ -138,23 +143,22 @@
               </mat-card-subtitle>
               <mat-card-title class="home-card__title" i18n="@@homeHostCard.title">Veranstaltung starten</mat-card-title>
             </div>
-            <a
-              mat-button
-              [routerLink]="['/quiz', demoQuizId, 'preview']"
-              class="home-card__demo-btn"
-              (mouseenter)="preloadQuiz()"
-              i18n-aria-label
-              aria-label="Demo spielen"
-            >
-              <mat-icon class="home-card__demo-btn-icon">play_circle</mat-icon>
-              <span i18n>Demo</span>
-            </a>
           </mat-card-header>
 
           <mat-card-content>
-            <div class="home-card__meta">
-              <p class="home-card__copy" i18n="@@homeHostCard.copy">Quiz, Fragen und Feedback mit einem Code</p>
-              <p class="home-card__hint" i18n="@@homeHostCard.docHint">Neu in Epic 8: Ein Session-Code, drei Live-Bereiche, inklusive Live-Soundsteuerung im Host.</p>
+            <div class="home-card__meta home-card__meta--links">
+              <div class="home-card__quick-links">
+                <a
+                  mat-button
+                  [routerLink]="['/quiz', demoQuizId, 'preview']"
+                  class="home-help-btn"
+                  (mouseenter)="preloadQuiz()"
+                  i18n-aria-label
+                  aria-label="Demo spielen"
+                >
+                  <mat-icon class="home-card__demo-btn-icon">play_circle</mat-icon>
+                  <span i18n>Demo</span>
+                </a>
               <a
                 matButton
                 routerLink="/help"
@@ -165,6 +169,7 @@
                 <mat-icon>help</mat-icon>
                 <span i18n>Hilfe</span>
               </a>
+              </div>
             </div>
           </mat-card-content>
 

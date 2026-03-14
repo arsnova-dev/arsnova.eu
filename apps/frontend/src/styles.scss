@@ -103,6 +103,7 @@ html {
   --app-color-success-bg: var(--mat-sys-secondary-container);
   --app-color-success-fg: var(--mat-sys-on-secondary-container);
   --app-status-healthy: light-dark(#16a34a, #4ade80);
+  --app-status-busy: light-dark(#f59e0b, #fbbf24);
   --app-color-danger-bg: var(--mat-sys-error-container);
   --app-color-danger-fg: var(--mat-sys-on-error-container);
   --arsnova-bar-correct: light-dark(#2e7d32, #66bb6a);
@@ -398,15 +399,15 @@ html.dark .app-qr-image {
   box-sizing: border-box;
 }
 
-.app-status-help-menu-panel.mat-mdc-menu-panel {
-  max-width: calc(100vw - 0.75rem) !important;
+.app-status-help-dialog-panel .mat-mdc-dialog-surface {
+  border-radius: var(--mat-sys-corner-large);
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-high);
+  box-shadow: var(--mat-sys-level3);
 }
 
-.app-status-help-menu-panel .mat-mdc-menu-content {
-  white-space: normal;
-  overflow-x: hidden;
-  max-width: 100%;
-  padding: 0.1rem !important;
+.app-status-help-dialog-panel .mat-mdc-dialog-content {
+  max-height: min(80dvh, 36rem);
 }
 
 @media (max-width: 600px), (max-height: 700px) {

@@ -78,7 +78,7 @@
 | 6    | 6.3   | Impressum & Datenschutz                       | 🔴   | ✅ Fertig |
 | 6    | 6.4   | Mobile-First & Responsive                     | 🔴   | ✅ Fertig |
 | 6    | 6.5   | Barrierefreiheit (Prüfung Projektende)        | 🔴   | ⬜ Offen  |
-| 7    | 7.1   | Team-Modus                                    | 🟢   | 🔨 In Arbeit |
+| 7    | 7.1   | Team-Modus                                    | 🟢   | ✅ Fertig |
 | 8    | 8.1   | Q&A-Session starten                           | 🟢   | ✅ Fertig |
 | 8    | 8.2   | Fragen einreichen                             | 🟢   | ✅ Fertig |
 | 8    | 8.3   | Upvoting & Sortierung                         | 🟢   | ✅ Fertig |
@@ -819,7 +819,7 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
 
 ---
 
-## Epic 7: Team-Modus (Rolle: Dozent & Student)
+## Epic 7: Team-Modus (Rolle: Dozent & Student) ✅ abgeschlossen
 
 - **Story 7.1 (Team-Modus):** 🟢 Als Dozent möchte ich optional einen Team-Modus aktivieren können, bei dem Studenten in Gruppen gegeneinander antreten.
   - **Akzeptanzkriterien:**
@@ -845,8 +845,9 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
     - Frontend: Join-, Quiz-, Host-, Present- und Vote-Specs decken Teamwahl, Teamvorschau, Lobby/Leaderboard, Beamer-Finale und kollektiven Teilnehmer-Reward ab.
     - Lokalisierung: Alle neuen Teammodus-Texte sind in `de`, `en`, `fr`, `es`, `it` nachgezogen; `extract-i18n` und `build:localize` laufen erfolgreich.
     - Laufzeit-Review: Echte Multi-Client-Captures aus dem lokalisierten Build wurden nach dem UX-Feinschliff erneuert (`runtime-02-join-manual.png`, `runtime-03-host-lobby-fixed.png`, `runtime-05-join-auto.png`, `runtime-06-present-finale.png`); der frühere Lobby-Befund bleibt als Vergleich in `runtime-03-host-lobby.png` erhalten.
-  - **Noch offen bis `✅ Fertig`:**
-    - abschließende Story-Abnahme und Commit/Integration der final verifizierten Teammodus-Dokumentation
+  - **Abschluss / DoD:**
+    - Story-Abnahme erfolgt, Teammodus-Dokumentation final integriert.
+    - Status auf `✅ Fertig` gesetzt.
 
 ---
 

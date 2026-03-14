@@ -17,16 +17,16 @@ import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { SwUpdate } from '@angular/service-worker';
 import { ThemePresetService } from './core/theme-preset.service';
 import { PresetSnackbarFocusService } from './core/preset-snackbar-focus.service';
 import { Subscription } from 'rxjs';
 import { TopToolbarComponent } from './shared/top-toolbar/top-toolbar.component';
-import { ConnectionBannerComponent } from './shared/connection-banner/connection-banner.component';
 import { trpc } from './core/trpc.client';
 import { ServerStatusWidgetComponent } from './shared/server-status-widget/server-status-widget.component';
+import { ServerStatusHelpDialogComponent } from './shared/server-status-help-dialog/server-status-help-dialog.component';
 
 const STORAGE_PLAYFUL_WELCOMED = 'home-playful-welcomed';
 const STORAGE_PWA_INSTALL_DISMISSED = 'pwa-install-dismissed';
@@ -43,6 +43,11 @@ class PresetToastHostDirective {
   readonly vcRef = inject(ViewContainerRef);
 }
 
+@Directive({ selector: '[connectionBannerHost]', standalone: true })
+class ConnectionBannerHostDirective {
+  readonly vcRef = inject(ViewContainerRef);
+}
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -50,11 +55,9 @@ class PresetToastHostDirective {
     RouterLink,
     MatButton,
     MatIcon,
-    MatMenu,
-    MatMenuTrigger,
     TopToolbarComponent,
     PresetToastHostDirective,
-    ConnectionBannerComponent,
+    ConnectionBannerHostDirective,
     ServerStatusWidgetComponent,
   ],
   templateUrl: './app.component.html',
@@ -73,7 +76,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /** PWA installierbar (beforeinstallprompt) – Snackbar-Hinweis v. a. für Mobile sichtbar. */
   installSnackbarVisible = signal(false);
   @ViewChild(PresetToastHostDirective) private presetToastHost?: PresetToastHostDirective;
+  @ViewChild(ConnectionBannerHostDirective) private connectionBannerHost?: ConnectionBannerHostDirective;
   private presetToastRef: ComponentRef<unknown> | null = null;
+  private connectionBannerRef: ComponentRef<unknown> | null = null;
   private snackbarTimer: ReturnType<typeof setTimeout> | null = null;
   private deferredInstallPrompt: BeforeInstallPromptEvent | null = null;
   private beforeInstallPromptListener = (e: Event): void => this.onBeforeInstallPrompt(e as BeforeInstallPromptEvent);
@@ -84,6 +89,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly swUpdate = inject(SwUpdate, { optional: true });
   private readonly focusService = inject(PresetSnackbarFocusService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
   private versionSub: Subscription | null = null;
   private routerSub: Subscription | null = null;
   private presetSub: Subscription | null = null;
@@ -119,8 +125,10 @@ export class AppComponent implements OnInit, OnDestroy {
       this.isOnline.set(navigator.onLine);
       if (typeof requestIdleCallback !== 'undefined') {
         requestIdleCallback(() => void this.checkApiConnection(), { timeout: 2000 });
+        requestIdleCallback(() => void this.loadConnectionBanner(), { timeout: 2500 });
       } else {
         setTimeout(() => void this.checkApiConnection(), 0);
+        setTimeout(() => void this.loadConnectionBanner(), 0);
       }
       this.checkForUpdates();
       this.setupPwaInstallPrompt();
@@ -138,6 +146,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.versionSub?.unsubscribe();
     this.routerSub?.unsubscribe();
     this.presetSub?.unsubscribe();
+    this.connectionBannerRef?.destroy();
+    this.connectionBannerRef = null;
     if (this.snackbarTimer) clearTimeout(this.snackbarTimer);
     if (isPlatformBrowser(this.platformId)) {
       window.removeEventListener('beforeinstallprompt', this.beforeInstallPromptListener);
@@ -292,6 +302,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.apiRetrying.set(false);
   }
 
+  openServerStatusHelp(): void {
+    this.dialog.open(ServerStatusHelpDialogComponent, {
+      panelClass: 'app-status-help-dialog-panel',
+      autoFocus: false,
+      restoreFocus: true,
+      width: 'min(40rem, calc(100vw - 1rem))',
+      maxWidth: 'min(42rem, calc(100vw - 1rem))',
+    });
+  }
+
   onPresetChanged(): void {
     if (this.router.url.startsWith('/feedback/')) return;
     this.focusService.blurInput();
@@ -349,6 +369,14 @@ export class AppComponent implements OnInit, OnDestroy {
         this.closePresetToast(),
       );
       this.presetToastRef = ref;
+    });
+  }
+
+  private loadConnectionBanner(): void {
+    if (this.connectionBannerRef || !this.connectionBannerHost) return;
+    import('./shared/connection-banner/connection-banner.component').then((m) => {
+      if (!this.connectionBannerHost || this.connectionBannerRef) return;
+      this.connectionBannerRef = this.connectionBannerHost.vcRef.createComponent(m.ConnectionBannerComponent);
     });
   }
 

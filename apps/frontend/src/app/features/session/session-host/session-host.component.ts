@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { firstValueFrom } from 'rxjs';
-import QRCode from 'qrcode';
 import type { Unsubscribable } from '@trpc/server/observable';
 import type { Subscription } from 'rxjs';
 import { trpc } from '../../../core/trpc.client';
@@ -709,7 +708,19 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   private async generateQrCode(): Promise<void> {
     try {
-      const url = await QRCode.toDataURL(this.joinUrl, { width: 320, margin: 2 });
+      const qrcodeModule = await import('qrcode-generator');
+      const qrcodeFactory = (qrcodeModule.default ?? qrcodeModule) as unknown as (
+        typeNumber: 0,
+        errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H',
+      ) => {
+        addData(data: string): void;
+        make(): void;
+        createDataURL(cellSize?: number, margin?: number): string;
+      };
+      const qr = qrcodeFactory(0, 'M');
+      qr.addData(this.joinUrl);
+      qr.make();
+      const url = qr.createDataURL(9, 2);
       this.qrDataUrl.set(url);
     } catch {
       // best-effort

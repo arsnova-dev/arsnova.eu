@@ -908,6 +908,12 @@
           <context context-type="linenumber">3,4</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="homeHero.line1" datatype="html">
+        <source>Quiz, Q&amp;A und Feedback –</source>
+      </trans-unit>
+      <trans-unit id="homeHero.line2" datatype="html">
+        <source>live in einer App</source>
+      </trans-unit>
       <trans-unit id="4642582109589985725" datatype="html">
         <source>Für Schulen, Unis, Events &amp; Business</source>
         <context-group purpose="location">
@@ -5588,9 +5594,6 @@
       <trans-unit id="homeHostCard.title" datatype="html">
         <source>Veranstaltung starten</source>
       </trans-unit>
-      <trans-unit id="homeHostCard.copy" datatype="html">
-        <source>Quiz, Fragen und Feedback mit einem Code</source>
-      </trans-unit>
       <trans-unit id="homeHostCard.primaryCta" datatype="html">
         <source>Veranstaltung starten</source>
       </trans-unit>
@@ -5646,7 +5649,19 @@
         <source>Server-Status erklärt</source>
       </trans-unit>
       <trans-unit id="app.footer.statusHelpDot" datatype="html">
-        <source>Der Punkt zeigt den Zustand: grün = gesund, gelb = ausgelastet, rot = überlastet, grau = keine Live-Daten.</source>
+        <source>Der Status wird über farbige Punkte angezeigt.</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendHealthy" datatype="html">
+        <source>Gesund</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendBusy" datatype="html">
+        <source>Ausgelastet</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendOverloaded" datatype="html">
+        <source>Überlastet</source>
+      </trans-unit>
+      <trans-unit id="app.footer.statusLegendUnknown" datatype="html">
+        <source>Keine Live-Daten</source>
       </trans-unit>
       <trans-unit id="app.footer.statusHelpLiveSessions" datatype="html">
         <source>Live-Sessions (aktuell aktive Veranstaltungen)</source>
@@ -5683,9 +5698,6 @@
       </trans-unit>
       <trans-unit id="sessionHost.musicLabelOff" datatype="html">
         <source>Musik aus</source>
-      </trans-unit>
-      <trans-unit id="homeHostCard.docHint" datatype="html">
-        <source>Neu in Epic 8: Ein Session-Code, drei Live-Bereiche, inklusive Live-Soundsteuerung im Host.</source>
       </trans-unit>
       <trans-unit id="help.epic8Title" datatype="html">
         <source>Neu seit Epic 8</source>
