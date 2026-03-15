@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
+import { localizeCommands } from '../../../core/locale-router';
 import {
   FormArray,
   FormControl,
@@ -124,6 +125,7 @@ type QuizMetadataFormGroup = FormGroup<{
   styleUrl: './quiz-edit.component.scss',
 })
 export class QuizEditComponent implements OnDestroy {
+  readonly localizedCommands = localizeCommands;
   private readonly document = inject(DOCUMENT);
   private readonly route = inject(ActivatedRoute);
   private readonly formBuilder = inject(NonNullableFormBuilder);

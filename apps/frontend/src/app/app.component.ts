@@ -27,6 +27,7 @@ import { TopToolbarComponent } from './shared/top-toolbar/top-toolbar.component'
 import { trpc } from './core/trpc.client';
 import { ServerStatusWidgetComponent } from './shared/server-status-widget/server-status-widget.component';
 import { ServerStatusHelpDialogComponent } from './shared/server-status-help-dialog/server-status-help-dialog.component';
+import { localizePath } from './core/locale-router';
 
 const STORAGE_PLAYFUL_WELCOMED = 'home-playful-welcomed';
 const STORAGE_PWA_INSTALL_DISMISSED = 'pwa-install-dismissed';
@@ -64,6 +65,7 @@ class ConnectionBannerHostDirective {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  readonly localizedPath = localizePath;
   isOnline = signal(true);
   updateAvailable = signal(false);
   apiStatus = signal<string | null>(null);

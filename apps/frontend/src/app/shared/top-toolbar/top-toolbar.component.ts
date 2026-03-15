@@ -14,6 +14,7 @@ import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
 import { LocaleSwitchGuardService } from '../../core/locale-switch-guard.service';
 import { getLocaleFromPath, SUPPORTED_LOCALES } from '../../core/locale-from-path';
+import { localizePath } from '../../core/locale-router';
 import {
   ConfirmLeaveDialogComponent,
   type ConfirmLeaveDialogData,
@@ -39,6 +40,7 @@ const STORAGE_LANG = 'home-language';
   styleUrls: ['./top-toolbar.component.scss'],
 })
 export class TopToolbarComponent {
+  readonly localizedPath = localizePath;
   readonly themePreset = inject(ThemePresetService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly focusService = inject(PresetSnackbarFocusService);

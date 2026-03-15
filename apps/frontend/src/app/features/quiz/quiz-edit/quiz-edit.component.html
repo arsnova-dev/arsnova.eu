@@ -49,7 +49,7 @@
         </form>
       </mat-card-content>
       <mat-card-actions class="quiz-edit__meta-actions">
-        <a mat-button [routerLink]="['/quiz/sync', syncRoomId()]" i18n-aria-label aria-label="Geräte synchronisieren">
+        <a mat-button [routerLink]="localizedCommands(['quiz/sync', syncRoomId()])" i18n-aria-label aria-label="Geräte synchronisieren">
           <mat-icon>devices</mat-icon>
           <span i18n>Synchronisieren</span>
         </a>

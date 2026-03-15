@@ -25,6 +25,7 @@ import {
 import { QuizStoreService, type QuizSettings } from '../data/quiz-store.service';
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
+import { localizeCommands } from '../../../core/locale-router';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
 
@@ -281,7 +282,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
       this.aiImportStatus.set($localize`KI-Quiz „${imported.name}“ importiert.`);
       this.aiJsonInput.set('');
       this.showAiImport.set(false);
-      await this.router.navigate(['/quiz', imported.id]);
+      await this.router.navigate(localizeCommands(['quiz', imported.id]));
     } catch (error) {
       const message = error instanceof Error ? error.message : 'KI-Import fehlgeschlagen.';
       this.aiImportError.set(message);
@@ -310,7 +311,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
         description: this.descriptionControl.value,
         settings: this.readSettingsFromForm(),
       });
-      await this.router.navigate(['/quiz', created.id]);
+      await this.router.navigate(localizeCommands(['quiz', created.id]));
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Erstellen fehlgeschlagen.';
       this.submitError.set(message);

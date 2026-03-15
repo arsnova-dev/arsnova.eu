@@ -13,6 +13,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { PresetStorageEntrySchema } from '@arsnova/shared-types';
 import { ThemePresetService } from '../../../core/theme-preset.service';
+import { localizeCommands } from '../../../core/locale-router';
 import { QuizStoreService } from '../data/quiz-store.service';
 import { trpc } from '../../../core/trpc.client';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
@@ -357,7 +358,7 @@ export class QuizListComponent implements OnInit {
       }
 
       this.actionInfo.set($localize`Session ${result.code} gestartet.`);
-      await this.router.navigate(['/session', result.code, 'host'], {
+      await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
         queryParams: options.startWithQa ? { tab: 'qa' } : undefined,
       });
     } catch (error) {

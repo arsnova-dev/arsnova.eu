@@ -10,7 +10,7 @@
       <mat-card-content>
         <p class="join-card__text" role="alert">{{ error() }}</p>
         @if (errorSessionFinished()) {
-          <a [routerLink]="['/session', code, 'host']" mat-button class="join-card__host-link">
+          <a [routerLink]="localizedCommands(['session', code, 'host'])" mat-button class="join-card__host-link">
             <mat-icon>admin_panel_settings</mat-icon>
             <span i18n>Als Dozent anzeigen</span>
           </a>

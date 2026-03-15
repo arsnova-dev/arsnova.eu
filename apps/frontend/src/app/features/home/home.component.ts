@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { trpc } from '../../core/trpc.client';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
+import { localizeCommands, localizePath } from '../../core/locale-router';
 import { DEMO_QUIZ_ID, QuizStoreService } from '../quiz/data/quiz-store.service';
 
 @Component({
@@ -32,6 +33,8 @@ import { DEMO_QUIZ_ID, QuizStoreService } from '../quiz/data/quiz-store.service'
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+  readonly localizedCommands = localizeCommands;
+  readonly localizedPath = localizePath;
   private readonly router = inject(Router);
   private readonly focusService = inject(PresetSnackbarFocusService);
   @ViewChild('sessionCodeInput') private readonly sessionCodeInput?: ElementRef<HTMLInputElement>;
@@ -213,7 +216,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       const fbResult = await trpc.quickFeedback.results.query({ sessionCode: code }).catch(() => null);
       if (fbResult) {
         this.addToRecentSessionCodes(code);
-        await this.router.navigate(['/feedback', code, 'vote']);
+        await this.router.navigate(localizeCommands(['feedback', code, 'vote']));
         return;
       }
       const session = await trpc.session.getInfo.query({ code });
@@ -224,7 +227,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       this.addToRecentSessionCodes(code);
-      await this.router.navigate(['/join', code]);
+      await this.router.navigate(localizeCommands(['join', code]));
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message

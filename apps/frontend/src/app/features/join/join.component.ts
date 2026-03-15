@@ -11,6 +11,7 @@ import { trpc } from '../../core/trpc.client';
 import type { SessionInfoDTO, TeamDTO } from '@arsnova/shared-types';
 import type { NicknameTheme } from '@arsnova/shared-types';
 import { getLocaleFromPath } from '../../core/locale-from-path';
+import { localizeCommands } from '../../core/locale-router';
 import { getNicknameList } from './nickname-themes';
 
 const PARTICIPANT_STORAGE_KEY = 'arsnova-participant';
@@ -28,6 +29,7 @@ const SESSION_POLL_MS = 3000;
   styleUrl: './join.component.scss',
 })
 export class JoinComponent implements OnInit, OnDestroy {
+  readonly localizedCommands = localizeCommands;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly code = (this.route.snapshot.paramMap.get('code') ?? '').trim().toUpperCase();
@@ -277,7 +279,7 @@ export class JoinComponent implements OnInit, OnDestroy {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`, result.participantId);
       }
-      await this.router.navigate(['/session', this.code, 'vote']);
+      await this.router.navigate(localizeCommands(['session', this.code, 'vote']));
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message
@@ -305,7 +307,7 @@ export class JoinComponent implements OnInit, OnDestroy {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`, result.participantId);
       }
-      await this.router.navigate(['/session', this.code, 'vote']);
+      await this.router.navigate(localizeCommands(['session', this.code, 'vote']));
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'message' in err && typeof (err as { message: string }).message === 'string'
         ? (err as { message: string }).message

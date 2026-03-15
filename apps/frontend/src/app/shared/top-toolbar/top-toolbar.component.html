@@ -7,7 +7,7 @@
 >
   <div class="top-toolbar__row">
     <div class="top-toolbar__start">
-      <a routerLink="/" class="top-toolbar__brand" i18n-aria-label aria-label="arsnova.eu Startseite">
+      <a [routerLink]="localizedPath('/')" class="top-toolbar__brand" i18n-aria-label aria-label="arsnova.eu Startseite">
         <svg
           class="top-toolbar__brand-icon"
         viewBox="0 0 32 32"
@@ -33,7 +33,7 @@
     </a>
       @if (showHomeLink()) {
         <a
-          routerLink="/"
+          [routerLink]="localizedPath('/')"
           class="top-toolbar__home-link"
           i18n-matTooltip
           matTooltip="Zur Startseite"

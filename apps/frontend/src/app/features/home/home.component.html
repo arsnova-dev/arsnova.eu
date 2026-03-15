@@ -122,7 +122,7 @@
             @if (joinError()) {
               <p class="home-error" role="alert">{{ joinError() }}</p>
               @if (joinErrorSessionFinished() && sessionCode().length === 6) {
-                <a [routerLink]="['/session', sessionCode().toUpperCase(), 'host']" mat-button class="home-error-link">
+                <a [routerLink]="localizedCommands(['session', sessionCode().toUpperCase(), 'host'])" mat-button class="home-error-link">
                   <mat-icon>admin_panel_settings</mat-icon>
                   <span i18n>Als Dozent anzeigen</span>
                 </a>
@@ -147,7 +147,7 @@
               <div class="home-card__quick-links">
                 <a
                   mat-button
-                  [routerLink]="['/quiz', demoQuizId, 'preview']"
+                  [routerLink]="localizedCommands(['quiz', demoQuizId, 'preview'])"
                   class="home-help-btn"
                   (mouseenter)="preloadQuiz()"
                   i18n-aria-label
@@ -163,7 +163,7 @@
           <mat-card-actions class="l-stack l-stack--sm">
             <a
               matButton="filled"
-              routerLink="/quiz"
+              [routerLink]="localizedPath('/quiz')"
               [queryParams]="{ startLive: 1 }"
               class="home-cta"
               (mouseenter)="preloadQuiz()"
@@ -174,7 +174,7 @@
             <div class="home-cta-row">
               <a
                 matButton="tonal"
-                routerLink="/quiz"
+                [routerLink]="localizedPath('/quiz')"
                 class="home-cta home-cta--secondary"
                 (mouseenter)="preloadQuiz()"
                 [matBadge]="quizCount()"

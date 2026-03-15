@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { trpc } from '../../core/trpc.client';
 import { ThemePresetService } from '../../core/theme-preset.service';
+import { localizeCommands, localizePath } from '../../core/locale-router';
 import { feedbackDisplayLabel, feedbackTitle, MOOD_OPTIONS, YESNO_OPTIONS, ABCD_OPTIONS } from './feedback.config';
 import type { QuickFeedbackResult } from '@arsnova/shared-types';
 import type { Unsubscribable } from '@trpc/server/observable';
@@ -282,8 +283,8 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
         return;
       }
 
-      await this.router.navigateByUrl('/', { skipLocationChange: true });
-      await this.router.navigate(['/feedback', res.sessionCode]);
+      await this.router.navigateByUrl(localizePath('/'), { skipLocationChange: true });
+      await this.router.navigate(localizeCommands(['feedback', res.sessionCode]));
     } catch {
       // best-effort
     }

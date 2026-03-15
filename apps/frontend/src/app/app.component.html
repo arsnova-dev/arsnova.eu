@@ -63,15 +63,15 @@
     <div class="app-footer__inner">
       <div class="app-footer__row">
         <div class="app-footer__links">
-          <a matButton routerLink="/help" i18n-aria-label aria-label="Hilfe öffnen">
+          <a matButton [routerLink]="localizedPath('/help')" i18n-aria-label aria-label="Hilfe öffnen">
             <mat-icon class="app-footer__icon">help</mat-icon>
             <span i18n>Hilfe</span>
           </a>
-          <a matButton routerLink="/legal/imprint">
+          <a matButton [routerLink]="localizedPath('/legal/imprint')">
             <mat-icon class="app-footer__icon">business</mat-icon>
             <span i18n>Impressum</span>
           </a>
-          <a matButton routerLink="/legal/privacy">
+          <a matButton [routerLink]="localizedPath('/legal/privacy')">
             <mat-icon class="app-footer__icon">privacy_tip</mat-icon>
             <span i18n>Datenschutz</span>
           </a>

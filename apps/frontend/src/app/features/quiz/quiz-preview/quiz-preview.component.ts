@@ -18,6 +18,7 @@ import {
   type SupportedQuestionType,
 } from '../data/quiz-store.service';
 import { LiveSessionDialogComponent } from '../quiz-list/live-session-dialog.component';
+import { localizeCommands } from '../../../core/locale-router';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 
 const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
@@ -207,7 +208,7 @@ export class QuizPreviewComponent implements OnDestroy {
 
   leavePreview(): void {
     this.commitInlineEdits();
-    void this.router.navigate(['/quiz', this.id]);
+    void this.router.navigate(localizeCommands(['quiz', this.id]));
   }
 
   async openLiveStartDialog(): Promise<void> {
@@ -569,7 +570,7 @@ export class QuizPreviewComponent implements OnDestroy {
         await trpc.session.startQa.mutate({ code: result.code });
       }
 
-      await this.router.navigate(['/session', result.code, 'host'], {
+      await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
         queryParams: options.startWithQa ? { tab: 'qa' } : undefined,
       });
     } catch {

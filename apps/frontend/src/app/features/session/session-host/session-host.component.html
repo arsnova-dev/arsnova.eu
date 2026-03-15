@@ -32,121 +32,90 @@
       </div>
     }
 
-    @if (effectiveStatus() !== 'LOBBY') {
-      @let liveParticipantCount = participantsPayload()?.participantCount ?? s.participantCount;
-      <section class="session-host__live-banner app-live-channel-shell">
-        @if (activeChannel() === 'quiz') {
-          <div class="session-host__live-phase-bar">
-            <p class="session-host__live-status">{{ phaseLabel(effectiveStatus(), allHaveVoted(), countdownEnded()) }}</p>
-          </div>
-        }
-
-        <div class="session-host__live-banner-main">
-          <div class="session-host__live-access">
-            @if (qrDataUrl()) {
-              <div class="session-host__live-qr-wrap">
-                <img
-                  [src]="qrDataUrl()"
-                  alt="QR-Code: Beitritts-Link {{ joinUrl }}"
-                  class="session-host__live-qr app-qr-image"
-                  width="320"
-                  height="320"
-                />
-              </div>
-            }
-            <div class="session-host__live-code-block">
-              <p class="session-host__live-label" aria-hidden="true" i18n>Session-Code</p>
-              <p class="session-host__live-code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
-              <p class="session-host__live-participants">
-                <span class="session-host__live-participants-count">{{ liveParticipantCount }}</span>
-                {{ liveParticipantCount === 1 ? participantLabelSingular() : participantLabelPlural() }}
-              </p>
-            </div>
-            <button
-              mat-icon-button
-              type="button"
-              class="session-host__meta-sound-control session-host__live-sound-control"
-              [class.session-host__meta-sound-control--active]="isBackgroundMusicEnabled()"
-              [matMenuTriggerFor]="hostMusicMenu"
-              i18n-aria-label="@@sessionHost.musicControlAria"
-              aria-label="Soundsteuerung öffnen"
-            >
-              <mat-icon aria-hidden="true">{{ isBackgroundMusicEnabled() ? 'graphic_eq' : 'volume_off' }}</mat-icon>
-              <span class="session-host__live-sound-label">{{ activeMusicLabel() }}</span>
-            </button>
-          </div>
+    @let liveParticipantCount = participantsPayload()?.participantCount ?? s.participantCount;
+    <section class="session-host__live-banner app-live-channel-shell">
+      @if (effectiveStatus() !== 'LOBBY' && activeChannel() === 'quiz') {
+        <div class="session-host__live-phase-bar">
+          <p class="session-host__live-status">{{ phaseLabel(effectiveStatus(), allHaveVoted(), countdownEnded()) }}</p>
         </div>
-        <mat-menu #hostMusicMenu="matMenu" xPosition="before">
-          <div class="session-host__music-menu-head" (click)="$event.stopPropagation()">
-            <p class="session-host__music-menu-title" i18n="@@sessionHost.musicMenuTitle">Hintergrundmusik</p>
-            <p class="session-host__music-menu-subtitle" i18n="@@sessionHost.musicMenuHint">
-              Live steuerbar, unabhängig von den Quiz-Einstellungen.
+      }
+
+      <div class="session-host__live-banner-main">
+        <div class="session-host__live-access">
+          @if (qrDataUrl()) {
+            <div class="session-host__live-qr-wrap">
+              <img
+                [src]="qrDataUrl()"
+                alt="QR-Code: Beitritts-Link {{ joinUrl }}"
+                class="session-host__live-qr app-qr-image"
+                width="320"
+                height="320"
+              />
+            </div>
+          }
+          <div class="session-host__live-code-block">
+            <p class="session-host__live-label" aria-hidden="true" i18n>Session-Code</p>
+            <p class="session-host__live-code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
+            <p class="session-host__live-participants">
+              <span class="session-host__live-participants-count">{{ liveParticipantCount }}</span>
+              {{ liveParticipantCount === 1 ? participantLabelSingular() : participantLabelPlural() }}
             </p>
           </div>
-          @if (isBackgroundMusicEnabled()) {
-            <button mat-menu-item type="button" (click)="toggleBackgroundMusic()">
-              <mat-icon aria-hidden="true">volume_off</mat-icon>
-              <span i18n="@@sessionHost.musicToggleTitleOn">Musik aus</span>
-            </button>
-          } @else {
-            <button mat-menu-item type="button" (click)="toggleBackgroundMusic()">
-              <mat-icon aria-hidden="true">volume_up</mat-icon>
-              <span i18n="@@sessionHost.musicToggleTitleOff">Musik an</span>
-            </button>
-          }
-          @for (track of musicTracks; track track.value) {
-            <button mat-menu-item type="button" (click)="selectBackgroundMusicTrack(track.value)">
-              <mat-icon aria-hidden="true">{{ activeMusicTrack() === track.value ? 'check_circle' : 'music_note' }}</mat-icon>
-              <span>{{ track.label }}</span>
-            </button>
-          }
-        </mat-menu>
-
-        @if (activeChannel() === 'quiz' && sessionHeading(); as heading) {
-          <div class="session-host__live-heading-band">
-            <p class="session-host__live-heading">{{ heading }}</p>
-          </div>
+          <button
+            mat-icon-button
+            type="button"
+            class="session-host__meta-sound-control session-host__live-sound-control"
+            [class.session-host__meta-sound-control--active]="isBackgroundMusicEnabled()"
+            [matMenuTriggerFor]="hostMusicMenu"
+            i18n-aria-label="@@sessionHost.musicControlAria"
+            aria-label="Soundsteuerung öffnen"
+          >
+            <mat-icon aria-hidden="true">{{ isBackgroundMusicEnabled() ? 'graphic_eq' : 'volume_off' }}</mat-icon>
+            <span class="session-host__live-sound-label">{{ activeMusicLabel() }}</span>
+          </button>
+        </div>
+      </div>
+      <mat-menu #hostMusicMenu="matMenu" xPosition="before">
+        <div class="session-host__music-menu-head" (click)="$event.stopPropagation()">
+          <p class="session-host__music-menu-title" i18n="@@sessionHost.musicMenuTitle">Hintergrundmusik</p>
+          <p class="session-host__music-menu-subtitle" i18n="@@sessionHost.musicMenuHint">
+            Live steuerbar, unabhängig von den Quiz-Einstellungen.
+          </p>
+        </div>
+        @if (isBackgroundMusicEnabled()) {
+          <button mat-menu-item type="button" (click)="toggleBackgroundMusic()">
+            <mat-icon aria-hidden="true">volume_off</mat-icon>
+            <span i18n="@@sessionHost.musicToggleTitleOn">Musik aus</span>
+          </button>
+        } @else {
+          <button mat-menu-item type="button" (click)="toggleBackgroundMusic()">
+            <mat-icon aria-hidden="true">volume_up</mat-icon>
+            <span i18n="@@sessionHost.musicToggleTitleOff">Musik an</span>
+          </button>
         }
-      </section>
-    }
+        @for (track of musicTracks; track track.value) {
+          <button mat-menu-item type="button" (click)="selectBackgroundMusicTrack(track.value)">
+            <mat-icon aria-hidden="true">{{ activeMusicTrack() === track.value ? 'check_circle' : 'music_note' }}</mat-icon>
+            <span>{{ track.label }}</span>
+          </button>
+        }
+      </mat-menu>
+
+      @if (activeChannel() === 'quiz' && sessionHeading(); as heading) {
+        <div class="session-host__live-heading-band">
+          <p class="session-host__live-heading">{{ heading }}</p>
+        </div>
+      }
+    </section>
 
     @if (showPrimaryLiveView()) {
     @if (effectiveStatus() === 'LOBBY') {
       <!-- Lobby: Code, QR (Story 2.1b), Beitritts-URL, Teilnehmerzahl. -->
       <div class="session-lobby">
         @let payload = participantsPayload();
-        @let count = payload ? payload.participantCount : s.participantCount;
+        <p class="session-lobby__join-hint" i18n>Beitreten unter</p>
+        <p class="session-lobby__join-url"><a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a></p>
         @if (s.teamMode && lobbyTeamsWithParticipants().length > 0) {
-          <section class="session-lobby__hero">
-            <div class="session-lobby__hero-main">
-              <p class="session-lobby__label" aria-hidden="true" i18n>Session-Code</p>
-              <p class="session-lobby__code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
-              <p class="session-lobby__participants">
-                <span class="session-lobby__participants-count">{{ count }}</span>
-                {{ count === 1 ? participantLabelSingular() : participantLabelPlural() }}
-              </p>
-              @if (sessionHeading(); as heading) {
-                <p class="session-lobby__quiz-name">{{ heading }}</p>
-              }
-            </div>
-            @if (qrDataUrl()) {
-              <div class="session-lobby__hero-qr">
-                <div class="session-lobby__qr session-lobby__qr--compact">
-                  <img
-                    [src]="qrDataUrl()"
-                    alt="QR-Code: Beitritts-Link {{ joinUrl }}"
-                    class="app-qr-image"
-                    width="320"
-                    height="320"
-                  />
-                </div>
-                <p class="session-lobby__join-url session-lobby__join-url--compact">
-                  <a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a>
-                </p>
-              </div>
-            }
-          </section>
-
           <section class="session-lobby__teams session-lobby__teams--hero" aria-labelledby="session-lobby-teams-heading">
             <h2 class="session-lobby__teams-title" id="session-lobby-teams-heading" i18n>Teams in der Lobby</h2>
             @if (isPlayfulPreset()) {
@@ -177,29 +146,6 @@
               }
             </div>
           </section>
-        } @else {
-          <p class="session-lobby__label" aria-hidden="true" i18n>Session-Code</p>
-          <p class="session-lobby__code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
-          <p class="session-lobby__participants">
-            <span class="session-lobby__participants-count">{{ count }}</span>
-            {{ count === 1 ? participantLabelSingular() : participantLabelPlural() }}
-          </p>
-          @if (sessionHeading(); as heading) {
-            <p class="session-lobby__quiz-name">{{ heading }}</p>
-          }
-          @if (qrDataUrl()) {
-            <div class="session-lobby__qr">
-              <img
-                [src]="qrDataUrl()"
-                alt="QR-Code: Beitritts-Link {{ joinUrl }}"
-                class="app-qr-image"
-                width="320"
-                height="320"
-              />
-            </div>
-          }
-          <p class="session-lobby__join-hint" i18n>Beitreten unter</p>
-          <p class="session-lobby__join-url"><a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a></p>
         }
         @if (!s.teamMode && !s.anonymousMode && payload && payload.participants.length > 0) {
           <ul class="session-lobby__list" role="list" i18n-aria-label aria-label="Teilnehmende">
