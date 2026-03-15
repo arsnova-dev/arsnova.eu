@@ -4066,8 +4066,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="731504381854376781" datatype="html">
-        <source>Frage ist sichtbar. Antworten noch gesperrt – gleich freigeben.</source>
-        <target>La domanda è visibile. Le risposte sono ancora bloccate: rilasciale ora.</target>
+        <source>Antworten folgen gleich.</source>
+        <target>Le risposte arrivano tra un attimo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
           <context context-type="linenumber">249,250</context>
@@ -4394,8 +4394,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3309552751464268959" datatype="html">
-        <source>Lesephase – Frage sichtbar, Antworten noch gesperrt</source>
-        <target>Fase di lettura – domanda visibile, risposte ancora bloccate</target>
+        <source>Lesephase – Antworten noch gesperrt</source>
+        <target>Fase di lettura – risposte ancora bloccate</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">473</context>

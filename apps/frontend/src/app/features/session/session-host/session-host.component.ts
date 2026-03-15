@@ -844,7 +844,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     }
     const labels: Record<SessionInfoDTO['status'], string> = {
       LOBBY: $localize`Lobby – Teilnehmende können beitreten`,
-      QUESTION_OPEN: $localize`Lesephase – Frage sichtbar, Antworten noch gesperrt`,
+      QUESTION_OPEN: $localize`Lesephase – Antworten noch gesperrt`,
       ACTIVE: $localize`Abstimmung läuft`,
       PAUSED: $localize`Pausiert`,
       RESULTS: $localize`Ergebnisse werden angezeigt`,

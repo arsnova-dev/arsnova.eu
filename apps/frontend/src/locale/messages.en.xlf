@@ -891,8 +891,8 @@
         <target>Reading phase</target>
       </trans-unit>
       <trans-unit id="731504381854376781" datatype="html">
-        <source>Frage ist sichtbar. Antworten noch gesperrt – gleich freigeben.</source>
-        <target>Question is visible. Answers still locked – releasing shortly.</target>
+        <source>Antworten folgen gleich.</source>
+        <target>Answers will follow shortly.</target>
       </trans-unit>
       <trans-unit id="241839647344135361" datatype="html">
         <source>Bewertung</source>
@@ -911,8 +911,8 @@
         <target>Lobby – participants can join</target>
       </trans-unit>
       <trans-unit id="3309552751464268959" datatype="html">
-        <source>Lesephase – Frage sichtbar, Antworten noch gesperrt</source>
-        <target>Reading phase – question visible, answers still locked</target>
+        <source>Lesephase – Antworten noch gesperrt</source>
+        <target>Reading phase – answers still locked</target>
       </trans-unit>
       <trans-unit id="8314358219279011566" datatype="html">
         <source>Abstimmung läuft</source>
