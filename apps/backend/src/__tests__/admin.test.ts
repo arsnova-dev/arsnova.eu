@@ -50,6 +50,8 @@ const SESSION_CODE = 'ABC123';
 
 describe('admin router (Epic 9)', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-14T12:00:00.000Z'));
     vi.clearAllMocks();
     verifyAdminSecretMock.mockReturnValue(true);
     createAdminSessionTokenMock.mockResolvedValue({
@@ -58,6 +60,10 @@ describe('admin router (Epic 9)', () => {
     });
     extractAdminTokenMock.mockReturnValue('token-xyz');
     isAdminSessionTokenValidMock.mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('loggt Admin mit gültigem Secret ein', async () => {
