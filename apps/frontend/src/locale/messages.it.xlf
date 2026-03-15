@@ -6161,6 +6161,46 @@
         <source>Meine Quizze</source>
         <target>I miei quiz</target>
       </trans-unit>
+      <trans-unit id="quizPreview.editModeEyebrow" datatype="html">
+        <source>Bearbeitungsmodus</source>
+        <target>Modalità modifica</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editModeTitle" datatype="html">
+        <source>Diese Folie bearbeiten</source>
+        <target>Modifica questa diapositiva</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.toggleCorrectAria" datatype="html">
+        <source>Richtige Antwort umschalten</source>
+        <target>Attiva/disattiva risposta corretta</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.answerStateCorrect" datatype="html">
+        <source>Richtig</source>
+        <target>Corretta</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.answerStateNeutral" datatype="html">
+        <source>Option</source>
+        <target>Opzione</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningTitle" datatype="html">
+        <source>Hier braucht diese Folie noch etwas Feinschliff</source>
+        <target>Questa diapositiva ha ancora bisogno di qualche rifinitura</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningAnswers" datatype="html">
+        <source>Füge mindestens zwei Antwortoptionen hinzu.</source>
+        <target>Aggiungi almeno due opzioni di risposta.</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningSingleCorrect" datatype="html">
+        <source>Wähle genau eine richtige Antwort aus.</source>
+        <target>Seleziona esattamente una risposta corretta.</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningMultipleCorrect" datatype="html">
+        <source>Markiere mindestens eine richtige Antwort.</source>
+        <target>Seleziona almeno una risposta corretta.</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorCorrectAnswerHint" datatype="html">
+        <source>Nutze die Auswahl links, um richtige Antworten direkt zu markieren.</source>
+        <target>Usa il selettore a sinistra per contrassegnare direttamente le risposte corrette.</target>
+      </trans-unit>
       <trans-unit id="help.demoCardHint" datatype="html">
         <source>Auf der Startseite in der Karte <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Veranstaltung starten<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> führt der Link <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Demo spielen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> in ein vorinstalliertes Beispiel-Quiz. Du siehst alle Frageformate (Multiple Choice, Freitext, Bewertungsskala usw.) inkl. KaTeX-Formeln und Markdown – ohne etwas anlegen zu müssen.</source>
         <target>Nella pagina iniziale, nella scheda <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Avvia evento<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>, il link <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Gioca la demo<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> apre un quiz di esempio preinstallato. Lì puoi vedere tutti i tipi di domande, incluse formule KaTeX e Markdown, senza dover creare nulla prima.</target>

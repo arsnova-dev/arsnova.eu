@@ -3969,6 +3969,46 @@
         <source>Meine Quizze</source>
         <target>My quizzes</target>
       </trans-unit>
+      <trans-unit id="quizPreview.editModeEyebrow" datatype="html">
+        <source>Bearbeitungsmodus</source>
+        <target>Edit mode</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editModeTitle" datatype="html">
+        <source>Diese Folie bearbeiten</source>
+        <target>Edit this slide</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.toggleCorrectAria" datatype="html">
+        <source>Richtige Antwort umschalten</source>
+        <target>Toggle correct answer</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.answerStateCorrect" datatype="html">
+        <source>Richtig</source>
+        <target>Correct</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.answerStateNeutral" datatype="html">
+        <source>Option</source>
+        <target>Option</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningTitle" datatype="html">
+        <source>Hier braucht diese Folie noch etwas Feinschliff</source>
+        <target>This slide still needs a bit of polishing</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningAnswers" datatype="html">
+        <source>Füge mindestens zwei Antwortoptionen hinzu.</source>
+        <target>Add at least two answer options.</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningSingleCorrect" datatype="html">
+        <source>Wähle genau eine richtige Antwort aus.</source>
+        <target>Select exactly one correct answer.</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorWarningMultipleCorrect" datatype="html">
+        <source>Markiere mindestens eine richtige Antwort.</source>
+        <target>Mark at least one correct answer.</target>
+      </trans-unit>
+      <trans-unit id="quizPreview.editorCorrectAnswerHint" datatype="html">
+        <source>Nutze die Auswahl links, um richtige Antworten direkt zu markieren.</source>
+        <target>Use the selector on the left to mark correct answers directly.</target>
+      </trans-unit>
       <trans-unit id="help.demoCardHint" datatype="html">
         <source>Auf der Startseite in der Karte <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Veranstaltung starten<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> führt der Link <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Demo spielen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> in ein vorinstalliertes Beispiel-Quiz. Du siehst alle Frageformate (Multiple Choice, Freitext, Bewertungsskala usw.) inkl. KaTeX-Formeln und Markdown – ohne etwas anlegen zu müssen.</source>
         <target>On the home page, in the <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Start event<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> card, the <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Play demo<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> link opens a preinstalled sample quiz. You can see all question types, including KaTeX formulas and Markdown, without creating anything first.</target>

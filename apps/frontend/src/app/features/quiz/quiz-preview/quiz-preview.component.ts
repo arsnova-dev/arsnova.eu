@@ -2,10 +2,14 @@ import { Component, HostListener, OnDestroy, computed, effect, inject, signal } 
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import type { Difficulty } from '@arsnova/shared-types';
+import { PresetStorageEntrySchema, type Difficulty } from '@arsnova/shared-types';
+import { firstValueFrom } from 'rxjs';
+import { ThemePresetService } from '../../../core/theme-preset.service';
+import { trpc } from '../../../core/trpc.client';
 import {
   DEMO_QUIZ_ID,
   QuizStoreService,
@@ -13,7 +17,10 @@ import {
   type QuizQuestion,
   type SupportedQuestionType,
 } from '../data/quiz-store.service';
+import { LiveSessionDialogComponent } from '../quiz-list/live-session-dialog.component';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
+
+const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
 
 /**
  * Quiz-Preview & Schnellkorrektur (Epic 1).
@@ -27,8 +34,6 @@ import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
     MatButton,
     MatCard,
     MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
     MatIcon,
     MatProgressBar,
   ],
@@ -40,6 +45,8 @@ export class QuizPreviewComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly quizStore = inject(QuizStoreService);
+  private readonly themePreset = inject(ThemePresetService);
+  private readonly dialog = inject(MatDialog);
   private persistTimer: ReturnType<typeof setTimeout> | null = null;
   private animationTimer: ReturnType<typeof setTimeout> | null = null;
   private touchStartX: number | null = null;
@@ -51,6 +58,8 @@ export class QuizPreviewComponent implements OnDestroy {
   readonly answerDraftTexts = signal<string[]>([]);
   readonly originalQuestionSnapshot = signal<AddQuizQuestionInput | null>(null);
   readonly swipeDirection = signal<'left' | 'right' | null>(null);
+  readonly liveStartPending = signal(false);
+  readonly liveStartError = signal<string | null>(null);
   readonly quiz = computed(() => this.quizStore.getQuizById(this.id));
   readonly questions = computed(() => {
     const quiz = this.quiz();
@@ -90,6 +99,29 @@ export class QuizPreviewComponent implements OnDestroy {
       })
       .filter((entry): entry is { index: number; message: string } => entry !== null),
   );
+  readonly currentQuestionValidation = computed(() => {
+    const question = this.currentQuestion();
+    if (!question) {
+      return { hasIssues: false, needsMoreAnswers: false, needsCorrectAnswer: false };
+    }
+
+    const needsMoreAnswers =
+      (question.type === 'SINGLE_CHOICE' ||
+        question.type === 'MULTIPLE_CHOICE' ||
+        question.type === 'SURVEY') &&
+      question.answers.length < 2;
+
+    const correctCount = question.answers.filter((answer) => answer.isCorrect).length;
+    const needsCorrectAnswer =
+      (question.type === 'SINGLE_CHOICE' && correctCount !== 1) ||
+      (question.type === 'MULTIPLE_CHOICE' && correctCount < 1);
+
+    return {
+      hasIssues: needsMoreAnswers || needsCorrectAnswer,
+      needsMoreAnswers,
+      needsCorrectAnswer,
+    };
+  });
 
   constructor() {
     if (this.id === DEMO_QUIZ_ID) {
@@ -157,6 +189,45 @@ export class QuizPreviewComponent implements OnDestroy {
   leavePreview(): void {
     this.commitInlineEdits();
     void this.router.navigate(['/quiz', this.id]);
+  }
+
+  async openLiveStartDialog(): Promise<void> {
+    const quiz = this.quiz();
+    if (!quiz || this.questions().length === 0 || this.liveStartPending()) return;
+
+    const dialogRef = this.dialog.open(LiveSessionDialogComponent, {
+      width: '32rem',
+      maxWidth: 'calc(100vw - 2rem)',
+      autoFocus: false,
+      panelClass: 'live-session-dialog-panel',
+      backdropClass: 'live-session-dialog-backdrop',
+      data: {
+        quizName: quiz.name,
+        quizCanStart: this.questions().length > 0,
+      },
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+    if (!result) return;
+
+    if (result.startMode === 'Q_AND_A') {
+      await this.startLiveSession({
+        includeQuiz: result.enableQuiz,
+        includeQa: result.enableQa,
+        includeQuickFeedback: result.enableQuickFeedback,
+        qaTitle: result.title,
+        startWithQa: true,
+      });
+      return;
+    }
+
+    await this.startLiveSession({
+      includeQuiz: result.enableQuiz,
+      includeQa: result.enableQa,
+      includeQuickFeedback: result.enableQuickFeedback,
+      qaTitle: result.title,
+      startWithQa: false,
+    });
   }
 
   enterInlineEditMode(): void {
@@ -323,6 +394,10 @@ export class QuizPreviewComponent implements OnDestroy {
     return 'Mittel';
   }
 
+  answerOptionLabel(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
+
   renderMarkdown(value: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(renderMarkdownWithKatex(value).html);
   }
@@ -405,6 +480,82 @@ export class QuizPreviewComponent implements OnDestroy {
     this.animationTimer = setTimeout(() => {
       this.swipeDirection.set(null);
       this.animationTimer = null;
-    }, 280);
+    }, 200);
+  }
+
+  private async startLiveSession(options: {
+    includeQuiz: boolean;
+    includeQa: boolean;
+    includeQuickFeedback: boolean;
+    qaTitle?: string;
+    startWithQa: boolean;
+  }): Promise<void> {
+    this.liveStartError.set(null);
+    this.liveStartPending.set(true);
+    try {
+      let result: { code: string };
+
+      if (options.includeQuiz) {
+        let payload = this.quizStore.getUploadPayload(this.id);
+        const presetKey = PRESET_OPTIONS_STORAGE_PREFIX + this.themePreset.preset();
+        try {
+          const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(presetKey) : null;
+          const parsed = raw ? (JSON.parse(raw) as unknown) : null;
+          const entry = PresetStorageEntrySchema.safeParse(parsed);
+          if (entry.success) {
+            const storedOptions = entry.data.options;
+            const optionEnabled = (id: string) => storedOptions[id] === true;
+            const nameMode = entry.data.nameMode;
+            payload = {
+              ...payload,
+              nicknameTheme: entry.data.nicknameThemeValue,
+              allowCustomNicknames: nameMode === 'allowCustomNicknames',
+              anonymousMode: nameMode === 'anonymousMode',
+              showLeaderboard: optionEnabled('showLeaderboard'),
+              enableRewardEffects: optionEnabled('enableRewardEffects'),
+              enableMotivationMessages: optionEnabled('enableMotivationMessages'),
+              enableEmojiReactions: optionEnabled('enableEmojiReactions'),
+              enableSoundEffects: optionEnabled('enableSoundEffects'),
+              readingPhaseEnabled: optionEnabled('readingPhaseEnabled'),
+              teamMode: optionEnabled('teamMode'),
+              teamAssignment: optionEnabled('teamAssignment') ? 'MANUAL' : 'AUTO',
+              teamCount: optionEnabled('teamMode') ? entry.data.teamCountValue : payload.teamCount,
+              bonusTokenCount: optionEnabled('bonusTokenCount') ? payload.bonusTokenCount ?? 3 : null,
+              defaultTimer: optionEnabled('defaultTimer') ? payload.defaultTimer ?? 60 : null,
+              backgroundMusic: optionEnabled('backgroundMusic') ? payload.backgroundMusic : null,
+            };
+          }
+        } catch {
+          // Preset-Optionen nicht lesbar → Quiz-Einstellungen unverändert nutzen
+        }
+
+        const { quizId: uploadedQuizId } = await trpc.quiz.upload.mutate(payload);
+        result = await trpc.session.create.mutate({
+          quizId: uploadedQuizId,
+          type: 'QUIZ',
+          qaEnabled: options.includeQa,
+          qaTitle: options.includeQa ? options.qaTitle?.trim() || undefined : undefined,
+          quickFeedbackEnabled: options.includeQuickFeedback,
+        });
+      } else {
+        result = await trpc.session.create.mutate({
+          type: 'Q_AND_A',
+          title: options.qaTitle?.trim() || undefined,
+          quickFeedbackEnabled: options.includeQuickFeedback,
+        });
+      }
+
+      if (options.startWithQa) {
+        await trpc.session.startQa.mutate({ code: result.code });
+      }
+
+      await this.router.navigate(['/session', result.code, 'host'], {
+        queryParams: options.startWithQa ? { tab: 'qa' } : undefined,
+      });
+    } catch {
+      this.liveStartError.set($localize`Veranstaltung konnte nicht gestartet werden.`);
+    } finally {
+      this.liveStartPending.set(false);
+    }
   }
 }
