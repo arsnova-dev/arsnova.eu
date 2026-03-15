@@ -123,7 +123,7 @@ describe('HomeComponent', () => {
       comp.sessionCode.set('TEST01');
       await comp.joinSession();
 
-      expect(navSpy).toHaveBeenCalledWith(['/join', 'TEST01']);
+      expect(navSpy).toHaveBeenCalledWith(['join', 'TEST01']);
     });
 
     it('speichert Code in recentSessionCodes', async () => {

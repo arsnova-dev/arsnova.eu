@@ -81,7 +81,7 @@ describe('QuizNewComponent', () => {
         preset: 'PLAYFUL',
       }),
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/quiz', '928f0bb8-bfd8-442b-9f2e-a7544628a92f']);
+    expect(navigateSpy).toHaveBeenCalledWith(['quiz', '928f0bb8-bfd8-442b-9f2e-a7544628a92f']);
   });
 
   it('erstellt kein Quiz bei ungültigem Formular', async () => {
@@ -127,7 +127,7 @@ describe('QuizNewComponent', () => {
     await component.importAiJson();
 
     expect(mockStore.importQuiz).toHaveBeenCalledWith({ quiz: { name: 'KI Import' } });
-    expect(navigateSpy).toHaveBeenCalledWith(['/quiz', 'caece014-f7cd-4d26-a101-bd494379f95f']);
+    expect(navigateSpy).toHaveBeenCalledWith(['quiz', 'caece014-f7cd-4d26-a101-bd494379f95f']);
     expect(component.aiImportError()).toBeNull();
   });
 

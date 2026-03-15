@@ -177,7 +177,7 @@ describe('JoinComponent', () => {
     await new Promise((r) => setTimeout(r, 50));
 
     expect(trpc.session.join.mutate).toHaveBeenCalledWith({ code: 'ABC123', nickname: 'Ada Yonath' });
-    expect(navSpy).toHaveBeenCalledWith(['/session', 'ABC123', 'vote']);
+    expect(navSpy).toHaveBeenCalledWith(['session', 'ABC123', 'vote']);
   });
 
   it('zeigt Teamauswahl bei manuellem Teammodus', async () => {
@@ -234,7 +234,7 @@ describe('JoinComponent', () => {
       nickname: 'Ada',
       teamId: 'team-b',
     });
-    expect(navSpy).toHaveBeenCalledWith(['/session', 'ABC123', 'vote']);
+    expect(navSpy).toHaveBeenCalledWith(['session', 'ABC123', 'vote']);
   });
 
   it('zeigt Teamvorschau auch bei automatischer Zuweisung', async () => {

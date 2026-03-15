@@ -47,7 +47,7 @@
           }
           <div class="vote-live-banner__code-block">
             <p class="vote-live-banner__label" aria-hidden="true" i18n>Session-Code</p>
-            <p class="vote-live-banner__code" i18n-aria-label aria-label="Session-Code {{ code }}">{{ code }}</p>
+            <p class="vote-live-banner__code" [attr.aria-label]="'Session-Code ' + code">{{ code }}</p>
             <p class="vote-live-banner__participants">
               <span class="vote-live-banner__participants-count">{{ liveParticipantCount() }}</span>
               <span i18n>Teilnehmende</span>
@@ -70,7 +70,7 @@
   @if (isLobby()) {
     <div class="vote-lobby">
       <p class="vote-lobby__badge" role="status" i18n>Du bist dabei</p>
-      <p class="vote-lobby__code" i18n-aria-label aria-label="Session-Code {{ code }}">{{ code }}</p>
+      <p class="vote-lobby__code" [attr.aria-label]="'Session-Code ' + code">{{ code }}</p>
       @if (sessionSettings().quizName) {
         <p class="vote-lobby__quiz">{{ sessionSettings().quizName }}</p>
       } @else if (sessionSettings().title) {

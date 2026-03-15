@@ -167,7 +167,7 @@
               <span class="session-host__live-join-label" i18n>Beitritt</span>
             </button>
             <div class="session-host__live-code-block">
-              <p class="session-host__live-code" i18n-aria-label aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
+              <p class="session-host__live-code" [attr.aria-label]="'Session-Code ' + s.code">{{ s.code }}</p>
               <p class="session-host__live-participants">
                 <span class="session-host__live-participants-count">{{ liveParticipantCount }}</span>
                 {{ liveParticipantCount === 1 ? participantLabelSingular() : participantLabelPlural() }}
