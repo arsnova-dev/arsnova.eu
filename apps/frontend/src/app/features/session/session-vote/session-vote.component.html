@@ -30,10 +30,43 @@
     </div>
   }
 
-  @if (showPrimaryLiveView()) {
-  @if (!isLobby()) {
-    <p class="vote-session-code" i18n-aria-label aria-label="Session-Code {{ code }}">{{ code }}</p>
+  @if (showChannelTabs() && !isLobby() && !isFinished()) {
+    <section class="vote-live-banner app-live-channel-shell">
+      <div class="vote-live-banner__main">
+        <div class="vote-live-banner__access">
+          @if (qrDataUrl()) {
+            <div class="vote-live-banner__qr-wrap">
+              <img
+                [src]="qrDataUrl()"
+                alt="QR-Code: Beitritts-Link {{ joinUrl }}"
+                class="vote-live-banner__qr app-qr-image"
+                width="320"
+                height="320"
+              />
+            </div>
+          }
+          <div class="vote-live-banner__code-block">
+            <p class="vote-live-banner__label" aria-hidden="true" i18n>Session-Code</p>
+            <p class="vote-live-banner__code" i18n-aria-label aria-label="Session-Code {{ code }}">{{ code }}</p>
+            <p class="vote-live-banner__participants">
+              <span class="vote-live-banner__participants-count">{{ liveParticipantCount() }}</span>
+              <span i18n>Teilnehmende</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="vote-live-banner__meta">
+          @if (liveHeading(); as heading) {
+            <p class="vote-live-banner__heading">{{ heading }}</p>
+          }
+          <p class="vote-live-banner__status">{{ channelLabel(activeChannel()) }}</p>
+          <p class="vote-live-banner__url"><a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a></p>
+        </div>
+      </div>
+    </section>
   }
+
+  @if (showPrimaryLiveView()) {
   @if (isLobby()) {
     <div class="vote-lobby">
       <p class="vote-lobby__badge" role="status" i18n>Du bist dabei</p>

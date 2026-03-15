@@ -107,6 +107,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   readonly participantId = signal('');
   readonly status = signal<SessionStatus>('LOBBY');
   readonly sessionSettings = signal<Partial<SessionInfoDTO>>({});
+  readonly qrDataUrl = signal('');
   readonly activeChannel = signal<SessionChannelTab>('quiz');
   readonly qaQuestions = signal<QaQuestionDTO[]>([]);
   readonly quickFeedbackResult = signal<QuickFeedbackResult | null>(null);
@@ -178,6 +179,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   readonly isResults = computed(() => this.status() === 'RESULTS');
   readonly isLobby = computed(() => this.status() === 'LOBBY');
   readonly isFinished = computed(() => this.status() === 'FINISHED');
+  readonly liveParticipantCount = computed(() => this.sessionSettings().participantCount ?? 0);
 
   readonly hasAnswers = computed(() => {
     const q = this.currentQuestion();
@@ -224,6 +226,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   });
   readonly qaHeading = computed(() =>
     this.sessionSettings().channels?.qa.title ?? this.sessionSettings().title ?? $localize`:@@sessionTabs.questions:Fragen`,
+  );
+  readonly liveHeading = computed(() =>
+    this.sessionSettings().quizName ?? this.sessionSettings().title ?? null,
   );
   readonly qaCanSubmit = computed(() =>
     this.qaDraft().trim().length > 0
@@ -460,6 +465,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.participantId.set(localStorage.getItem(`${PARTICIPANT_STORAGE_KEY}-${this.code}`) ?? '');
     }
 
+    await this.generateQrCode();
     await this.loadSessionInfo();
 
     this.statusSub = trpc.session.onStatusChanged.subscribe(
@@ -592,6 +598,11 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     this.stopCountdown();
   }
 
+  get joinUrl(): string {
+    const origin = typeof globalThis.location?.origin === 'string' ? globalThis.location.origin : '';
+    return origin ? `${origin}/join/${this.code}` : `/join/${this.code}`;
+  }
+
   private startCountdown(q: CurrentQuestion | null): void {
     if (!q || !('timer' in q) || !q.timer || q.timer <= 0) {
       this.stopCountdown();
@@ -663,6 +674,31 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       )
     ) {
       this.activeChannel.set('quiz');
+    }
+  }
+
+  private async generateQrCode(): Promise<void> {
+    if (!this.code) {
+      this.qrDataUrl.set('');
+      return;
+    }
+
+    try {
+      const qrcodeModule = await import('qrcode-generator');
+      const qrcodeFactory = (qrcodeModule.default ?? qrcodeModule) as unknown as (
+        typeNumber: 0,
+        errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H',
+      ) => {
+        addData(data: string): void;
+        make(): void;
+        createDataURL(cellSize?: number, margin?: number): string;
+      };
+      const qr = qrcodeFactory(0, 'M');
+      qr.addData(this.joinUrl);
+      qr.make();
+      this.qrDataUrl.set(qr.createDataURL(8, 2));
+    } catch {
+      this.qrDataUrl.set('');
     }
   }
 

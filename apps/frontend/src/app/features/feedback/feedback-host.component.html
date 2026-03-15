@@ -24,19 +24,21 @@
 } @else if (result(); as data) {
   <div class="feedback-host app-live-channel-shell" [class.feedback-host--embedded]="embeddedInSession()">
     <div class="feedback-host__wrapper">
-    <section class="feedback-host__join">
-      @if (qrDataUrl()) {
-        <img
-          [src]="qrDataUrl()"
-          i18n-alt
-          alt="QR-Code zum Beitreten"
-          class="feedback-host__qr app-qr-image"
-          width="320"
-          height="320"
-        />
+    <section class="feedback-host__join" [class.feedback-host__join--embedded]="embeddedInSession()">
+      @if (!embeddedInSession()) {
+        @if (qrDataUrl()) {
+          <img
+            [src]="qrDataUrl()"
+            i18n-alt
+            alt="QR-Code zum Beitreten"
+            class="feedback-host__qr app-qr-image"
+            width="320"
+            height="320"
+          />
+        }
+        <p class="feedback-host__code">{{ code() }}</p>
+        <p class="feedback-host__url">{{ joinUrl }}</p>
       }
-      <p class="feedback-host__code">{{ code() }}</p>
-      <p class="feedback-host__url">{{ joinUrl }}</p>
       <div class="feedback-host__actions">
         @if (isDiscussion()) {
           <button mat-button type="button" (click)="startSecondRound()" i18n-aria-label aria-label="Zweite Abstimmung starten">
