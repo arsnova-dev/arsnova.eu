@@ -1,14 +1,17 @@
 <div class="help-page l-page l-section">
-  <article class="help-article">
-    <h1 class="help-title">
-      <mat-icon class="help-title-icon">help_outline</mat-icon>
-      <span i18n>Hilfe</span>
-    </h1>
-    <p class="help-lead" i18n>
+  <nav class="content-back" aria-label="Navigation">
+    <button mat-button type="button" (click)="back()" i18n-aria-label="@@contentPage.backAria" aria-label="Zurück zur vorherigen Seite">
+      <mat-icon>arrow_back</mat-icon>
+      <span i18n="@@contentPage.back">Zurück</span>
+    </button>
+  </nav>
+  <article class="legal-article">
+    <h1 i18n>Hilfe</h1>
+    <p i18n>
       arsnova.eu ist eine Plattform für Quiz und Q&A, Blitz-Feedback und Abstimmungen – ohne Anmeldung, direkt im Browser.
     </p>
 
-    <section class="help-section help-section--demo">
+    <section class="help-section--demo">
       <h2 i18n>Demo spielen</h2>
       <p i18n="@@help.demoCardHint">
         Auf der Startseite in der Karte <strong>Veranstaltung starten</strong> führt der Link <strong>Demo spielen</strong> in ein vorinstalliertes Beispiel-Quiz. Du siehst alle Frageformate (Multiple Choice, Freitext, Bewertungsskala usw.) inkl. KaTeX-Formeln und Markdown – ohne etwas anlegen zu müssen.
@@ -19,7 +22,7 @@
       <p i18n>Das Demo-Quiz liegt auch in deiner Quiz-Liste („Meine Quizze") und kann von dort aus in der Vorschau geöffnet werden.</p>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Schnellstart</h2>
       <ol class="help-steps">
         <li i18n><strong>Quiz erstellen:</strong> Auf der Startseite „Neues Quiz erstellen" wählen, Fragen anlegen und Einstellungen festlegen.</li>
@@ -28,7 +31,7 @@
       </ol>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n="@@help.epic8Title">Neu seit Epic 8</h2>
       <ul>
         <li i18n="@@help.epic8Unified"><strong>Ein Code, drei Live-Bereiche:</strong> Quiz, Fragen und Blitz-Feedback laufen in einer gemeinsamen Veranstaltung.</li>
@@ -38,7 +41,7 @@
       </ul>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Blitz-Feedback</h2>
       <p i18n>Schnelle Abstimmung als Live-Bereich in deiner Veranstaltung.</p>
       <ul>
@@ -55,7 +58,7 @@
       </ul>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Quiz veranstalten</h2>
       <p i18n="@@help.hostLead">Du startest eine Live-Session, teilst den Code und steuerst Quiz, Fragen und weitere Live-Bereiche.</p>
       <ul>
@@ -67,7 +70,7 @@
       </ul>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Dabei sein</h2>
       <p i18n>Ohne Anmeldung mit dem Code beitreten. Stil und Optionen gibt die Session vor.</p>
       <ul>
@@ -78,7 +81,7 @@
       </ul>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Meine Quizze</h2>
       <p i18n>Unter „Meine Quizze" findest du alle lokal gespeicherten Quizze.</p>
       <ul>
@@ -89,7 +92,7 @@
       </ul>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Seriös und Spielerisch</h2>
       <p i18n>Zwei Voreinstellungen, wählbar auf der Startseite und in den Quiz-Einstellungen.</p>
       <ul>
@@ -99,7 +102,7 @@
       <p i18n>Alle Optionen (Rangliste, Sound, Lesephase, Team, Bonus) lassen sich einzeln an- und ausschalten.</p>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Weitere Funktionen</h2>
       <ul>
         <li i18n><strong>Bonus-Option:</strong> Top-Platzierte erhalten einen einlösbaren Code (z. B. für Bonuspunkte). Du kannst die Code-Liste einsehen; personenbezogene Daten werden nicht gespeichert.</li>
@@ -108,7 +111,7 @@
       </ul>
     </section>
 
-    <section class="help-section">
+    <section>
       <h2 i18n>Datenschutz und Technik</h2>
       <p i18n>arsnova.eu ist kostenlos, Open Source und DSGVO-konform. Quiz-Inhalte werden lokal im Browser gespeichert (Local-First). Blitz-Feedback-Runden laufen über Redis und verfallen automatisch nach 30 Minuten. Keine Anmeldung nötig.</p>
     </section>

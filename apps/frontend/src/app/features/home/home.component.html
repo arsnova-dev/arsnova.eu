@@ -5,9 +5,6 @@
           <span class="home-hero-break-mobile" i18n="@@homeHero.line2">live in einer App</span>
         </p>
         <p class="home-hero-usp" i18n>Für Schulen, Unis, Events &amp; Business</p>
-        @if (themePreset.preset() === 'spielerisch') {
-          <p class="home-hero-usp home-hero-usp--secondary" i18n>Bonus für die Besten</p>
-        }
 
         <div class="home-hero-preset-mobile" i18n-aria-label aria-label="Stil wählen">
           <mat-button-toggle-group
@@ -159,16 +156,6 @@
                   <mat-icon class="home-card__demo-btn-icon">play_circle</mat-icon>
                   <span i18n>Demo</span>
                 </a>
-              <a
-                matButton
-                routerLink="/help"
-                class="home-help-btn"
-                i18n-aria-label
-                i18n-aria-label aria-label="Hilfe öffnen"
-              >
-                <mat-icon>help</mat-icon>
-                <span i18n>Hilfe</span>
-              </a>
               </div>
             </div>
           </mat-card-content>
@@ -187,15 +174,6 @@
             <div class="home-cta-row">
               <a
                 matButton="tonal"
-                routerLink="/quiz/new"
-                class="home-cta home-cta--secondary"
-                (mouseenter)="preloadQuiz()"
-              >
-                <mat-icon class="home-cta__icon">add_circle</mat-icon>
-                <span i18n="@@homeHostCard.secondaryCta">Neues Quiz erstellen</span>
-              </a>
-              <a
-                matButton="tonal"
                 routerLink="/quiz"
                 class="home-cta home-cta--secondary"
                 (mouseenter)="preloadQuiz()"
@@ -203,7 +181,7 @@
                 [matBadgeHidden]="quizCount() === 0"
               >
                 <mat-icon class="home-cta__icon">library_books</mat-icon>
-                <span i18n="@@homeHostCard.libraryCta">Quiz-Bibliothek</span>
+                <span i18n="@@homeHostCard.libraryCta">Meine Quizze</span>
               </a>
             </div>
           </mat-card-actions>

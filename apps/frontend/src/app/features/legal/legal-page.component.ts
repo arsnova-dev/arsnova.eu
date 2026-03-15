@@ -1,18 +1,22 @@
+import { Location } from '@angular/common';
 import { Component, inject, NgZone, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
 import { Subject, takeUntil } from 'rxjs';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { getLocaleFromPath, type SupportedLocale } from '../../core/locale-from-path';
 
 @Component({
   selector: 'app-legal-page',
-  imports: [],
+  imports: [MatButton, MatIcon],
   templateUrl: './legal-page.component.html',
   styleUrls: ['./legal-page.component.scss'],
 })
 export class LegalPageComponent implements OnInit, OnDestroy {
+  private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
   private readonly sanitizer = inject(DomSanitizer);
@@ -22,6 +26,10 @@ export class LegalPageComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
   content = signal<SafeHtml | null>(null);
+
+  back(): void {
+    this.location.back();
+  }
 
   private getSlug(): string {
     return (this.route.snapshot.data['slug'] ?? this.route.snapshot.paramMap.get('slug') ?? '') as string;

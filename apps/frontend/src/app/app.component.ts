@@ -64,7 +64,6 @@ class ConnectionBannerHostDirective {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  readonly year = new Date().getFullYear();
   isOnline = signal(true);
   updateAvailable = signal(false);
   apiStatus = signal<string | null>(null);
@@ -101,6 +100,9 @@ export class AppComponent implements OnInit, OnDestroy {
   isFeedbackRoute = signal(
     typeof window !== 'undefined' && window.location.pathname.startsWith('/feedback/')
   );
+  isHomeRoute = signal(
+    typeof window !== 'undefined' && this.matchesHomeRoute(window.location.pathname)
+  );
   private lastScrollY = 0;
   private static readonly HIDE_SCROLL_THRESHOLD_PX = 80;
 
@@ -122,6 +124,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.presetSub = this.themePreset.presetChanged$.subscribe(() => this.onPresetChanged());
     if (isPlatformBrowser(this.platformId)) {
+      this.updateRouteFlags();
       this.isOnline.set(navigator.onLine);
       if (typeof requestIdleCallback !== 'undefined') {
         requestIdleCallback(() => void this.checkApiConnection(), { timeout: 2000 });
@@ -136,7 +139,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
         .subscribe(() => {
           this.toolbarHidden.set(false);
-          this.isFeedbackRoute.set(this.router.url.startsWith('/feedback/'));
+          this.updateRouteFlags();
           requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
         });
     }
@@ -385,5 +388,16 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.presetToastVisible()) {
       this.closePresetToast();
     }
+  }
+
+  private updateRouteFlags(): void {
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : this.router.url;
+    const normalizedPath = pathname.replace(/^\/(?:de|en|fr|it|es)(?=\/|$)/, '') || '/';
+    this.isFeedbackRoute.set(normalizedPath.startsWith('/feedback/'));
+    this.isHomeRoute.set(this.matchesHomeRoute(pathname));
+  }
+
+  private matchesHomeRoute(pathname: string): boolean {
+    return /^\/(?:de|en|fr|it|es)?\/?$/.test(pathname);
   }
 }

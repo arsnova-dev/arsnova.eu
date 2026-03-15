@@ -1,4 +1,10 @@
 <div class="legal-page l-page l-section">
+  <nav class="legal-back" aria-label="Navigation">
+    <button mat-button type="button" (click)="back()" i18n-aria-label="@@contentPage.backAria" aria-label="Zurück zur vorherigen Seite">
+      <mat-icon>arrow_back</mat-icon>
+      <span i18n="@@contentPage.back">Zurück</span>
+    </button>
+  </nav>
   @if (loading()) {
     <p class="legal-loading" i18n>Wird geladen…</p>
   } @else if (error()) {

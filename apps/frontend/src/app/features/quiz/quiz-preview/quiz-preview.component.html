@@ -1,43 +1,54 @@
 @if (quiz(); as quizData) {
   <section class="quiz-preview l-stack l-stack--sm">
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title i18n>Vorschau: {{ quizData.name }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        @if (quizData.description) {
-          <p class="quiz-preview__description">{{ quizData.description }}</p>
-        }
-
-        @if (questions().length > 0) {
-          <p class="quiz-preview__meta" i18n>Frage {{ currentIndex() + 1 }} von {{ questions().length }}</p>
-          <mat-progress-bar mode="determinate" [value]="progressValue()"></mat-progress-bar>
-          <nav class="quiz-preview__dots" i18n-aria-label aria-label="Frage wählen">
-            @for (q of questions(); track q.id; let i = $index) {
-              <button
-                class="quiz-preview__dot"
-                [class.quiz-preview__dot--active]="i === currentIndex()"
-                [class.quiz-preview__dot--warn]="hasWarningAtIndex(i)"
-                type="button"
-                (click)="goToQuestion(i)"
-                [attr.aria-label]="questionAriaLabel(i)"
-                [attr.aria-current]="i === currentIndex() ? 'step' : null"
-              ></button>
-            }
-          </nav>
-          <div class="quiz-preview__shortcuts" i18n-aria-label aria-label="Tastenkürzel">
-            <kbd>←</kbd><kbd>→</kbd>
-            <span class="quiz-preview__shortcut-label" i18n>Navigation</span>
-            <kbd>E</kbd>
-            <span class="quiz-preview__shortcut-label" i18n>Bearbeiten</span>
-            <kbd>Esc</kbd>
-            <span class="quiz-preview__shortcut-label" i18n>Zurück</span>
+    @if (questions().length > 0) {
+      <header class="quiz-preview__top-bar">
+        <mat-progress-bar mode="determinate" [value]="progressValue()" class="quiz-preview__progress"></mat-progress-bar>
+        <nav class="quiz-preview__dots" i18n-aria-label aria-label="Frage wählen">
+          @for (q of questions(); track q.id; let i = $index) {
+            <button
+              class="quiz-preview__dot"
+              [class.quiz-preview__dot--active]="i === currentIndex()"
+              [class.quiz-preview__dot--warn]="hasWarningAtIndex(i)"
+              type="button"
+              (click)="goToQuestion(i)"
+              [attr.aria-label]="questionAriaLabel(i)"
+              [attr.aria-current]="i === currentIndex() ? 'step' : null"
+            ></button>
+          }
+        </nav>
+        <nav class="quiz-preview__nav-bar" i18n-aria-label aria-label="Fragen-Navigation">
+          <span class="quiz-preview__nav-bar-spacer" aria-hidden="true"></span>
+          <div class="quiz-preview__nav-bar-arrows">
+            <button
+              mat-icon-button
+              type="button"
+              (click)="previousQuestion()"
+              [disabled]="currentIndex() === 0"
+              i18n-aria-label
+              aria-label="Vorherige Frage"
+            >
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              type="button"
+              (click)="nextQuestion()"
+              [disabled]="currentIndex() >= questions().length - 1"
+              i18n-aria-label
+              aria-label="Nächste Frage"
+            >
+              <mat-icon>chevron_right</mat-icon>
+            </button>
           </div>
-        } @else {
-          <p class="quiz-preview__meta" i18n>Fragen: 0</p>
-        }
-      </mat-card-content>
-    </mat-card>
+          <div class="quiz-preview__nav-bar-back">
+            <a mat-button [routerLink]="['../']" i18n-aria-label aria-label="Zurück zum Editor">
+              <mat-icon>arrow_back</mat-icon>
+              <span i18n="@@contentPage.back">Zurück</span>
+            </a>
+          </div>
+        </nav>
+      </header>
+    }
 
     @if (questions().length === 0) {
       <mat-card appearance="outlined" class="quiz-preview__empty-card">
@@ -179,34 +190,6 @@
         }
       </mat-card-content>
     </mat-card>
-
-    <nav class="quiz-preview__nav" i18n-aria-label aria-label="Fragen-Navigation">
-      <div class="quiz-preview__nav-paging">
-        <button mat-button type="button" (click)="previousQuestion()" [disabled]="currentIndex() === 0">
-          <mat-icon>chevron_left</mat-icon>
-          <span i18n>Vorherige</span>
-        </button>
-        <button
-          mat-button
-          type="button"
-          (click)="nextQuestion()"
-          [disabled]="currentIndex() >= questions().length - 1"
-        >
-          <span i18n>Nächste</span>
-          <mat-icon>chevron_right</mat-icon>
-        </button>
-      </div>
-      <div class="quiz-preview__nav-links">
-        <a mat-button [routerLink]="['../']" i18n-aria-label aria-label="Zurück zum Editor">
-          <mat-icon>edit</mat-icon>
-          <span i18n>Editor</span>
-        </a>
-        <a mat-button [routerLink]="['../../']" i18n-aria-label aria-label="Zurück zur Quiz-Liste">
-          <mat-icon>arrow_back</mat-icon>
-          <span i18n>Liste</span>
-        </a>
-      </div>
-    </nav>
   </section>
 } @else {
   <mat-card appearance="outlined">

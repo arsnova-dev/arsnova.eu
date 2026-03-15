@@ -405,6 +405,6 @@ export class QuizPreviewComponent implements OnDestroy {
     this.animationTimer = setTimeout(() => {
       this.swipeDirection.set(null);
       this.animationTimer = null;
-    }, 150);
+    }, 280);
   }
 }

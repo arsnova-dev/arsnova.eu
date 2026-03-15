@@ -2,6 +2,14 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="de" target-language="en" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="contentPage.back" datatype="html">
+        <source>Zurück</source>
+        <target>Back</target>
+      </trans-unit>
+      <trans-unit id="contentPage.backAria" datatype="html">
+        <source>Zurück zur vorherigen Seite</source>
+        <target>Back to previous page</target>
+      </trans-unit>
       <trans-unit id="2685999326867203280" datatype="html">
         <source>Offline. Verbindung prüfen.</source>
         <target>Offline. Check connection.</target>
@@ -3958,8 +3966,8 @@
         <target>Create new quiz</target>
       </trans-unit>
       <trans-unit id="homeHostCard.libraryCta" datatype="html">
-        <source>Quiz-Bibliothek</source>
-        <target>Quiz library</target>
+        <source>Meine Quizze</source>
+        <target>My quizzes</target>
       </trans-unit>
       <trans-unit id="help.demoCardHint" datatype="html">
         <source>Auf der Startseite in der Karte <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Veranstaltung starten<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> führt der Link <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Demo spielen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> in ein vorinstalliertes Beispiel-Quiz. Du siehst alle Frageformate (Multiple Choice, Freitext, Bewertungsskala usw.) inkl. KaTeX-Formeln und Markdown – ohne etwas anlegen zu müssen.</source>
