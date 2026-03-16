@@ -40,6 +40,19 @@
   padding-top: var(--session-host-run-offset);
 }
 
+.session-host--with-live-banner.session-host--with-channel-tabs .session-host__channel-panel--feedback {
+  padding-top: calc(var(--session-host-run-offset) + 1rem);
+  min-height: calc(100dvh - var(--session-host-run-offset) - 1rem);
+  display: flex;
+}
+
+@media (max-width: 599px) {
+  .session-host--with-live-banner.session-host--with-channel-tabs .session-host__channel-panel--feedback {
+    padding-top: calc(var(--session-host-run-offset) + 2rem);
+    min-height: calc(100dvh - var(--session-host-run-offset) - 0.75rem);
+  }
+}
+
 .session-channel-tabs-shell {
   position: fixed;
   top: var(--session-host-tabs-top);

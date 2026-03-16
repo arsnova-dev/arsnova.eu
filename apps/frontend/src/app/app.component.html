@@ -61,7 +61,10 @@
     [class.app-main--immersive-host]="isImmersiveHostView()"
     role="main"
   >
-    <div class="app-main__content" [class.app-main__content--centered]="!isPreviewRoute()">
+    <div
+      class="app-main__content"
+      [class.app-main__content--centered]="!isPreviewRoute() && !isFeedbackRoute() && !isImmersiveHostView()"
+    >
       <router-outlet />
     </div>
   </main>

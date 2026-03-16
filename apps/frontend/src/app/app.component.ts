@@ -102,7 +102,8 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Toolbar beim Runterscrollen ausblenden, beim Hochscrollen einblenden (UX-Empfehlung, alle Seiten). */
   toolbarHidden = signal(false);
   isFeedbackRoute = signal(
-    typeof window !== 'undefined' && window.location.pathname.startsWith('/feedback/')
+    typeof window !== 'undefined' &&
+      (window.location.pathname.replace(/^\/(?:de|en|fr|it|es)(?=\/|$)/, '') || '/').startsWith('/feedback/')
   );
   isPreviewRoute = signal(
     typeof window !== 'undefined' && this.matchesPreviewRoute(window.location.pathname)
@@ -321,7 +322,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onPresetChanged(): void {
-    if (this.router.url.startsWith('/feedback/')) return;
+    if ((this.router.url.replace(/^\/(?:de|en|fr|it|es)(?=\/|$)/, '') || '/').startsWith('/feedback/')) return;
     this.focusService.blurInput();
     const isPlayful = this.themePreset.preset() === 'spielerisch';
     const firstTime =

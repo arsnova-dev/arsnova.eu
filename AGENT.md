@@ -12,6 +12,12 @@ Für Pfade (`apps/backend`, `apps/frontend`, `libs/shared-types`), strikte Monor
 * Liefer bei jeder Story die **DoD-Tests mit** (siehe Abschnitt „Test-Regel: Tests gehören zur Story“).
 * Bevor du eine Story als fertig markierst: einen einfachen **tRPC-Integrationstest** generieren, der das DTO-Stripping (z.B. kein `isCorrect` an Studenten in ACTIVE) verifiziert, sofern die Story Frage-Auslieferung betrifft.
 
+### Scroll- und Layout-Debugging
+* Bei Scroll-, Overlay- oder "Inhalt ist da, aber nicht erreichbar"-Fehlern in Live-Ansichten **nicht mehrfach blind per Komponenten-CSS nachjustieren**.
+* Frueh den **tatsaechlichen Scrollcontainer** im Browser pruefen (`app-main`, eingebettete Panels, Dialog-Content, Listen-Container) und nicht nur die betroffene Komponente.
+* Immer auch auf **fixed/sticky Ueberlagerungen** achten (Toolbar, Channel-Tabs, Live-Banner, Floating Controls). Das sichtbare Problem sitzt oft in der Kombination aus globalem Layout und eingebettetem Feature.
+* **Mobile und Desktop getrennt pruefen**: unterschiedliche Top-Offsets, Banner-Hoehen und Zentrierungsregeln koennen auf einer Plattform funktionieren und auf der anderen scheitern.
+
 ## 🧪 Unit-Tests (Angular Style Guide)
 * **Platzierung:** Unit-Test-Dateien liegen **im gleichen Ordner** wie die zu testende Datei (z.B. Komponente, Service, Pipe).
 * **Benennung:** Gleicher Basis-Dateiname + `.spec.ts` (z.B. `home.component.ts` → `home.component.spec.ts`, `preset-toast.component.ts` → `preset-toast.component.spec.ts`).
