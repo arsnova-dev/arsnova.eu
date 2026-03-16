@@ -1,0 +1,526 @@
+<!-- markdownlint-disable MD013 -->
+
+# Quiz-Bibliothek Synchronisierung
+
+**Zielgruppe:** Entwicklerinnen, Entwickler und technisch interessierte Personen  
+**Stand:** 2026-03-16  
+**Status:** Living Document
+
+## 1. Zweck
+
+Dieses Dokument beschreibt die Synchronisierung der **Quiz-Bibliothek** in `arsnova.eu`.
+
+Im Zentrum stehen drei Anforderungen:
+
+- **Local-First:** Die dauerhafte Quelle der Quiz-Bibliothek liegt im Browser, nicht auf dem Server.
+- **Zero-Knowledge:** Der Server speichert keine dauerhafte Kopie der Bibliothek.
+- **Multi-Device-Sync ohne Account:** Eine Bibliothek kann über Sync-Link oder Sync-ID auf mehreren Geräten genutzt werden.
+
+Dieses Dokument ergänzt insbesondere:
+
+- [ADR-0004: Nutzung von Yjs (CRDTs) für Local-First Speicherung](./decisions/0004-use-yjs-for-local-first-storage.md)
+- [Architektur-Handbuch](./handbook.md)
+- [Diagramme: arsnova.eu](../diagrams/diagrams.md)
+
+## 2. Begriffe
+
+- **Quiz-Bibliothek:** Die lokal gehaltene Sammlung aller Quizzes eines Geräts.
+- **Sync-Raum:** Der logische Yjs-Raum, in dem mehrere Geräte dieselbe Bibliothek teilen.
+- **Sync-ID:** Die technische Raum-ID, aus der im UI ein kurzer Code abgeleitet wird.
+- **Sync-Link:** URL auf `quiz/sync/:docId`, über die ein Gerät gezielt in einen Sync-Raum einsteigt.
+- **Origin / Ursprungsgerät:** Das Gerät, auf dem eine Bibliothek erstmals bewusst für andere Geräte freigegeben wurde.
+- **Remote-Änderung:** Eine Änderung, die über Yjs von einem anderen Gerät übernommen wird.
+- **Awareness:** Flüchtige Präsenzdaten von `y-websocket`, etwa Gerätetyp und Browser anderer aktiver Clients.
+
+## 3. Architekturüberblick
+
+Die Synchronisierung ist vollständig frontendgetrieben. Das Backend stellt nur den Yjs-WebSocket-Relay bereit.
+
+```mermaid
+flowchart LR
+    subgraph BrowserA["Browser A"]
+        UIA[Angular UI]
+        STOREA[QuizStoreService]
+        META_A[(localStorage<br/>Room-Mirror + Sync-Metadaten)]
+        IDB_A[(IndexedDB<br/>y-indexeddb)]
+        YDOC_A[Y.Doc + Y.Map]
+    end
+
+    subgraph BrowserB["Browser B"]
+        UIB[Angular UI]
+        STOREB[QuizStoreService]
+        META_B[(localStorage<br/>Room-Mirror + Sync-Metadaten)]
+        IDB_B[(IndexedDB<br/>y-indexeddb)]
+        YDOC_B[Y.Doc + Y.Map]
+    end
+
+    subgraph Relay["Backend / Relay"]
+        YWS[y-websocket<br/>/yjs-ws oder :3002]
+    end
+
+    UIA --> STOREA
+    STOREA --> META_A
+    STOREA --> IDB_A
+    STOREA --> YDOC_A
+
+    UIB --> STOREB
+    STOREB --> META_B
+    STOREB --> IDB_B
+    STOREB --> YDOC_B
+
+    YDOC_A <--> YWS
+    YDOC_B <--> YWS
+```
+
+## 4. Technische Bausteine
+
+### 4.1 Frontend Store
+
+Die Kernlogik liegt in `apps/frontend/src/app/features/quiz/data/quiz-store.service.ts`.
+
+Wesentliche Aufgaben des Stores:
+
+- lokale Quiz-Bibliothek halten
+- Änderungen lokal persistieren
+- Yjs initialisieren und beenden
+- Room-Wechsel durchführen
+- Remote-Snapshots anwenden
+- Sync-Metadaten und Vertrauenssignale pflegen
+
+### 4.2 Persistenzschichten
+
+Die Bibliothek wird bewusst auf mehreren Ebenen gehalten:
+
+- **Signals im Speicher:** aktive Arbeitskopie der UI
+- **localStorage Room-Mirror:** serialisierte Bibliothek pro Raum, plus Legacy-Mirror
+- **IndexedDB via `y-indexeddb`:** lokale Yjs-Persistenz
+- **Yjs Relay:** Übertragung der Deltas zwischen Geräten
+
+### 4.3 WebSocket-Ziele
+
+Die URL wird im Frontend bestimmt:
+
+- lokal: `ws://127.0.0.1:3002`
+- produktionsnah: `wss://<host>/yjs-ws`
+
+Damit kann dieselbe Frontend-Logik lokal und hinter Reverse Proxy betrieben werden.
+
+## 5. Einstiegswege in die Synchronisierung
+
+Es gibt aktuell zwei fachlich unterschiedliche Einstiegswege:
+
+1. **Bibliothek freigeben**
+   über `quiz/sync/:docId`
+2. **Bibliothek importieren / auf diesem Gerät weiterführen**
+   über das Eingabefeld auf der Startseite
+
+Der Unterschied ist wichtig, weil nur beim ersten Weg das **Ursprungsgerät** registriert wird.
+
+```mermaid
+sequenceDiagram
+    participant U as Nutzer
+    participant Home as HomeComponent
+    participant SyncPage as QuizSyncComponent
+    participant Store as QuizStoreService
+
+    alt Freigeben auf Ursprungsgerät
+        U->>SyncPage: /quiz/sync/:docId öffnen
+        SyncPage->>Store: activateSyncRoom(docId, { markShared: true, registerOrigin: true })
+        Store->>Store: librarySharingMode = shared
+        Store->>Store: origin nur einmalig setzen
+    else Import auf weiterem Gerät
+        U->>Home: Sync-Link oder Sync-ID eingeben
+        Home->>Store: activateSyncRoom(docId, { markShared: true })
+        Store->>Store: librarySharingMode = shared
+        Store->>Store: Origin bleibt unverändert
+    end
+```
+
+## 6. Room-Aktivierung und lokale Wiederaufnahme
+
+Bei `activateSyncRoom()` passiert in komprimierter Form:
+
+1. Sync-ID normalisieren und validieren
+2. optional Bibliothek als `shared` markieren
+3. vorhandene Yjs-Instanz sauber abbauen
+4. neuen Raum aktiv setzen und lokal merken
+5. Sync-Metadaten für diesen Raum laden
+6. falls nötig Origin einmalig registrieren
+7. Bibliothek aus lokalem Room-Mirror laden
+8. Yjs + IndexedDB + Awareness starten
+
+Das ist wichtig für die UX:
+
+- Ein Gerätewechsel fühlt sich wie das Öffnen derselben Bibliothek an.
+- Ein Raumwechsel ist ein echter Kontextwechsel mit separatem Mirror und separaten Metadaten.
+
+## 7. Datenfluss bei lokalen Änderungen
+
+Lokale Änderungen entstehen etwa bei:
+
+- Quiz anlegen
+- Quiz-Metadaten ändern
+- Fragen hinzufügen, ändern, löschen, sortieren
+- Quiz importieren oder duplizieren
+
+Bei jeder lokalen Änderung ergänzt der Store Geräte-Metadaten am betroffenen `QuizDocument`:
+
+- `updatedByDeviceId`
+- `updatedByDeviceLabel`
+- `updatedByBrowserLabel`
+
+Danach läuft die Persistenzkette:
+
+```mermaid
+sequenceDiagram
+    participant UI as Angular UI
+    participant Store as QuizStoreService
+    participant LS as localStorage
+    participant Y as Y.Doc / Y.Map
+    participant Relay as y-websocket Relay
+
+    UI->>Store: lokale Quiz-Änderung
+    Store->>Store: QuizDocument mit updatedBy* anreichern
+    Store->>Store: recordLocalChange()
+    Store->>LS: Room-Mirror schreiben
+    Store->>Y: JSON-Snapshot in Y.Map schreiben
+    Y->>Relay: Delta senden
+```
+
+## 8. Datenfluss bei Remote-Übernahme
+
+Wenn ein anderes Gerät schreibt, empfängt der aktuelle Client über Yjs einen neuen Snapshot.
+
+```mermaid
+sequenceDiagram
+    participant Remote as Anderes Gerät
+    participant Relay as y-websocket Relay
+    participant Store as QuizStoreService
+    participant LS as localStorage
+    participant UI as Angular UI
+
+    Remote->>Relay: Yjs-Delta
+    Relay->>Store: Root-Änderung
+    Store->>Store: applyYjsSnapshot()
+    Store->>Store: JSON in QuizDocument[] normalisieren
+    Store->>Store: determineLastChangedQuiz()
+    Store->>Store: recordRemoteSync()
+    Store->>LS: Bibliotheks-Mirror aktualisieren
+    Store->>LS: Sync-Metadaten aktualisieren
+    Store->>UI: Signals aktualisieren
+```
+
+Wichtige Ableitungen dabei:
+
+- **letzte übernommene Änderung**
+- **betroffenes Quiz**
+- **Gerät der letzten Remote-Änderung**
+- **Zeitpunkt der letzten Remote-Übernahme**
+
+## 9. Sync-Metadatenmodell
+
+Neben der Bibliothek selbst speichert das Frontend pro Raum ein separates Metadatenobjekt.
+
+```mermaid
+classDiagram
+    class QuizDocument {
+      +id: string
+      +name: string
+      +updatedAt: string
+      +updatedByDeviceId: string|null
+      +updatedByDeviceLabel: string|null
+      +updatedByBrowserLabel: string|null
+    }
+
+    class SyncMetadataSnapshot {
+      +lastConnectedAt: string|null
+      +lastLocalChangeAt: string|null
+      +lastRemoteSyncAt: string|null
+      +lastRemoteChangedQuizName: string|null
+      +lastRemoteChangedQuizUpdatedAt: string|null
+      +lastRemoteChangedByDeviceLabel: string|null
+      +lastRemoteChangedByBrowserLabel: string|null
+      +originSharedAt: string|null
+      +originDeviceLabel: string|null
+      +originBrowserLabel: string|null
+    }
+
+    class SyncClientPresence {
+      +deviceId: string
+      +deviceLabel: string
+      +browserLabel: string
+    }
+
+    QuizDocument --> SyncMetadataSnapshot : liefert letzte Remote-Hinweise
+    SyncClientPresence --> SyncMetadataSnapshot : ergänzt aktive Präsenz
+```
+
+### Semantik
+
+- **Origin-Felder** sind stabil und werden nur einmalig gesetzt.
+- **Remote-Felder** sind laufende Diagnose- und Vertrauensinformationen.
+- **Awareness-Daten** sind flüchtig und gelten nur für aktuell verbundene Geräte.
+
+## 10. UI-Sicht auf die Synchronisierung
+
+Die Bibliotheksseite zeigt die Synchronisierung bewusst nicht als rein technischen Debug-Block, sondern als Vertrauenssignal.
+
+Der Expander in `QuizListComponent` zeigt:
+
+- Verbindungsstatus
+- Sync-ID
+- aktuelles Gerät
+- weitere aktive Geräte
+- Ursprungsgerät und Freigabezeitpunkt
+- letzte übernommene Änderung
+- Gerät der letzten Remote-Änderung
+- letzte lokale Änderung
+
+Ziel dieser Darstellung:
+
+- nachvollziehbar machen, **ob** die Bibliothek geteilt ist
+- sichtbar machen, **woher** Änderungen kommen
+- ohne Accountsystem trotzdem **Vertrauen** schaffen
+
+## 11. Was der Server weiß und was nicht
+
+Das ist für Architektur und Datenschutz zentral:
+
+### Der Server weiß
+
+- dass Clients über denselben Yjs-Raum verbunden sind
+- die flüchtigen Yjs-Deltas für die Übertragung
+- WebSocket-Verbindungszustände während der Laufzeit
+
+### Der Server weiß nicht dauerhaft
+
+- wem eine Bibliothek gehört
+- welche Person hinter einem Gerät steht
+- eine dauerhafte Klartext-Kopie der kompletten Quiz-Bibliothek
+
+Die Vertrauensinformationen im UI stammen deshalb **nicht** aus einem Benutzerkonto, sondern aus lokaler Metadatenpflege plus Awareness.
+
+## 12. Sicherheitskonzept
+
+### 12.1 Aktuelles Schutzmodell
+
+Das aktuelle Sync-Feature folgt einem einfachen **Bearer-Secret-Modell**:
+
+- Der Besitz des **Sync-Links** beziehungsweise der zugrunde liegenden **Room-ID** ist der Zugriffsschlüssel.
+- Es gibt **keine Benutzerkonten**, keine serverseitige Eigentümerprüfung und keine getrennten Rollen für Lesen/Bearbeiten.
+- Der Yjs-Relay dient als Transportpfad; er prüft aktuell nicht fachlich, **wer** auf einen Raum zugreifen darf.
+
+Das Modell ist bewusst niedrigschwellig und passt zum Local-First-Ansatz, ist aber sicherheitlich nur so stark wie die Geheimhaltung des Links.
+
+### 12.2 Was bereits abgesichert ist
+
+Für Eingaben und Fehlbedienungen existieren bereits grundlegende Schutzmechanismen:
+
+- Sync-Raum-IDs werden nur in einem engen Zeichenraum akzeptiert (`[a-zA-Z0-9_-]`, Länge `8..128`).
+- Die Startseite extrahiert nur explizit erlaubte Sync-URLs (`/quiz/sync/:docId`) oder rohe IDs im erlaubten Format.
+- Ungültige Werte werden früh zurückgewiesen und nicht an den Store übergeben.
+- Die Raum-ID-Erzeugung basiert auf `crypto.randomUUID()` sofern verfügbar.
+
+### 12.3 Sicherheitsgrenzen des aktuellen Modells
+
+Trotz dieser Validierung gibt es klare Grenzen:
+
+1. **Besitz des Links ist Besitz des Zugriffs.**  
+   Wer den Link kennt, kann die Bibliothek auf einem anderen Gerät öffnen.
+
+2. **Die kurze angezeigte Sync-ID ist kein eigener Sicherheitsmechanismus.**  
+   Die nutzerfreundliche Darstellung darf nicht mit einem eigenständigen, verifizierten Share-Code verwechselt werden.
+
+3. **Geräte- und Herkunftsinformationen sind Vertrauenssignale, keine Beweise.**  
+   `deviceLabel`, `browserLabel` und Awareness-Daten stammen aus Clientangaben und sind nicht als manipulationssichere Nachweise zu verstehen.
+
+4. **Es gibt derzeit keine serverseitige Raumautorisierung.**  
+   Weder Signaturen noch Ablaufdaten oder Rotation schützen einen geleakten Link.
+
+### 12.4 Sicherheitsziel des Features
+
+Das realistische Sicherheitsziel ist derzeit:
+
+- versehentliche Fehleingaben robust abweisen
+- Sync-Räume schwer erratbar machen
+- Herkunft und Aktivität transparent machen
+- ohne Benutzerkonto trotzdem eine nachvollziehbare Freigabelogik bieten
+
+Nicht Ziel des aktuellen Modells ist:
+
+- starke Identitätsprüfung
+- personenbezogene Eigentümerbindung
+- forensisch belastbare Auditierung
+
+### 12.5 Empfohlene Härtungsstufen
+
+#### Stufe A: kurzfristig
+
+- **Sync-Link als primären Zugangspfad kommunizieren**  
+  Die UI sollte klar sagen, dass der Link selbst der Zugriffsschlüssel ist.
+
+- **Security-Wording ergänzen**  
+  Zum Beispiel: „Wer den Sync-Link hat, kann diese Bibliothek auf einem anderen Gerät öffnen.“
+
+- **Kurz-ID semantisch bereinigen**  
+  Entweder nur noch als Anzeigehilfe, oder später durch einen echten auflösbaren Kurzcode ersetzen.
+
+#### Stufe B: mittelfristig
+
+- **Rate-Limits für Sync-Raum-Zugriffe**  
+  Schutz gegen massenhafte Join-Versuche oder Raumtests.
+
+- **Signiertes Share-Token statt nackter Raum-ID**  
+  Zugriff über `roomId + token` oder vergleichbares Share-Modell.
+
+- **Link-Rotation**  
+  Möglichkeit, alte Freigaben ungültig zu machen.
+
+#### Stufe C: langfristig
+
+- **Ablaufzeiten für Freigaben**
+- **getrennte Rollen für Öffnen und Bearbeiten**
+- **stärkerer serverseitiger Schutz für Share-Auflösung**
+
+### 12.6 Empfehlung für weitere Entwicklung
+
+Die nächste sinnvolle Sicherheitsinvestition ist nicht ein Vollumbau, sondern:
+
+1. UI-Semantik des Links schärfen
+2. kurze Sync-ID fachlich bereinigen
+3. danach Share-Token und Rotation konzipieren
+
+So bleibt das Feature verständlich und gewinnt schrittweise an Schutz, ohne den Local-First-Ansatz aufzugeben.
+
+## 13. Grenzen und bewusste Nicht-Ziele
+
+### 13.1 Keine rückwirkende Herkunft für Altbestände
+
+Bibliotheken, die schon geteilt waren, bevor `originSharedAt` und `originDevice*` eingeführt wurden, können ihre ursprüngliche Quelle nicht rückwirkend zuverlässig rekonstruieren.
+
+### 13.2 Keine personenbezogene Identität
+
+Das System erkennt nur neutrale Geräte-/Browserlabels wie:
+
+- `Mac`
+- `iPhone`
+- `Firefox`
+- `Chrome`
+
+Es gibt bewusst keine Nutzerkonten und keine persönliche Autorenzuordnung.
+
+### 13.3 Kein Audit-Log des kompletten Änderungsverlaufs
+
+Aktuell wird **der letzte sichtbare Zustand** dokumentiert, nicht eine vollständige Historie aller Änderungen.
+
+## 14. Typische Fehlerszenarien
+
+### Verbindung steht nicht
+
+Mögliche Ursachen:
+
+- Yjs-WebSocket nicht erreichbar
+- falsche lokale Host-Konfiguration
+- zweites Gerät nutzt lokale `127.0.0.1`-Entwicklung statt Produktion
+
+Symptome:
+
+- Status bleibt auf `connecting` oder `offline`
+- keine Awareness-Peers sichtbar
+- Remote-Änderungen erscheinen nicht
+
+### Bibliothek wirkt veraltet
+
+Mögliche Ursachen:
+
+- falscher Sync-Raum aktiv
+- anderer Raum-Mirror in `localStorage`
+- Origin/Remote-Metadaten vorhanden, aber keine neue Remote-Änderung
+
+### Herkunft unbekannt
+
+Mögliche Ursachen:
+
+- Altbestand ohne Origin-Metadaten
+- Bibliothek wurde importiert, aber nie auf der Share-Seite erzeugt
+
+## 15. Hinweise für Weiterentwicklung
+
+Wer das Feature erweitert, sollte folgende Regeln einhalten:
+
+1. **Origin nicht überschreiben.**  
+   Ursprung bleibt stabil, auch wenn später weitere Geräte dieselbe Bibliothek öffnen.
+
+2. **Remote- und Origin-Semantik nicht vermischen.**  
+   `lastRemoteChangedBy...` ist nicht dasselbe wie `originDevice...`.
+
+3. **Lokale Änderungen immer mit Geräte-Metadaten anreichern.**  
+   Sonst verliert die UI ihre Vertrauenssignale.
+
+4. **UI-Texte und Übersetzungen immer gemeinsam pflegen.**  
+   Das Feature lebt stark von verständlicher Sprache.
+
+5. **Bei neuen Sync-Signalen zwischen dauerhaft und flüchtig unterscheiden.**  
+   `Awareness` ist live, aber nicht historisch belastbar.
+
+## 16. Performance und Skalierung
+
+### 15.1 Aktuelle Risiken
+
+Die aktuelle Architektur ist für normale Bibliotheksgrößen gut geeignet, hat aber klare Lasttreiber:
+
+- die Bibliothek wird als JSON-Snapshot in Yjs gehalten
+- größere Bibliotheken erzeugen teurere Serialisierung
+- `localStorage` läuft synchron auf dem Main Thread
+- lokale Vertrauensmetadaten erzeugen zusätzliche Schreibvorgänge
+
+### 15.2 Kurzfristige Optimierungen, die bereits umgesetzt wurden
+
+Folgende Quick Wins wurden bereits umgesetzt:
+
+- **Serialisierung pro Änderung nur noch einmal:** derselbe JSON-Snapshot wird für lokalen Mirror und Yjs weiterverwendet
+- **Snapshot-Cache statt erneuter Vollserialisierung beim Vergleich:** eingehende Remote-Snapshots werden gegen den zuletzt bekannten serialisierten Zustand verglichen
+- **Gebündelte Persistenz von Sync-Metadaten:** Zeitstempel und Herkunftsinformationen werden leicht verzögert zusammen in `localStorage` geschrieben
+
+Diese Maßnahmen ändern die Architektur nicht grundlegend, senken aber unnötige CPU- und Main-Thread-Arbeit.
+
+### 15.3 Nächste sinnvolle Optimierungsstufe
+
+Wenn die Bibliotheken größer werden oder mehrere Geräte intensiver parallel arbeiten, sind dies die nächsten Hebel:
+
+1. **Legacy-Mirror schrittweise zurückbauen**  
+   Der zusätzliche `QUIZ_STORAGE_LEGACY_KEY` verdoppelt einen Teil der lokalen Schreibarbeit.
+
+2. **Room-Mirror weiter reduzieren**  
+   Langfristig sollte `localStorage` nur noch kleine Metadaten halten, nicht die eigentliche Bibliothek.
+
+3. **Messpunkte einbauen**  
+   Sinnvoll sind Logging oder Telemetrie für:
+   - Größe des serialisierten Bibliotheks-Snapshots
+   - Dauer von Mirror-Writes
+   - Dauer von Yjs-Writes
+   - Anzahl der Schreibvorgänge pro Nutzeraktion
+
+4. **Yjs granular statt als JSON-Blob nutzen**  
+   Der größte Architekturhebel ist ein Umbau auf `Y.Map`/`Y.Array` pro Quiz, Frage und Antwort.
+   Dann würden nicht mehr komplette Bibliotheken neu serialisiert, sondern nur echte Teiländerungen.
+
+### 15.4 Empfohlene Reihenfolge
+
+Für die Weiterentwicklung ist diese Reihenfolge sinnvoll:
+
+1. bestehende Quick Wins stabil halten
+2. Legacy-Mirror abbauen
+3. reale Messwerte mit größeren Bibliotheken sammeln
+4. erst danach über den Umbau auf granulare Yjs-Strukturen entscheiden
+
+## 17. TL;DR
+
+Die Synchronisierung der Quiz-Bibliothek ist in `arsnova.eu` ein **frontendzentriertes Local-First-System**:
+
+- Yjs liefert konfliktfreie Multi-Device-Synchronisierung
+- IndexedDB und lokale Mirror machen die Bibliothek offlinefähig
+- der Server ist Relay, nicht dauerhafte Datenquelle
+- zusätzliche lokale Metadaten machen Herkunft, letzte Änderungen und aktive Geräte nachvollziehbar
+
+Genau diese Kombination macht das Feature technisch anspruchsvoll: Es verbindet CRDT-Sync, Offline-Persistenz, bewusst geringe Serverkenntnis und vertrauensbildende UX ohne Benutzerkonto.

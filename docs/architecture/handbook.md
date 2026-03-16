@@ -69,6 +69,10 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 - [ADR-0009: Unified Live-Session Channels (Quiz, Q&A, Blitzlicht)](./decisions/0009-unified-live-session-channels.md)
 - [ADR-0010: Blitzlicht als Kernmodus mit konsistenter UX in Startseite und Live-Session](./decisions/0010-blitzlicht-as-core-live-mode.md)
 
+**Vertiefende Architektur-Dokumente:**
+
+- [Quiz-Bibliothek Synchronisierung](./quiz-library-sync.md)
+
 ---
 
 ## 5. Datenmodell (Single Source of Truth)

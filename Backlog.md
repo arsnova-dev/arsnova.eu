@@ -31,6 +31,8 @@
 | 1    | 1.6   | Yjs Multi-Device-Sync                         | 🟢   | ✅ Fertig |
 | 1    | 1.6a  | Quiz auf anderem Gerät öffnen (Sync-Key/Link) | 🟡   | ✅ Fertig |
 | 1    | 1.6b  | Preset & Optionen beim Sync mitführen          | 🟢   | ✅ Fertig |
+| 1    | 1.6c  | Sync-Sicherheit härten                         | 🔴   | ⬜ Offen  |
+| 1    | 1.6d  | Sync-Performance & Skalierung optimieren       | 🟡   | ⬜ Offen  |
 | 1    | 1.7   | Markdown & KaTeX                              | 🔴   | ✅ Fertig |
 | 1    | 1.8   | Quiz exportieren                              | 🟡   | ✅ Fertig |
 | 1    | 1.9   | Quiz importieren                              | 🟡   | ✅ Fertig |
@@ -90,7 +92,7 @@
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 23 · 🟡 Should: 32 · 🟢 Could: 14 = **69 Storys gesamt**
+> **Statistik:** 🔴 Must: 24 · 🟡 Should: 33 · 🟢 Could: 14 = **71 Storys gesamt**
 
 ---
 
@@ -271,6 +273,20 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Beim Öffnen eines Sync-Links auf dem anderen Client werden diese Einstellungen übernommen (Preset-Anzeige, Optionen-Chips); bei Konflikt gewinnt „last write“ oder CRDT-Merge (z. B. einzelne Optionen als Y-Map).
     - Ohne aktiven Sync bleibt das bisherige Verhalten (nur localStorage); mit Sync werden Änderungen an Preset/Optionen ins Yjs-Dokument geschrieben und so auf andere Clients übertragen.
     - Abhängig von Story 1.6 bzw. 1.6a (Sync-Link/Key muss vorhanden sein).
+- **Story 1.6c (Sync-Sicherheit härten):** 🔴 Als Dozent möchte ich, dass geteilte Quiz-Bibliotheken sicherer geöffnet werden können, damit ein versehentlich weitergegebener oder missverstandener Sync-Zugang nicht stillschweigend Vollzugriff gewährt.
+  - **Akzeptanzkriterien:**
+    - Die UI erklärt klar, dass der **Sync-Link** der eigentliche Zugriffsschlüssel ist.
+    - Die aktuell verkürzte Anzeige der **Sync-ID** wird fachlich bereinigt: entweder nur noch als Anzeigehilfe oder durch einen echten, technisch auflösbaren Kurzcode ersetzt.
+    - Für Sync-Raum-Zugriffe existiert ein Schutzkonzept gegen Missbrauch (mindestens Rate-Limit oder gleichwertige Begrenzung auf Relay-/Proxy-Ebene).
+    - Ein Härtungspfad für **signierte Share-Tokens** und **Link-Rotation** ist konzipiert und dokumentiert.
+    - Herkunfts- und Geräteangaben werden im UI und in der Doku ausdrücklich als **Vertrauenssignale**, nicht als manipulationssichere Sicherheitsnachweise beschrieben.
+- **Story 1.6d (Sync-Performance & Skalierung optimieren):** 🟡 Als Dozent möchte ich, dass die Synchronisierung meiner Quiz-Bibliothek auch bei größeren Bibliotheken und mehreren Geräten flüssig bleibt, damit Bearbeitung und Gerätewechsel nicht durch spürbare Verzögerungen ausgebremst werden.
+  - **Akzeptanzkriterien:**
+    - Kurzfristige Optimierungen reduzieren unnötige Vollserialisierung und bündeln lokale Persistenzvorgänge.
+    - Für größere Bibliotheken werden Messpunkte dokumentiert oder implementiert (z. B. Snapshot-Größe, Dauer von Mirror-/Yjs-Writes, Anzahl von Writes pro Aktion).
+    - Der Legacy-Mirror in `localStorage` ist auf seine Notwendigkeit geprüft und kann perspektivisch reduziert oder entfernt werden.
+    - Ein technischer Zielpfad für eine granularere Yjs-Modellierung (`Y.Map`/`Y.Array` statt JSON-Blob) ist dokumentiert.
+    - Die Architektur-Dokumentation benennt klar, welche Quick Wins bereits umgesetzt sind und welche Skalierungsmaßnahmen noch offen bleiben.
 - **Story 1.7 (Markdown & KaTeX):** 🔴 Als Dozent möchte ich im Fragenstamm und in den Antwortoptionen Markdown und KaTeX-Formeln verwenden können, damit ich mathematische und formatierte Inhalte ansprechend darstellen kann.
   - **Akzeptanzkriterien:**
     - Fragenstamm (`Question.text`) und Antworttext (`AnswerOption.text`) akzeptieren Markdown-Syntax (Fett, Kursiv, Listen, Code-Blöcke, Bilder).

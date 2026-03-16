@@ -352,6 +352,11 @@ export class QuizStoreService {
   private yProvider: WebsocketProvider | null = null;
   private isApplyingYjsSnapshot = false;
   private hasStoredSyncRoomId = false;
+  private lastSerializedQuizDocuments = '[]';
+  private lastSerializedRoomId = '';
+  private pendingSyncMetadataRoomId: string | null = null;
+  private pendingSyncMetadataSnapshot: SyncMetadataSnapshot | null = null;
+  private hasPendingSyncMetadataFlush = false;
   private readonly currentSyncDeviceId = this.resolveCurrentSyncDeviceId();
   private readonly onPresetUpdated = (): void => {
     this.writePresetSnapshotToYjs();
@@ -898,6 +903,7 @@ export class QuizStoreService {
       const parsed = JSON.parse(sourceRaw) as unknown;
       const validQuizzes = normalizeStoredQuizzes(parsed);
       this.quizDocuments.set(validQuizzes);
+      this.updateSerializedQuizCache(roomId, JSON.stringify(validQuizzes));
 
       if (!raw && legacyRaw) {
         this.persistLocalMirror();
@@ -906,25 +912,28 @@ export class QuizStoreService {
       }
     } catch {
       this.quizDocuments.set([]);
+      this.updateSerializedQuizCache(roomId, '[]');
     }
   }
 
   private persistToStorage(): void {
     this.recordLocalChange();
-    this.persistLocalMirror();
-    this.writeYjsSnapshot();
+    const serialized = this.serializeQuizDocuments();
+    this.persistLocalMirror(serialized);
+    this.writeYjsSnapshot(serialized);
   }
 
-  private persistLocalMirror(): void {
+  private persistLocalMirror(serialized?: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const roomId = this.syncRoomId();
     if (!roomId) return;
+    const payload = serialized ?? this.serializeQuizDocuments();
 
     try {
-      const serialized = JSON.stringify(this.quizDocuments());
-      localStorage.setItem(this.storageKeyForRoom(roomId), serialized);
+      localStorage.setItem(this.storageKeyForRoom(roomId), payload);
       // Legacy mirror for backward compatibility with existing clients/tests.
-      localStorage.setItem(QUIZ_STORAGE_LEGACY_KEY, serialized);
+      localStorage.setItem(QUIZ_STORAGE_LEGACY_KEY, payload);
+      this.updateSerializedQuizCache(roomId, payload);
     } catch {
       // Ignore quota/unavailable storage and keep in-memory state.
     }
@@ -1021,7 +1030,7 @@ export class QuizStoreService {
 
     const raw = this.yRoot.get(QUIZ_YDOC_ROOT_KEY);
     if (typeof raw !== 'string') return;
-    if (raw === JSON.stringify(this.quizDocuments())) return;
+    if (raw === this.lastSerializedQuizDocuments && this.lastSerializedRoomId === this.syncRoomId()) return;
 
     try {
       const parsed = JSON.parse(raw) as unknown;
@@ -1033,7 +1042,7 @@ export class QuizStoreService {
       if (lastRemoteChangedQuiz) {
         this.recordRemoteSync(lastRemoteChangedQuiz);
       }
-      this.persistLocalMirror();
+      this.persistLocalMirror(raw);
     } catch {
       // Ignore malformed CRDT payload and keep current in-memory state.
     } finally {
@@ -1102,11 +1111,27 @@ export class QuizStoreService {
       originBrowserLabel: this.originBrowserLabel(),
     };
 
-    try {
-      localStorage.setItem(this.syncMetadataStorageKey(roomId), JSON.stringify(snapshot));
-    } catch {
-      // Ignore quota/unavailable storage and keep in-memory metadata.
+    this.pendingSyncMetadataRoomId = roomId;
+    this.pendingSyncMetadataSnapshot = snapshot;
+    if (this.hasPendingSyncMetadataFlush) {
+      return;
     }
+
+    this.hasPendingSyncMetadataFlush = true;
+    queueMicrotask(() => {
+      const pendingRoomId = this.pendingSyncMetadataRoomId;
+      const pendingSnapshot = this.pendingSyncMetadataSnapshot;
+      this.hasPendingSyncMetadataFlush = false;
+      this.pendingSyncMetadataRoomId = null;
+      this.pendingSyncMetadataSnapshot = null;
+      if (!pendingRoomId || !pendingSnapshot || !isPlatformBrowser(this.platformId)) return;
+
+      try {
+        localStorage.setItem(this.syncMetadataStorageKey(pendingRoomId), JSON.stringify(pendingSnapshot));
+      } catch {
+        // Ignore quota/unavailable storage and keep in-memory metadata.
+      }
+    });
   }
 
   private recordConnectedAt(): void {
@@ -1139,6 +1164,15 @@ export class QuizStoreService {
     this.persistSyncMetadata();
   }
 
+  private serializeQuizDocuments(): string {
+    return JSON.stringify(this.quizDocuments());
+  }
+
+  private updateSerializedQuizCache(roomId: string, serialized: string): void {
+    this.lastSerializedRoomId = roomId;
+    this.lastSerializedQuizDocuments = serialized;
+  }
+
   private readonly onAwarenessChanged = (): void => {
     const states = this.yProvider?.awareness.getStates();
     if (!states) {
@@ -1160,10 +1194,11 @@ export class QuizStoreService {
     this.syncPeerInfos.set(Array.from(peersByDeviceId.values()));
   };
 
-  private writeYjsSnapshot(): void {
+  private writeYjsSnapshot(serialized?: string): void {
     if (!this.yRoot || this.isApplyingYjsSnapshot) return;
+    const payload = serialized ?? this.serializeQuizDocuments();
     try {
-      this.yRoot.set(QUIZ_YDOC_ROOT_KEY, JSON.stringify(this.quizDocuments()));
+      this.yRoot.set(QUIZ_YDOC_ROOT_KEY, payload);
       this.writePresetSnapshotToYjs();
     } catch {
       // Keep local state even if Yjs write fails.
