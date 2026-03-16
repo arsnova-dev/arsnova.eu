@@ -392,6 +392,33 @@ Die nächste sinnvolle Sicherheitsinvestition ist nicht ein Vollumbau, sondern:
 
 So bleibt das Feature verständlich und gewinnt schrittweise an Schutz, ohne den Local-First-Ansatz aufzugeben.
 
+### 12.7 Sicherheit und Performance als Spannungsfeld
+
+Für dieses Feature gilt ausdrücklich:
+
+- **Maximale Sicherheit** und **maximale Performance** sind hier nicht gleichzeitig in voller Stärke erreichbar.
+- Jede zusätzliche Sicherheitsmaßnahme erzeugt meist mehr Prüf-, Speicher- oder Netzwerkaufwand.
+- Jede radikale Performance-Optimierung reduziert oft Prüftiefe, Widerrufbarkeit oder Nachvollziehbarkeit.
+
+Typische Zielkonflikte:
+
+1. **Serverseitige Autorisierung vs. direkte Sync-Geschwindigkeit**  
+   Signierte Share-Tokens, Rotation, TTLs und serverseitige Prüfpfade erhöhen den Schutz, kosten aber zusätzliche Roundtrips, Cache-Lookups oder Validierungsarbeit.
+
+2. **Widerrufbarkeit vs. Local-First-Unabhängigkeit**  
+   Je stärker ein Zugriff jederzeit widerrufbar sein soll, desto stärker muss der Server in den Zugriffspfad eingebunden werden. Das steht im Spannungsfeld zum Ziel, Bibliotheken lokal, offlinefähig und mit minimaler Serverkenntnis nutzbar zu halten.
+
+3. **Vertrauenssignale vs. Schreiblast**  
+   Herkunftsinformationen, Zeitstempel und Gerätehinweise erhöhen Transparenz und damit Sicherheitsempfinden, erzeugen aber zusätzliche lokale Persistenz und Vergleichslogik.
+
+4. **Kurze Token-Lebensdauer vs. Bedienfluss**  
+   Kurze TTLs und häufige Rotation reduzieren das Schadensfenster bei geleakten Links, erhöhen aber Reibung, Reconnect-Komplexität und potenziell sichtbare Unterbrechungen.
+
+5. **Mehr Auditierbarkeit vs. Zero-Knowledge-Prinzip**  
+   Mehr Sicherheitsnachweise verlangen meist mehr serverseitige Spuren, was der gewollt schlanken, datensparsamen und local-first-orientierten Architektur entgegenläuft.
+
+Die Konsequenz ist: Optimierung darf hier nie eindimensional erfolgen. Wer Sicherheit erhöht, muss die Performance-Folgen mitdenken. Wer Performance optimiert, muss ausdrücklich benennen, welche Sicherheits- oder Kontrolltiefe dadurch begrenzt wird.
+
 ## 13. Grenzen und bewusste Nicht-Ziele
 
 ### 13.1 Keine rückwirkende Herkunft für Altbestände
@@ -465,7 +492,7 @@ Wer das Feature erweitert, sollte folgende Regeln einhalten:
 
 ## 16. Performance und Skalierung
 
-### 15.1 Aktuelle Risiken
+### 16.1 Aktuelle Risiken
 
 Die aktuelle Architektur ist für normale Bibliotheksgrößen gut geeignet, hat aber klare Lasttreiber:
 
@@ -474,7 +501,7 @@ Die aktuelle Architektur ist für normale Bibliotheksgrößen gut geeignet, hat 
 - `localStorage` läuft synchron auf dem Main Thread
 - lokale Vertrauensmetadaten erzeugen zusätzliche Schreibvorgänge
 
-### 15.2 Kurzfristige Optimierungen, die bereits umgesetzt wurden
+### 16.2 Kurzfristige Optimierungen, die bereits umgesetzt wurden
 
 Folgende Quick Wins wurden bereits umgesetzt:
 
@@ -484,7 +511,7 @@ Folgende Quick Wins wurden bereits umgesetzt:
 
 Diese Maßnahmen ändern die Architektur nicht grundlegend, senken aber unnötige CPU- und Main-Thread-Arbeit.
 
-### 15.3 Nächste sinnvolle Optimierungsstufe
+### 16.3 Nächste sinnvolle Optimierungsstufe
 
 Wenn die Bibliotheken größer werden oder mehrere Geräte intensiver parallel arbeiten, sind dies die nächsten Hebel:
 
@@ -505,7 +532,7 @@ Wenn die Bibliotheken größer werden oder mehrere Geräte intensiver parallel a
    Der größte Architekturhebel ist ein Umbau auf `Y.Map`/`Y.Array` pro Quiz, Frage und Antwort.
    Dann würden nicht mehr komplette Bibliotheken neu serialisiert, sondern nur echte Teiländerungen.
 
-### 15.4 Empfohlene Reihenfolge
+### 16.4 Empfohlene Reihenfolge
 
 Für die Weiterentwicklung ist diese Reihenfolge sinnvoll:
 
@@ -513,6 +540,37 @@ Für die Weiterentwicklung ist diese Reihenfolge sinnvoll:
 2. Legacy-Mirror abbauen
 3. reale Messwerte mit größeren Bibliotheken sammeln
 4. erst danach über den Umbau auf granulare Yjs-Strukturen entscheiden
+
+### 16.5 Abhängigkeiten und Widersprüche zu Sicherheitszielen
+
+Die wichtigsten Wechselwirkungen zwischen Performance und Sicherheit:
+
+1. **Weniger lokale Mirror = besser für Performance, schlechter für Diagnose und Recovery**  
+   Wenn lokale Spiegel reduziert werden, sinkt Main-Thread-Last. Gleichzeitig werden Fehlersuche, Vertrauenssignale und Wiederanlaufpfade dünner.
+
+2. **Granulare Yjs-Strukturen = besser für Performance, aber aufwendiger in Validierung und Schutzmodell**  
+   Feingranulare CRDTs reduzieren Vollserialisierung, vergrößern aber die Zahl der veränderbaren Teilobjekte. Das erhöht die Anforderungen an Konsistenzregeln, Validierung und Sicherheitsreview.
+
+3. **Mehr Security-Gates = mehr Latenz auf Hotpaths**  
+   Rate-Limits, Token-Prüfungen, Share-Auflösung und Rotation schützen den Zugriff, fügen aber zusätzliche Prüfungen in genau die Pfade ein, die für ein „fühlt sich sofort an“ besonders kritisch sind.
+
+4. **Mehr Metadaten = mehr Transparenz, aber auch mehr Schreibaufwand**  
+   Alles, was Herkunft und letzte Änderungen sichtbarer macht, verbessert Vertrauen. Gleichzeitig erhöht es die Zahl der lokalen Persistenzvorgänge.
+
+5. **Mehr Serverwissen = bessere Kontrolle, aber schwächeres Zero-Knowledge-Profil**  
+   Stärkere Zugriffskontrolle oder Auditierung brauchen meist mehr serverseitigen Zustand. Das verbessert Sicherheit, verschiebt aber die Architektur weg vom reinen Relay-Modell.
+
+Deshalb gilt als Leitregel:
+
+- **Zuerst das minimale notwendige Sicherheitsniveau sauber definieren.**
+- **Dann innerhalb dieser Sicherheitsgrenzen performen.**
+- **Nicht umgekehrt.**
+
+Für arsnova.eu bedeutet das konkret:
+
+- Bei Host-/Moderatorzugängen hat **serverseitig prüfbare Autorisierung** Vorrang vor maximaler Bequemlichkeit.
+- Bei der Quiz-Bibliothek hat **Local-First mit nachvollziehbarem Vertrauensmodell** Vorrang vor maximal aggressiver Optimierung.
+- Performance-Maßnahmen sind bevorzugt dort sinnvoll, wo sie **keine** Autorisierung, Widerrufbarkeit oder Transparenz abbauen.
 
 ## 17. TL;DR
 

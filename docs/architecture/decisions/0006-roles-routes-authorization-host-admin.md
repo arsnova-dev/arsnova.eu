@@ -22,6 +22,7 @@ Die App ist für Dozenten und Teilnehmer **accountfrei**; Sessions und Quiz-Date
 | --- | --- | --- |
 | **Host** | `/session/:code/host` | Dozent: Steuerung, Lobby |
 | **Present** | `/session/:code/present` | Dozent: Beamer/Projektion |
+| **Moderator** | `/session/:code/moderate` | Delegierte Live-Moderation mit eingeschränkten Rechten |
 | **Join** | `/join/:code` | Teilnehmer: Einstieg (QR-Ziel), Nickname, dann Redirect auf Vote |
 | **Vote** | `/session/:code/vote` | Teilnehmer: Abstimmung, Scorecard |
 | **Admin** | `/admin` | Admin: Dashboard, Session-Code-Eingabe, Liste, Detail, Löschen, Export |
@@ -37,43 +38,13 @@ Die App ist für Dozenten und Teilnehmer **accountfrei**; Sessions und Quiz-Date
 - **Jede Host-only-Prozedur** (nextQuestion, revealResults, end, getBonusTokens, getExportData usw.) erwartet das Host-Token (Header oder Input); das Backend prüft gegen einen gespeicherten Hash (z. B. Redis `host:${sessionId}`). Ungültig/fehlend → `UNAUTHORIZED`.
 - Aufruf von `/session/:code/host` oder `.../present` **ohne** gültiges Token → Frontend zeigt „Zugriff verweigert“ oder Redirect; Backend liefert bei Host-API-Aufrufen ohne Token keine Daten.
 
-### 2a. Delegation: Presenter- und Moderator-Zugang
+### 2a. Delegierte Live-Rollen bauen auf dieser Basis auf
 
-Für den Live-Betrieb braucht arsnova.eu nicht nur den primären Host, sondern auch **sicher delegierbare Zweitzugänge**:
+Zusätzliche delegierte Rollen wie **Presenter** und **Moderator** bauen auf derselben Grundregel auf:
 
-- **Presenter-Token:** read-only Zugriff auf `/session/:code/present`. Darf Live-Inhalte anzeigen, aber **keine** Session steuern.
-- **Moderator-Token:** kanalgebundener Zugriff für Q&A-Moderation. Darf Fragen sichten/freigeben/pinnen/archivieren, aber **keine** Quiz-Steuerung, kein Session-Ende und keine anderen Host-Aktionen auslösen.
-- **Host-Token:** bleibt der einzige Vollzugriff auf Session-Steuerung und kanalübergreifende Moderation.
-
-Zielbild:
-
-1. Dozent startet die Veranstaltung mit **Host-Token**.
-2. Beamer/Laptop/zweites Gerät kann über einen **Presenter-Link** dieselbe laufende Session anzeigen.
-3. Tutor:in kann über einen **Moderator-Link** parallel nur die Q&A-Moderation übernehmen.
-4. Der **6-stellige Session-Code** bleibt ausschließlich Teilnehmer-Zugang und darf niemals Host-, Presenter- oder Moderatorrechte verleihen.
-
-### 2b. Token-Modell für Live-Sessions
-
-Für Live-Sessions gelten drei getrennte Token-Klassen:
-
-- **Host-Token:** Vollzugriff auf Host- und Presenter-Route sowie alle Host-Mutationen.
-- **Presenter-Token:** Lesender Zugriff auf Presenter-Daten und Presenter-Route.
-- **Moderator-Token:** Zugriff auf moderatorbezogene Q&A-Prozeduren und optional auf eine reduzierte Moderator-UI.
-
-Technische Leitplanken:
-
-- Tokens werden serverseitig erzeugt, nur als **Hash** gespeichert und an die Session gebunden.
-- Tokens haben mindestens eine **TTL für die Laufzeit der Session**.
-- Tokens sind **widerrufbar/rotierbar** (mindestens Host und Moderator; Presenter nachrangig, aber wünschenswert).
-- Jede geschützte tRPC-Prozedur nutzt eine passende Procedure-Middleware (`hostProcedure`, `presenterProcedure`, `moderatorProcedure` oder äquivalent).
-
-### 2c. Umsetzungsstand und aktuelle Lücke
-
-Stand 2026-03 besteht hier noch eine relevante Sicherheitslücke:
-
-- Der aktuelle Laufzeitstand entspricht dem Zielbild aus diesem ADR noch nicht vollständig.
-- Insbesondere dürfen **Session-Code** oder bloßes Aufrufen von `/session/:code/host` nicht als ausreichender Nachweis für Host- oder Moderationsrechte akzeptiert werden.
-- Die Schließung dieser Lücke ist ein **konkretes Security-Härtungspaket** und muss im Backlog als eigene Weiterentwicklung sichtbar sein.
+- Rechte werden **nie** durch die URL oder durch den Session-Code verliehen.
+- Zusätzliche Live-Rollen benötigen eigene Tokens und serverseitige Prüfpfade.
+- Die konkrete Ausgestaltung der delegierten Moderatorrolle ist in **ADR-0011** festgelegt.
 
 ### 3. Admin-Rolle und -Credentials
 
@@ -116,8 +87,7 @@ Stand 2026-03 besteht hier noch eine relevante Sicherheitslücke:
 - **Rolle nur per URL „verstecken“:** Sicherheit durch Unkenntnis der Admin-URL – abgelehnt; Sicherheit soll auf Credentials/Token beruhen, nicht auf Geheimhaltung der Route.
 - **Account-basierte Admin-Anmeldung:** Würde eine Nutzerverwaltung für Admins erfordern; für MVP bewusst vermieden zugunsten eines einzelnen konfigurierbaren Admin-Secrets.
 - **Host-Rechte über Session-Code:** Wer den 6-stelligen Code kennt, könnte Host sein – abgelehnt, da Teilnehmer den Code ebenfalls kennen; Host-Token bleibt exklusiv bei Session-Erstellung.
-- **Tutoren über Host-Link arbeiten lassen:** abgelehnt; Q&A-Moderation soll delegierbar sein, ohne Quiz-Steuerung oder Session-Ende freizuschalten.
 
 ---
 
-**Referenzen:** Backlog Epic 9 (Admin), [docs/ROUTES_AND_STORIES.md](../../ROUTES_AND_STORIES.md) (Routen, Host-/Admin-Autorisierung, Absicherung).
+**Referenzen:** Backlog Epic 9 (Admin), [docs/ROUTES_AND_STORIES.md](../../ROUTES_AND_STORIES.md) (Routen, Host-/Admin-Autorisierung, Absicherung), [ADR-0011: Delegierbare Moderatorrolle für Live-Sessions](./0011-delegated-moderator-role-for-live-sessions.md).

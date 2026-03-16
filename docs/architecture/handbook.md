@@ -68,6 +68,7 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 - [ADR-0008: Internationalisierung (i18n) — Technik, Locale-Strategie und Hinweise bei Inhaltsverlust](./decisions/0008-i18n-internationalization.md)
 - [ADR-0009: Unified Live-Session Channels (Quiz, Q&A, Blitzlicht)](./decisions/0009-unified-live-session-channels.md)
 - [ADR-0010: Blitzlicht als Kernmodus mit konsistenter UX in Startseite und Live-Session](./decisions/0010-blitzlicht-as-core-live-mode.md)
+- [ADR-0011: Delegierbare Moderatorrolle für Live-Sessions](./decisions/0011-delegated-moderator-role-for-live-sessions.md)
 
 **Vertiefende Architektur-Dokumente:**
 
@@ -119,6 +120,27 @@ Die wichtigsten umgesetzten Produktionsoptimierungen:
 - **DB-Indexierung nach Query-Mustern:** gezielte Indizes für Session-, Vote-, Q&A-, Bonus- und Admin-Audit-Queries.
 - **Polling-Reduktion / WebSocket-first:** Subscription-Intervalle entschärft und dedupliziert; Frontend-Fallback-Polling reduziert.
 - **Query-Payload-Reduktion:** Hotpaths (`getCurrentQuestionForHost/Student`) laden nur noch benötigte Felder.
+
+### 7.1 Grundsatz: Performance nicht ohne Sicherheitskontext optimieren
+
+Für arsnova.eu gilt architektonisch:
+
+- **Sicherheit, Autorisierung und Datenschutz** sind keine optionalen Aufpreise auf Performance.
+- **Maximale Performance** und **maximale Sicherheitskontrolle** sind oft ein Zielkonflikt, kein gemeinsames Maximum.
+- Jede Optimierung muss deshalb auch ihre Folgen für Autorisierung, Missbrauchsschutz, Widerrufbarkeit, Auditierbarkeit und Datenminimierung benennen.
+
+Typische Spannungsfelder:
+
+- **Mehr Sicherheitsprüfungen** bedeuten oft mehr Roundtrips, Hash-/Token-Prüfungen, Redis-Lookups oder zusätzliche Persistenz.
+- **Weniger Prüfpfade** machen Hotpaths schneller, vergrößern aber das Risiko von Rolleneskalation, Missbrauch oder stillen Fehlannahmen.
+- **Mehr lokale Caches und Mirror** verbessern Reaktionszeit und Offline-Verhalten, können aber Vertrauensannahmen, Recovery-Logik und Sicherheitssemantik komplizierter machen.
+- **Mehr serverseitige Kontrolle** verbessert Widerrufbarkeit und Nachweisbarkeit, schwächt aber Local-First und Zero-Knowledge.
+
+Leitregel für neue Features:
+
+- erst das **notwendige Sicherheitsniveau** festlegen
+- dann innerhalb dieses Rahmens den Hotpath optimieren
+- Optimierungen bevorzugen, die **ohne Sicherheitsabbau** wirken
 
 Grundprinzip fuer neue Features:
 
