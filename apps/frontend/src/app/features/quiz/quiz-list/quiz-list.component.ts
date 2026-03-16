@@ -9,12 +9,13 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { PresetStorageEntrySchema } from '@arsnova/shared-types';
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import { localizeCommands } from '../../../core/locale-router';
-import { QuizStoreService } from '../data/quiz-store.service';
+import { QuizStoreService, type QuizSummary } from '../data/quiz-store.service';
 import { trpc } from '../../../core/trpc.client';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import { LiveSessionDialogComponent } from './live-session-dialog.component';
@@ -54,8 +55,10 @@ export class QuizListComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly themePreset = inject(ThemePresetService);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
   readonly quizzes = this.quizStore.quizzes;
   readonly syncRoomId = this.quizStore.syncRoomId;
+  readonly syncConnectionState = this.quizStore.syncConnectionState;
   readonly actionInfo = signal<string | null>(null);
   readonly actionError = signal<string | null>(null);
   readonly activeLiveQuizIds = signal<Set<string>>(new Set());
@@ -91,6 +94,7 @@ export class QuizListComponent implements OnInit {
       this.activeLiveQuizIds.set(new Set());
     }
 
+    await this.handleSyncImportNoticeIfRequested();
     await this.activateLiveStartShortcutIfRequested();
   }
 
@@ -271,6 +275,80 @@ export class QuizListComponent implements OnInit {
     }
 
     this.startLiveShortcutMode.set(true);
+  }
+
+  private async handleSyncImportNoticeIfRequested(): Promise<void> {
+    if (this.route.snapshot.queryParamMap.get('syncImported') !== '1') {
+      return;
+    }
+
+    const syncedQuizzes = await this.waitForSyncImportSnapshot();
+    this.snackBar.open(
+      this.buildSyncImportMessage(syncedQuizzes),
+      '',
+      {
+        duration: 9000,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+      },
+    );
+    await this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { syncImported: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private async waitForSyncImportSnapshot(): Promise<QuizSummary[]> {
+    const currentQuizzes = this.quizzes();
+    if (currentQuizzes.length > 0 || this.syncConnectionState() !== 'connecting') {
+      return currentQuizzes;
+    }
+
+    return await new Promise<QuizSummary[]>((resolve) => {
+      const startedAt = Date.now();
+      const poll = (): void => {
+        const quizzes = this.quizzes();
+        if (quizzes.length > 0 || this.syncConnectionState() !== 'connecting' || Date.now() - startedAt >= 4000) {
+          resolve(quizzes);
+          return;
+        }
+        setTimeout(poll, 150);
+      };
+      poll();
+    });
+  }
+
+  private buildSyncImportMessage(quizzes: QuizSummary[]): string {
+    const latestUpdatedAt = quizzes.reduce<string | null>((latest, quiz) => {
+      if (!latest) return quiz.updatedAt;
+      return Date.parse(quiz.updatedAt) > Date.parse(latest) ? quiz.updatedAt : latest;
+    }, null);
+    const formattedTimestamp = latestUpdatedAt ? this.formatSyncTimestamp(latestUpdatedAt) : null;
+
+    if (!formattedTimestamp) {
+      return $localize`:@@quizList.syncImportedSuccess:Quiz-Bibliothek erfolgreich synchronisiert.`;
+    }
+
+    return $localize`:@@quizList.syncImportedSuccessWithTimestamp:Quiz-Bibliothek erfolgreich synchronisiert. Neuester Stand vom ${formattedTimestamp}:timestamp:.`;
+  }
+
+  private formatSyncTimestamp(value: string): string | null {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    const locale =
+      this.document.documentElement.lang ||
+      (typeof navigator !== 'undefined' ? navigator.language : '') ||
+      'de-DE';
+
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(parsed);
   }
 
   private async clearLiveStartShortcut(): Promise<void> {

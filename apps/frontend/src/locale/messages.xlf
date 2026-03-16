@@ -3012,6 +3012,15 @@
       <trans-unit id="quizList.syncHint" datatype="html">
         <source>Sichere deine Quiz-Bibliothek auf ein anderes Geraet oder gib sie per Sync-ID oder Sync-Link an Kolleginnen und Kollegen weiter.</source>
       </trans-unit>
+      <trans-unit id="quizList.syncImportedSuccess" datatype="html">
+        <source>Quiz-Bibliothek erfolgreich synchronisiert.</source>
+      </trans-unit>
+      <trans-unit id="quizList.syncImportedSuccessWithTimestamp" datatype="html">
+        <source>Quiz-Bibliothek erfolgreich synchronisiert. Neuester Stand vom <x id="PH" equiv-text="formattedTimestamp"/>.</source>
+      </trans-unit>
+      <trans-unit id="quizList.edit" datatype="html">
+        <source>Bearbeiten</source>
+      </trans-unit>
       <trans-unit id="3293413491190500382" datatype="html">
         <source>„<x id="PH" equiv-text="duplicate.name"/>“ wurde dupliziert.</source>
         <context-group purpose="location">

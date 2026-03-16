@@ -197,7 +197,9 @@ describe('HomeComponent', () => {
       await comp.openSyncLink();
 
       expect(activateSpy).toHaveBeenCalledWith('sync-room-12345678');
-      expect(navSpy).toHaveBeenCalledWith(['quiz']);
+      expect(navSpy).toHaveBeenCalledWith(['quiz'], {
+        queryParams: { syncImported: 1 },
+      });
       expect(comp.syncLinkError()).toBeNull();
     });
 
@@ -212,7 +214,9 @@ describe('HomeComponent', () => {
       await comp.openSyncLink();
 
       expect(activateSpy).toHaveBeenCalledWith('sync-room-12345678');
-      expect(navSpy).toHaveBeenCalledWith(['quiz']);
+      expect(navSpy).toHaveBeenCalledWith(['quiz'], {
+        queryParams: { syncImported: 1 },
+      });
       expect(comp.syncLinkError()).toBeNull();
     });
 

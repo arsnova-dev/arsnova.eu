@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { QuizEditComponent } from './quiz-edit.component';
@@ -38,7 +37,6 @@ describe('QuizEditComponent', () => {
   };
 
   const mockStore = {
-    syncRoomId: signal('test-sync-room'),
     getQuizById: vi.fn((id: string) => (id === QUIZ_ID ? quiz : null)),
     addQuestion: vi.fn(),
     updateQuestion: vi.fn(),

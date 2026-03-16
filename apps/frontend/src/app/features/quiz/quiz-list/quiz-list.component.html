@@ -151,6 +151,10 @@
                   <mat-icon>play_circle</mat-icon>
                   <span i18n="@@quizList.startSession">Veranstaltung starten</span>
                 </button>
+                <a mat-menu-item [routerLink]="[quiz.id]">
+                  <mat-icon>edit</mat-icon>
+                  <span i18n="@@quizList.edit">Bearbeiten</span>
+                </a>
                 <a mat-menu-item [routerLink]="[quiz.id, 'preview']">
                   <mat-icon>visibility</mat-icon>
                   <span i18n>Vorschau</span>

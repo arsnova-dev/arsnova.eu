@@ -3202,6 +3202,18 @@
         <source>Sichere deine Quiz-Bibliothek auf ein anderes Geraet oder gib sie per Sync-ID oder Sync-Link an Kolleginnen und Kollegen weiter.</source>
         <target>Sauvegarde ta bibliothèque de quiz sur un autre appareil ou partage-la avec des collègues via l’identifiant sync ou le lien sync.</target>
       </trans-unit>
+      <trans-unit id="quizList.syncImportedSuccess" datatype="html">
+        <source>Quiz-Bibliothek erfolgreich synchronisiert.</source>
+        <target>Bibliothèque de quiz synchronisée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="quizList.syncImportedSuccessWithTimestamp" datatype="html">
+        <source>Quiz-Bibliothek erfolgreich synchronisiert. Neuester Stand vom <x id="PH" equiv-text="formattedTimestamp"/>.</source>
+        <target>Bibliothèque de quiz synchronisée avec succès. Dernière version du <x id="PH" equiv-text="formattedTimestamp"/>.</target>
+      </trans-unit>
+      <trans-unit id="quizList.edit" datatype="html">
+        <source>Bearbeiten</source>
+        <target>Modifier</target>
+      </trans-unit>
       <trans-unit id="3293413491190500382" datatype="html">
         <source>„<x id="PH" equiv-text="duplicate.name"/>“ wurde dupliziert.</source>
         <target>« <x id="PH" equiv-text="duplicate.name"/> » a été dupliqué.</target>
