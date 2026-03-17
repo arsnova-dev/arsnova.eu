@@ -242,10 +242,17 @@
 
     @if (questions().length > 0) {
       <nav class="quiz-preview__bottom-bar" i18n-aria-label aria-label="Vorschau-Steuerung">
-        <a mat-button class="quiz-preview__bottom-action" [routerLink]="['../']" i18n-aria-label aria-label="Zurück zum Editor">
+        <button
+          mat-button
+          type="button"
+          class="quiz-preview__bottom-action"
+          (click)="backToOrigin()"
+          i18n-aria-label
+          aria-label="Zurück zur vorherigen Seite"
+        >
           <mat-icon>arrow_back</mat-icon>
           <span i18n="@@contentPage.back">Zurück</span>
-        </a>
+        </button>
 
         <div class="quiz-preview__bottom-nav">
           <button mat-icon-button type="button" (click)="previousQuestion()" [disabled]="currentIndex() === 0" i18n-aria-label aria-label="Vorherige Frage">
@@ -273,17 +280,17 @@
               <span i18n>Bearbeiten</span>
             </button>
             <button
-              mat-button
+              matButton="tonal"
               type="button"
               class="quiz-preview__bottom-action quiz-preview__valid-action"
               [class.quiz-preview__valid-action--pending]="liveStartPending()"
               (click)="openLiveStartDialog()"
               [disabled]="liveStartPending() || validationWarnings().length > 0"
-              i18n-aria-label
-              aria-label="Veranstaltung starten"
+              i18n-aria-label="@@quizList.startSession"
+              aria-label="Starten"
             >
               <mat-icon>{{ liveStartPending() ? 'sync' : 'play_circle' }}</mat-icon>
-              <span class="quiz-preview__valid-action-label" i18n="@@quizList.startSession">Veranstaltung starten</span>
+              <span class="quiz-preview__valid-action-label" i18n="@@quizList.startSession">Starten</span>
             </button>
           </div>
         } @else {

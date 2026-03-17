@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, HostListener, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -42,6 +43,7 @@ const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
   styleUrl: './quiz-preview.component.scss',
 })
 export class QuizPreviewComponent implements OnDestroy {
+  private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
@@ -206,8 +208,25 @@ export class QuizPreviewComponent implements OnDestroy {
     this.goToQuestion(total - 1);
   }
 
-  leavePreview(): void {
+  backToOrigin(): void {
     this.commitInlineEdits();
+    const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+
+    if (returnTo === 'list') {
+      void this.router.navigate(localizeCommands(['quiz']));
+      return;
+    }
+
+    if (returnTo === 'edit') {
+      void this.router.navigate(localizeCommands(['quiz', this.id]));
+      return;
+    }
+
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
     void this.router.navigate(localizeCommands(['quiz', this.id]));
   }
 
@@ -372,7 +391,7 @@ export class QuizPreviewComponent implements OnDestroy {
       if (this.inlineEditMode()) {
         this.cancelInlineEditMode();
       } else {
-        this.leavePreview();
+        this.backToOrigin();
       }
       return;
     }

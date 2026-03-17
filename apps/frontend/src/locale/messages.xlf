@@ -5541,7 +5541,7 @@
         <source>Aus</source>
       </trans-unit>
       <trans-unit id="quizList.startSession" datatype="html">
-        <source>Veranstaltung starten</source>
+        <source>Starten</source>
       </trans-unit>
       <trans-unit id="quizList.qaStarted" datatype="html">
         <source>Fragerunde <x id="code" equiv-text="result.code"/> gestartet.</source>

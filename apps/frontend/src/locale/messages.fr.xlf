@@ -6066,8 +6066,8 @@
         <target>Off</target>
       </trans-unit>
       <trans-unit id="quizList.startSession" datatype="html">
-        <source>Veranstaltung starten</source>
-        <target>Démarrer l’événement</target>
+        <source>Starten</source>
+        <target>Démarrer</target>
       </trans-unit>
       <trans-unit id="quizList.qaStarted" datatype="html">
         <source>Fragerunde <x id="code" equiv-text="result.code"/> gestartet.</source>

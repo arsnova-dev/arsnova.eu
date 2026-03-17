@@ -6070,8 +6070,8 @@
         <target>Off</target>
       </trans-unit>
       <trans-unit id="quizList.startSession" datatype="html">
-        <source>Veranstaltung starten</source>
-        <target>Avvia evento</target>
+        <source>Starten</source>
+        <target>Avvia</target>
       </trans-unit>
       <trans-unit id="quizList.qaStarted" datatype="html">
         <source>Fragerunde <x id="code" equiv-text="result.code"/> gestartet.</source>

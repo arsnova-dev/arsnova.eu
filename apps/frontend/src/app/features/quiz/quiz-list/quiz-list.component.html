@@ -189,24 +189,29 @@
                     <span class="quiz-list-item__meta-text" i18n>{{ quiz.questionCount === 1 ? 'Frage' : 'Fragen' }}</span>
                   }
                   <span class="quiz-list-item__meta-sep" aria-hidden="true">·</span>
-                  <span class="quiz-list-item__meta-text">{{ quiz.updatedAt | date: 'dd.MM.yy' }}</span>
+                  <span class="quiz-list-item__meta-text">
+                    <mat-icon class="quiz-list-item__meta-icon" aria-hidden="true">update</mat-icon>
+                    {{ quiz.updatedAt | date: 'shortDate' }} · {{ quiz.updatedAt | date: 'shortTime' }}
+                  </span>
                 </div>
               </div>
             </a>
 
             <div class="quiz-list-item__actions">
-              @if (startLiveShortcutMode()) {
-                <button
-                  matButton="filled"
-                  type="button"
-                  [disabled]="liveStartPending()"
-                  [matTooltip]="quiz.questionCount === 0 ? tooltipMinQuestions() : null"
-                  (click)="openLiveStartDialog(quiz.id, quiz.name, quiz.questionCount)"
-                >
-                  <mat-icon>play_circle</mat-icon>
-                  <span i18n="@@quizList.startSession">Veranstaltung starten</span>
-                </button>
-              }
+              <a mat-button type="button" [routerLink]="[quiz.id, 'preview']" [queryParams]="{ returnTo: 'list' }">
+                <mat-icon>visibility</mat-icon>
+                <span i18n>Vorschau</span>
+              </a>
+              <button
+                matButton="tonal"
+                type="button"
+                [disabled]="liveStartPending()"
+                [matTooltip]="quiz.questionCount === 0 ? tooltipMinQuestions() : null"
+                (click)="openLiveStartDialog(quiz.id, quiz.name, quiz.questionCount)"
+              >
+                <mat-icon>play_circle</mat-icon>
+                <span i18n="@@quizList.startSession">Starten</span>
+              </button>
               <button
                 mat-icon-button
                 class="quiz-list-item__menu-trigger"
@@ -218,23 +223,9 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #quizMenu="matMenu">
-                <button
-                  mat-menu-item
-                  type="button"
-                  [disabled]="liveStartPending()"
-                  [matTooltip]="quiz.questionCount === 0 ? tooltipMinQuestions() : null"
-                  (click)="openLiveStartDialog(quiz.id, quiz.name, quiz.questionCount)"
-                >
-                  <mat-icon>play_circle</mat-icon>
-                  <span i18n="@@quizList.startSession">Veranstaltung starten</span>
-                </button>
                 <a mat-menu-item [routerLink]="[quiz.id]">
                   <mat-icon>edit</mat-icon>
                   <span i18n="@@quizList.edit">Bearbeiten</span>
-                </a>
-                <a mat-menu-item [routerLink]="[quiz.id, 'preview']">
-                  <mat-icon>visibility</mat-icon>
-                  <span i18n>Vorschau</span>
                 </a>
                 <button mat-menu-item type="button" (click)="exportQuiz(quiz.id)">
                   <mat-icon>download</mat-icon>
