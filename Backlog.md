@@ -73,6 +73,7 @@
 | 5    | 5.1   | Sound-Effekte                                 | 🟡   | ✅ Fertig |
 | 5    | 5.3   | Hintergrundmusik                              | 🟢   | ✅ Fertig |
 | 5    | 5.4   | Belohnungseffekte                             | 🟡   | ✅ Fertig |
+| 5    | 5.4a  | Foyer-Einflug im Preset Spielerisch           | 🟡   | ⬜ Offen  |
 | 5    | 5.5   | Answer Streak                                 | 🟡   | ✅ Fertig |
 | 5    | 5.6   | Persönliche Scorecard                         | 🔴   | ✅ Fertig |
 | 5    | 5.7   | Motivationsmeldungen                          | 🟡   | ✅ Fertig |
@@ -95,7 +96,7 @@
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 25 · 🟡 Should: 35 · 🟢 Could: 14 = **74 Storys gesamt**
+> **Statistik:** 🔴 Must: 25 · 🟡 Should: 36 · 🟢 Could: 14 = **75 Storys gesamt**
 
 ---
 
@@ -776,6 +777,30 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Effekte können vom Dozenten deaktiviert werden (`enableRewardEffects`, default: an).
     - Bei `prefers-reduced-motion: reduce` werden Animationen deaktiviert; nur statische Icons und Text werden angezeigt (konsistent mit Story 6.5).
     - Abhängig von Story 4.1 (Leaderboard).
+- **Story 5.4a (Foyer-Einflug im Preset Spielerisch):** 🟡 Als Teilnehmende:r möchte ich im Preset `Spielerisch` waehrend der Connecting-Phase sehen, wie bunte Teilnehmer-Chips in das Foyer einfliegen, damit der Einstieg lebendig, motivierend und unverwechselbar wirkt.
+  - **Akzeptanzkriterien:**
+    - **Nur im Preset `Spielerisch`:** Der Effekt ist standardmaessig nur aktiv, wenn das Quiz bzw. die Live-Session im Preset `Spielerisch` laeuft; im Preset `Serioes` erscheint keine verspielte Einflug-Animation.
+    - **Connecting-Phase klar definiert:** Der Effekt wird waehrend des Verbindens bzw. beim Uebergang in Lobby/Foyer gezeigt, nicht waehrend aktiver Fragen oder Ergebnisphasen.
+    - **Eigenstaendiger Stil:** Die Animation darf an die Lebendigkeit von Kahoot erinnern, muss aber einen klar eigenen Stil von arsnova.eu haben; sie ist keine optische Kopie bestehender Produkte.
+    - **Teilnehmer als Chips:** Jeder neu beitretende Teilnehmende wird als farbiger Chip visualisiert; der Chip kann Initiale, Icon, Pseudonym oder ein abstrahiertes Teilnehmer-Symbol tragen.
+    - **Mehrere Farben gleichzeitig:** Die Chips verwenden mehrere deutlich unterscheidbare, themenkonforme Farben und erzeugen dadurch ein lebendiges, aber nicht chaotisches Gesamtbild.
+    - **Einflugbewegung ins Foyer:** Neue Chips bewegen sich sichtbar von ausserhalb oder vom Rand in den Foyer-Bereich hinein und kommen dort in einer ruhigen Endposition an.
+    - **Kein wildes Durcheinander:** Auch bei vielen fast gleichzeitigen Joins bleibt die Bewegung lesbar; Chips duerfen sich nicht stoerend ueberlagern oder hektisch unkontrolliert springen.
+    - **Host-Lobby profitiert sichtbar:** In der Host-Lobby wird der Effekt klar sichtbar, damit die Lehrperson den lebendigen Zulauf ins Foyer wahrnimmt.
+    - **Beamer-tauglich:** Wenn die Lobby auf dem Beamer gezeigt wird, ist der Effekt grosszuegig, kontrastreich und aus der Distanz gut erkennbar.
+    - **Teilnehmenden-Geraet mit passendem Feedback:** Auf dem Smartphone der beitretenden Person gibt es einen kleineren, passenden Ankunftsmoment oder eine Bestaetigung, die den erfolgreichen Eintritt ins Foyer spielerisch bestaetigt.
+    - **Ruhender Endzustand:** Nach dem Einflug bleiben Chips stabil im Foyer sichtbar oder gehen in eine geordnete Lobby-Darstellung ueber; es bleibt kein permanent unruhiges Herumfliegen bestehen.
+    - **Skalierung bei vielen Joins:** Bei steigender Teilnehmerzahl skaliert die Darstellung sauber, z. B. ueber kleinere Chips, Clustering oder reduzierte Bewegungsdauer, ohne unlesbar zu werden.
+    - **Keine Behinderung zentraler Lobby-Infos:** Session-Code, QR-Code, Join-Link, Teamkarten oder Teilnehmerzahl bleiben trotz Animation klar lesbar und bedienbar.
+    - **Designsystem-konform:** Form, Farbe, Schatten, Bewegung und Timing passen zu Material 3 und zum visuellen Stil der Startseite bzw. des Presets `Spielerisch`.
+    - **Konfigurierbar ueber bestehende Effektlogik:** Der Effekt respektiert vorhandene Effekt-Schalter wie `enableRewardEffects` oder eine gleichwertige dedizierte Option fuer Lobby-Mikrointeraktionen.
+    - **`prefers-reduced-motion`:** Bei reduzierter Bewegung wird der Einflug stark vereinfacht oder durch eine statische, sanfte Einblendung ersetzt.
+    - **Performant im Live-Betrieb:** Auch bei vielen schnellen Beitritten bleibt die Lobby flüssig; Animationen duerfen das UI nicht spürbar blockieren.
+    - **Team-Modus kompatibel:** Wenn Team-Modus aktiv ist, duerfen Chips farblich oder gruppierend mit Teamkarten zusammenspielen, ohne die Team-Erkennbarkeit zu verschlechtern.
+    - **Anonymitaet gewahrt:** Im anonymen oder serioesen Kontext werden keine zusaetzlichen personenbezogenen Signale sichtbar gemacht; der Effekt arbeitet mit den ohnehin zulaessigen Anzeigeformen.
+    - **Sound optional, nicht zwingend:** Ein kurzer verspielter Join-Sound ist optional moeglich, darf aber nur abgespielt werden, wenn Soundeffekte aktiv sind und die Browser-Policy das erlaubt.
+    - **Testfaelle fuer Qualitaet:** Die Story gilt erst als abgeschlossen, wenn die Lobby mit wenigen, mittleren und vielen parallelen Joins visuell geprueft wurde und der Effekt in allen drei Faellen motivierend statt stoerend wirkt.
+  - **Abhaengigkeiten:** Story 2.2 (Lobby-Ansicht), Story 1.11 (Preset `Spielerisch`), Story 5.1 (Sound-Effekte, optional), Story 6.4 (Responsive), Story 6.5 (Barrierefreiheit).
 - **Story 5.5 (Answer Streak — Serienbonus):** 🟡 Als Student möchte ich für aufeinanderfolgende richtige Antworten einen steigenden Bonus erhalten, damit ich für Konstanz belohnt werde.
   - **Akzeptanzkriterien:**
     - Für jede weitere korrekte Antwort in Folge steigt der Streak-Zähler: 2er-Streak = ×1.1, 3er-Streak = ×1.2, 4er-Streak = ×1.3, 5+ = ×1.5 (Multiplikator auf den Frage-Score).
