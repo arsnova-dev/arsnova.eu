@@ -40,6 +40,15 @@
   justify-content: flex-end;
 }
 
+.quiz-list__ai-trigger {
+  font-weight: 600;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+}
+
+.quiz-list__ai-trigger:hover {
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
+}
+
 .quiz-list__sync-callout {
   width: 100%;
   display: flex;
@@ -315,9 +324,64 @@
   row-gap: 0.65rem;
 }
 
+.quiz-list__ai-steps {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.quiz-list__ai-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--mat-sys-corner-large);
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 88%, var(--mat-sys-surface));
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 14%, transparent);
+}
+
+.quiz-list__ai-step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.quiz-list__ai-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 80%, var(--mat-sys-surface));
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-title-small);
+  font-weight: 700;
+}
+
+.quiz-list__ai-step-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.quiz-list__ai-step-title {
+  margin: 0;
+  font: var(--mat-sys-title-small);
+  line-height: 1.35;
+}
+
+.quiz-list__ai-step-text {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+  line-height: 1.5;
+}
+
 .quiz-list__ai-field {
   width: 100%;
-  margin: 0.15rem 0 0.35rem;
+  margin: 0;
 }
 
 .quiz-list__ai-textarea {
@@ -331,7 +395,7 @@
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.65rem;
-  margin-top: 0.15rem;
+  margin-top: 0;
 }
 
 .quiz-list-item__content {
@@ -350,6 +414,14 @@
   margin: 0;
   font: var(--mat-sys-body-medium);
   line-height: 1.55;
+}
+
+.quiz-list-item__description :deep(p) {
+  margin: 0;
+}
+
+.quiz-list-item__description :deep(strong) {
+  font-weight: 700;
 }
 
 .quiz-list-item__description--muted {

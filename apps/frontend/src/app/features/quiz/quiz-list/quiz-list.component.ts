@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -18,6 +19,7 @@ import { localizeCommands } from '../../../core/locale-router';
 import { QuizStoreService, type QuizSettings, type QuizSummary } from '../data/quiz-store.service';
 import { trpc } from '../../../core/trpc.client';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
+import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { LiveSessionDialogComponent } from './live-session-dialog.component';
 
 const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
@@ -37,6 +39,7 @@ const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
     MatCard,
     MatCardContent,
     MatFormField,
+    MatHint,
     MatIcon,
     MatInput,
     MatLabel,
@@ -56,6 +59,7 @@ export class QuizListComponent implements OnInit {
   private readonly themePreset = inject(ThemePresetService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly sanitizer = inject(DomSanitizer);
   readonly quizzes = this.quizStore.quizzes;
   readonly syncRoomId = this.quizStore.syncRoomId;
   readonly syncConnectionState = this.quizStore.syncConnectionState;
@@ -98,6 +102,10 @@ export class QuizListComponent implements OnInit {
 
   getQuizActionsAriaLabel(quizName: string): string {
     return $localize`:@@quizList.ariaQuizActions:Aktionen für Quiz ${quizName}:quizName:`;
+  }
+
+  renderDescription(value: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(renderMarkdownWithKatex(value).html);
   }
 
   isSharedLibrary(): boolean {
@@ -206,6 +214,12 @@ export class QuizListComponent implements OnInit {
     this.aiJsonInput.set(value);
   }
 
+  resetAiImport(): void {
+    this.aiJsonInput.set('');
+    this.actionError.set(null);
+    this.actionInfo.set(null);
+  }
+
   duplicateQuiz(quizId: string): void {
     this.actionError.set(null);
     try {
@@ -298,9 +312,11 @@ export class QuizListComponent implements OnInit {
     });
     try {
       await navigator.clipboard.writeText(prompt);
-      this.actionInfo.set($localize`Prompt in die Zwischenablage kopiert.`);
+      this.actionInfo.set($localize`:@@quizList.aiImport.copySuccess:Die Textvorlage ist jetzt in deiner Zwischenablage.`);
     } catch {
-      this.actionError.set($localize`Kopieren fehlgeschlagen – bitte manuell kopieren.`);
+      this.actionError.set(
+        $localize`:@@quizList.aiImport.copyFailed:Kopieren fehlgeschlagen. Bitte versuche es noch einmal.`,
+      );
     }
   }
 
@@ -372,18 +388,25 @@ export class QuizListComponent implements OnInit {
 
     const raw = this.aiJsonInput().trim();
     if (!raw) {
-      this.actionError.set($localize`Füge zuerst das KI-JSON ein.`);
+      this.actionError.set(
+        $localize`:@@quizList.aiImport.empty:Füge zuerst die Antwort aus dem KI-Chat ein.`,
+      );
       return;
     }
 
     try {
-      const parsed = JSON.parse(raw) as unknown;
+      const parsed = parseAiImportPayload(raw);
       const imported = this.quizStore.importQuiz(parsed);
-      this.actionInfo.set($localize`KI-„${imported.name}“ wurde importiert.`);
+      this.actionInfo.set(
+        $localize`:@@quizList.aiImport.success:„${imported.name}:quizName:“ wurde importiert.`,
+      );
       this.aiJsonInput.set('');
       this.showAiImport.set(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : $localize`KI-Import fehlgeschlagen.`;
+      const message =
+        error instanceof Error
+          ? error.message
+          : $localize`:@@quizList.aiImport.failed:Import fehlgeschlagen. Prüfe, ob du die komplette Antwort aus dem KI-Chat eingefügt hast.`;
       this.actionError.set(message);
     }
   }
@@ -416,25 +439,14 @@ export class QuizListComponent implements OnInit {
       return;
     }
 
-    if (result.startMode === 'Q_AND_A') {
-      await this.startLiveSession({
-        quizId,
-        includeQuiz: result.enableQuiz,
-        includeQa: result.enableQa,
-        includeQuickFeedback: result.enableQuickFeedback,
-        qaTitle: result.title,
-        startWithQa: true,
-      });
-      return;
-    }
-
     await this.startLiveSession({
       quizId,
       includeQuiz: result.enableQuiz,
       includeQa: result.enableQa,
       includeQuickFeedback: result.enableQuickFeedback,
       qaTitle: result.title,
-      startWithQa: false,
+      startWithQa: result.startChannel === 'qa',
+      initialTab: result.startChannel,
     });
   }
 
@@ -552,6 +564,7 @@ export class QuizListComponent implements OnInit {
     includeQuickFeedback: boolean;
     qaTitle?: string;
     startWithQa: boolean;
+    initialTab: 'quiz' | 'qa' | 'quickFeedback';
   }): Promise<void> {
     this.actionError.set(null);
     this.actionInfo.set(null);
@@ -602,8 +615,8 @@ export class QuizListComponent implements OnInit {
         });
       } else {
         result = await trpc.session.create.mutate({
-          type: 'Q_AND_A',
-          title: options.qaTitle?.trim() || undefined,
+          type: options.includeQa ? 'Q_AND_A' : 'QUIZ',
+          title: options.includeQa ? options.qaTitle?.trim() || undefined : undefined,
           quickFeedbackEnabled: options.includeQuickFeedback,
         });
       }
@@ -614,7 +627,7 @@ export class QuizListComponent implements OnInit {
 
       this.actionInfo.set($localize`Session ${result.code} gestartet.`);
       await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
-        queryParams: options.startWithQa ? { tab: 'qa' } : undefined,
+        queryParams: options.initialTab === 'quiz' ? undefined : { tab: options.initialTab },
       });
     } catch (error) {
       const msg =
@@ -640,4 +653,91 @@ export class QuizListComponent implements OnInit {
       .slice(0, 80) || 'quiz';
     return `${safeName}_${date}.json`;
   }
+}
+
+function parseAiImportPayload(raw: string): unknown {
+  const directParse = tryParseJson(raw);
+  if (directParse.ok) {
+    return directParse.value;
+  }
+
+  const fencedCodeBlockMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const fencedCandidate = fencedCodeBlockMatch?.[1]?.trim();
+  if (fencedCandidate) {
+    const fencedParse = tryParseJson(fencedCandidate);
+    if (fencedParse.ok) {
+      return fencedParse.value;
+    }
+  }
+
+  const inlineCandidate = extractBalancedJsonCandidate(raw);
+  if (inlineCandidate) {
+    const inlineParse = tryParseJson(inlineCandidate);
+    if (inlineParse.ok) {
+      return inlineParse.value;
+    }
+  }
+
+  throw directParse.error ?? new Error('Import fehlgeschlagen.');
+}
+
+function tryParseJson(value: string): { ok: true; value: unknown } | { ok: false; error: Error | null } {
+  try {
+    return { ok: true, value: JSON.parse(value) as unknown };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error : null };
+  }
+}
+
+function extractBalancedJsonCandidate(value: string): string | null {
+  const startIndex = value.search(/[\[{]/);
+  if (startIndex < 0) {
+    return null;
+  }
+
+  const openingChar = value[startIndex];
+  const closingChar = openingChar === '{' ? '}' : ']';
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = startIndex; index < value.length; index += 1) {
+    const char = value[index];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+
+      if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (char === openingChar) {
+      depth += 1;
+      continue;
+    }
+
+    if (char === closingChar) {
+      depth -= 1;
+      if (depth === 0) {
+        return value.slice(startIndex, index + 1);
+      }
+    }
+  }
+
+  return null;
 }

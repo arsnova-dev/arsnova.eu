@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,8 +7,6 @@ import {
   MatCard,
   MatCardActions,
   MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
 } from '@angular/material/card';
 import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
@@ -26,7 +23,6 @@ import { QuizStoreService, type QuizSettings } from '../data/quiz-store.service'
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
 import { localizeCommands } from '../../../core/locale-router';
-import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
 
 /**
@@ -44,8 +40,6 @@ import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util
     MatCard,
     MatCardActions,
     MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
     MatError,
     MatFormField,
     MatHint,
@@ -59,7 +53,6 @@ import { focusFirstInvalidField } from '../../../shared/focus-invalid-field.util
   styleUrl: './quiz-new.component.scss',
 })
 export class QuizNewComponent implements OnInit, OnDestroy {
-  private readonly document = inject(DOCUMENT);
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly quizStore = inject(QuizStoreService);
@@ -89,12 +82,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
   readonly isSaving = signal(false);
   readonly submitError = signal<string | null>(null);
   readonly submitted = signal(false);
-  readonly promptStatus = signal<string | null>(null);
   readonly showSettings = signal(false);
-  readonly showAiImport = signal(false);
-  readonly aiJsonInput = signal('');
-  readonly aiImportStatus = signal<string | null>(null);
-  readonly aiImportError = signal<string | null>(null);
   @ViewChild('quizCreateForm') private quizCreateForm?: ElementRef<HTMLFormElement>;
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -176,77 +164,6 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     });
   }
 
-  async copyKiPrompt(): Promise<void> {
-    this.promptStatus.set(null);
-    const settings = this.readSettingsFromForm();
-    const prompt = buildKiQuizSystemPrompt({
-      presetLabel: this.presetBadgeLabel(),
-      presetValue: settings.preset,
-      nicknameTheme: settings.nicknameTheme,
-      readingPhaseEnabled: settings.readingPhaseEnabled,
-      defaultDifficulty: 'MEDIUM',
-      showLeaderboard: settings.showLeaderboard,
-      allowCustomNicknames: settings.allowCustomNicknames,
-      defaultTimer: settings.defaultTimer,
-      enableSoundEffects: settings.enableSoundEffects,
-      enableRewardEffects: settings.enableRewardEffects,
-      enableMotivationMessages: settings.enableMotivationMessages,
-      enableEmojiReactions: settings.enableEmojiReactions,
-      anonymousMode: settings.anonymousMode,
-      teamMode: settings.teamMode,
-      teamCount: settings.teamCount,
-      teamAssignment: settings.teamAssignment,
-      teamNames: settings.teamNames,
-      backgroundMusic: settings.backgroundMusic,
-      bonusTokenCount: settings.bonusTokenCount,
-    });
-
-    try {
-      const clipboard = this.document.defaultView?.navigator.clipboard;
-      if (!clipboard) {
-        throw new Error($localize`Clipboard API nicht verfügbar.`);
-      }
-      await clipboard.writeText(prompt);
-      this.promptStatus.set($localize`KI-Prompt kopiert.`);
-    } catch {
-      this.promptStatus.set($localize`Kopieren nicht möglich. Prüfe die Browser-Berechtigung.`);
-    }
-  }
-
-  toggleAiImport(): void {
-    this.showAiImport.update((visible) => !visible);
-    this.aiImportError.set(null);
-    this.aiImportStatus.set(null);
-  }
-
-  updateAiJsonInput(value: string): void {
-    this.aiJsonInput.set(value);
-  }
-
-  async onAiImportFileSelected(event: Event): Promise<void> {
-    this.aiImportError.set(null);
-    this.aiImportStatus.set(null);
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (!file) return;
-
-    try {
-      const raw = await file.text();
-      await this.importAiPayload(raw);
-    } finally {
-      target.value = '';
-    }
-  }
-
-  async importAiJson(): Promise<void> {
-    const raw = this.aiJsonInput().trim();
-    if (!raw) {
-      this.aiImportError.set($localize`Füge zuerst das KI-JSON ein.`);
-      return;
-    }
-    await this.importAiPayload(raw);
-  }
-
   private matchesPreset(preset: QuizPreset): boolean {
     const target = QUIZ_PRESETS[preset];
     const current = this.readSettingsFromForm();
@@ -285,23 +202,6 @@ export class QuizNewComponent implements OnInit, OnDestroy {
       readingPhaseEnabled: this.form.controls.readingPhaseEnabled.value,
       preset: this.themePreset.preset() === 'serious' ? 'SERIOUS' as const : 'PLAYFUL' as const,
     };
-  }
-
-  private async importAiPayload(raw: string): Promise<void> {
-    this.aiImportError.set(null);
-    this.aiImportStatus.set(null);
-
-    try {
-      const payload = JSON.parse(raw) as unknown;
-      const imported = this.quizStore.importQuiz(payload);
-      this.aiImportStatus.set($localize`KI-Quiz „${imported.name}“ importiert.`);
-      this.aiJsonInput.set('');
-      this.showAiImport.set(false);
-      await this.router.navigate(localizeCommands(['quiz', imported.id]));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'KI-Import fehlgeschlagen.';
-      this.aiImportError.set(message);
-    }
   }
 
   async submit(): Promise<void> {

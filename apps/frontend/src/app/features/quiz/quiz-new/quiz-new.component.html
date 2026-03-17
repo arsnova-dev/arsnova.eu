@@ -1,8 +1,4 @@
 <mat-card appearance="outlined" class="quiz-form-card">
-  <mat-card-header class="quiz-form-card__header">
-    <mat-card-title i18n>Quiz erstellen</mat-card-title>
-  </mat-card-header>
-
   <mat-card-content>
     <form
       #quizCreateForm
@@ -64,60 +60,7 @@
                   <span i18n>{{ preset.label }} anwenden</span>
                 </button>
               }
-              <button mat-button type="button" (click)="copyKiPrompt()">
-                <mat-icon>smart_toy</mat-icon>
-                <span i18n>KI-Prompt kopieren</span>
-              </button>
-              <button mat-button type="button" (click)="toggleAiImport()">
-                <mat-icon>upload_file</mat-icon>
-                <span i18n>KI-Quiz importieren</span>
-              </button>
-              @if (promptStatus()) {
-                <p class="quiz-form__preset-badge" role="status">{{ promptStatus() }}</p>
-              }
             </div>
-
-            @if (aiImportStatus()) {
-              <p class="quiz-form__preset-badge" role="status">{{ aiImportStatus() }}</p>
-            }
-            @if (aiImportError()) {
-              <p class="quiz-form__error" role="alert">{{ aiImportError() }}</p>
-            }
-
-            @if (showAiImport()) {
-              <div class="quiz-form__ai-import l-stack l-stack--xs">
-                <p class="quiz-form__ai-hint" i18n>
-                  Füge das JSON aus deiner KI ein oder lade es als Datei. Wir prüfen den Inhalt vor dem Import.
-                </p>
-                <mat-form-field appearance="outline">
-                  <mat-label i18n>KI-JSON einfügen</mat-label>
-                  <textarea
-                    #aiJsonTextarea
-                    matInput
-                    rows="8"
-                    [value]="aiJsonInput()"
-                    (input)="updateAiJsonInput(aiJsonTextarea.value)"
-                  ></textarea>
-                </mat-form-field>
-                <div class="quiz-form__ai-actions">
-                  <button mat-button type="button" (click)="aiImportFileInput.click()">
-                    <mat-icon>description</mat-icon>
-                    <span i18n>Datei wählen</span>
-                  </button>
-                  <button mat-button type="button" (click)="toggleAiImport()" i18n>Abbrechen</button>
-                  <button matButton="filled" type="button" (click)="importAiJson()" i18n>
-                    Importieren
-                  </button>
-                </div>
-                <input
-                  #aiImportFileInput
-                  type="file"
-                  accept=".json,application/json"
-                  hidden
-                  (change)="onAiImportFileSelected($event)"
-                />
-              </div>
-            }
 
             <fieldset class="quiz-form__fieldset">
             <legend class="quiz-form__legend" i18n>Spiel &amp; Auswertung</legend>

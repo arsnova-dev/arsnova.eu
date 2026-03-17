@@ -1,8 +1,8 @@
 <section class="quiz-list-page l-stack l-stack--sm">
   <div class="quiz-list__actions">
-    <button mat-button type="button" (click)="toggleAiImport()">
+    <button matButton="tonal" type="button" class="quiz-list__ai-trigger" (click)="toggleAiImport()">
       <mat-icon>psychology</mat-icon>
-      <span i18n>KI-Quiz importieren</span>
+      <span i18n="@@quizList.aiImport.trigger">Quiz aus KI-Chat importieren</span>
     </button>
     <button mat-button type="button" (click)="importFileInput.click()">
       <mat-icon>upload_file</mat-icon>
@@ -20,6 +20,96 @@
       (change)="onImportFileSelected($event)"
     />
   </div>
+
+  @if (actionInfo()) {
+    <p class="quiz-list__info" role="status">{{ actionInfo() }}</p>
+  }
+  @if (actionError()) {
+    <p class="quiz-list__error" role="alert">{{ actionError() }}</p>
+  }
+
+  @if (showAiImport()) {
+    <mat-card appearance="outlined" class="quiz-list__ai-card">
+      <mat-card-content class="quiz-list__ai-content l-stack l-stack--xs">
+        <h2 class="quiz-list__ai-title" i18n="@@quizList.aiImport.title">Quiz aus KI-Chat importieren</h2>
+        <p class="quiz-list__ai-hint" i18n="@@quizList.aiImport.hint">
+          In drei kurzen Schritten kommst du vom KI-Chat direkt zu einem neuen Quiz.
+        </p>
+        <div class="quiz-list__ai-steps" aria-label="KI-Import Schritte" i18n-aria-label="@@quizList.aiImport.stepsAria">
+          <section class="quiz-list__ai-step">
+            <div class="quiz-list__ai-step-header">
+              <span class="quiz-list__ai-step-number" aria-hidden="true">1</span>
+              <div class="quiz-list__ai-step-copy">
+                <h3 class="quiz-list__ai-step-title" i18n="@@quizList.aiImport.stepOneTitle">
+                  Textvorlage kopieren
+                </h3>
+                <p class="quiz-list__ai-step-text" i18n="@@quizList.aiImport.stepOneText">
+                  Öffne deinen KI-Chat und sende dort die Textvorlage ab.
+                </p>
+              </div>
+            </div>
+            <button mat-button type="button" (click)="copyKiPrompt()">
+              <mat-icon>content_copy</mat-icon>
+              <span i18n="@@quizList.aiImport.copyTemplate">Textvorlage kopieren</span>
+            </button>
+          </section>
+
+          <section class="quiz-list__ai-step">
+            <div class="quiz-list__ai-step-header">
+              <span class="quiz-list__ai-step-number" aria-hidden="true">2</span>
+              <div class="quiz-list__ai-step-copy">
+                <h3 class="quiz-list__ai-step-title" i18n="@@quizList.aiImport.stepTwoTitle">
+                  Antwort einfügen
+                </h3>
+                <p class="quiz-list__ai-step-text" i18n="@@quizList.aiImport.stepTwoText">
+                  Kopiere am besten nur den JSON-Codeblock aus dem KI-Chat und füge ihn hier ein.
+                </p>
+              </div>
+            </div>
+            <mat-form-field appearance="outline" class="quiz-list__ai-field">
+              <mat-label i18n="@@quizList.aiImport.responseLabel">Antwort aus dem KI-Chat</mat-label>
+              <textarea
+                #aiJsonTextarea
+                class="quiz-list__ai-textarea"
+                matInput
+                rows="8"
+                [value]="aiJsonInput()"
+                (input)="updateAiJsonInput(aiJsonTextarea.value)"
+              ></textarea>
+              <mat-hint i18n="@@quizList.aiImport.responseHint">
+                Am einfachsten klappt es mit dem Codeblock. Falls du die ganze Chat-Antwort kopierst, versuchen wir den JSON-Teil automatisch zu erkennen.
+              </mat-hint>
+            </mat-form-field>
+          </section>
+
+          <section class="quiz-list__ai-step">
+            <div class="quiz-list__ai-step-header">
+              <span class="quiz-list__ai-step-number" aria-hidden="true">3</span>
+              <div class="quiz-list__ai-step-copy">
+                <h3 class="quiz-list__ai-step-title" i18n="@@quizList.aiImport.stepThreeTitle">
+                  Quiz importieren
+                </h3>
+                <p class="quiz-list__ai-step-text" i18n="@@quizList.aiImport.stepThreeText">
+                  Prüfe kurz den Inhalt und starte dann den Import.
+                </p>
+              </div>
+            </div>
+            <div class="quiz-list__ai-actions">
+              <button matButton="tonal" type="button" (click)="resetAiImport()">
+                <mat-icon>restart_alt</mat-icon>
+                <span i18n>Zurücksetzen</span>
+              </button>
+              <button mat-button type="button" (click)="toggleAiImport()" i18n>Abbrechen</button>
+              <button matButton="filled" type="button" (click)="importAiJson()" i18n="@@quizList.aiImport.submit">
+                Quiz importieren
+              </button>
+            </div>
+          </section>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
   <div class="quiz-list__sync-callout">
     @if (isSharedLibrary()) {
       <div class="quiz-list__sync-status">
@@ -113,45 +203,6 @@
     </p>
   </div>
 
-  @if (actionInfo()) {
-    <p class="quiz-list__info" role="status">{{ actionInfo() }}</p>
-  }
-  @if (actionError()) {
-    <p class="quiz-list__error" role="alert">{{ actionError() }}</p>
-  }
-
-  @if (showAiImport()) {
-    <mat-card appearance="outlined" class="quiz-list__ai-card">
-      <mat-card-content class="quiz-list__ai-content l-stack l-stack--xs">
-        <h2 class="quiz-list__ai-title" i18n>KI-Quiz importieren</h2>
-        <p class="quiz-list__ai-hint" i18n>
-          Kopiere den Prompt in deine KI, dann füge das generierte JSON hier ein.
-        </p>
-        <button mat-button type="button" (click)="copyKiPrompt()">
-          <mat-icon>content_copy</mat-icon>
-          <span i18n>Prompt kopieren</span>
-        </button>
-        <mat-form-field appearance="outline" class="quiz-list__ai-field">
-          <mat-label i18n>KI-JSON</mat-label>
-          <textarea
-            #aiJsonTextarea
-            class="quiz-list__ai-textarea"
-            matInput
-            rows="8"
-            [value]="aiJsonInput()"
-            (input)="updateAiJsonInput(aiJsonTextarea.value)"
-          ></textarea>
-        </mat-form-field>
-        <div class="quiz-list__ai-actions">
-          <button mat-button type="button" (click)="toggleAiImport()" i18n>Abbrechen</button>
-          <button matButton="filled" type="button" (click)="importAiJson()" i18n>
-            Import starten
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  }
-
   @if (quizzes().length === 0) {
     <mat-card appearance="outlined" class="quiz-empty-state">
       <mat-card-content class="quiz-empty-state__content">
@@ -177,7 +228,7 @@
               <div class="quiz-list-item__main">
                 <h2 class="quiz-list-item__title">{{ quiz.name }}</h2>
                 @if (quiz.description) {
-                  <p class="quiz-list-item__description">{{ quiz.description }}</p>
+                  <div class="quiz-list-item__description" [innerHTML]="renderDescription(quiz.description)"></div>
                 }
                 <div class="quiz-list-item__meta">
                   <span class="quiz-list-item__badge" [class.quiz-list-item__badge--empty]="quiz.questionCount === 0">

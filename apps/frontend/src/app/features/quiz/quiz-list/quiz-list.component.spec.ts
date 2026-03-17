@@ -207,6 +207,25 @@ describe('QuizListComponent', () => {
     expect(link.getAttribute('aria-label')).toContain('Datenbanken');
   });
 
+  it('rendert Markdown in der Quiz-Beschreibung', () => {
+    quizzesSignal.set([
+      {
+        id: 'e31fef3f-f7b1-4705-a739-28c8ec4486bf',
+        name: 'Deep Learning Quiz',
+        description: 'Teste dein Wissen über **Deep Learning**.',
+        createdAt: '2026-03-08T10:00:00.000Z',
+        updatedAt: '2026-03-08T11:30:00.000Z',
+        questionCount: 2,
+      },
+    ]);
+
+    const fixture = TestBed.createComponent(QuizListComponent);
+    fixture.detectChanges();
+
+    const description = fixture.nativeElement.querySelector('.quiz-list-item__description') as HTMLElement;
+    expect(description.innerHTML).toContain('<strong>Deep Learning</strong>');
+  });
+
   it('zeigt im More-Menü den Eintrag Bearbeiten', async () => {
     quizzesSignal.set([
       {
@@ -250,6 +269,45 @@ describe('QuizListComponent', () => {
     await fixture.whenStable();
 
     expect(fixture.componentInstance.isQuizLive('e31fef3f-f7b1-4705-a739-28c8ec4486bf')).toBe(true);
+  });
+
+  it('setzt die KI-Eingabe ohne Schliessen der Karte zurueck', () => {
+    const fixture = TestBed.createComponent(QuizListComponent);
+    const component = fixture.componentInstance;
+
+    component.showAiImport.set(true);
+    component.updateAiJsonInput('{"quiz":{"name":"Import"}}');
+    component['actionError'].set('Fehler');
+    component['actionInfo'].set('Info');
+
+    component.resetAiImport();
+
+    expect(component.showAiImport()).toBe(true);
+    expect(component.aiJsonInput()).toBe('');
+    expect(component.actionError()).toBeNull();
+    expect(component.actionInfo()).toBeNull();
+  });
+
+  it('importiert auch eine komplette KI-Chat-Antwort mit json-Codeblock', () => {
+    const fixture = TestBed.createComponent(QuizListComponent);
+    const component = fixture.componentInstance;
+    mockStore.importQuiz.mockReturnValue({
+      id: 'caece014-f7cd-4d26-a101-bd494379f95f',
+      name: 'KI Import',
+    });
+
+    component.updateAiJsonInput(`Hier ist dein Quiz:
+
+\`\`\`json
+{"quiz":{"name":"KI Import"}}
+\`\`\`
+
+Viel Erfolg beim Import.`);
+
+    component.importAiJson();
+
+    expect(mockStore.importQuiz).toHaveBeenCalledWith({ quiz: { name: 'KI Import' } });
+    expect(component.actionError()).toBeNull();
   });
 
   it('zeigt direkten Start-CTA bei startLive-Shortcut', async () => {

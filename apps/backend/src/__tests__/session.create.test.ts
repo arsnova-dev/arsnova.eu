@@ -149,6 +149,46 @@ describe('session.create (Story 2.1a)', () => {
     );
   });
 
+  it('erlaubt Blitzlicht-only ohne quizId', async () => {
+    prismaMock.session.create.mockResolvedValueOnce({
+      id: SESSION_ID,
+      code: CODE,
+      type: 'QUIZ',
+      status: 'LOBBY',
+      quizId: null,
+      qaEnabled: false,
+      qaTitle: null,
+      qaModerationMode: false,
+      quickFeedbackEnabled: true,
+      quiz: null,
+    });
+
+    const result = await caller.create({
+      type: 'QUIZ',
+      quickFeedbackEnabled: true,
+    });
+
+    expect(result).toEqual({
+      sessionId: SESSION_ID,
+      code: CODE,
+      status: 'LOBBY',
+      quizName: null,
+    });
+    expect(prismaMock.session.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: 'QUIZ',
+          quizId: null,
+          qaEnabled: false,
+          qaTitle: null,
+          qaModerationMode: false,
+          quickFeedbackEnabled: true,
+          status: 'LOBBY',
+        }),
+      }),
+    );
+  });
+
   it('lehnt Quiz-Sessions ohne quizId ab', async () => {
     await expect(caller.create({})).rejects.toMatchObject({
       code: 'BAD_REQUEST',

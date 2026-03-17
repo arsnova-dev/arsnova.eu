@@ -7,7 +7,6 @@ import { QuizStoreService } from '../data/quiz-store.service';
 describe('QuizNewComponent', () => {
   const mockStore = {
     createQuiz: vi.fn(),
-    importQuiz: vi.fn(),
   };
 
   beforeEach(() => {
@@ -111,35 +110,6 @@ describe('QuizNewComponent', () => {
     expect(component.form.controls.enableSoundEffects.value).toBe(false);
     expect(component.form.controls.anonymousMode.value).toBe(true);
     expect(component.form.controls.defaultTimer.value).toBeNull();
-  });
-
-  it('importiert KI-JSON und navigiert direkt zum importierten Quiz', async () => {
-    const fixture = TestBed.createComponent(QuizNewComponent);
-    const component = fixture.componentInstance;
-    const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
-    mockStore.importQuiz.mockReturnValue({
-      id: 'caece014-f7cd-4d26-a101-bd494379f95f',
-      name: 'KI Import',
-    });
-
-    component.updateAiJsonInput('{"quiz":{"name":"KI Import"}}');
-    await component.importAiJson();
-
-    expect(mockStore.importQuiz).toHaveBeenCalledWith({ quiz: { name: 'KI Import' } });
-    expect(navigateSpy).toHaveBeenCalledWith(['quiz', 'caece014-f7cd-4d26-a101-bd494379f95f']);
-    expect(component.aiImportError()).toBeNull();
-  });
-
-  it('zeigt bei leerer KI-Eingabe eine verständliche Meldung', async () => {
-    const fixture = TestBed.createComponent(QuizNewComponent);
-    const component = fixture.componentInstance;
-
-    component.updateAiJsonInput('   ');
-    await component.importAiJson();
-
-    expect(component.aiImportError()).toBe('Füge zuerst das KI-JSON ein.');
-    expect(mockStore.importQuiz).not.toHaveBeenCalled();
   });
 
   it('verhindert das Erstellen bei doppelten Team-Namen', async () => {

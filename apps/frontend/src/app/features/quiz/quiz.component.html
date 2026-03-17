@@ -2,8 +2,18 @@
   @if (showHeader()) {
     <div class="quiz-page__header">
       <h1 class="quiz-page__title">
-        <mat-icon class="quiz-page__title-icon">quiz</mat-icon>
-        <span i18n="@@quizPage.title">Meine Quizze</span>
+        <mat-icon class="quiz-page__title-icon">
+          @if (pageTitle() === 'NEW') {
+            add_circle
+          } @else {
+            library_books
+          }
+        </mat-icon>
+        @if (pageTitle() === 'NEW') {
+          <span i18n="@@quizPage.newTitle">Quiz erstellen</span>
+        } @else {
+          <span i18n="@@quizPage.title">Meine Quiz-Bibliothek</span>
+        }
       </h1>
     </div>
   }

@@ -195,7 +195,13 @@ export const CreateSessionInputSchema = z.object({
   qaModerationMode: z.boolean().optional(),                // ADR-0009: Vorab-Moderation für Q&A
   quickFeedbackEnabled: z.boolean().optional().default(false), // ADR-0009: Blitz-Feedback-Kanal
 }).superRefine((value, ctx) => {
-  if (value.type === 'QUIZ' && !value.quizId) {
+  const isQuickFeedbackOnlySession =
+    value.type === 'QUIZ' &&
+    !value.quizId &&
+    value.qaEnabled !== true &&
+    value.quickFeedbackEnabled === true;
+
+  if (value.type === 'QUIZ' && !value.quizId && !isQuickFeedbackOnlySession) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['quizId'],

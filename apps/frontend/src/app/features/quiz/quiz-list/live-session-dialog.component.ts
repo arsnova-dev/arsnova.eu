@@ -18,7 +18,7 @@ export interface LiveSessionDialogData {
 }
 
 export interface LiveSessionDialogResult {
-  startMode: 'QUIZ' | 'Q_AND_A';
+  startChannel: 'quiz' | 'qa' | 'quickFeedback';
   enableQuiz: boolean;
   enableQa: boolean;
   enableQuickFeedback: boolean;
@@ -49,159 +49,86 @@ export interface LiveSessionDialogResult {
 
     <mat-dialog-content>
       <div class="live-session-dialog__content">
-      <section class="live-session-dialog__panel">
-        <div class="live-session-dialog__section-head">
-          <p class="live-session-dialog__section-label" i18n="@@quizList.liveDialog.startLabel">Start</p>
-        </div>
-
-        <div class="live-session-dialog__options" role="group" [attr.aria-label]="optionGroupAriaLabel()">
+      <div class="live-session-dialog__channel-grid" role="group" [attr.aria-label]="channelGroupAriaLabel()">
         <button
           type="button"
-          class="live-session-dialog__option"
-          [class.live-session-dialog__option--selected]="startMode() === 'QUIZ'"
-          [attr.aria-pressed]="startMode() === 'QUIZ'"
+          class="live-session-dialog__channel-card"
+          [class.live-session-dialog__channel-card--selected]="enableQuiz()"
           [disabled]="!data.quizCanStart"
-          (click)="selectMode('QUIZ')"
+          [attr.aria-pressed]="enableQuiz()"
+          (click)="handleChannelCardClick('quiz')"
         >
-          <mat-icon class="live-session-dialog__option-icon" aria-hidden="true">quiz</mat-icon>
-          <span class="live-session-dialog__option-copy">
-            <span class="live-session-dialog__option-label" i18n="@@quizList.liveDialog.optionQuiz">Mit Quiz</span>
-            <span class="live-session-dialog__option-hint" i18n="@@quizList.liveDialog.optionQuizHint">
-              Nutzt „{{ data.quizName }}“.
+          <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">quiz</mat-icon>
+          <span class="live-session-dialog__channel-copy">
+            <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQuiz">Quiz</span>
+            <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQuizHint">
+              Startet mit „{{ data.quizName }}“.
             </span>
           </span>
+          @if (channelStateLabel('quiz'); as stateLabel) {
+            <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
+          }
           <span
-            class="live-session-dialog__option-radio"
-            [class.live-session-dialog__option-radio--selected]="startMode() === 'QUIZ'"
+            class="live-session-dialog__channel-toggle"
+            [class.live-session-dialog__channel-toggle--selected]="enableQuiz()"
             aria-hidden="true"
-          ></span>
+          >
+            <span class="live-session-dialog__channel-toggle-thumb"></span>
+          </span>
         </button>
 
         <button
           type="button"
-          class="live-session-dialog__option"
-          [class.live-session-dialog__option--selected]="startMode() === 'Q_AND_A'"
-          [attr.aria-pressed]="startMode() === 'Q_AND_A'"
-          (click)="selectMode('Q_AND_A')"
+          class="live-session-dialog__channel-card"
+          [class.live-session-dialog__channel-card--selected]="enableQa()"
+          [attr.aria-pressed]="enableQa()"
+          (click)="handleChannelCardClick('qa')"
         >
-          <mat-icon class="live-session-dialog__option-icon" aria-hidden="true">forum</mat-icon>
-          <span class="live-session-dialog__option-copy">
-            <span class="live-session-dialog__option-label" i18n="@@quizList.liveDialog.optionQa">Mit Q&amp;A</span>
-            <span class="live-session-dialog__option-hint" i18n="@@quizList.liveDialog.optionQaHint">
-              Startet mit Q&amp;A. Quiz später dazu.
+          <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">forum</mat-icon>
+          <span class="live-session-dialog__channel-copy">
+            <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQa">Q&amp;A</span>
+            <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQaHint">
+              Fragen aus dem Raum
             </span>
           </span>
+          @if (channelStateLabel('qa'); as stateLabel) {
+            <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
+          }
           <span
-            class="live-session-dialog__option-radio"
-            [class.live-session-dialog__option-radio--selected]="startMode() === 'Q_AND_A'"
+            class="live-session-dialog__channel-toggle"
+            [class.live-session-dialog__channel-toggle--selected]="enableQa()"
             aria-hidden="true"
-          ></span>
+          >
+            <span class="live-session-dialog__channel-toggle-thumb"></span>
+          </span>
         </button>
-        </div>
-      </section>
 
-      <section class="live-session-dialog__panel live-session-dialog__panel--soft">
-        <div class="live-session-dialog__channels">
-          <div class="live-session-dialog__section-head">
-            <p class="live-session-dialog__section-label" i18n="@@quizList.liveDialog.channelsLabel">Zusätzlich aktivieren</p>
-          </div>
-
-          <div class="live-session-dialog__channel-grid" role="group" [attr.aria-label]="channelGroupAriaLabel()">
-            @if (startMode() !== 'QUIZ') {
-              <button
-                type="button"
-                class="live-session-dialog__channel-card"
-                [class.live-session-dialog__channel-card--selected]="enableQuiz()"
-                [class.live-session-dialog__channel-card--locked]="startMode() === 'QUIZ'"
-                [disabled]="!data.quizCanStart"
-                [attr.aria-pressed]="enableQuiz()"
-                (click)="toggleQuizCard()"
-              >
-                <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">quiz</mat-icon>
-                <span class="live-session-dialog__channel-copy">
-                  <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQuiz">Quiz</span>
-                  <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQuizHint">
-                    Fragen und Ergebnisse
-                  </span>
-                </span>
-                @if (channelStateLabel('quiz'); as stateLabel) {
-                  <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
-                }
-                <span
-                  class="live-session-dialog__channel-toggle"
-                  [class.live-session-dialog__channel-toggle--selected]="enableQuiz()"
-                  [class.live-session-dialog__channel-toggle--locked]="startMode() === 'QUIZ'"
-                  aria-hidden="true"
-                >
-                  <span class="live-session-dialog__channel-toggle-thumb"></span>
-                </span>
-              </button>
-            }
-
-            @if (startMode() !== 'Q_AND_A') {
-              <button
-                type="button"
-                class="live-session-dialog__channel-card"
-                [class.live-session-dialog__channel-card--selected]="enableQa()"
-                [class.live-session-dialog__channel-card--locked]="startMode() === 'Q_AND_A'"
-                [attr.aria-pressed]="enableQa()"
-                (click)="toggleQaCard()"
-              >
-                <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">forum</mat-icon>
-                <span class="live-session-dialog__channel-copy">
-                  <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQa">Q&amp;A</span>
-                  <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQaHint">
-                    Fragen aus dem Raum
-                  </span>
-                </span>
-                @if (channelStateLabel('qa'); as stateLabel) {
-                  <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
-                }
-                <span
-                  class="live-session-dialog__channel-toggle"
-                  [class.live-session-dialog__channel-toggle--selected]="enableQa()"
-                  [class.live-session-dialog__channel-toggle--locked]="startMode() === 'Q_AND_A'"
-                  aria-hidden="true"
-                >
-                  <span class="live-session-dialog__channel-toggle-thumb"></span>
-                </span>
-              </button>
-            }
-
-            <button
-              type="button"
-              class="live-session-dialog__channel-card"
-              [class.live-session-dialog__channel-card--selected]="enableQuickFeedback()"
-              [attr.aria-pressed]="enableQuickFeedback()"
-              (click)="toggleQuickFeedbackCard()"
-            >
-              <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">bolt</mat-icon>
-              <span class="live-session-dialog__channel-copy">
-                <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQuickFeedback">Blitzlicht</span>
-                <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQuickFeedbackHint">
-                  Kurze Stimmungsbilder
-                </span>
-              </span>
-              @if (channelStateLabel('quickFeedback'); as stateLabel) {
-                <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
-              }
-              <span
-                class="live-session-dialog__channel-toggle"
-                [class.live-session-dialog__channel-toggle--selected]="enableQuickFeedback()"
-                aria-hidden="true"
-              >
-                <span class="live-session-dialog__channel-toggle-thumb"></span>
-              </span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      @if (startMode() === 'QUIZ' && !data.quizCanStart) {
-        <p class="live-session-dialog__hint live-session-dialog__hint--error" i18n="@@quizList.liveDialog.quizDisabled">
-          Für Quiz brauchst du mindestens eine Frage. Sonst starte mit Q&amp;A.
-        </p>
-      }
+        <button
+          type="button"
+          class="live-session-dialog__channel-card"
+          [class.live-session-dialog__channel-card--selected]="enableQuickFeedback()"
+          [attr.aria-pressed]="enableQuickFeedback()"
+          (click)="handleChannelCardClick('quickFeedback')"
+        >
+          <mat-icon class="live-session-dialog__channel-icon" aria-hidden="true">bolt</mat-icon>
+          <span class="live-session-dialog__channel-copy">
+            <span class="live-session-dialog__channel-label" i18n="@@quizList.liveDialog.channelQuickFeedback">Blitzlicht</span>
+            <span class="live-session-dialog__channel-hint" i18n="@@quizList.liveDialog.channelQuickFeedbackHint">
+              Kurze Stimmungsbilder
+            </span>
+          </span>
+          @if (channelStateLabel('quickFeedback'); as stateLabel) {
+            <span class="live-session-dialog__channel-state">{{ stateLabel }}</span>
+          }
+          <span
+            class="live-session-dialog__channel-toggle"
+            [class.live-session-dialog__channel-toggle--selected]="enableQuickFeedback()"
+            aria-hidden="true"
+          >
+            <span class="live-session-dialog__channel-toggle-thumb"></span>
+          </span>
+        </button>
+      </div>
 
       @if (enableQa()) {
         <div class="live-session-dialog__field-row">
@@ -231,9 +158,8 @@ export interface LiveSessionDialogResult {
   `,
   styles: [`
     :host {
-      --live-session-dialog-leading-width: 1.5rem;
+      --live-session-dialog-leading-width: 1.35rem;
       --live-session-dialog-control-width: 2.65rem;
-      --live-session-dialog-panel-padding: 1.05rem;
     }
 
     .live-session-dialog__title-content {
@@ -253,173 +179,13 @@ export interface LiveSessionDialogResult {
 
     .live-session-dialog__content {
       display: grid;
-      gap: 1.2rem;
-      min-width: min(32rem, 100%);
-    }
-
-    .live-session-dialog__panel {
-      display: grid;
       gap: 1rem;
-      padding: var(--live-session-dialog-panel-padding);
-      border-radius: calc(var(--mat-sys-corner-large) + 0.25rem);
-      background: color-mix(in srgb, var(--mat-sys-surface-container-low) 86%, var(--mat-sys-surface));
-      box-shadow:
-        0 1px 2px color-mix(in srgb, var(--mat-sys-shadow) 3%, transparent),
-        0 10px 24px color-mix(in srgb, var(--mat-sys-shadow) 3%, transparent);
-    }
-
-    .live-session-dialog__panel--soft {
-      background: color-mix(in srgb, var(--mat-sys-surface-container-low) 66%, var(--mat-sys-surface));
-    }
-
-    .live-session-dialog__section-head {
-      display: grid;
-      gap: 0.28rem;
-    }
-
-    .live-session-dialog__options {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .live-session-dialog__channels {
-      display: grid;
-      gap: 0.65rem;
+      min-width: min(32rem, 100%);
     }
 
     .live-session-dialog__channel-grid {
       display: grid;
       gap: 0.65rem;
-    }
-
-    .live-session-dialog__section-label {
-      margin: 0;
-      font: var(--mat-sys-title-small);
-      font-weight: 700;
-      color: var(--mat-sys-on-surface);
-      letter-spacing: -0.01em;
-    }
-
-    .live-session-dialog__section-copy {
-      margin: 0;
-      font: var(--mat-sys-body-small);
-      line-height: 1.5;
-      color: var(--mat-sys-on-surface-variant);
-      max-width: 32ch;
-    }
-
-    .live-session-dialog__option {
-      appearance: none;
-      border: 1px solid var(--mat-sys-outline-variant);
-      display: grid;
-      grid-template-columns:
-        var(--live-session-dialog-leading-width)
-        minmax(0, 1fr)
-        var(--live-session-dialog-control-width);
-      column-gap: 0.75rem;
-      align-items: start;
-      min-height: 0;
-      width: 100%;
-      padding: 1.02rem 1rem;
-      margin: 0;
-      text-align: left;
-      border-radius: calc(var(--mat-sys-corner-large) + 0.15rem);
-      background: color-mix(in srgb, var(--mat-sys-surface) 92%, var(--mat-sys-surface-container-low));
-      color: inherit;
-      font: inherit;
-      cursor: pointer;
-    }
-
-    .live-session-dialog__option--selected {
-      border-color: var(--mat-sys-primary);
-      background: color-mix(in srgb, var(--mat-sys-primary) 9%, var(--mat-sys-surface));
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 18%, transparent),
-        0 10px 20px color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      .live-session-dialog__option {
-        transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-      }
-
-      .live-session-dialog__option:hover:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px color-mix(in srgb, var(--mat-sys-shadow) 10%, transparent);
-      }
-    }
-
-    .live-session-dialog__option:focus-visible {
-      outline: 2px solid var(--mat-sys-primary);
-      outline-offset: 2px;
-    }
-
-    .live-session-dialog__option:disabled {
-      cursor: default;
-      opacity: 0.65;
-    }
-
-    .live-session-dialog__option-icon {
-      width: var(--live-session-dialog-leading-width);
-      min-width: var(--live-session-dialog-leading-width);
-      height: var(--live-session-dialog-leading-width);
-      margin-top: 0.08rem;
-      color: var(--mat-sys-primary);
-      font-size: 1.35rem;
-      line-height: 1;
-    }
-
-    .live-session-dialog__option-copy {
-      display: grid;
-      gap: 0.15rem;
-      min-width: 0;
-    }
-
-    .live-session-dialog__option-radio {
-      align-self: start;
-      justify-self: end;
-      margin-top: 0.08rem;
-      width: 1.35rem;
-      height: 1.35rem;
-      border-radius: 50%;
-      border: 2px solid color-mix(in srgb, var(--mat-sys-outline) 82%, var(--mat-sys-primary));
-      background: var(--mat-sys-surface);
-      box-sizing: border-box;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .live-session-dialog__option-radio::after {
-      content: '';
-      position: absolute;
-      inset: 0.22rem;
-      border-radius: 50%;
-      background: transparent;
-    }
-
-    .live-session-dialog__option-radio--selected {
-      border-color: var(--mat-sys-primary);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
-    }
-
-    .live-session-dialog__option-radio--selected::after {
-      background: var(--mat-sys-primary);
-    }
-
-    .live-session-dialog__option-label {
-      display: block;
-      font: var(--mat-sys-title-medium);
-      font-weight: 600;
-      color: var(--mat-sys-on-surface);
-      line-height: 1.25;
-    }
-
-    .live-session-dialog__option-hint {
-      display: block;
-      font: var(--mat-sys-body-small);
-      line-height: 1.5;
-      color: var(--mat-sys-on-surface-variant);
-      white-space: normal;
     }
 
     .live-session-dialog__channel-card {
@@ -451,10 +217,6 @@ export interface LiveSessionDialogResult {
         0 8px 18px color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
     }
 
-    .live-session-dialog__channel-card--locked {
-      cursor: default;
-    }
-
     .live-session-dialog__channel-card:disabled {
       cursor: default;
       opacity: 0.7;
@@ -465,7 +227,7 @@ export interface LiveSessionDialogResult {
         transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
       }
 
-      .live-session-dialog__channel-card:hover:not(:disabled):not(.live-session-dialog__channel-card--locked) {
+      .live-session-dialog__channel-card:hover:not(:disabled) {
         transform: translateY(-1px);
         box-shadow: 0 6px 16px color-mix(in srgb, var(--mat-sys-shadow) 10%, transparent);
       }
@@ -541,10 +303,6 @@ export interface LiveSessionDialogResult {
       border-color: color-mix(in srgb, var(--mat-sys-primary) 78%, transparent);
     }
 
-    .live-session-dialog__channel-toggle--locked {
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
-    }
-
     .live-session-dialog__channel-toggle-thumb {
       display: block;
       width: 1rem;
@@ -560,7 +318,7 @@ export interface LiveSessionDialogResult {
     }
 
     .live-session-dialog__field-row {
-      padding-inline: var(--live-session-dialog-panel-padding);
+      padding-inline: 0;
     }
 
     .live-session-dialog__field {
@@ -573,25 +331,7 @@ export interface LiveSessionDialogResult {
       border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 28%, transparent);
     }
 
-    .live-session-dialog__hint {
-      margin: 0;
-      font: var(--mat-sys-body-small);
-      line-height: 1.45;
-      padding: 0.8rem 0.9rem;
-      border-radius: var(--mat-sys-corner-medium);
-      background: color-mix(in srgb, var(--mat-sys-error) 6%, var(--mat-sys-surface));
-      border: 1px solid color-mix(in srgb, var(--mat-sys-error) 18%, transparent);
-    }
-
-    .live-session-dialog__hint--error {
-      color: var(--mat-sys-error);
-    }
-
     @media (max-width: 599px) {
-      :host {
-        --live-session-dialog-panel-padding: 0.9rem;
-      }
-
       .live-session-dialog__content {
         min-width: 0;
         gap: 1rem;
@@ -601,40 +341,11 @@ export interface LiveSessionDialogResult {
         margin-top: 0.15rem;
       }
 
-      .live-session-dialog__panel {
-        padding: 0.95rem var(--live-session-dialog-panel-padding);
-      }
-
-      .live-session-dialog__option {
-        grid-template-columns: 1fr var(--live-session-dialog-control-width);
-        padding: 0.9rem;
-      }
-
-      .live-session-dialog__option-icon {
-        grid-column: 1;
-        grid-row: 1;
-        margin-bottom: 0.2rem;
-      }
-
-      .live-session-dialog__option-copy {
-        grid-column: 1 / -1;
-        grid-row: 2;
-      }
-
-      .live-session-dialog__option-radio {
-        grid-column: 2;
-        grid-row: 1;
-      }
-
-      .live-session-dialog__section-copy,
-      .live-session-dialog__option-hint,
-      .live-session-dialog__channel-hint,
-      .live-session-dialog__hint {
+      .live-session-dialog__channel-hint {
         font-size: 0.84rem;
         line-height: 1.42;
       }
 
-      .live-session-dialog__option-label,
       .live-session-dialog__channel-label {
         font-size: 1rem;
         line-height: 1.28;
@@ -671,68 +382,100 @@ export class LiveSessionDialogComponent {
   readonly data = inject<LiveSessionDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<LiveSessionDialogComponent, LiveSessionDialogResult | undefined>);
 
-  readonly startMode = signal<'QUIZ' | 'Q_AND_A'>(this.data.quizCanStart ? 'QUIZ' : 'Q_AND_A');
   readonly enableQuiz = signal(this.data.quizCanStart);
   readonly enableQa = signal(true);
-  readonly enableQuickFeedback = signal(false);
+  readonly enableQuickFeedback = signal(true);
   readonly qaTitle = signal('');
+  readonly startChannel = signal<'quiz' | 'qa' | 'quickFeedback'>(this.data.quizCanStart ? 'quiz' : 'qa');
   readonly canStart = computed(() => this.enableQuiz() || this.enableQa() || this.enableQuickFeedback());
 
-  optionGroupAriaLabel(): string {
-    return $localize`:@@quizList.liveDialog.optionGroup:Start für Live-Session wählen`;
-  }
-
   channelGroupAriaLabel(): string {
-    return $localize`:@@quizList.liveDialog.channelGroup:Zusätzliche Live-Bereiche wählen`;
-  }
-
-  selectMode(mode: 'QUIZ' | 'Q_AND_A'): void {
-    this.startMode.set(mode);
-    if (mode === 'QUIZ') {
-      this.enableQuiz.set(true);
-    }
-    if (mode === 'Q_AND_A') {
-      this.enableQa.set(true);
-    }
+    return $localize`:@@quizList.liveDialog.channelGroup:Live-Bereiche wählen`;
   }
 
   toggleQuiz(checked: boolean): void {
+    if (!checked && !this.enableQa() && !this.enableQuickFeedback()) {
+      return;
+    }
     this.enableQuiz.set(checked);
-    if (!checked && this.startMode() === 'QUIZ') {
-      this.startMode.set('Q_AND_A');
-      this.enableQa.set(true);
+    if (!checked && this.startChannel() === 'quiz') {
+      this.startChannel.set(this.nextAvailableStartChannel('quiz'));
     }
   }
 
   toggleQa(checked: boolean): void {
+    if (!checked && !this.enableQuiz() && !this.enableQuickFeedback()) {
+      return;
+    }
     this.enableQa.set(checked);
-    if (!checked && this.startMode() === 'Q_AND_A' && this.data.quizCanStart) {
-      this.startMode.set('QUIZ');
-      this.enableQuiz.set(true);
+    if (!checked && this.startChannel() === 'qa') {
+      this.startChannel.set(this.nextAvailableStartChannel('qa'));
     }
-  }
-
-  toggleQuizCard(): void {
-    if (!this.data.quizCanStart || this.startMode() === 'QUIZ') {
-      return;
-    }
-    this.toggleQuiz(!this.enableQuiz());
-  }
-
-  toggleQaCard(): void {
-    if (this.startMode() === 'Q_AND_A') {
-      return;
-    }
-    this.toggleQa(!this.enableQa());
   }
 
   toggleQuickFeedbackCard(): void {
-    this.enableQuickFeedback.set(!this.enableQuickFeedback());
+    if (!this.enableQuickFeedback() && !this.enableQuiz() && !this.enableQa()) {
+      this.enableQuickFeedback.set(true);
+      this.startChannel.set('quickFeedback');
+      return;
+    }
+
+    if (!this.enableQuickFeedback()) {
+      this.enableQuickFeedback.set(true);
+      this.startChannel.set('quickFeedback');
+      return;
+    }
+
+    if (this.startChannel() === 'quickFeedback') {
+      if (!this.enableQuiz() && !this.enableQa()) {
+        return;
+      }
+      this.enableQuickFeedback.set(false);
+      this.startChannel.set(this.nextAvailableStartChannel('quickFeedback'));
+      return;
+    }
+
+    this.startChannel.set('quickFeedback');
+  }
+
+  handleChannelCardClick(channel: 'quiz' | 'qa' | 'quickFeedback'): void {
+    if (channel === 'quiz') {
+      if (!this.data.quizCanStart) {
+        return;
+      }
+      if (!this.enableQuiz()) {
+        this.enableQuiz.set(true);
+        this.startChannel.set('quiz');
+        return;
+      }
+      if (this.startChannel() === 'quiz') {
+        this.toggleQuiz(false);
+        return;
+      }
+      this.startChannel.set('quiz');
+      return;
+    }
+
+    if (channel === 'qa') {
+      if (!this.enableQa()) {
+        this.enableQa.set(true);
+        this.startChannel.set('qa');
+        return;
+      }
+      if (this.startChannel() === 'qa') {
+        this.toggleQa(false);
+        return;
+      }
+      this.startChannel.set('qa');
+      return;
+    }
+
+    this.toggleQuickFeedbackCard();
   }
 
   channelStateLabel(channel: 'quiz' | 'qa' | 'quickFeedback'): string | null {
     if (channel === 'quiz') {
-      if (this.startMode() === 'QUIZ' && this.enableQuiz()) {
+      if (this.enableQuiz() && this.startChannel() === 'quiz') {
         return $localize`:@@quizList.liveDialog.channelStateStart:Start`;
       }
       return this.enableQuiz()
@@ -741,12 +484,16 @@ export class LiveSessionDialogComponent {
     }
 
     if (channel === 'qa') {
-      if (this.startMode() === 'Q_AND_A' && this.enableQa()) {
+      if (this.enableQa() && this.startChannel() === 'qa') {
         return $localize`:@@quizList.liveDialog.channelStateStart:Start`;
       }
       return this.enableQa()
         ? $localize`:@@quizList.liveDialog.channelStateOn:An`
         : $localize`:@@quizList.liveDialog.channelStateOff:Aus`;
+    }
+
+    if (this.enableQuickFeedback() && this.startChannel() === 'quickFeedback') {
+      return $localize`:@@quizList.liveDialog.channelStateStart:Start`;
     }
 
     return this.enableQuickFeedback()
@@ -760,11 +507,25 @@ export class LiveSessionDialogComponent {
     }
 
     this.dialogRef.close({
-      startMode: this.startMode(),
+      startMode: this.enableQuiz() ? 'QUIZ' : 'Q_AND_A',
       enableQuiz: this.enableQuiz(),
       enableQa: this.enableQa(),
       enableQuickFeedback: this.enableQuickFeedback(),
       title: this.enableQa() ? this.qaTitle().trim() : undefined,
     });
+  }
+
+  private nextAvailableStartChannel(
+    excluded: 'quiz' | 'qa' | 'quickFeedback',
+  ): 'quiz' | 'qa' | 'quickFeedback' {
+    const order: Array<'quiz' | 'qa' | 'quickFeedback'> = ['quiz', 'qa', 'quickFeedback'];
+    const available = order.filter((channel) => channel !== excluded && this.isChannelEnabled(channel));
+    return available[0] ?? excluded;
+  }
+
+  private isChannelEnabled(channel: 'quiz' | 'qa' | 'quickFeedback'): boolean {
+    if (channel === 'quiz') return this.enableQuiz();
+    if (channel === 'qa') return this.enableQa();
+    return this.enableQuickFeedback();
   }
 }

@@ -19,6 +19,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   private navSub?: Subscription;
 
   readonly showHeader = signal(true);
+  readonly pageTitle = signal<'LIST' | 'NEW'>('LIST');
 
   ngOnInit(): void {
     this.updateHeaderVisibility();
@@ -32,6 +33,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
 
   private updateHeaderVisibility(): void {
-    this.showHeader.set(!this.router.url.includes('/preview'));
+    const isPreview = this.router.url.includes('/preview');
+    this.showHeader.set(!isPreview);
+    this.pageTitle.set(this.router.url.includes('/new') ? 'NEW' : 'LIST');
   }
 }

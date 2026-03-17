@@ -1130,8 +1130,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.requestedInitialTab === 'qa' && visible.includes('qa') && active !== 'qa') {
-      this.activeChannel.set('qa');
+    if (
+      (this.requestedInitialTab === 'qa' || this.requestedInitialTab === 'quickFeedback') &&
+      visible.includes(this.requestedInitialTab) &&
+      active !== this.requestedInitialTab
+    ) {
+      this.activeChannel.set(this.requestedInitialTab);
     }
   }
 
