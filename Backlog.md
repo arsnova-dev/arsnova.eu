@@ -21,6 +21,7 @@
 | 0    | 0.4   | Server-Status-Indikator                       | 🟡   | ✅ Fertig |
 | 0    | 0.5   | Rate-Limiting & Brute-Force-Schutz            | 🔴   | ✅ Fertig |
 | 0    | 0.6   | CI/CD-Pipeline (GitHub Actions)               | 🔴   | ✅ Fertig |
+| 0    | 0.7   | Last- & Performance-Tests mit E2E-Szenarien   | 🟡   | ⬜ Offen  |
 | 1    | 1.1   | Quiz erstellen                                | 🔴   | ✅ Fertig |
 | 1    | 1.2a  | Fragentypen: MC & SC                          | 🔴   | ✅ Fertig |
 | 1    | 1.2b  | Fragentypen: Freitext & Umfrage               | 🟡   | ✅ Fertig |
@@ -96,7 +97,7 @@
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 25 · 🟡 Should: 36 · 🟢 Could: 14 = **75 Storys gesamt**
+> **Statistik:** 🔴 Must: 25 · 🟡 Should: 37 · 🟢 Could: 14 = **76 Storys gesamt**
 
 ---
 
@@ -204,6 +205,42 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - [x] **Matrix-Test:** Pipeline läuft auf Node.js 20 und 22 (Kompatibilitätstest).
     - [x] **Tests:** Job `test` führt Backend-Unit-Tests aus (Vitest: health.check, health.stats, Rate-Limiting).
     - [x] **Status-Badge:** README.md enthält ein CI-Status-Badge (`![CI](https://github.com/...)`).
+- **Story 0.7 (Last- & Performance-Tests mit E2E-Szenarien):** 🟡 Als Entwickler möchte ich reproduzierbare Last- und Performance-Tests mit realitätsnahen E2E-Szenarien haben, damit Engpässe in Live-Sessions, Join-Flows, Freitext, Q&A und Synchronisierung früh erkannt und vor Releases messbar bewertet werden können.
+  - **Akzeptanzkriterien:**
+    - Es gibt ein eigenes Test-Setup für Last- und Performance-Prüfungen, das lokal und in CI oder einer dedizierten Prüf-Umgebung ausführbar ist.
+    - Die Tests decken nicht nur einzelne HTTP-Requests ab, sondern vollständige E2E-Szenarien mit Frontend, Backend, WebSocket/tRPC und Redis.
+    - Mindestens folgende Szenarien sind automatisiert abbildbar:
+      - viele parallele Joins in eine Lobby
+      - Start einer Live-Session mit Quiz
+      - gleichzeitige Abstimmungen auf eine aktive Frage
+      - Freitext-Eingaben mit Live-Auswertung / Word-Cloud
+      - Q&A-Fragen einreichen und moderieren
+      - Reconnect-Szenarien bei unterbrochener WebSocket-Verbindung
+      - optional Sync-Szenarien fuer Quiz-Bibliothek auf mehreren Clients
+    - Es gibt definierte Laststufen, z. B. klein, mittel und hoch, die mit festen Profilen wiederholbar gestartet werden koennen.
+    - Fuer jede Laststufe werden zentrale Metriken erfasst, mindestens:
+      - Zeit bis Join erfolgreich abgeschlossen ist
+      - Latenz fuer Session-Statuswechsel
+      - Latenz bis ein Vote oder Freitext-Eintrag in Host/Presenter sichtbar wird
+      - Fehlerrate / Timeout-Rate
+      - Reconnect-Dauer nach Verbindungsabbruch
+      - CPU- und Speicherverhalten von Frontend und Backend, soweit praktikabel
+    - Es gibt klare Schwellwerte oder Zielkorridore, ab wann ein Szenario als bestanden, degradiert oder fehlgeschlagen gilt.
+    - Die Tests liefern maschinenlesbare Ergebnisse und eine für Entwickler:innen gut lesbare Zusammenfassung.
+    - Ergebnisse koennen zwischen Läufen verglichen werden, damit Performance-Regressionen sichtbar werden.
+    - E2E-Lasttests sind von funktionalen Standardtests getrennt, damit normale CI-Laufzeiten nicht unnötig explodieren.
+    - Für Pull-Requests gibt es mindestens einen leichten Smoke-/Performance-Check; schwerere Lasttests dürfen zeitgesteuert, manuell oder auf dedizierten Branches laufen.
+    - Die Testdaten und Szenarien sind deterministisch genug, dass Ergebnisse nicht durch Zufall stark schwanken.
+    - Das Setup berücksichtigt die reale Architektur von arsnova.eu mit tRPC, WebSocket-Subscriptions, Redis und Yjs- bzw. Sync-Komponenten.
+    - Lasttests für Live-Sessions respektieren das Sicherheitsmodell; es werden keine Abkürzungen genutzt, die Host-/Presenter-/Teilnehmerpfade unrealistisch vereinfachen.
+    - Für besonders kritische Flows gibt es explizite Benchmarks, mindestens für:
+      - Lobby-Join bei hoher Gleichzeitigkeit
+      - Vote-Submit unter Last
+      - Freitext-Live-Auswertung
+      - Session-Start
+    - Die Dokumentation beschreibt, wie die Lasttests gestartet werden, welche Infrastruktur benötigt wird und wie Resultate zu interpretieren sind.
+    - Neue Performance-Erkenntnisse aus diesen Tests fliessen in Backlog, ADRs oder Optimierungsstories zurück.
+  - **Abhängigkeiten:** Story 0.2 (tRPC WebSocket-Adapter), Story 0.5 (Rate-Limiting), Story 0.6 (CI/CD), Story 2.1a (Session-Start), Story 2.2 (Lobby), Story 3.1 (Join), Story 3.3b (Abstimmung), Story 4.5 (Freitext-Auswertung), Story 8.1–8.4 (Q&A), optional Story 1.6/1.6a/1.6b/1.6d (Sync).
 
 ---
 
