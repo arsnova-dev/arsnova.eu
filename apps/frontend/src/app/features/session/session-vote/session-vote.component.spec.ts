@@ -156,6 +156,7 @@ describe('SessionVoteComponent', () => {
     const fixture = TestBed.createComponent(SessionVoteComponent);
     fixture.detectChanges();
     await fixture.whenStable();
+    await (fixture.componentInstance as unknown as { loadTeamRewardState: () => Promise<void> }).loadTeamRewardState();
     await new Promise((r) => setTimeout(r, 50));
     fixture.detectChanges();
 

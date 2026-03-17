@@ -279,7 +279,7 @@ describe('QuizListComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Veranstaltung starten');
+    expect(text).toContain('Starten');
     expect(fixture.componentInstance.startLiveShortcutMode()).toBe(true);
   });
 });
