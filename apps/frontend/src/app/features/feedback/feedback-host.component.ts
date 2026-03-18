@@ -318,11 +318,17 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
       const preset = this.themePreset.preset();
 
       if (this.shouldBlockTypeChange(type)) {
-        this.snackBar.open(
-          $localize`:@@feedback.compareRoundFormatHint:Eine Vergleichsrunde funktioniert nur mit demselben Blitzlicht-Format. Bitte erst zurücksetzen. Das löscht die bisherigen Stimmen.`,
-          undefined,
-          { duration: 5000 },
+        const ref = this.snackBar.open(
+          $localize`:@@feedback.compareRoundFormatHint:Formatwechsel gesperrt. In Runde 2 bleibt das aktuelle Blitzlicht-Format aktiv. Für einen Wechsel setze das Blitzlicht zuerst zurück. Dabei werden die Stimmen aus Runde 1 gelöscht.`,
+          $localize`Zurücksetzen`,
+          {
+            duration: 12000,
+            panelClass: 'feedback-compare-round-snackbar',
+          },
         );
+        ref.onAction().subscribe(() => {
+          void this.resetRound();
+        });
         return;
       }
 

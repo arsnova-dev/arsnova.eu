@@ -46,59 +46,73 @@
       </mat-card-content>
     </mat-card>
   } @else {
-    <h1 class="feedback-vote__heading">
-      {{ headingText() }}
-      @if (currentRound() === 2) {
-        <span class="feedback-vote__round-badge" i18n>2. Runde</span>
+    <section class="feedback-vote__panel">
+      <h1 class="feedback-vote__heading">
+        {{ headingText() }}
+        @if (currentRound() === 2) {
+          <span class="feedback-vote__round-badge" i18n>2. Runde</span>
+        }
+      </h1>
+      @if (currentRound() === 2 && !voted()) {
+        <p class="feedback-vote__round2-hint" role="status" aria-live="polite" i18n="@@feedback.compareRoundQuestion">
+          Wie ist deine Einschätzung jetzt?
+        </p>
       }
-    </h1>
-    @if (currentRound() === 2 && !voted()) {
-      <p class="feedback-vote__round2-hint" role="status" aria-live="polite" i18n="@@feedback.compareRoundQuestion">
-        Wie ist deine Einschätzung jetzt?
-      </p>
-    }
-    @if (usesLetterButtons()) {
-      <div class="feedback-vote__options feedback-vote__options--abcd" role="group" i18n-aria-label aria-label="Antwort wählen">
-        @for (option of currentOptions(); track option.value) {
-          <button
-            mat-fab
-            class="feedback-vote__abcd-btn"
-            type="button"
-            (click)="vote(option.value)"
-            [attr.aria-label]="option.label"
-          >
-            {{ option.value }}
-          </button>
-        }
-      </div>
-    } @else {
-      <div class="feedback-vote__options feedback-vote__options--mood" role="group" i18n-aria-label aria-label="Abstimmung wählen">
-        @for (option of currentOptions(); track option.value) {
-          <button
-            class="feedback-vote__mood-btn"
-            type="button"
-            (click)="vote(option.value)"
-            [attr.aria-label]="option.label"
-          >
-            @if (option.icon) {
-              @if (option.iconKind === 'mat') {
-                <mat-icon
-                  class="feedback-vote__mood-icon"
-                  [class.feedback-vote__mood-icon--positive]="option.tone === 'positive'"
-                  [class.feedback-vote__mood-icon--negative]="option.tone === 'negative'"
-                  [class.feedback-vote__mood-icon--neutral]="option.tone === 'neutral'"
-                  aria-hidden="true"
-                >
-                  {{ option.icon }}
-                </mat-icon>
-              } @else {
-                <span class="feedback-vote__mood-emoji">{{ option.icon }}</span>
+      @if (usesLetterButtons()) {
+        <div
+          class="feedback-vote__options feedback-vote__options--abcd"
+          [class.feedback-vote__options--three]="currentOptions().length === 3"
+          role="group"
+          i18n-aria-label
+          aria-label="Antwort wählen"
+        >
+          @for (option of currentOptions(); track option.value) {
+            <button
+              mat-fab
+              class="feedback-vote__abcd-btn"
+              type="button"
+              (click)="vote(option.value)"
+              [attr.aria-label]="option.label"
+            >
+              {{ option.value }}
+            </button>
+          }
+        </div>
+      } @else {
+        <div
+          class="feedback-vote__options feedback-vote__options--mood"
+          [class.feedback-vote__options--three]="currentOptions().length === 3"
+          role="group"
+          i18n-aria-label
+          aria-label="Abstimmung wählen"
+        >
+          @for (option of currentOptions(); track option.value) {
+            <button
+              class="feedback-vote__mood-btn"
+              type="button"
+              (click)="vote(option.value)"
+              [attr.aria-label]="option.label"
+            >
+              @if (option.icon) {
+                @if (option.iconKind === 'mat') {
+                  <mat-icon
+                    class="feedback-vote__mood-icon"
+                    [class.feedback-vote__mood-icon--positive]="option.tone === 'positive'"
+                    [class.feedback-vote__mood-icon--negative]="option.tone === 'negative'"
+                    [class.feedback-vote__mood-icon--neutral]="option.tone === 'neutral'"
+                    aria-hidden="true"
+                  >
+                    {{ option.icon }}
+                  </mat-icon>
+                } @else {
+                  <span class="feedback-vote__mood-emoji">{{ option.icon }}</span>
+                }
               }
-            }
-            <span class="feedback-vote__mood-label">{{ option.label }}</span>
-          </button>
-        }
-      </div>
-    }
+              <span class="feedback-vote__mood-label">{{ option.label }}</span>
+            </button>
+          }
+        </div>
+      }
+    </section>
   }
 </div>

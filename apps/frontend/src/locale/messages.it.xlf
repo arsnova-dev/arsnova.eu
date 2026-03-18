@@ -483,8 +483,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="feedback.compareRoundFormatHint" datatype="html">
-        <source>Eine Vergleichsrunde funktioniert nur mit demselben Blitzlicht-Format. Bitte erst zurücksetzen. Das löscht die bisherigen Stimmen.</source>
-        <target>Un giro di confronto funziona solo con lo stesso formato di voto rapido. Prima reimpostalo. Questo elimina i voti già espressi.</target>
+        <source>Formatwechsel gesperrt. In Runde 2 bleibt das aktuelle Blitzlicht-Format aktiv. Für einen Wechsel setze das Blitzlicht zuerst zurück. Dabei werden die Stimmen aus Runde 1 gelöscht.</source>
+        <target>Cambio di formato bloccato. Nel secondo turno resta attivo il formato attuale di voto rapido. Per cambiarlo, prima reimposta il voto rapido. Questo elimina i voti del primo turno.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.ts</context>
           <context context-type="linenumber">322</context>

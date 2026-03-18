@@ -485,8 +485,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="feedback.compareRoundFormatHint" datatype="html">
-        <source>Eine Vergleichsrunde funktioniert nur mit demselben Blitzlicht-Format. Bitte erst zurücksetzen. Das löscht die bisherigen Stimmen.</source>
-        <target>A comparison round only works with the same quick-vote format. Please reset first. This deletes the previous votes.</target>
+        <source>Formatwechsel gesperrt. In Runde 2 bleibt das aktuelle Blitzlicht-Format aktiv. Für einen Wechsel setze das Blitzlicht zuerst zurück. Dabei werden die Stimmen aus Runde 1 gelöscht.</source>
+        <target>Format change locked. In round 2, the current quick feedback format stays active. To switch, reset quick feedback first. This deletes the votes from round 1.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.ts</context>
           <context context-type="linenumber">322</context>

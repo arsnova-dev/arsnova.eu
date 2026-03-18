@@ -483,8 +483,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="feedback.compareRoundFormatHint" datatype="html">
-        <source>Eine Vergleichsrunde funktioniert nur mit demselben Blitzlicht-Format. Bitte erst zurücksetzen. Das löscht die bisherigen Stimmen.</source>
-        <target>Un tour de comparaison ne fonctionne qu’avec le même format de vote éclair. Réinitialise d’abord. Cela supprime les votes déjà enregistrés.</target>
+        <source>Formatwechsel gesperrt. In Runde 2 bleibt das aktuelle Blitzlicht-Format aktiv. Für einen Wechsel setze das Blitzlicht zuerst zurück. Dabei werden die Stimmen aus Runde 1 gelöscht.</source>
+        <target>Changement de format bloqué. Au 2e tour, le format actuel du vote éclair reste actif. Pour le changer, réinitialise d’abord le vote éclair. Cela supprime les votes du 1er tour.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.ts</context>
           <context context-type="linenumber">322</context>
