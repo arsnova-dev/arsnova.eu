@@ -64,6 +64,7 @@
       @if (usesLetterButtons()) {
         <div
           class="feedback-vote__options feedback-vote__options--abcd"
+          [class.feedback-vote__options--two]="currentOptions().length === 2"
           [class.feedback-vote__options--three]="currentOptions().length === 3"
           role="group"
           i18n-aria-label
@@ -84,6 +85,7 @@
       } @else {
         <div
           class="feedback-vote__options feedback-vote__options--mood"
+          [class.feedback-vote__options--two]="currentOptions().length === 2"
           [class.feedback-vote__options--three]="currentOptions().length === 3"
           role="group"
           i18n-aria-label
