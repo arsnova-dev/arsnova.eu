@@ -566,7 +566,7 @@ export class QuizPreviewComponent implements OnDestroy {
               teamCount: optionEnabled('teamMode') ? entry.data.teamCountValue : payload.teamCount,
               bonusTokenCount: optionEnabled('bonusTokenCount') ? payload.bonusTokenCount ?? 3 : null,
               defaultTimer: optionEnabled('defaultTimer') ? payload.defaultTimer ?? 60 : null,
-              backgroundMusic: optionEnabled('backgroundMusic') ? payload.backgroundMusic : null,
+              backgroundMusic: null,
             };
           }
         } catch {

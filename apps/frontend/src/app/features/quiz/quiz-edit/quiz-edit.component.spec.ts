@@ -287,7 +287,6 @@ describe('QuizEditComponent', () => {
       teamCount: 3,
       teamAssignment: 'MANUAL',
       teamNamesText: 'Rot\nBlau\nGold',
-      backgroundMusic: 'CALM_LOFI',
       nicknameTheme: 'HIGH_SCHOOL',
       bonusTokenCount: 5,
       readingPhaseEnabled: true,
@@ -308,7 +307,7 @@ describe('QuizEditComponent', () => {
         teamCount: 3,
         teamAssignment: 'MANUAL',
         teamNames: ['Rot', 'Blau', 'Gold'],
-        backgroundMusic: 'CALM_LOFI',
+        backgroundMusic: null,
         nicknameTheme: 'HIGH_SCHOOL',
       }),
     );

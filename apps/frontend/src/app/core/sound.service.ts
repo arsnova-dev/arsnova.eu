@@ -11,7 +11,6 @@ const SOUND_PATHS: Record<SoundKey, string> = {
   countdownEnd: 'assets/sound/countdownEnd/Song1.mp3',
 };
 
-export type MusicTrack = 'CALM_LOFI' | 'UPBEAT_POP' | 'FOCUS_AMBIENT' | 'UPBEAT' | 'EPIC' | 'CHILL';
 const MUSIC_PATHS: Record<string, string> = {
   LOBBY_0: 'assets/sound/lobby/Song0.mp3',
   LOBBY_1: 'assets/sound/lobby/Song1.mp3',
@@ -21,12 +20,6 @@ const MUSIC_PATHS: Record<string, string> = {
   COUNTDOWN_RUNNING_0: 'assets/sound/countdownRunning/Song0.mp3',
   COUNTDOWN_RUNNING_1: 'assets/sound/countdownRunning/Song1.mp3',
   COUNTDOWN_RUNNING_2: 'assets/sound/countdownRunning/Song2.mp3',
-  CALM_LOFI: 'assets/sound/lobby/Song0.mp3',
-  UPBEAT_POP: 'assets/sound/lobby/Song1.mp3',
-  FOCUS_AMBIENT: 'assets/sound/lobby/Song2.mp3',
-  UPBEAT: 'assets/sound/lobby/Song1.mp3',
-  CHILL: 'assets/sound/lobby/Song0.mp3',
-  EPIC: 'assets/sound/lobby/Song3.mp3',
 };
 
 /**
@@ -120,7 +113,7 @@ export class SoundService {
   }
 
   /** Startet (oder hält) loopende Hintergrundmusik für den gewünschten Track. */
-  async playMusic(track: MusicTrack | string): Promise<void> {
+  async playMusic(track: string): Promise<void> {
     const ctx = await this.ensureContextRunning();
     if (!ctx) return;
     const path = MUSIC_PATHS[track];

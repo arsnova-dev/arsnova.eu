@@ -77,7 +77,6 @@ type QuizSettingsFormGroup = FormGroup<{
   teamCount: FormControl<number | null>;
   teamAssignment: FormControl<TeamAssignment>;
   teamNamesText: FormControl<string>;
-  backgroundMusic: FormControl<string>;
   nicknameTheme: FormControl<NicknameTheme>;
   bonusTokenCount: FormControl<number | null>;
   preset: FormControl<QuizPreset>;
@@ -187,13 +186,6 @@ export class QuizEditComponent implements OnDestroy {
     { value: 'HIGH_SCHOOL', label: $localize`Oberstufe` },
   ];
 
-  readonly backgroundMusicOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: $localize`Keine Musik` },
-    { value: 'CALM_LOFI', label: 'Calm LoFi' },
-    { value: 'UPBEAT_POP', label: 'Upbeat Pop' },
-    { value: 'FOCUS_AMBIENT', label: 'Focus Ambient' },
-  ];
-
   readonly quiz = computed(() => this.quizStore.getQuizById(this.id));
   readonly questions = computed(() => {
     const quiz = this.quiz();
@@ -233,7 +225,6 @@ export class QuizEditComponent implements OnDestroy {
     }),
     teamAssignment: this.formBuilder.control<TeamAssignment>('AUTO'),
     teamNamesText: this.formBuilder.control(''),
-    backgroundMusic: this.formBuilder.control(''),
     nicknameTheme: this.formBuilder.control<NicknameTheme>('NOBEL_LAUREATES'),
     bonusTokenCount: this.formBuilder.control<number | null>(null, {
       validators: [Validators.min(1), Validators.max(50)],
@@ -722,7 +713,6 @@ export class QuizEditComponent implements OnDestroy {
       teamCount: settings.teamCount,
       teamAssignment: settings.teamAssignment,
       teamNamesText: settings.teamNames.join('\n'),
-      backgroundMusic: settings.backgroundMusic ?? '',
       nicknameTheme: settings.nicknameTheme,
       bonusTokenCount: settings.bonusTokenCount,
       preset: settings.preset,
@@ -747,7 +737,7 @@ export class QuizEditComponent implements OnDestroy {
         : null,
       teamAssignment: this.settingsForm.controls.teamAssignment.value,
       teamNames: parseTeamNamesText(this.settingsForm.controls.teamNamesText.value),
-      backgroundMusic: this.settingsForm.controls.backgroundMusic.value || null,
+      backgroundMusic: null,
       nicknameTheme: this.settingsForm.controls.nicknameTheme.value ?? 'NOBEL_LAUREATES',
       bonusTokenCount: this.settingsForm.controls.bonusTokenCount.value,
       readingPhaseEnabled: this.settingsForm.controls.readingPhaseEnabled.value,

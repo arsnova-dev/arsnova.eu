@@ -201,15 +201,6 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label i18n>Hintergrundmusik</mat-label>
-              <mat-select formControlName="backgroundMusic" i18n-aria-label aria-label="Hintergrundmusik wählen">
-                @for (music of backgroundMusicOptions; track music.value) {
-                  <mat-option [value]="music.value">{{ music.label }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
               <mat-label i18n>Bonus-Codes für Top-Plätze (optional)</mat-label>
               <input
                 matInput

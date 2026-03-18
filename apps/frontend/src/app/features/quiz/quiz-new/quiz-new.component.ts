@@ -72,13 +72,6 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     { value: 'HIGH_SCHOOL', label: $localize`Oberstufe` },
   ];
 
-  readonly backgroundMusicOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: $localize`Keine Musik` },
-    { value: 'CALM_LOFI', label: 'Calm LoFi' },
-    { value: 'UPBEAT_POP', label: 'Upbeat Pop' },
-    { value: 'FOCUS_AMBIENT', label: 'Focus Ambient' },
-  ];
-
   readonly isSaving = signal(false);
   readonly submitError = signal<string | null>(null);
   readonly submitted = signal(false);
@@ -105,7 +98,6 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     }),
     teamAssignment: this.formBuilder.control<TeamAssignment>('AUTO'),
     teamNamesText: [''],
-    backgroundMusic: [''],
     nicknameTheme: this.formBuilder.control<NicknameTheme>('NOBEL_LAUREATES'),
     bonusTokenCount: this.formBuilder.control<number | null>(null, {
       validators: [Validators.min(1), Validators.max(50)],
@@ -196,7 +188,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
       teamCount: this.form.controls.teamMode.value ? this.teamCountControl.value : null,
       teamAssignment: this.form.controls.teamAssignment.value ?? 'AUTO',
       teamNames: parseTeamNamesText(this.form.controls.teamNamesText.value),
-      backgroundMusic: this.form.controls.backgroundMusic.value || null,
+      backgroundMusic: null,
       nicknameTheme: this.form.controls.nicknameTheme.value ?? 'NOBEL_LAUREATES',
       bonusTokenCount: this.bonusTokenCountControl.value,
       readingPhaseEnabled: this.form.controls.readingPhaseEnabled.value,

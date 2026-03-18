@@ -374,7 +374,6 @@ export class QuizListComponent implements OnInit {
         teamMode,
         teamAssignment: optionEnabled('teamAssignment', false) ? ('MANUAL' as TeamAssignment) : 'AUTO',
         teamCount: teamMode ? entry.data.teamCountValue : null,
-        // Musik wird live in der Veranstaltung gesteuert, nicht über Presets.
         backgroundMusic: null,
         bonusTokenCount: optionEnabled('bonusTokenCount', false) ? defaultSettings.bonusTokenCount ?? 3 : null,
       };
@@ -612,7 +611,6 @@ export class QuizListComponent implements OnInit {
               teamCount: optionEnabled('teamMode') ? entry.data.teamCountValue : payload.teamCount,
               bonusTokenCount: optionEnabled('bonusTokenCount') ? payload.bonusTokenCount ?? 3 : null,
               defaultTimer: optionEnabled('defaultTimer') ? payload.defaultTimer ?? 60 : null,
-              // Verhindert doppelte Audio-Ausführung durch vorab gesetzte Preset-Musik.
               backgroundMusic: null,
             };
           }

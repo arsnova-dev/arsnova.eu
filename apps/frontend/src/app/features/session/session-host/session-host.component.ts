@@ -52,11 +52,12 @@ type HostMusicTrack =
   | 'COUNTDOWN_RUNNING_1'
   | 'COUNTDOWN_RUNNING_2';
 
-type MusicPhase = 'lobby' | 'connecting';
+type MusicPhase = 'lobby' | 'connecting' | 'running';
 
 const PHASE_TRACK_DEFAULTS: Record<MusicPhase, HostMusicTrack> = {
   lobby: 'LOBBY_2',
   connecting: 'CONNECTING_0',
+  running: 'COUNTDOWN_RUNNING_0',
 };
 
 const MUSIC_PHASE_STORAGE_KEY = 'arsnova-host-phase-tracks';
@@ -69,6 +70,7 @@ function loadPhaseTracksFromStorage(): Record<MusicPhase, HostMusicTrack> {
     return {
       lobby: isValidTrack(parsed['lobby']) ? parsed['lobby'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.lobby,
       connecting: isValidTrack(parsed['connecting']) ? parsed['connecting'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.connecting,
+      running: isValidTrack(parsed['running']) ? parsed['running'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.running,
     };
   } catch {
     return { ...PHASE_TRACK_DEFAULTS };
@@ -178,6 +180,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private fingerHideTimeout: ReturnType<typeof setTimeout> | null = null;
   private countdownIntroSoundPlayed = false;
   private countdownFinalSoundPlayed = false;
+  /** true ab 7 Sek. vor Countdown-Ende → Musik aus, nur SFX. */
+  readonly countdownSfxPhase = signal(false);
   readonly Math = Math;
   readonly teamLeaderboardMaxScore = computed(() =>
     Math.max(1, ...this.teamLeaderboard().map((entry) => entry.totalScore)),
@@ -243,6 +247,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly musicPhases: ReadonlyArray<{ id: MusicPhase; label: string }> = [
     { id: 'lobby', label: $localize`:@@sessionHost.phaseLobbyShort:Lobby` },
     { id: 'connecting', label: $localize`:@@sessionHost.phaseConnectingShort:Beitritt` },
+    { id: 'running', label: $localize`:@@sessionHost.phaseRunningShort:Countdown` },
   ];
   readonly phaseTracks = signal<Record<MusicPhase, HostMusicTrack>>(loadPhaseTracksFromStorage());
   readonly musicMuted = signal(false);
@@ -250,10 +255,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const status = this.effectiveStatus();
     if (status === 'LOBBY') return 'lobby';
     if (status === 'QUESTION_OPEN') return 'connecting';
+    if (status === 'ACTIVE') return 'running';
     return null;
   });
   readonly activeMusicTrack = computed<HostMusicTrack | null>(() => {
     if (this.musicMuted()) return null;
+    if (this.countdownSfxPhase() || this.countdownEnded()) return null;
     const phase = this.currentMusicPhase();
     if (!phase) return null;
     return this.phaseTracks()[phase];
@@ -676,6 +683,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private startCountdown(timerSeconds: number | null | undefined, activeAt?: string): void {
     this.stopCountdown();
     this.countdownEnded.set(false);
+    this.countdownSfxPhase.set(false);
     this.countdownIntroSoundPlayed = false;
     this.countdownFinalSoundPlayed = false;
     if (!timerSeconds || timerSeconds <= 0) {
@@ -688,6 +696,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const tick = (): void => {
       const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
       this.countdownSeconds.set(remaining);
+      if (remaining <= 9 && !this.countdownSfxPhase()) {
+        this.countdownSfxPhase.set(true);
+      }
       if (remaining <= 6 && this.session()?.enableSoundEffects) {
         if (remaining === 6 && !this.countdownIntroSoundPlayed) {
           void this.sound.play('countdownEnd');

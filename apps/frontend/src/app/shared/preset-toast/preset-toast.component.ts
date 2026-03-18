@@ -46,7 +46,6 @@ export const PRESET_OPTION_IDS = [
   { id: 'teamMode', label: $localize`In Teams spielen`, icon: 'groups', categoryId: 'team' as CategoryId },
   { id: 'teamAssignment', label: $localize`Automatisch oder manuell zuweisen`, icon: 'shuffle', categoryId: 'team' as CategoryId },
   { id: 'enableSoundEffects', label: $localize`Sounds bei Aktionen`, icon: 'volume_up', categoryId: 'audio' as CategoryId },
-  { id: 'backgroundMusic', label: $localize`Hintergrundmusik in der Lobby`, icon: 'music_note', categoryId: 'audio' as CategoryId },
 ] as const;
 
 export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon: string }[] = [
@@ -200,9 +199,6 @@ export class PresetToastComponent implements OnInit {
   }
 
   isOptionVisible(id: string): boolean {
-    if (!this.isOptionAvailableForPreset(id)) {
-      return false;
-    }
     const parent = PresetToastComponent.OPTION_REQUIRES_PARENT_ON[id];
     return parent ? !!this.optionState()[parent] : true;
   }
@@ -222,7 +218,6 @@ export class PresetToastComponent implements OnInit {
   }
 
   toggleOption(id: string): void {
-    if (!this.isOptionAvailableForPreset(id)) return;
     if (this.isOptionDisabled(id)) return;
     const state = { ...this.optionState() };
     state[id] = !state[id];
@@ -242,14 +237,8 @@ export class PresetToastComponent implements OnInit {
 
   saveAndClose(): void {
     try {
-      const normalizedOptions = { ...this.optionState() };
-      for (const option of PRESET_OPTION_IDS) {
-        if (!this.isOptionAvailableForPreset(option.id)) {
-          normalizedOptions[option.id] = false;
-        }
-      }
       const payload = {
-        options: normalizedOptions,
+        options: { ...this.optionState() },
         nameMode: this.nameMode(),
         nicknameThemeValue: this.nicknameThemeValue(),
         teamCountValue: this.teamCountValue(),
@@ -379,10 +368,6 @@ export class PresetToastComponent implements OnInit {
         const defaults = getPresetDefaults(preset);
         state = { ...defaults };
         for (const o of PRESET_OPTION_IDS) {
-          if (!this.isOptionAvailableForPreset(o.id, preset)) {
-            state[o.id] = false;
-            continue;
-          }
           const value = parsedEntry.data.options[o.id];
           if (typeof value === 'boolean') {
             state[o.id] = value;
@@ -408,7 +393,4 @@ export class PresetToastComponent implements OnInit {
     };
   }
 
-  private isOptionAvailableForPreset(id: string, preset: 'serious' | 'spielerisch' = this.themePreset.preset()): boolean {
-    return !(preset === 'spielerisch' && id === 'backgroundMusic');
-  }
 }
