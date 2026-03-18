@@ -200,6 +200,9 @@ export class PresetToastComponent implements OnInit {
   }
 
   isOptionVisible(id: string): boolean {
+    if (!this.isOptionAvailableForPreset(id)) {
+      return false;
+    }
     const parent = PresetToastComponent.OPTION_REQUIRES_PARENT_ON[id];
     return parent ? !!this.optionState()[parent] : true;
   }
@@ -219,6 +222,7 @@ export class PresetToastComponent implements OnInit {
   }
 
   toggleOption(id: string): void {
+    if (!this.isOptionAvailableForPreset(id)) return;
     if (this.isOptionDisabled(id)) return;
     const state = { ...this.optionState() };
     state[id] = !state[id];
@@ -238,8 +242,14 @@ export class PresetToastComponent implements OnInit {
 
   saveAndClose(): void {
     try {
+      const normalizedOptions = { ...this.optionState() };
+      for (const option of PRESET_OPTION_IDS) {
+        if (!this.isOptionAvailableForPreset(option.id)) {
+          normalizedOptions[option.id] = false;
+        }
+      }
       const payload = {
-        options: this.optionState(),
+        options: normalizedOptions,
         nameMode: this.nameMode(),
         nicknameThemeValue: this.nicknameThemeValue(),
         teamCountValue: this.teamCountValue(),
@@ -369,6 +379,10 @@ export class PresetToastComponent implements OnInit {
         const defaults = getPresetDefaults(preset);
         state = { ...defaults };
         for (const o of PRESET_OPTION_IDS) {
+          if (!this.isOptionAvailableForPreset(o.id, preset)) {
+            state[o.id] = false;
+            continue;
+          }
           const value = parsedEntry.data.options[o.id];
           if (typeof value === 'boolean') {
             state[o.id] = value;
@@ -392,5 +406,9 @@ export class PresetToastComponent implements OnInit {
       nicknameThemeValue: themeVal,
       teamCountValue: teamCount,
     };
+  }
+
+  private isOptionAvailableForPreset(id: string, preset: 'serious' | 'spielerisch' = this.themePreset.preset()): boolean {
+    return !(preset === 'spielerisch' && id === 'backgroundMusic');
   }
 }

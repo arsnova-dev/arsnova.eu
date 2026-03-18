@@ -3,13 +3,11 @@ import { Injectable, signal } from '@angular/core';
 export type SoundKey =
   | 'sessionEnd'
   | 'questionStart'
-  | 'countdownTick'
   | 'countdownEnd';
 
 const SOUND_PATHS: Record<SoundKey, string> = {
   sessionEnd: 'assets/sound/countdownEnd/Song0.mp3',
   questionStart: 'assets/sound/connecting/Song0.mp3',
-  countdownTick: 'assets/sound/countdownRunning/Song0.mp3',
   countdownEnd: 'assets/sound/countdownEnd/Song1.mp3',
 };
 
@@ -49,6 +47,7 @@ export class SoundService {
   private musicGain: GainNode | null = null;
   private musicGeneration = 0;
   private currentMusicTrack: string | null = null;
+  private pendingMusicTrack: string | null = null;
   private readonly activeMusicNodes = new Set<AudioBufferSourceNode>();
   readonly musicPlaying = signal(false);
   readonly musicVolume = signal(80);
@@ -56,7 +55,11 @@ export class SoundService {
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
-      this.ctx = new AudioContext();
+      try {
+        this.ctx = new AudioContext();
+      } catch {
+        return null;
+      }
     }
     return this.ctx;
   }
@@ -128,9 +131,13 @@ export class SoundService {
     if (this.musicPlaying() && this.currentMusicTrack === track && this.activeMusicNodes.size > 0) {
       return;
     }
+    if (this.pendingMusicTrack === track) {
+      return;
+    }
 
     this.stopMusic();
     const generation = this.musicGeneration;
+    this.pendingMusicTrack = track;
 
     let buffer = this.buffers.get(path);
     if (!buffer) {
@@ -140,10 +147,16 @@ export class SoundService {
         buffer = await ctx.decodeAudioData(arrayBuffer);
         this.buffers.set(path, buffer);
       } catch {
+        if (generation === this.musicGeneration) {
+          this.pendingMusicTrack = null;
+        }
         return;
       }
     }
     if (generation !== this.musicGeneration || !buffer) {
+      if (generation === this.musicGeneration) {
+        this.pendingMusicTrack = null;
+      }
       return;
     }
 
@@ -160,6 +173,7 @@ export class SoundService {
     this.currentMusicTrack = track;
     this.activeMusicNodes.add(source);
     this.musicPlaying.set(true);
+    this.pendingMusicTrack = null;
     source.onended = () => this.activeMusicNodes.delete(source);
   }
 
@@ -174,6 +188,7 @@ export class SoundService {
     }
     this.musicGain = null;
     this.currentMusicTrack = null;
+    this.pendingMusicTrack = null;
     this.musicPlaying.set(false);
   }
 

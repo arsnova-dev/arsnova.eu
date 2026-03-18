@@ -1225,6 +1225,32 @@
   line-height: 1.4;
 }
 
+.session-host__music-phase-group {
+  padding: 0.15rem 0 0.35rem;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.session-host__music-phase-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.35rem 1rem 0.15rem;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.session-host__music-phase-label--active {
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+}
+
+.session-host__music-phase-playing {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
 /* --- Ergebnisseite (FINISHED) – Container & Hero --- */
 
 .session-host__results {

@@ -52,6 +52,45 @@ type HostMusicTrack =
   | 'COUNTDOWN_RUNNING_1'
   | 'COUNTDOWN_RUNNING_2';
 
+type MusicPhase = 'lobby' | 'connecting';
+
+const PHASE_TRACK_DEFAULTS: Record<MusicPhase, HostMusicTrack> = {
+  lobby: 'LOBBY_2',
+  connecting: 'CONNECTING_0',
+};
+
+const MUSIC_PHASE_STORAGE_KEY = 'arsnova-host-phase-tracks';
+
+function loadPhaseTracksFromStorage(): Record<MusicPhase, HostMusicTrack> {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(MUSIC_PHASE_STORAGE_KEY) : null;
+    if (!raw) return { ...PHASE_TRACK_DEFAULTS };
+    const parsed = JSON.parse(raw) as Record<string, string>;
+    return {
+      lobby: isValidTrack(parsed['lobby']) ? parsed['lobby'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.lobby,
+      connecting: isValidTrack(parsed['connecting']) ? parsed['connecting'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.connecting,
+    };
+  } catch {
+    return { ...PHASE_TRACK_DEFAULTS };
+  }
+}
+
+function isValidTrack(v: unknown): v is HostMusicTrack {
+  return typeof v === 'string' && ALL_MUSIC_TRACK_VALUES.includes(v as HostMusicTrack);
+}
+
+const ALL_MUSIC_TRACKS: ReadonlyArray<{ value: HostMusicTrack; label: string }> = [
+  { value: 'LOBBY_0', label: 'Lobby · Warm' },
+  { value: 'LOBBY_1', label: 'Lobby · Drive' },
+  { value: 'LOBBY_2', label: 'Lobby · Smooth' },
+  { value: 'LOBBY_3', label: 'Lobby · Pulse' },
+  { value: 'CONNECTING_0', label: 'Connecting · Build' },
+  { value: 'COUNTDOWN_RUNNING_0', label: 'Running · Focus' },
+  { value: 'COUNTDOWN_RUNNING_1', label: 'Running · Push' },
+  { value: 'COUNTDOWN_RUNNING_2', label: 'Running · Intense' },
+];
+const ALL_MUSIC_TRACK_VALUES = ALL_MUSIC_TRACKS.map((t) => t.value);
+
 /**
  * Host-Ansicht: Lobby + Präsentations-Steuerung (Epic 2).
  * Story 2.1a, 2.2, 2.3, 2.4, 4.2, 4.6, 4.7, 4.8, 7.1, 8.1, 8.4.
@@ -139,7 +178,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private fingerHideTimeout: ReturnType<typeof setTimeout> | null = null;
   private countdownIntroSoundPlayed = false;
   private countdownFinalSoundPlayed = false;
-  private lastCountdownSoundSecond: number | null = null;
   readonly Math = Math;
   readonly teamLeaderboardMaxScore = computed(() =>
     Math.max(1, ...this.teamLeaderboard().map((entry) => entry.totalScore)),
@@ -201,33 +239,31 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     );
   });
   readonly isFullscreenActive = signal(false);
-  readonly musicTracks: ReadonlyArray<{ value: HostMusicTrack; label: string }> = [
-    { value: 'LOBBY_0', label: 'Lobby · Warm' },
-    { value: 'LOBBY_1', label: 'Lobby · Drive' },
-    { value: 'LOBBY_2', label: 'Lobby · Smooth' },
-    { value: 'LOBBY_3', label: 'Lobby · Pulse' },
-    { value: 'CONNECTING_0', label: 'Connecting · Build' },
-    { value: 'COUNTDOWN_RUNNING_0', label: 'Running · Focus' },
-    { value: 'COUNTDOWN_RUNNING_1', label: 'Running · Push' },
-    { value: 'COUNTDOWN_RUNNING_2', label: 'Running · Intense' },
+  readonly allMusicTracks = ALL_MUSIC_TRACKS;
+  readonly musicPhases: ReadonlyArray<{ id: MusicPhase; label: string }> = [
+    { id: 'lobby', label: $localize`:@@sessionHost.phaseLobbyShort:Lobby` },
+    { id: 'connecting', label: $localize`:@@sessionHost.phaseConnectingShort:Beitritt` },
   ];
-  /** Live-Override durch den Dozenten: null = Quiz-Setting, true/false = manuelle Erzwingung. */
-  readonly musicOverrideEnabled = signal<boolean | null>(null);
-  /** Optionaler Live-Track-Override durch den Dozenten (nur Laufzeit, nicht persistent). */
-  readonly musicOverrideTrack = signal<HostMusicTrack | null>(null);
-  readonly activeMusicTrack = computed<HostMusicTrack | null>(() =>
-    this.musicOverrideTrack() ?? this.resolveMusicTrack(this.session()?.backgroundMusic),
-  );
+  readonly phaseTracks = signal<Record<MusicPhase, HostMusicTrack>>(loadPhaseTracksFromStorage());
+  readonly musicMuted = signal(false);
+  readonly currentMusicPhase = computed<MusicPhase | null>(() => {
+    const status = this.effectiveStatus();
+    if (status === 'LOBBY') return 'lobby';
+    if (status === 'QUESTION_OPEN') return 'connecting';
+    return null;
+  });
+  readonly activeMusicTrack = computed<HostMusicTrack | null>(() => {
+    if (this.musicMuted()) return null;
+    const phase = this.currentMusicPhase();
+    if (!phase) return null;
+    return this.phaseTracks()[phase];
+  });
   readonly activeMusicLabel = computed(() => {
     const active = this.activeMusicTrack();
     if (!active) return $localize`:@@sessionHost.musicLabelOff:Musik aus`;
-    return this.musicTracks.find((track) => track.value === active)?.label ?? active;
+    return ALL_MUSIC_TRACKS.find((t) => t.value === active)?.label ?? active;
   });
-  readonly isBackgroundMusicEnabled = computed(() => {
-    const forced = this.musicOverrideEnabled();
-    if (forced !== null) return forced;
-    return this.resolveMusicTrack(this.session()?.backgroundMusic) !== null;
-  });
+  readonly isBackgroundMusicEnabled = computed(() => !this.musicMuted() && this.activeMusicTrack() !== null);
   readonly sessionHeading = computed(() => {
     const session = this.session();
     if (!session) {
@@ -389,7 +425,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.sound.unlock();
       if (status === 'ACTIVE' && prev !== 'ACTIVE') {
         this.sound.stopAllSfx();
-        void this.sound.play('questionStart');
       } else if (status === 'FINISHED') {
         this.sound.stopAllSfx();
         void this.sound.play('sessionEnd');
@@ -452,7 +487,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     await this.generateQrCode();
     await this.refreshLiveFreetext();
     await this.refreshCurrentQuestionForHost();
-    this.sound.stopMusic();
+    this.syncMusic();
     this.pollTimer = setInterval(() => {
       void this.refreshParticipantsPayload();
       void this.refreshLiveFreetext();
@@ -643,7 +678,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.countdownEnded.set(false);
     this.countdownIntroSoundPlayed = false;
     this.countdownFinalSoundPlayed = false;
-    this.lastCountdownSoundSecond = null;
     if (!timerSeconds || timerSeconds <= 0) {
       this.countdownSeconds.set(null);
       return;
@@ -654,25 +688,18 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const tick = (): void => {
       const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
       this.countdownSeconds.set(remaining);
-      if (remaining <= 5 && this.session()?.enableSoundEffects) {
-        if (remaining === 5 && !this.countdownIntroSoundPlayed) {
-          // Finger-Countdown einläuten: Gong zu Beginn.
-          void this.sound.play('sessionEnd');
-          this.countdownIntroSoundPlayed = true;
-          this.lastCountdownSoundSecond = remaining;
-        } else if (remaining > 1 && remaining < 5 && remaining !== this.lastCountdownSoundSecond) {
-          this.lastCountdownSoundSecond = remaining;
-          void this.sound.play('countdownTick');
-        } else if (remaining <= 0 && !this.countdownFinalSoundPlayed) {
-          // Finale: Pfiff ganz zuletzt.
+      if (remaining <= 6 && this.session()?.enableSoundEffects) {
+        if (remaining === 6 && !this.countdownIntroSoundPlayed) {
           void this.sound.play('countdownEnd');
+          this.countdownIntroSoundPlayed = true;
+        } else if (remaining === 1 && !this.countdownFinalSoundPlayed) {
+          void this.sound.play('sessionEnd');
           this.countdownFinalSoundPlayed = true;
         }
       }
       if (remaining <= 0) {
         if (this.session()?.enableSoundEffects && !this.countdownFinalSoundPlayed) {
-          // Fallback bei Timing-Sprüngen: Pfiff trotzdem sicher auslösen.
-          void this.sound.play('countdownEnd');
+          void this.sound.play('sessionEnd');
           this.countdownFinalSoundPlayed = true;
         }
         this.stopCountdown();
@@ -692,66 +719,38 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private stopCountdown(): void {
     if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
     if (this.fingerHideTimeout) { clearTimeout(this.fingerHideTimeout); this.fingerHideTimeout = null; }
-    this.lastCountdownSoundSecond = null;
   }
 
-  /**
-   * Synchronisiert Host-Hintergrundmusik:
-   * - Dozenten-Override hat Vorrang vor Quiz-Setting.
-   * - Während FINISHED ist Musik immer aus.
-   */
+  /** Synchronisiert Host-Hintergrundmusik phasenabhängig. */
   private syncMusic(): void {
     const session = this.session();
-    if (!session || this.effectiveStatus() === 'FINISHED' || !this.isBackgroundMusicEnabled()) {
+    const track = this.activeMusicTrack();
+    if (!session || this.effectiveStatus() === 'FINISHED' || !track) {
       this.sound.stopMusic();
       return;
     }
-    const track = this.activeMusicTrack() ?? 'LOBBY_0';
     void this.sound.playMusic(track);
   }
 
-  toggleBackgroundMusic(): void {
+  toggleMuteMusic(): void {
     this.sound.unlock();
-    this.musicOverrideEnabled.set(!this.isBackgroundMusicEnabled());
-    if (this.musicOverrideEnabled() === true && !this.activeMusicTrack()) {
-      this.musicOverrideTrack.set('LOBBY_0');
-    }
+    this.musicMuted.set(!this.musicMuted());
     this.syncMusic();
   }
 
-  selectBackgroundMusicTrack(track: HostMusicTrack): void {
+  setPhaseTrack(phase: MusicPhase, track: HostMusicTrack): void {
     this.sound.unlock();
-    this.musicOverrideTrack.set(track);
-    this.musicOverrideEnabled.set(true);
+    const next = { ...this.phaseTracks(), [phase]: track };
+    this.phaseTracks.set(next);
+    try {
+      localStorage.setItem(MUSIC_PHASE_STORAGE_KEY, JSON.stringify(next));
+    } catch { /* quota */ }
     this.syncMusic();
   }
 
-  private resolveMusicTrack(raw: string | null | undefined): HostMusicTrack | null {
-    if (
-      raw === 'LOBBY_0' ||
-      raw === 'LOBBY_1' ||
-      raw === 'LOBBY_2' ||
-      raw === 'LOBBY_3' ||
-      raw === 'CONNECTING_0' ||
-      raw === 'COUNTDOWN_RUNNING_0' ||
-      raw === 'COUNTDOWN_RUNNING_1' ||
-      raw === 'COUNTDOWN_RUNNING_2'
-    ) {
-      return raw;
-    }
-    if (raw === 'CALM_LOFI') return 'LOBBY_0';
-    if (raw === 'UPBEAT_POP') return 'LOBBY_1';
-    if (raw === 'FOCUS_AMBIENT') return 'LOBBY_2';
-    if (raw === 'UPBEAT') {
-      return 'LOBBY_1';
-    }
-    if (raw === 'CHILL') {
-      return 'LOBBY_0';
-    }
-    if (raw === 'EPIC') {
-      return 'LOBBY_3';
-    }
-    return null;
+  phaseTrackLabel(phase: MusicPhase): string {
+    const track = this.phaseTracks()[phase];
+    return ALL_MUSIC_TRACKS.find((t) => t.value === track)?.label ?? track;
   }
 
   async exportFreetextSessionCsv(): Promise<void> {
