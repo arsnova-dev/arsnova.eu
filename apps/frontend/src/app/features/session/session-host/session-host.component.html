@@ -93,9 +93,7 @@
           >
             {{ phase.label }}
             @if (currentMusicPhase() === phase.id) {
-              <mat-icon class="session-host__music-phase-playing" aria-hidden="true"
-                >graphic_eq</mat-icon
-              >
+              <app-music-equalizer-icon class="session-host__music-phase-playing" size="small" />
             }
           </p>
           @for (track of allMusicTracks; track track.value) {
@@ -151,9 +149,11 @@
                 i18n-aria-label="@@sessionHost.musicControlAria"
                 aria-label="Soundsteuerung öffnen"
               >
-                <mat-icon aria-hidden="true">{{
-                  musicMuted() ? 'volume_off' : 'graphic_eq'
-                }}</mat-icon>
+                @if (musicMuted()) {
+                  <mat-icon aria-hidden="true">volume_off</mat-icon>
+                } @else {
+                  <app-music-equalizer-icon class="session-host__live-sound-icon" />
+                }
                 <span class="session-host__live-sound-label">{{ activeMusicLabel() }}</span>
               </button>
               @if (isRunningSession() && !showChannelTabs()) {
@@ -247,10 +247,6 @@
               </section>
             }
             @let payload = participantsPayload();
-            <p class="session-lobby__join-hint" i18n>Beitreten unter</p>
-            <p class="session-lobby__join-url">
-              <a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a>
-            </p>
             @if (s.teamMode && lobbyTeamsWithParticipants().length > 0) {
               <section
                 class="session-lobby__teams session-lobby__teams--hero"

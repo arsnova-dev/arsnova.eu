@@ -54,6 +54,7 @@ import type {
 } from '@arsnova/shared-types';
 import { WordCloudComponent } from '../session-present/word-cloud.component';
 import { CountdownFingersComponent } from '../../../shared/countdown-fingers/countdown-fingers.component';
+import { MusicEqualizerIconComponent } from '../../../shared/music-equalizer-icon/music-equalizer-icon.component';
 import { FeedbackHostComponent } from '../../feedback/feedback-host.component';
 
 const ANSWER_COLORS = [
@@ -161,6 +162,7 @@ const ALL_MUSIC_TRACK_VALUES = ALL_MUSIC_TRACKS.map((t) => t.value);
     MatSlideToggle,
     WordCloudComponent,
     CountdownFingersComponent,
+    MusicEqualizerIconComponent,
     FeedbackHostComponent,
   ],
   templateUrl: './session-host.component.html',
