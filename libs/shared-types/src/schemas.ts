@@ -679,7 +679,7 @@ export const QuizExportSchema = z.object({
   exportedAt: z.string(), // ISO-8601 Timestamp
   quiz: z.object({
     name: z.string().min(1).max(200),
-    description: z.string().max(1000).optional(),
+    description: z.string().max(5000).optional(),
     showLeaderboard: z.boolean(),
     allowCustomNicknames: z.boolean(),
     defaultTimer: z.number().int().min(5).max(300).nullable().optional(),

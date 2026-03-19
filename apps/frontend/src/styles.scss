@@ -42,42 +42,54 @@ html {
 
   @include mat.strong-focus-indicators();
 
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$cyan-palette,
-    ),
-    typography: (
-      brand-family: 'system-ui',
-      plain-family: 'system-ui',
-    ),
-    density: 0,
-  ));
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: (
+        brand-family: 'system-ui',
+        plain-family: 'system-ui',
+      ),
+      density: 0,
+    )
+  );
 }
 
 // Explicit overrides for manual theme switching
-html.dark  { color-scheme: dark; }
-html.light { color-scheme: light; }
+html.dark {
+  color-scheme: dark;
+}
+html.light {
+  color-scheme: light;
+}
 
 // Playful preset – nur Palette + Formen, gleiche Schrift wie Seriös (System-UI)
 html.preset-playful {
-  @include mat.theme((
-    color: (
-      primary: mat.$magenta-palette,
-      tertiary: mat.$violet-palette,
-    ),
-  ));
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$magenta-palette,
+        tertiary: mat.$violet-palette,
+      ),
+    )
+  );
 
-  @include mat.button-overrides((
-    filled-container-shape: 9999px,
-    outlined-container-shape: 9999px,
-    text-container-shape: 9999px,
-  ));
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 9999px,
+      outlined-container-shape: 9999px,
+      text-container-shape: 9999px,
+    )
+  );
 
-  @include mat.card-overrides((
-    outlined-container-shape: 1.5rem,
-    elevated-container-shape: 1.5rem,
-  ));
+  @include mat.card-overrides(
+    (
+      outlined-container-shape: 1.5rem,
+      elevated-container-shape: 1.5rem,
+    )
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -85,15 +97,18 @@ html.preset-playful {
 // ---------------------------------------------------------------------------
 
 html {
-  @include mat.card-overrides((
-    outlined-container-shape: var(--mat-sys-corner-extra-large),
-  ));
+  @include mat.card-overrides(
+    (
+      outlined-container-shape: var(--mat-sys-corner-extra-large),
+    )
+  );
 
-  @include mat.button-toggle-overrides((
-    shape: var(--mat-sys-corner-medium),
-  ));
+  @include mat.button-toggle-overrides(
+    (
+      shape: var(--mat-sys-corner-medium),
+    )
+  );
 }
-
 
 // ---------------------------------------------------------------------------
 // 2) App-Semantic Tokens – TOKENS.md §2
@@ -141,7 +156,8 @@ html.preset-playful {
     var(--mat-sys-surface-container) 100%
   );
   --app-shadow-accent: 0 14px 44px -10px color-mix(in srgb, var(--mat-sys-primary) 50%, transparent);
-  --app-shadow-card-playful: 0 8px 28px -6px color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
+  --app-shadow-card-playful: 0 8px 28px -6px
+    color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
   --app-shadow-cta-glow: 0 0 20px color-mix(in srgb, var(--mat-sys-primary) 45%, transparent);
   --app-corner-playful: 1.5rem;
 
@@ -182,7 +198,6 @@ html.preset-playful {
   .app-footer__icon {
     color: var(--mat-sys-primary);
   }
-
 }
 
 // ---------------------------------------------------------------------------
@@ -225,12 +240,24 @@ html {
 // Keyframes für Preset Spielerisch (Startseite) – global, damit Animationen sicher laufen
 @media (prefers-reduced-motion: no-preference) {
   @keyframes home-playful-brand-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
   }
   @keyframes home-playful-hero-twinkle {
-    0%, 100% { transform: scale(1); opacity: 0.9; }
-    50% { transform: scale(1.15); opacity: 1; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 1;
+    }
   }
 }
 
@@ -253,11 +280,21 @@ html {
   display: flex;
   flex-direction: column;
 
-  &--xs  { gap: 0.25rem; }
-  &--sm  { gap: 0.5rem; }
-  &--md  { gap: 1rem; }
-  &--lg  { gap: 1.5rem; }
-  &--xl  { gap: 2rem; }
+  &--xs {
+    gap: 0.25rem;
+  }
+  &--sm {
+    gap: 0.5rem;
+  }
+  &--md {
+    gap: 1rem;
+  }
+  &--lg {
+    gap: 1.5rem;
+  }
+  &--xl {
+    gap: 2rem;
+  }
 }
 
 .l-cluster {
@@ -265,33 +302,74 @@ html {
   flex-wrap: wrap;
   align-items: center;
 
-  &--xs  { gap: 0.25rem; }
-  &--sm  { gap: 0.5rem; }
-  &--md  { gap: 1rem; }
-  &--lg  { gap: 1.5rem; }
+  &--xs {
+    gap: 0.25rem;
+  }
+  &--sm {
+    gap: 0.5rem;
+  }
+  &--md {
+    gap: 1rem;
+  }
+  &--lg {
+    gap: 1.5rem;
+  }
 }
 
 .l-grid {
   display: grid;
 
-  &--sm  { gap: 0.5rem; }
-  &--md  { gap: 0.75rem; }
-  &--lg  { gap: 1rem; }
+  &--sm {
+    gap: 0.5rem;
+  }
+  &--md {
+    gap: 0.75rem;
+  }
+  &--lg {
+    gap: 1rem;
+  }
 
-  &--2col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  &--4col { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  &--2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  &--4col {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 
-  @media (max-width: 599px)  { &--2col, &--4col { grid-template-columns: 1fr; } }
-  @media (min-width: 600px)  { &--auto-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1200px) { &--auto-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 599px) {
+    &--2col,
+    &--4col {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (min-width: 600px) {
+    &--auto-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    &--auto-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
 }
 
 .l-inset {
-  &--xs  { padding: 0.25rem; }
-  &--sm  { padding: 0.5rem; }
-  &--md  { padding: 1rem; }
-  &--lg  { padding: 1.5rem; }
-  &--xl  { padding: 2rem; }
+  &--xs {
+    padding: 0.25rem;
+  }
+  &--sm {
+    padding: 0.5rem;
+  }
+  &--md {
+    padding: 1rem;
+  }
+  &--lg {
+    padding: 1.5rem;
+  }
+  &--xl {
+    padding: 2rem;
+  }
 }
 
 .l-page {
@@ -299,8 +377,12 @@ html {
   margin-inline: auto;
   padding: 1.5rem 1rem;
 
-  @media (min-width: 600px) { padding-inline: 1.5rem; }
-  @media (min-width: 840px) { padding-inline: 2rem; }
+  @media (min-width: 600px) {
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 840px) {
+    padding-inline: 2rem;
+  }
 }
 
 .l-section {
@@ -348,7 +430,11 @@ html {
 }
 
 html.dark .cdk-overlay-pane.live-session-dialog-panel .mat-mdc-dialog-surface {
-  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 90%, var(--mat-sys-surface-bright));
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-surface-container-high) 90%,
+    var(--mat-sys-surface-bright)
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -430,7 +516,11 @@ html.dark .app-qr-image {
   border-radius: 1.15rem;
   border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 20%, var(--mat-sys-outline-variant));
   background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--mat-sys-primary) 14%, transparent), transparent 62%),
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--mat-sys-primary) 14%, transparent),
+      transparent 62%
+    ),
     color-mix(in srgb, var(--mat-sys-surface-container-high) 92%, var(--mat-sys-surface));
   box-shadow: 0 1rem 2rem color-mix(in srgb, black 16%, transparent);
   color: var(--mat-sys-on-surface);
@@ -596,10 +686,10 @@ html.dark .app-qr-image {
   hyphens: auto;
 }
 
-/* KaTeX: line-height für Lesbarkeit; overflow-y: hidden verhindert unerwünschten vertikalen Scrollbalken (v. a. bei overflow-x: auto, siehe GitHub KaTeX #2942) */
+/* KaTeX: line-height kompakt halten; overflow-y: hidden verhindert unerwünschten vertikalen Scrollbalken (v. a. bei overflow-x: auto, siehe GitHub KaTeX #2942) */
 .katex,
 .katex-display {
-  line-height: 2.2 !important;
+  line-height: 1.5 !important;
   overflow-y: hidden;
 }
 
@@ -623,4 +713,50 @@ html.dark .app-qr-image {
 .vote-question__text .katex-display,
 .session-host__question-title-inner .katex-display {
   display: block;
+}
+
+/* Quiz-Beschreibung: einheitliche Zeilenhöhe für Text, KaTeX und Tabellen (innerHTML-Inhalt, daher global) */
+.quiz-list-item__description .katex {
+  line-height: 1.5 !important;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.quiz-list-item__description .katex-display {
+  line-height: 1.5 !important;
+  display: block;
+}
+
+.quiz-list-item__description table {
+  line-height: 1.5;
+  width: 100%;
+  min-width: 28rem;
+  margin: 0.75rem 0;
+  border-collapse: collapse;
+  font: var(--mat-sys-label-small);
+  font-size: 0.9em;
+}
+
+.quiz-list-item__description th,
+.quiz-list-item__description td {
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 35%, transparent);
+  vertical-align: top;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
+.quiz-list-item__description thead th {
+  background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+  font-weight: 600;
+}
+
+.quiz-list-item__description tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--mat-sys-on-surface) 4%, transparent);
+}
+
+.quiz-list-item__description td:first-child {
+  white-space: nowrap;
+  width: 2rem;
 }

@@ -54,7 +54,8 @@
     180deg,
     color-mix(in srgb, var(--mat-sys-surface-container-high) 88%, transparent) 0%,
     var(--mat-sys-surface-container-low) 52%,
-    color-mix(in srgb, var(--mat-sys-primary-container) 12%, var(--mat-sys-surface-container-low)) 100%
+    color-mix(in srgb, var(--mat-sys-primary-container) 12%, var(--mat-sys-surface-container-low))
+      100%
   );
   border-color: color-mix(in srgb, var(--mat-sys-primary) 12%, var(--mat-sys-outline-variant));
   overflow: hidden;
@@ -136,18 +137,18 @@
 .quiz-preview-question__position {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);
-  font: var(--mat-sys-label-medium);
+  font: var(--mat-sys-label-small);
 }
 
 .quiz-preview-question__text {
   margin: 0;
-  font: var(--mat-sys-title-medium);
+  font: var(--mat-sys-title-small);
   line-height: 1.4;
 }
 
 @media (min-width: 840px) {
   .quiz-preview-question__text {
-    font: var(--mat-sys-title-large);
+    font: var(--mat-sys-title-medium);
   }
 }
 
@@ -487,7 +488,11 @@
   padding: 0.5rem;
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: var(--mat-sys-corner-extra-large);
-  background: color-mix(in srgb, var(--mat-sys-surface-container-highest) 96%, var(--mat-sys-surface));
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-surface-container-highest) 96%,
+    var(--mat-sys-surface)
+  );
   box-shadow: var(--mat-sys-level5);
   backdrop-filter: blur(14px);
 }

@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  PLATFORM_ID,
-  Signal,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Injectable, PLATFORM_ID, Signal, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import * as Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
@@ -221,7 +214,8 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
     ctx.addIssue({
       code: 'custom',
       path: ['type'],
-      message: 'Nur Single Choice, Multiple Choice, Freitext, Umfrage oder Rating ist hier erlaubt.',
+      message:
+        'Nur Single Choice, Multiple Choice, Freitext, Umfrage oder Rating ist hier erlaubt.',
     });
     return;
   }
@@ -319,8 +313,7 @@ const QuestionCreateSchema = AddQuestionInputSchema.pick({
   }
 });
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const DEFAULT_QUIZ_SETTINGS: QuizSettings = parseQuizSettings({});
 type SyncConnectionState = 'connected' | 'connecting' | 'disconnected';
@@ -373,7 +366,10 @@ export class QuizStoreService {
       updatedAt: quiz.updatedAt,
       questionCount: quiz.questions.length,
       teamMode: quiz.settings.teamMode === true,
-      hasBonus: quiz.settings.bonusTokenCount !== null && quiz.settings.bonusTokenCount !== undefined && quiz.settings.bonusTokenCount > 0,
+      hasBonus:
+        quiz.settings.bonusTokenCount !== null &&
+        quiz.settings.bonusTokenCount !== undefined &&
+        quiz.settings.bonusTokenCount > 0,
     })),
   );
 
@@ -386,6 +382,7 @@ export class QuizStoreService {
     this.syncRoomId.set(roomId);
     this.loadSyncMetadata(roomId);
     this.loadFromStorage(roomId, !this.hasStoredSyncRoomId);
+    this.ensureDemoQuiz();
     this.initYjsPersistence(roomId);
     if (isPlatformBrowser(this.platformId)) {
       globalThis.addEventListener(PRESET_UPDATED_EVENT, this.onPresetUpdated);
@@ -396,7 +393,10 @@ export class QuizStoreService {
     return this.getQuizById(DEMO_QUIZ_ID) ? DEMO_QUIZ_ID : null;
   }
 
-  private currentQuizUpdateSource(): Pick<QuizDocument, 'updatedByDeviceId' | 'updatedByDeviceLabel' | 'updatedByBrowserLabel'> {
+  private currentQuizUpdateSource(): Pick<
+    QuizDocument,
+    'updatedByDeviceId' | 'updatedByDeviceLabel' | 'updatedByBrowserLabel'
+  > {
     return {
       updatedByDeviceId: this.currentSyncDeviceId,
       updatedByDeviceLabel: this.currentDeviceLabel(),
@@ -600,9 +600,15 @@ export class QuizStoreService {
       throw new Error('Quiz muss mindestens eine Frage enthalten.');
     }
 
+    const UPLOAD_DESCRIPTION_MAX = 1000;
+    const description =
+      document.description && document.description.length > UPLOAD_DESCRIPTION_MAX
+        ? document.description.slice(0, UPLOAD_DESCRIPTION_MAX - 3) + '...'
+        : document.description;
+
     const payload: QuizUploadInput = {
       name: document.name,
-      ...(document.description ? { description: document.description } : {}),
+      ...(description ? { description } : {}),
       showLeaderboard: document.settings.showLeaderboard,
       allowCustomNicknames: document.settings.allowCustomNicknames,
       defaultTimer: document.settings.defaultTimer,
@@ -635,7 +641,8 @@ export class QuizStoreService {
 
     const parsed = QuizUploadInputSchema.safeParse(payload);
     if (!parsed.success) {
-      const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Daten für Live-Start.`;
+      const message =
+        parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Daten für Live-Start.`;
       throw new Error(message);
     }
     return parsed.data;
@@ -676,7 +683,8 @@ export class QuizStoreService {
         nicknameTheme: parsed.data.quiz.nicknameTheme,
         bonusTokenCount: parsed.data.quiz.bonusTokenCount ?? null,
         readingPhaseEnabled: parsed.data.quiz.readingPhaseEnabled ?? true,
-        preset: (parsed.data.quiz as Record<string, unknown>)['preset'] as QuizPreset ?? 'PLAYFUL',
+        preset:
+          ((parsed.data.quiz as Record<string, unknown>)['preset'] as QuizPreset) ?? 'PLAYFUL',
       }),
       questions: parsed.data.quiz.questions
         .sort((a, b) => a.order - b.order)
@@ -695,11 +703,11 @@ export class QuizStoreService {
           ratingMax: question.type === 'RATING' ? (question.ratingMax ?? 5) : null,
           ratingLabelMin:
             question.type === 'RATING'
-              ? normalizeNullableLabel(question.ratingLabelMin) ?? null
+              ? (normalizeNullableLabel(question.ratingLabelMin) ?? null)
               : null,
           ratingLabelMax:
             question.type === 'RATING'
-              ? normalizeNullableLabel(question.ratingLabelMax) ?? null
+              ? (normalizeNullableLabel(question.ratingLabelMax) ?? null)
               : null,
         })),
     };
@@ -752,11 +760,7 @@ export class QuizStoreService {
     return question;
   }
 
-  updateQuestion(
-    quizId: string,
-    questionId: string,
-    input: AddQuizQuestionInput,
-  ): QuizQuestion {
+  updateQuestion(quizId: string, questionId: string, input: AddQuizQuestionInput): QuizQuestion {
     const parsed = validateQuestionInput(input);
 
     const document = this.getQuizById(quizId);
@@ -764,9 +768,7 @@ export class QuizStoreService {
       throw new Error('Quiz nicht gefunden.');
     }
 
-    const questionIndex = document.questions.findIndex(
-      (question) => question.id === questionId,
-    );
+    const questionIndex = document.questions.findIndex((question) => question.id === questionId);
     if (questionIndex < 0) {
       throw new Error('Frage nicht gefunden.');
     }
@@ -865,7 +867,10 @@ export class QuizStoreService {
     }
   }
 
-  activateSyncRoom(roomId: string, options?: { markShared?: boolean; registerOrigin?: boolean }): void {
+  activateSyncRoom(
+    roomId: string,
+    options?: { markShared?: boolean; registerOrigin?: boolean },
+  ): void {
     const normalizedRoomId = normalizeSyncRoomId(roomId);
     if (!normalizedRoomId) {
       throw new Error($localize`Ungültige Sync-ID.`);
@@ -965,14 +970,21 @@ export class QuizStoreService {
           `${QUIZ_SYNC_ROOM_PREFIX}${roomId}`,
           this.yDoc,
         );
-        this.yProvider.awareness.setLocalStateField('syncClient', readCurrentSyncClientPresence(this.currentSyncDeviceId));
+        this.yProvider.awareness.setLocalStateField(
+          'syncClient',
+          readCurrentSyncClientPresence(this.currentSyncDeviceId),
+        );
         this.yProvider.awareness.on('change', this.onAwarenessChanged);
         this.yProvider.on('sync', (isSynced: boolean) => {
           if (isSynced) this.syncFromYjsOrSeed();
         });
         this.yProvider.on('status', ({ status }: { status: SyncConnectionState }) => {
           const nextState =
-            status === 'connected' ? 'connected' : status === 'connecting' ? 'connecting' : 'disconnected';
+            status === 'connected'
+              ? 'connected'
+              : status === 'connecting'
+                ? 'connecting'
+                : 'disconnected';
           this.syncConnectionState.set(nextState);
           if (nextState === 'connected') {
             this.recordConnectedAt();
@@ -1034,19 +1046,26 @@ export class QuizStoreService {
 
     const raw = this.yRoot.get(QUIZ_YDOC_ROOT_KEY);
     if (typeof raw !== 'string') return;
-    if (raw === this.lastSerializedQuizDocuments && this.lastSerializedRoomId === this.syncRoomId()) return;
+    if (raw === this.lastSerializedQuizDocuments && this.lastSerializedRoomId === this.syncRoomId())
+      return;
 
     try {
       const parsed = JSON.parse(raw) as unknown;
       const validQuizzes = normalizeStoredQuizzes(parsed);
       const lastRemoteChangedQuiz = determineLastChangedQuiz(this.quizDocuments(), validQuizzes);
+      const hadDemoQuiz = validQuizzes.some((q) => q.id === DEMO_QUIZ_ID);
 
       this.isApplyingYjsSnapshot = true;
       this.quizDocuments.set(validQuizzes);
       if (lastRemoteChangedQuiz) {
         this.recordRemoteSync(lastRemoteChangedQuiz);
       }
-      this.persistLocalMirror(raw);
+      this.ensureDemoQuiz();
+      if (hadDemoQuiz) {
+        this.persistLocalMirror(raw);
+      } else {
+        this.persistToStorage();
+      }
     } catch {
       // Ignore malformed CRDT payload and keep current in-memory state.
     } finally {
@@ -1131,7 +1150,10 @@ export class QuizStoreService {
       if (!pendingRoomId || !pendingSnapshot || !isPlatformBrowser(this.platformId)) return;
 
       try {
-        localStorage.setItem(this.syncMetadataStorageKey(pendingRoomId), JSON.stringify(pendingSnapshot));
+        localStorage.setItem(
+          this.syncMetadataStorageKey(pendingRoomId),
+          JSON.stringify(pendingSnapshot),
+        );
       } catch {
         // Ignore quota/unavailable storage and keep in-memory metadata.
       }
@@ -1186,7 +1208,9 @@ export class QuizStoreService {
 
     const peersByDeviceId = new Map<string, SyncPeerInfo>();
     for (const awarenessState of states.values()) {
-      const candidate = normalizeSyncClientPresence((awarenessState as Record<string, unknown>)['syncClient']);
+      const candidate = normalizeSyncClientPresence(
+        (awarenessState as Record<string, unknown>)['syncClient'],
+      );
       if (!candidate || candidate.deviceId === this.currentSyncDeviceId) continue;
       peersByDeviceId.set(candidate.deviceId, {
         deviceId: candidate.deviceId,
@@ -1354,7 +1378,10 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
   };
 }
 
-function determineLastChangedQuiz(previousQuizzes: QuizDocument[], nextQuizzes: QuizDocument[]): QuizDocument | null {
+function determineLastChangedQuiz(
+  previousQuizzes: QuizDocument[],
+  nextQuizzes: QuizDocument[],
+): QuizDocument | null {
   const previousById = new Map(previousQuizzes.map((quiz) => [quiz.id, quiz]));
   const changed = nextQuizzes.filter((quiz) => {
     const previous = previousById.get(quiz.id);
@@ -1461,7 +1488,8 @@ function normalizeStoredQuizSettings(value: unknown): QuizSettings {
           : undefined,
       bonusTokenCount: readNumberOrNull(candidate['bonusTokenCount']),
       readingPhaseEnabled: readBoolean(candidate['readingPhaseEnabled']),
-      preset: typeof candidate['preset'] === 'string' ? (candidate['preset'] as QuizPreset) : undefined,
+      preset:
+        typeof candidate['preset'] === 'string' ? (candidate['preset'] as QuizPreset) : undefined,
     });
   } catch {
     return { ...DEFAULT_QUIZ_SETTINGS };
@@ -1498,8 +1526,14 @@ function validateQuestionInput(input: AddQuizQuestionInput): ValidatedQuestionIn
 
   const ratingMin = parsed.data.type === 'RATING' ? (parsed.data.ratingMin ?? 1) : null;
   const ratingMax = parsed.data.type === 'RATING' ? (parsed.data.ratingMax ?? 5) : null;
-  const ratingLabelMin = parsed.data.type === 'RATING' ? normalizeNullableLabel(parsed.data.ratingLabelMin) ?? null : null;
-  const ratingLabelMax = parsed.data.type === 'RATING' ? normalizeNullableLabel(parsed.data.ratingLabelMax) ?? null : null;
+  const ratingLabelMin =
+    parsed.data.type === 'RATING'
+      ? (normalizeNullableLabel(parsed.data.ratingLabelMin) ?? null)
+      : null;
+  const ratingLabelMax =
+    parsed.data.type === 'RATING'
+      ? (normalizeNullableLabel(parsed.data.ratingLabelMax) ?? null)
+      : null;
 
   return {
     text: parsed.data.text,
@@ -1564,11 +1598,11 @@ function normalizeStoredQuestion(value: unknown, fallbackOrder: number): QuizQue
     ratingMax: parsed.data.type === 'RATING' ? (parsed.data.ratingMax ?? 5) : null,
     ratingLabelMin:
       parsed.data.type === 'RATING'
-        ? normalizeNullableLabel(parsed.data.ratingLabelMin) ?? null
+        ? (normalizeNullableLabel(parsed.data.ratingLabelMin) ?? null)
         : null,
     ratingLabelMax:
       parsed.data.type === 'RATING'
-        ? normalizeNullableLabel(parsed.data.ratingLabelMax) ?? null
+        ? (normalizeNullableLabel(parsed.data.ratingLabelMax) ?? null)
         : null,
   };
 }
@@ -1649,7 +1683,9 @@ function readStringOrNull(value: unknown): string | null | undefined {
 }
 
 function readStringArray(value: unknown): string[] | undefined {
-  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : undefined;
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === 'string')
+    : undefined;
 }
 
 function isValidDateString(value: string): boolean {
@@ -1711,12 +1747,7 @@ function readHomePresetSnapshot(): HomePresetSnapshot | null {
     playfulOptions: localStorage.getItem(HOME_PRESET_OPTIONS_PLAYFUL_KEY),
   };
 
-  if (
-    !snapshot.theme &&
-    !snapshot.preset &&
-    !snapshot.seriousOptions &&
-    !snapshot.playfulOptions
-  ) {
+  if (!snapshot.theme && !snapshot.preset && !snapshot.seriousOptions && !snapshot.playfulOptions) {
     return null;
   }
 
@@ -1762,8 +1793,10 @@ function normalizeSyncMetadataSnapshot(value: unknown): SyncMetadataSnapshot {
     lastRemoteSyncAt: readIsoDateOrNull(candidate['lastRemoteSyncAt']),
     lastRemoteChangedQuizName: readStringOrNull(candidate['lastRemoteChangedQuizName']) ?? null,
     lastRemoteChangedQuizUpdatedAt: readIsoDateOrNull(candidate['lastRemoteChangedQuizUpdatedAt']),
-    lastRemoteChangedByDeviceLabel: readStringOrNull(candidate['lastRemoteChangedByDeviceLabel']) ?? null,
-    lastRemoteChangedByBrowserLabel: readStringOrNull(candidate['lastRemoteChangedByBrowserLabel']) ?? null,
+    lastRemoteChangedByDeviceLabel:
+      readStringOrNull(candidate['lastRemoteChangedByDeviceLabel']) ?? null,
+    lastRemoteChangedByBrowserLabel:
+      readStringOrNull(candidate['lastRemoteChangedByBrowserLabel']) ?? null,
     originSharedAt: readIsoDateOrNull(candidate['originSharedAt']),
     originDeviceLabel: readStringOrNull(candidate['originDeviceLabel']) ?? null,
     originBrowserLabel: readStringOrNull(candidate['originBrowserLabel']) ?? null,
@@ -1776,7 +1809,11 @@ function normalizeSyncClientPresence(value: unknown): SyncClientPresence | null 
   const deviceId = candidate['deviceId'];
   const deviceLabel = candidate['deviceLabel'];
   const browserLabel = candidate['browserLabel'];
-  if (typeof deviceId !== 'string' || typeof deviceLabel !== 'string' || typeof browserLabel !== 'string') {
+  if (
+    typeof deviceId !== 'string' ||
+    typeof deviceLabel !== 'string' ||
+    typeof browserLabel !== 'string'
+  ) {
     return null;
   }
   if (!deviceId.trim() || !deviceLabel.trim() || !browserLabel.trim()) {

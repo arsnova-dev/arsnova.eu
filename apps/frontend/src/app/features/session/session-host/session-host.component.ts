@@ -1,10 +1,27 @@
 import { DecimalPipe, DOCUMENT } from '@angular/common';
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject, signal, computed, effect } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardSubtitle,
+  MatCardTitle,
+} from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -39,8 +56,26 @@ import { WordCloudComponent } from '../session-present/word-cloud.component';
 import { CountdownFingersComponent } from '../../../shared/countdown-fingers/countdown-fingers.component';
 import { FeedbackHostComponent } from '../../feedback/feedback-host.component';
 
-const ANSWER_COLORS = ['#1565c0', '#e65100', '#2e7d32', '#6a1b9a', '#c62828', '#00838f', '#4e342e', '#37474f'];
-const ANSWER_SHAPES = ['\u25B3', '\u25CB', '\u25A1', '\u25C7', '\u2606', '\u2B21', '\u2B20', '\u2BC6'];
+const ANSWER_COLORS = [
+  '#1565c0',
+  '#e65100',
+  '#2e7d32',
+  '#6a1b9a',
+  '#c62828',
+  '#00838f',
+  '#4e342e',
+  '#37474f',
+];
+const ANSWER_SHAPES = [
+  '\u25B3',
+  '\u25CB',
+  '\u25A1',
+  '\u25C7',
+  '\u2606',
+  '\u2B21',
+  '\u2B20',
+  '\u2BC6',
+];
 const HOST_FALLBACK_POLL_MS = 3000;
 type SessionChannelTab = 'quiz' | 'qa' | 'quickFeedback';
 type HostMusicTrack =
@@ -65,13 +100,20 @@ const MUSIC_PHASE_STORAGE_KEY = 'arsnova-host-phase-tracks';
 
 function loadPhaseTracksFromStorage(): Record<MusicPhase, HostMusicTrack> {
   try {
-    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(MUSIC_PHASE_STORAGE_KEY) : null;
+    const raw =
+      typeof localStorage !== 'undefined' ? localStorage.getItem(MUSIC_PHASE_STORAGE_KEY) : null;
     if (!raw) return { ...PHASE_TRACK_DEFAULTS };
     const parsed = JSON.parse(raw) as Record<string, string>;
     return {
-      lobby: isValidTrack(parsed['lobby']) ? parsed['lobby'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.lobby,
-      connecting: isValidTrack(parsed['connecting']) ? parsed['connecting'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.connecting,
-      running: isValidTrack(parsed['running']) ? parsed['running'] as HostMusicTrack : PHASE_TRACK_DEFAULTS.running,
+      lobby: isValidTrack(parsed['lobby'])
+        ? (parsed['lobby'] as HostMusicTrack)
+        : PHASE_TRACK_DEFAULTS.lobby,
+      connecting: isValidTrack(parsed['connecting'])
+        ? (parsed['connecting'] as HostMusicTrack)
+        : PHASE_TRACK_DEFAULTS.connecting,
+      running: isValidTrack(parsed['running'])
+        ? (parsed['running'] as HostMusicTrack)
+        : PHASE_TRACK_DEFAULTS.running,
     };
   } catch {
     return { ...PHASE_TRACK_DEFAULTS };
@@ -171,7 +213,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   /** Aktuelle Frage für Host (Text + Antwortoptionen), null wenn keine Frage aktiv. */
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
   /** Emoji-Reaktionen der Teilnehmer in der Ergebnis-Phase (Story 5.8). */
-  readonly emojiReactions = signal<{ reactions: Record<string, number>; total: number } | null>(null);
+  readonly emojiReactions = signal<{ reactions: Record<string, number>; total: number } | null>(
+    null,
+  );
   readonly emojiNewCount = signal(0);
   readonly emojiBadgePulse = signal(false);
   private emojiPulseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -209,7 +253,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly showChannelTabs = computed(() => this.visibleChannels().length > 1);
   readonly isLegacyQaOnlySession = computed(() => {
     const session = this.session();
-    return session?.type === 'Q_AND_A' && this.channels().quiz === false && this.channels().qa === true;
+    return (
+      session?.type === 'Q_AND_A' && this.channels().quiz === false && this.channels().qa === true
+    );
   });
   readonly showPrimaryLiveView = computed(() => {
     const active = this.activeChannel();
@@ -274,7 +320,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (!active) return $localize`:@@sessionHost.musicLabelOff:Musik aus`;
     return ALL_MUSIC_TRACKS.find((t) => t.value === active)?.label ?? active;
   });
-  readonly isBackgroundMusicEnabled = computed(() => !this.musicMuted() && this.activeMusicTrack() !== null);
+  readonly isBackgroundMusicEnabled = computed(
+    () => !this.musicMuted() && this.activeMusicTrack() !== null,
+  );
   readonly sessionHeading = computed(() => {
     const session = this.session();
     if (!session) {
@@ -287,33 +335,35 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
     return session.quizName ?? null;
   });
-  readonly qaHeading = computed(() =>
-    this.session()?.channels?.qa.title ?? this.session()?.title ?? $localize`:@@sessionTabs.questions:Q&A`,
+  readonly qaHeading = computed(
+    () =>
+      this.session()?.channels?.qa.title ??
+      this.session()?.title ??
+      $localize`:@@sessionTabs.questions:Q&A`,
   );
   readonly qaShowPinnedOnly = signal(false);
   readonly qaFilteredQuestions = computed(() => {
     const all = this.qaQuestions();
     return this.qaShowPinnedOnly() ? all.filter((q) => q.status === 'PINNED') : all;
   });
-  readonly qaPinnedCount = computed(() =>
-    this.qaQuestions().filter((q) => q.status === 'PINNED').length,
+  readonly qaPinnedCount = computed(
+    () => this.qaQuestions().filter((q) => q.status === 'PINNED').length,
   );
-  readonly qaPendingCount = computed(() =>
-    this.qaQuestions().filter((question) => question.status === 'PENDING').length,
+  readonly qaPendingCount = computed(
+    () => this.qaQuestions().filter((question) => question.status === 'PENDING').length,
   );
-  readonly qaArchivedCount = computed(() =>
-    this.qaQuestions().filter((q) => q.status === 'ARCHIVED').length,
+  readonly qaArchivedCount = computed(
+    () => this.qaQuestions().filter((q) => q.status === 'ARCHIVED').length,
   );
-  readonly qaDeletedCount = computed(() =>
-    this.qaQuestions().filter((q) => q.status === 'DELETED').length,
+  readonly qaDeletedCount = computed(
+    () => this.qaQuestions().filter((q) => q.status === 'DELETED').length,
   );
-  readonly qaShowNewBanner = computed(() =>
-    this.qaUnseenCount() > 0 && this.qaScrolledDown(),
-  );
-  readonly qaUnseenCount = computed(() =>
-    this.qaQuestions().filter((question) =>
-      question.status !== 'DELETED' && !this.qaSeenQuestionIds().has(question.id),
-    ).length,
+  readonly qaShowNewBanner = computed(() => this.qaUnseenCount() > 0 && this.qaScrolledDown());
+  readonly qaUnseenCount = computed(
+    () =>
+      this.qaQuestions().filter(
+        (question) => question.status !== 'DELETED' && !this.qaSeenQuestionIds().has(question.id),
+      ).length,
   );
   readonly quickFeedbackUnseenCount = computed(() => {
     const result = this.quickFeedbackResult();
@@ -350,7 +400,13 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   showFingerCountdown(): boolean {
     const s = this.countdownSeconds();
-    return this.effectiveStatus() === 'ACTIVE' && s !== null && s >= 0 && s <= 5 && this.themePreset.preset() === 'spielerisch';
+    return (
+      this.effectiveStatus() === 'ACTIVE' &&
+      s !== null &&
+      s >= 0 &&
+      s <= 5 &&
+      this.themePreset.preset() === 'spielerisch'
+    );
   }
 
   /** Stimmenzahl der aktuellen Frage (für Vergleich mit Teilnehmerzahl). */
@@ -397,7 +453,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
           .map((question) => question.id),
       );
       const nextHighlighted = new Set(
-        [...this.qaHighlightedQuestionIds()].filter((questionId) => visibleQuestionIds.has(questionId)),
+        [...this.qaHighlightedQuestionIds()].filter((questionId) =>
+          visibleQuestionIds.has(questionId),
+        ),
       );
       let changed = false;
       for (const question of this.qaQuestions()) {
@@ -455,16 +513,21 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         this.sound.stopAllSfx();
       } else if (status === 'FINISHED') {
         this.sound.stopAllSfx();
-        void this.sound.play('sessionEnd');
       } else if (status === 'RESULTS' || status === 'QUESTION_OPEN') {
         this.sound.stopAllSfx();
       }
     });
   }
 
-  getColor(index: number): string { return ANSWER_COLORS[index % ANSWER_COLORS.length]; }
-  getShape(index: number): string { return ANSWER_SHAPES[index % ANSWER_SHAPES.length]; }
-  getLetter(index: number): string { return String.fromCharCode(65 + index); }
+  getColor(index: number): string {
+    return ANSWER_COLORS[index % ANSWER_COLORS.length];
+  }
+  getShape(index: number): string {
+    return ANSWER_SHAPES[index % ANSWER_SHAPES.length];
+  }
+  getLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
 
   ratingBarRange(q: HostCurrentQuestionDTO): number[] {
     const min = q.ratingMin ?? 1;
@@ -487,9 +550,10 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   /** Für Lobby: volle Beitritts-URL (präsentierbar, Story 2.1b QR-Code). */
   get joinUrl(): string {
-    const origin = typeof this.document?.defaultView?.location?.origin === 'string'
-      ? this.document.defaultView.location.origin
-      : '';
+    const origin =
+      typeof this.document?.defaultView?.location?.origin === 'string'
+        ? this.document.defaultView.location.origin
+        : '';
     return origin ? `${origin}/join/${this.code}` : `/join/${this.code}`;
   }
 
@@ -506,7 +570,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       await this.refreshQaQuestions();
       await this.refreshQuickFeedbackResult();
       if (session.preset === 'PLAYFUL' || session.preset === 'SERIOUS') {
-        this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', { silent: true });
+        this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', {
+          silent: true,
+        });
       }
     } catch {
       this.session.set(null);
@@ -541,11 +607,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.statusSub = trpc.session.onStatusChanged.subscribe(
         { code: this.code.toUpperCase() },
         {
-          onData: (data) => this.statusUpdate.set({
-            status: data.status as SessionStatusUpdate['status'],
-            currentQuestion: data.currentQuestion,
-            activeAt: data.activeAt,
-          }),
+          onData: (data) =>
+            this.statusUpdate.set({
+              status: data.status as SessionStatusUpdate['status'],
+              currentQuestion: data.currentQuestion,
+              activeAt: data.activeAt,
+            }),
           onError: () => {},
         },
       );
@@ -564,7 +631,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       }
 
       this.presetSub = this.themePreset.presetChanged$.subscribe(() => {
-        const preset = this.themePreset.preset() === 'serious' ? 'SERIOUS' as const : 'PLAYFUL' as const;
+        const preset =
+          this.themePreset.preset() === 'serious' ? ('SERIOUS' as const) : ('PLAYFUL' as const);
         void trpc.session.updatePreset.mutate({ code: this.code.toUpperCase(), preset });
       });
 
@@ -682,7 +750,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       consequences.push($localize`${participants} Teilnehmende warten auf deine Steuerung.`);
     }
     if (status === 'ACTIVE' || status === 'QUESTION_OPEN') {
-      consequences.push($localize`Die aktuelle Frage bleibt offen – kein automatisches Weiterschalten.`);
+      consequences.push(
+        $localize`Die aktuelle Frage bleibt offen – kein automatisches Weiterschalten.`,
+      );
     }
 
     const dialogRef = this.dialog.open(ConfirmLeaveDialogComponent, {
@@ -749,8 +819,14 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   }
 
   private stopCountdown(): void {
-    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
-    if (this.fingerHideTimeout) { clearTimeout(this.fingerHideTimeout); this.fingerHideTimeout = null; }
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer);
+      this.countdownTimer = null;
+    }
+    if (this.fingerHideTimeout) {
+      clearTimeout(this.fingerHideTimeout);
+      this.fingerHideTimeout = null;
+    }
   }
 
   /** Synchronisiert Host-Hintergrundmusik phasenabhängig. */
@@ -776,7 +852,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.phaseTracks.set(next);
     try {
       localStorage.setItem(MUSIC_PHASE_STORAGE_KEY, JSON.stringify(next));
-    } catch { /* quota */ }
+    } catch {
+      /* quota */
+    }
     this.syncMusic();
   }
 
@@ -787,7 +865,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   async exportFreetextSessionCsv(): Promise<void> {
     try {
-      const data = await trpc.session.getFreetextSessionExport.query({ code: this.code.toUpperCase() });
+      const data = await trpc.session.getFreetextSessionExport.query({
+        code: this.code.toUpperCase(),
+      });
       const rows = ['questionOrder,questionText,response,count'];
       for (const entry of data.entries) {
         for (const aggregate of entry.aggregates) {
@@ -934,7 +1014,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   }
 
   /** Lesbare Phasen-Beschreibung für Dozenten-Info und Publikum. */
-  phaseLabel(status: SessionInfoDTO['status'] | null, allVoted = false, countdownEnded = false): string {
+  phaseLabel(
+    status: SessionInfoDTO['status'] | null,
+    allVoted = false,
+    countdownEnded = false,
+  ): string {
     if (!status) return '—';
     if (this.isQaSession()) {
       const labels: Record<SessionInfoDTO['status'], string> = {
@@ -1069,11 +1153,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   qaStatusIcon(status: QaQuestionDTO['status']): string {
     switch (status) {
-      case 'PINNED': return 'push_pin';
-      case 'PENDING': return 'hourglass_top';
-      case 'ARCHIVED': return 'check_circle_outline';
-      case 'DELETED': return 'delete_outline';
-      default: return 'circle';
+      case 'PINNED':
+        return 'push_pin';
+      case 'PENDING':
+        return 'hourglass_top';
+      case 'ARCHIVED':
+        return 'check_circle_outline';
+      case 'DELETED':
+        return 'delete_outline';
+      default:
+        return 'circle';
     }
   }
 
@@ -1099,12 +1188,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return $localize`vor ${minutes}\u00A0Min.`;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return hours === 1 ? $localize`vor 1\u00A0Std.` : $localize`vor ${hours}\u00A0Std.`;
+    if (hours < 24)
+      return hours === 1 ? $localize`vor 1\u00A0Std.` : $localize`vor ${hours}\u00A0Std.`;
     const days = Math.floor(hours / 24);
     return days === 1 ? $localize`vor 1\u00A0Tag` : $localize`vor ${days}\u00A0Tagen`;
   }
 
-  qaActionLabel(action: 'APPROVE' | 'PIN' | 'UNPIN' | 'ARCHIVE' | 'DELETE', status?: QaQuestionDTO['status']): string {
+  qaActionLabel(
+    action: 'APPROVE' | 'PIN' | 'UNPIN' | 'ARCHIVE' | 'DELETE',
+    status?: QaQuestionDTO['status'],
+  ): string {
     switch (action) {
       case 'APPROVE':
         return $localize`:@@sessionQa.actionApprove:Freigeben`;
@@ -1123,15 +1216,23 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   qaActionIcon(action: 'APPROVE' | 'PIN' | 'UNPIN' | 'ARCHIVE' | 'DELETE'): string {
     switch (action) {
-      case 'APPROVE': return 'check';
-      case 'PIN': return 'push_pin';
-      case 'UNPIN': return 'push_pin';
-      case 'ARCHIVE': return 'archive';
-      case 'DELETE': return 'delete_outline';
+      case 'APPROVE':
+        return 'check';
+      case 'PIN':
+        return 'push_pin';
+      case 'UNPIN':
+        return 'push_pin';
+      case 'ARCHIVE':
+        return 'archive';
+      case 'DELETE':
+        return 'delete_outline';
     }
   }
 
-  canModerateQaQuestion(question: QaQuestionDTO, action: 'APPROVE' | 'PIN' | 'UNPIN' | 'ARCHIVE' | 'DELETE'): boolean {
+  canModerateQaQuestion(
+    question: QaQuestionDTO,
+    action: 'APPROVE' | 'PIN' | 'UNPIN' | 'ARCHIVE' | 'DELETE',
+  ): boolean {
     if (this.qaPendingQuestionIds().has(question.id)) {
       return false;
     }
@@ -1263,7 +1364,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const result = await trpc.quickFeedback.results.query({ sessionCode: this.code.toUpperCase() });
+      const result = await trpc.quickFeedback.results.query({
+        sessionCode: this.code.toUpperCase(),
+      });
       this.quickFeedbackResult.set(result);
     } catch {
       this.quickFeedbackResult.set(null);
@@ -1284,16 +1387,22 @@ export class SessionHostComponent implements OnInit, OnDestroy {
           channels: { ...s.channels, qa: { ...s.channels.qa, moderationMode: result.enabled } },
         };
       });
-      this.qaInfo.set(result.enabled
-        ? $localize`:@@sessionQa.moderationEnabled:Vorab-Moderation aktiviert.`
-        : $localize`:@@sessionQa.moderationDisabled:Vorab-Moderation deaktiviert.`,
+      this.qaInfo.set(
+        result.enabled
+          ? $localize`:@@sessionQa.moderationEnabled:Vorab-Moderation aktiviert.`
+          : $localize`:@@sessionQa.moderationDisabled:Vorab-Moderation deaktiviert.`,
       );
     } catch {
-      this.qaError.set($localize`:@@sessionQa.moderationToggleError:Moderation konnte nicht umgeschaltet werden.`);
+      this.qaError.set(
+        $localize`:@@sessionQa.moderationToggleError:Moderation konnte nicht umgeschaltet werden.`,
+      );
     }
   }
 
-  async moderateQaQuestion(questionId: string, action: 'APPROVE' | 'PIN' | 'ARCHIVE' | 'DELETE'): Promise<void> {
+  async moderateQaQuestion(
+    questionId: string,
+    action: 'APPROVE' | 'PIN' | 'ARCHIVE' | 'DELETE',
+  ): Promise<void> {
     if (!this.code) {
       return;
     }
@@ -1324,7 +1433,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
               : $localize`:@@sessionQa.moderationDeleted:Frage entfernt.`,
       );
     } catch {
-      this.qaError.set($localize`:@@sessionQa.moderationError:Moderationsaktion konnte nicht ausgeführt werden.`);
+      this.qaError.set(
+        $localize`:@@sessionQa.moderationError:Moderationsaktion konnte nicht ausgeführt werden.`,
+      );
     } finally {
       const remaining = new Set(this.qaPendingQuestionIds());
       remaining.delete(questionId);
@@ -1394,8 +1505,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   async refreshEmojiReactions(): Promise<void> {
     if (
-      (this.effectiveStatus() !== 'RESULTS' && this.effectiveStatus() !== 'ACTIVE')
-      || !this.session()?.enableEmojiReactions
+      (this.effectiveStatus() !== 'RESULTS' && this.effectiveStatus() !== 'ACTIVE') ||
+      !this.session()?.enableEmojiReactions
     ) {
       this.emojiReactions.set(null);
       return;
@@ -1449,7 +1560,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     try {
       const entries = await trpc.session.getLeaderboard.query({ code: this.code.toUpperCase() });
       this.leaderboard.set(entries);
-      const teamEntries = await trpc.session.getTeamLeaderboard.query({ code: this.code.toUpperCase() });
+      const teamEntries = await trpc.session.getTeamLeaderboard.query({
+        code: this.code.toUpperCase(),
+      });
       this.teamLeaderboard.set(teamEntries);
     } catch {
       this.leaderboard.set([]);
@@ -1476,19 +1589,23 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   async loadFeedbackSummary(): Promise<void> {
     if (!this.code) return;
     try {
-      const summary = await trpc.session.getSessionFeedbackSummary.query({ code: this.code.toUpperCase() });
+      const summary = await trpc.session.getSessionFeedbackSummary.query({
+        code: this.code.toUpperCase(),
+      });
       if (summary.totalResponses > 0) {
         this.feedbackSummary.set(summary);
       }
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }
 
   exportBonusTokensCsv(): void {
     const tokens = this.bonusTokens();
     if (tokens.length === 0) return;
     const header = 'Rang;Nickname;Code;Punkte;Generiert am';
-    const rows = tokens.map((t) =>
-      `${t.rank};${t.nickname};${t.token};${t.totalScore};${t.generatedAt}`
+    const rows = tokens.map(
+      (t) => `${t.rank};${t.nickname};${t.token};${t.totalScore};${t.generatedAt}`,
     );
     const csv = [header, ...rows].join('\n');
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -1507,15 +1624,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.exportExporting.set(true);
     try {
       const data = await trpc.session.getExportData.query({ sessionId: sid });
-      const rows: string[] = [
-        $localize`Frage Nr.;Fragentext;Typ;Teilnehmer;Ø Punkte;Details`,
-      ];
+      const rows: string[] = [$localize`Frage Nr.;Fragentext;Typ;Teilnehmer;Ø Punkte;Details`];
 
       for (const q of data.questions) {
         let details = '';
         if (q.optionDistribution) {
           details = q.optionDistribution
-            .map((o) => `${stripMarkdownToPlainText(o.text)}: ${o.count} (${o.percentage}%)${o.isCorrect ? ' ✓' : ''}`)
+            .map(
+              (o) =>
+                `${stripMarkdownToPlainText(o.text)}: ${o.count} (${o.percentage}%)${o.isCorrect ? ' ✓' : ''}`,
+            )
             .join(' | ');
         } else if (q.freetextAggregates) {
           details = q.freetextAggregates
@@ -1525,7 +1643,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
           details = Object.entries(q.ratingDistribution)
             .map(([k, v]) => `${k}★: ${v}`)
             .join(' | ');
-          if (q.ratingAverage !== null && q.ratingAverage !== undefined) details += ` (Ø ${q.ratingAverage})`;
+          if (q.ratingAverage !== null && q.ratingAverage !== undefined)
+            details += ` (Ø ${q.ratingAverage})`;
         }
 
         rows.push(
@@ -1582,7 +1701,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private async refreshCurrentQuestionForHost(): Promise<void> {
     if (!this.code || this.code.length !== 6) return;
     try {
-      const q = await trpc.session.getCurrentQuestionForHost.query({ code: this.code.toUpperCase() });
+      const q = await trpc.session.getCurrentQuestionForHost.query({
+        code: this.code.toUpperCase(),
+      });
       this.currentQuestionForHost.set(q);
     } catch {
       this.currentQuestionForHost.set(null);

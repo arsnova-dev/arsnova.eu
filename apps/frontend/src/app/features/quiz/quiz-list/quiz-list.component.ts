@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -23,7 +23,12 @@ import {
 } from '@arsnova/shared-types';
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import { localizeCommands } from '../../../core/locale-router';
-import { QuizStoreService, type QuizSettings, type QuizSummary } from '../data/quiz-store.service';
+import {
+  DEMO_QUIZ_ID,
+  QuizStoreService,
+  type QuizSettings,
+  type QuizSummary,
+} from '../data/quiz-store.service';
 import { trpc } from '../../../core/trpc.client';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
@@ -68,6 +73,13 @@ export class QuizListComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly sanitizer = inject(DomSanitizer);
   readonly quizzes = this.quizStore.quizzes;
+  readonly sortedQuizzes = computed(() =>
+    [...this.quizzes()].sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    ),
+  );
+  readonly hasUserQuizzes = computed(() => this.quizzes().some((q) => q.id !== DEMO_QUIZ_ID));
+  readonly demoQuizId = DEMO_QUIZ_ID;
   readonly syncRoomId = this.quizStore.syncRoomId;
   readonly syncConnectionState = this.quizStore.syncConnectionState;
   readonly librarySharingMode = this.quizStore.librarySharingMode;
