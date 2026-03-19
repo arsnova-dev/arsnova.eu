@@ -727,7 +727,7 @@ export class QuizEditComponent implements OnDestroy {
       anonymousMode: settings.anonymousMode,
       readingPhaseEnabled: settings.readingPhaseEnabled,
       teamMode: settings.teamMode,
-      teamCount: settings.teamCount,
+      teamCount: settings.teamCount ?? DEFAULT_TEAM_COUNT,
       teamAssignment: settings.teamAssignment,
       teamNamesText: settings.teamNames.join('\n'),
       nicknameTheme: settings.nicknameTheme,
@@ -735,7 +735,7 @@ export class QuizEditComponent implements OnDestroy {
         settings.bonusTokenCount !== null &&
         settings.bonusTokenCount !== undefined &&
         settings.bonusTokenCount > 0,
-      bonusTokenCount: settings.bonusTokenCount,
+      bonusTokenCount: settings.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT,
       preset: settings.preset,
     });
     this.settingsForm.markAsPristine();

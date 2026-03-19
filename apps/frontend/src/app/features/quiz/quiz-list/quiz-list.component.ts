@@ -17,6 +17,7 @@ import {
   QUIZ_PRESETS,
   PresetStorageEntrySchema,
   DEFAULT_BONUS_TOKEN_COUNT,
+  DEFAULT_TIMER_SECONDS,
   type QuizPreset,
   type TeamAssignment,
 } from '@arsnova/shared-types';
@@ -351,7 +352,8 @@ export class QuizListComponent implements OnInit {
     const defaultSettings: QuizSettings = {
       showLeaderboard: presetDefaults.showLeaderboard ?? true,
       allowCustomNicknames: false,
-      defaultTimer: preset === 'PLAYFUL' ? 60 : (presetDefaults.defaultTimer ?? null),
+      defaultTimer:
+        preset === 'PLAYFUL' ? DEFAULT_TIMER_SECONDS : (presetDefaults.defaultTimer ?? null),
       enableSoundEffects: presetDefaults.enableSoundEffects ?? true,
       enableRewardEffects: presetDefaults.enableRewardEffects ?? true,
       enableMotivationMessages: presetDefaults.enableMotivationMessages ?? true,
@@ -390,7 +392,7 @@ export class QuizListComponent implements OnInit {
         anonymousMode: nameMode === 'anonymousMode',
         showLeaderboard: optionEnabled('showLeaderboard', defaultSettings.showLeaderboard),
         defaultTimer: optionEnabled('defaultTimer', defaultSettings.defaultTimer !== null)
-          ? (defaultSettings.defaultTimer ?? 60)
+          ? (defaultSettings.defaultTimer ?? DEFAULT_TIMER_SECONDS)
           : null,
         enableRewardEffects: optionEnabled(
           'enableRewardEffects',
@@ -665,7 +667,9 @@ export class QuizListComponent implements OnInit {
               bonusTokenCount: optionEnabled('bonusTokenCount')
                 ? (payload.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT)
                 : payload.bonusTokenCount,
-              defaultTimer: optionEnabled('defaultTimer') ? (payload.defaultTimer ?? 60) : null,
+              defaultTimer: optionEnabled('defaultTimer')
+                ? (payload.defaultTimer ?? DEFAULT_TIMER_SECONDS)
+                : null,
               backgroundMusic: null,
             };
           }

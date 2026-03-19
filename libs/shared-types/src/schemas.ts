@@ -98,6 +98,7 @@ export type EmojiReaction = (typeof EMOJI_REACTIONS)[number];
 // ---------------------------------------------------------------------------
 export const DEFAULT_TEAM_COUNT = 2;
 export const DEFAULT_BONUS_TOKEN_COUNT = 3;
+export const DEFAULT_TIMER_SECONDS = 60;
 
 // ---------------------------------------------------------------------------
 // Quiz-Schemas (Zod) – werden in Backend (Validierung) & Frontend (Forms) genutzt

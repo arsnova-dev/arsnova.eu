@@ -18,6 +18,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import {
   PresetStorageEntrySchema,
   DEFAULT_BONUS_TOKEN_COUNT,
+  DEFAULT_TIMER_SECONDS,
   type Difficulty,
 } from '@arsnova/shared-types';
 import { firstValueFrom } from 'rxjs';
@@ -588,7 +589,9 @@ export class QuizPreviewComponent implements OnDestroy {
               bonusTokenCount: optionEnabled('bonusTokenCount')
                 ? (payload.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT)
                 : payload.bonusTokenCount,
-              defaultTimer: optionEnabled('defaultTimer') ? (payload.defaultTimer ?? 60) : null,
+              defaultTimer: optionEnabled('defaultTimer')
+                ? (payload.defaultTimer ?? DEFAULT_TIMER_SECONDS)
+                : null,
               backgroundMusic: null,
             };
           }
