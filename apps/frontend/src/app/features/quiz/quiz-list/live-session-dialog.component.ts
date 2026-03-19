@@ -555,6 +555,7 @@ export class LiveSessionDialogComponent {
     }
 
     this.dialogRef.close({
+      startChannel: this.startChannel(),
       startMode: this.enableQuiz() ? 'QUIZ' : 'Q_AND_A',
       enableQuiz: this.enableQuiz(),
       enableQa: this.enableQa(),

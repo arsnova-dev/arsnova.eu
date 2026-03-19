@@ -264,23 +264,13 @@ export class QuizPreviewComponent implements OnDestroy {
     const result = await firstValueFrom(dialogRef.afterClosed());
     if (!result) return;
 
-    if (result.startMode === 'Q_AND_A') {
-      await this.startLiveSession({
-        includeQuiz: result.enableQuiz,
-        includeQa: result.enableQa,
-        includeQuickFeedback: result.enableQuickFeedback,
-        qaTitle: result.title,
-        startWithQa: true,
-      });
-      return;
-    }
-
     await this.startLiveSession({
       includeQuiz: result.enableQuiz,
       includeQa: result.enableQa,
       includeQuickFeedback: result.enableQuickFeedback,
       qaTitle: result.title,
-      startWithQa: false,
+      startWithQa: result.startChannel === 'qa',
+      initialTab: result.startChannel,
     });
   }
 
@@ -548,6 +538,7 @@ export class QuizPreviewComponent implements OnDestroy {
     includeQuickFeedback: boolean;
     qaTitle?: string;
     startWithQa: boolean;
+    initialTab: 'quiz' | 'qa' | 'quickFeedback';
   }): Promise<void> {
     this.liveStartError.set(null);
     this.liveStartPending.set(true);
@@ -620,7 +611,7 @@ export class QuizPreviewComponent implements OnDestroy {
       }
 
       await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
-        queryParams: options.startWithQa ? { tab: 'qa' } : undefined,
+        queryParams: options.initialTab === 'quiz' ? undefined : { tab: options.initialTab },
       });
     } catch {
       this.liveStartError.set($localize`Veranstaltung konnte nicht gestartet werden.`);

@@ -944,7 +944,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   }
 
   playfulLobbyTeamsLabel(): string {
-    return $localize`Teamduell startet gleich. Zeigt die Farben schon auf dem Beamer.`;
+    return $localize`:@@sessionHost.playfulLobbyTeamsLabel:Warten auf die anderen...`;
   }
 
   /** i18n: Feedback rating count (singular). */
