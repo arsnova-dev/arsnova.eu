@@ -720,7 +720,7 @@ export class QuizEditComponent implements OnDestroy {
       teamAssignment: settings.teamAssignment,
       teamNamesText: settings.teamNames.join('\n'),
       nicknameTheme: settings.nicknameTheme,
-      bonusEnabled: settings.bonusTokenCount != null && settings.bonusTokenCount > 0,
+      bonusEnabled: settings.bonusTokenCount !== null && settings.bonusTokenCount !== undefined && settings.bonusTokenCount > 0,
       bonusTokenCount: settings.bonusTokenCount,
       preset: settings.preset,
     });

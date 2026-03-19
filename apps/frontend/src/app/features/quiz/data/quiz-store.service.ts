@@ -373,7 +373,7 @@ export class QuizStoreService {
       updatedAt: quiz.updatedAt,
       questionCount: quiz.questions.length,
       teamMode: quiz.settings.teamMode === true,
-      hasBonus: quiz.settings.bonusTokenCount != null && quiz.settings.bonusTokenCount > 0,
+      hasBonus: quiz.settings.bonusTokenCount !== null && quiz.settings.bonusTokenCount !== undefined && quiz.settings.bonusTokenCount > 0,
     })),
   );
 
