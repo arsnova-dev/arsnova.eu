@@ -1,5 +1,13 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
 import {
   FormArray,
@@ -10,7 +18,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDragPlaceholder,
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -29,6 +43,8 @@ import { MatInput } from '@angular/material/input';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import {
+  DEFAULT_BONUS_TOKEN_COUNT,
+  DEFAULT_TEAM_COUNT,
   QUIZ_PRESETS,
   SC_FORMAT_PRESETS,
   type Difficulty,
@@ -45,7 +61,10 @@ import {
   type SupportedQuestionType,
 } from '../data/quiz-store.service';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
-import { focusAndScrollElement, focusFirstInvalidField } from '../../../shared/focus-invalid-field.util';
+import {
+  focusAndScrollElement,
+  focusFirstInvalidField,
+} from '../../../shared/focus-invalid-field.util';
 
 type AnswerFormGroup = FormGroup<{
   text: FormControl<string>;
@@ -221,14 +240,14 @@ export class QuizEditComponent implements OnDestroy {
     anonymousMode: this.formBuilder.control(false),
     readingPhaseEnabled: this.formBuilder.control(false),
     teamMode: this.formBuilder.control(false),
-    teamCount: this.formBuilder.control<number | null>(null, {
+    teamCount: this.formBuilder.control<number | null>(DEFAULT_TEAM_COUNT, {
       validators: [Validators.min(2), Validators.max(8)],
     }),
     teamAssignment: this.formBuilder.control<TeamAssignment>('AUTO'),
     teamNamesText: this.formBuilder.control(''),
     nicknameTheme: this.formBuilder.control<NicknameTheme>('NOBEL_LAUREATES'),
     bonusEnabled: this.formBuilder.control(false),
-    bonusTokenCount: this.formBuilder.control<number | null>(null, {
+    bonusTokenCount: this.formBuilder.control<number | null>(DEFAULT_BONUS_TOKEN_COUNT, {
       validators: [Validators.min(1), Validators.max(50)],
     }),
     preset: this.formBuilder.control<QuizPreset>('PLAYFUL'),
@@ -254,8 +273,7 @@ export class QuizEditComponent implements OnDestroy {
     }
     this.scheduleLivePreview();
     this.localeGuard.register(
-      () =>
-        this.form.dirty || this.settingsForm.dirty || this.metadataForm.dirty,
+      () => this.form.dirty || this.settingsForm.dirty || this.metadataForm.dirty,
     );
   }
 
@@ -308,9 +326,7 @@ export class QuizEditComponent implements OnDestroy {
   }
 
   questionTypeLabel(type: SupportedQuestionType): string {
-    return (
-      this.questionTypeOptions.find((option) => option.value === type)?.label ?? type
-    );
+    return this.questionTypeOptions.find((option) => option.value === type)?.label ?? type;
   }
 
   difficultyLabel(value: Difficulty): string {
@@ -539,8 +555,7 @@ export class QuizEditComponent implements OnDestroy {
       this.submitted.set(false);
       this.scheduleLivePreview();
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : $localize`Speichern fehlgeschlagen.`;
+      const message = error instanceof Error ? error.message : $localize`Speichern fehlgeschlagen.`;
       this.submitError.set(message);
     }
   }
@@ -588,9 +603,7 @@ export class QuizEditComponent implements OnDestroy {
       this.metadataSaved.set(true);
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : 'Titel konnte nicht gespeichert werden.';
+        error instanceof Error ? error.message : 'Titel konnte nicht gespeichert werden.';
       this.metadataSubmitError.set(message);
     }
   }
@@ -661,8 +674,7 @@ export class QuizEditComponent implements OnDestroy {
         this.cancelEditing();
       }
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : $localize`Löschen fehlgeschlagen.`;
+      const message = error instanceof Error ? error.message : $localize`Löschen fehlgeschlagen.`;
       this.submitError.set(message);
     }
   }
@@ -672,8 +684,7 @@ export class QuizEditComponent implements OnDestroy {
     try {
       this.quizStore.reorderQuestions(this.id, event.previousIndex, event.currentIndex);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Verschieben fehlgeschlagen.';
+      const message = error instanceof Error ? error.message : 'Verschieben fehlgeschlagen.';
       this.submitError.set(message);
     }
   }
@@ -720,7 +731,10 @@ export class QuizEditComponent implements OnDestroy {
       teamAssignment: settings.teamAssignment,
       teamNamesText: settings.teamNames.join('\n'),
       nicknameTheme: settings.nicknameTheme,
-      bonusEnabled: settings.bonusTokenCount !== null && settings.bonusTokenCount !== undefined && settings.bonusTokenCount > 0,
+      bonusEnabled:
+        settings.bonusTokenCount !== null &&
+        settings.bonusTokenCount !== undefined &&
+        settings.bonusTokenCount > 0,
       bonusTokenCount: settings.bonusTokenCount,
       preset: settings.preset,
     });
@@ -747,7 +761,7 @@ export class QuizEditComponent implements OnDestroy {
       backgroundMusic: null,
       nicknameTheme: this.settingsForm.controls.nicknameTheme.value ?? 'NOBEL_LAUREATES',
       bonusTokenCount: this.settingsForm.controls.bonusEnabled.value
-        ? (this.settingsForm.controls.bonusTokenCount.value ?? 3)
+        ? (this.settingsForm.controls.bonusTokenCount.value ?? DEFAULT_BONUS_TOKEN_COUNT)
         : null,
       readingPhaseEnabled: this.settingsForm.controls.readingPhaseEnabled.value,
       preset: this.settingsForm.controls.preset.value,
@@ -766,8 +780,7 @@ export class QuizEditComponent implements OnDestroy {
       current.enableEmojiReactions ===
         (target.enableEmojiReactions ?? current.enableEmojiReactions) &&
       current.anonymousMode === (target.anonymousMode ?? current.anonymousMode) &&
-      current.readingPhaseEnabled ===
-        (target.readingPhaseEnabled ?? current.readingPhaseEnabled) &&
+      current.readingPhaseEnabled === (target.readingPhaseEnabled ?? current.readingPhaseEnabled) &&
       current.defaultTimer === (target.defaultTimer ?? current.defaultTimer)
     );
   }
@@ -878,17 +891,13 @@ export class QuizEditComponent implements OnDestroy {
 
     this.previewTimer = setTimeout(() => {
       const questionResult = renderMarkdownWithKatex(this.textControl.value);
-      this.questionPreviewHtml.set(
-        this.sanitizer.bypassSecurityTrustHtml(questionResult.html),
-      );
+      this.questionPreviewHtml.set(this.sanitizer.bypassSecurityTrustHtml(questionResult.html));
 
       const answerResults = this.answersArray.controls.map((answer) =>
         renderMarkdownWithKatex(answer.controls.text.value),
       );
       this.answerPreviewHtml.set(
-        answerResults.map((result) =>
-          this.sanitizer.bypassSecurityTrustHtml(result.html),
-        ),
+        answerResults.map((result) => this.sanitizer.bypassSecurityTrustHtml(result.html)),
       );
 
       const firstError =
@@ -911,7 +920,10 @@ function parseTeamNamesText(value: string): string[] {
 function buildEffectiveTeamNames(value: string, teamCount: number | null | undefined): string[] {
   const customNames = parseTeamNamesText(value);
   const effectiveCount = normalizeTeamCount(teamCount);
-  return Array.from({ length: effectiveCount }, (_, index) => customNames[index] ?? buildDefaultTeamName(index));
+  return Array.from(
+    { length: effectiveCount },
+    (_, index) => customNames[index] ?? buildDefaultTeamName(index),
+  );
 }
 
 function applyTeamNamesValidation(
@@ -943,7 +955,7 @@ function applyTeamNamesValidation(
 }
 
 function normalizeTeamCount(teamCount: number | null | undefined): number {
-  return Math.min(8, Math.max(2, teamCount ?? 2));
+  return Math.min(8, Math.max(DEFAULT_TEAM_COUNT, teamCount ?? DEFAULT_TEAM_COUNT));
 }
 
 function buildDefaultTeamName(index: number): string {

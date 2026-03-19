@@ -1,5 +1,13 @@
 import { Location } from '@angular/common';
-import { Component, HostListener, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
@@ -7,7 +15,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { PresetStorageEntrySchema, type Difficulty } from '@arsnova/shared-types';
+import {
+  PresetStorageEntrySchema,
+  DEFAULT_BONUS_TOKEN_COUNT,
+  type Difficulty,
+} from '@arsnova/shared-types';
 import { firstValueFrom } from 'rxjs';
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import { trpc } from '../../../core/trpc.client';
@@ -31,14 +43,7 @@ const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
 @Component({
   selector: 'app-quiz-preview',
   standalone: true,
-  imports: [
-    RouterLink,
-    MatButton,
-    MatCard,
-    MatCardContent,
-    MatIcon,
-    MatProgressBar,
-  ],
+  imports: [RouterLink, MatButton, MatCard, MatCardContent, MatIcon, MatProgressBar],
   templateUrl: './quiz-preview.component.html',
   styleUrl: './quiz-preview.component.scss',
 })
@@ -96,18 +101,27 @@ export class QuizPreviewComponent implements OnDestroy {
             question.type === 'SURVEY') &&
           question.answers.length < 2
         ) {
-          return { index, message: $localize`Frage ${index + 1}:questionNumber:: weniger als 2 Antworten` };
+          return {
+            index,
+            message: $localize`Frage ${index + 1}:questionNumber:: weniger als 2 Antworten`,
+          };
         }
         if (question.type === 'SINGLE_CHOICE') {
           const count = question.answers.filter((answer) => answer.isCorrect).length;
           if (count !== 1) {
-            return { index, message: $localize`Frage ${index + 1}:questionNumber:: keine richtige Antwort gewählt` };
+            return {
+              index,
+              message: $localize`Frage ${index + 1}:questionNumber:: keine richtige Antwort gewählt`,
+            };
           }
         }
         if (question.type === 'MULTIPLE_CHOICE') {
           const count = question.answers.filter((answer) => answer.isCorrect).length;
           if (count < 1) {
-            return { index, message: $localize`Frage ${index + 1}:questionNumber:: keine richtige Antwort gewählt` };
+            return {
+              index,
+              message: $localize`Frage ${index + 1}:questionNumber:: keine richtige Antwort gewählt`,
+            };
           }
         }
         return null;
@@ -564,15 +578,17 @@ export class QuizPreviewComponent implements OnDestroy {
               readingPhaseEnabled: optionEnabled('readingPhaseEnabled'),
               teamMode: effectiveTeamMode,
               teamAssignment: optionEnabled('teamMode')
-                ? (optionEnabled('teamAssignment') ? 'MANUAL' : 'AUTO')
+                ? optionEnabled('teamAssignment')
+                  ? 'MANUAL'
+                  : 'AUTO'
                 : (payload.teamAssignment ?? 'AUTO'),
               teamCount: optionEnabled('teamMode')
                 ? (entry.data.teamCountValue ?? payload.teamCount)
                 : payload.teamCount,
               bonusTokenCount: optionEnabled('bonusTokenCount')
-                ? (payload.bonusTokenCount ?? 3)
+                ? (payload.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT)
                 : payload.bonusTokenCount,
-              defaultTimer: optionEnabled('defaultTimer') ? payload.defaultTimer ?? 60 : null,
+              defaultTimer: optionEnabled('defaultTimer') ? (payload.defaultTimer ?? 60) : null,
               backgroundMusic: null,
             };
           }

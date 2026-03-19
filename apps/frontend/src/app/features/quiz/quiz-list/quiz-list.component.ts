@@ -13,7 +13,13 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
-import { QUIZ_PRESETS, PresetStorageEntrySchema, type QuizPreset, type TeamAssignment } from '@arsnova/shared-types';
+import {
+  QUIZ_PRESETS,
+  PresetStorageEntrySchema,
+  DEFAULT_BONUS_TOKEN_COUNT,
+  type QuizPreset,
+  type TeamAssignment,
+} from '@arsnova/shared-types';
 import { ThemePresetService } from '../../../core/theme-preset.service';
 import { localizeCommands } from '../../../core/locale-router';
 import { QuizStoreService, type QuizSettings, type QuizSummary } from '../data/quiz-store.service';
@@ -115,17 +121,22 @@ export class QuizListComponent implements OnInit {
   syncStatusLabel(): string {
     const state = this.syncConnectionState();
     if (state === 'connected') return $localize`:@@quizList.syncStatusConnected:Verbunden`;
-    if (state === 'connecting') return $localize`:@@quizList.syncStatusConnecting:Verbindung wird aufgebaut`;
+    if (state === 'connecting')
+      return $localize`:@@quizList.syncStatusConnecting:Verbindung wird aufgebaut`;
     return $localize`:@@quizList.syncStatusOffline:Offline`;
   }
 
   syncCode(): string {
-    return this.syncRoomId().replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase();
+    return this.syncRoomId()
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .slice(0, 8)
+      .toUpperCase();
   }
 
   syncPeerCountLabel(): string {
     const count = this.syncPeerInfos().length;
-    if (count === 0) return $localize`:@@quizList.syncPeerCountNone:Gerade kein anderes Gerät aktiv`;
+    if (count === 0)
+      return $localize`:@@quizList.syncPeerCountNone:Gerade kein anderes Gerät aktiv`;
     if (count === 1) return $localize`:@@quizList.syncPeerCountOne:Gerade 1 weiteres Gerät aktiv`;
     return $localize`:@@quizList.syncPeerCountMany:Gerade ${count}:count: weitere Geräte aktiv`;
   }
@@ -138,7 +149,10 @@ export class QuizListComponent implements OnInit {
     if (!value) {
       return $localize`:@@quizList.syncTimestampUnknown:Noch keine Daten`;
     }
-    return this.formatSyncTimestamp(value) ?? $localize`:@@quizList.syncTimestampUnknown:Noch keine Daten`;
+    return (
+      this.formatSyncTimestamp(value) ??
+      $localize`:@@quizList.syncTimestampUnknown:Noch keine Daten`
+    );
   }
 
   lastRemoteSyncSummary(): string {
@@ -176,10 +190,12 @@ export class QuizListComponent implements OnInit {
       return null;
     }
 
-    return quizzes.reduce<QuizSummary | null>((latest, quiz) => {
-      if (!latest) return quiz;
-      return Date.parse(quiz.updatedAt) > Date.parse(latest.updatedAt) ? quiz : latest;
-    }, null)?.name ?? null;
+    return (
+      quizzes.reduce<QuizSummary | null>((latest, quiz) => {
+        if (!latest) return quiz;
+        return Date.parse(quiz.updatedAt) > Date.parse(latest.updatedAt) ? quiz : latest;
+      }, null)?.name ?? null
+    );
   }
 
   private formatSyncDateTimeOrNull(value: string | null): string | null {
@@ -187,7 +203,8 @@ export class QuizListComponent implements OnInit {
       return null;
     }
 
-    return this.formatSyncDateTime(value) === $localize`:@@quizList.syncTimestampUnknown:Noch keine Daten`
+    return this.formatSyncDateTime(value) ===
+      $localize`:@@quizList.syncTimestampUnknown:Noch keine Daten`
       ? null
       : this.formatSyncDateTime(value);
   }
@@ -226,7 +243,9 @@ export class QuizListComponent implements OnInit {
       const duplicate = this.quizStore.duplicateQuiz(quizId);
       this.actionInfo.set($localize`„${duplicate.name}“ wurde dupliziert.`);
     } catch (error) {
-      this.actionError.set(error instanceof Error ? error.message : $localize`Duplizieren fehlgeschlagen.`);
+      this.actionError.set(
+        error instanceof Error ? error.message : $localize`Duplizieren fehlgeschlagen.`,
+      );
     }
   }
 
@@ -245,7 +264,9 @@ export class QuizListComponent implements OnInit {
       this.quizStore.deleteQuiz(quizId);
       this.actionInfo.set($localize`„${quizName}“ wurde gelöscht.`);
     } catch (error) {
-      this.actionError.set(error instanceof Error ? error.message : $localize`Löschen fehlgeschlagen.`);
+      this.actionError.set(
+        error instanceof Error ? error.message : $localize`Löschen fehlgeschlagen.`,
+      );
     }
   }
 
@@ -264,7 +285,9 @@ export class QuizListComponent implements OnInit {
       URL.revokeObjectURL(url);
       this.actionInfo.set($localize`„${quiz.quiz.name}“ wurde exportiert.`);
     } catch (error) {
-      this.actionError.set(error instanceof Error ? error.message : $localize`Export fehlgeschlagen.`);
+      this.actionError.set(
+        error instanceof Error ? error.message : $localize`Export fehlgeschlagen.`,
+      );
     }
   }
 
@@ -312,7 +335,9 @@ export class QuizListComponent implements OnInit {
     });
     try {
       await navigator.clipboard.writeText(prompt);
-      this.actionInfo.set($localize`:@@quizList.aiImport.copySuccess:Die Textvorlage ist jetzt in deiner Zwischenablage.`);
+      this.actionInfo.set(
+        $localize`:@@quizList.aiImport.copySuccess:Die Textvorlage ist jetzt in deiner Zwischenablage.`,
+      );
     } catch {
       this.actionError.set(
         $localize`:@@quizList.aiImport.copyFailed:Kopieren fehlgeschlagen. Bitte versuche es noch einmal.`,
@@ -353,7 +378,8 @@ export class QuizListComponent implements OnInit {
       }
 
       const options = entry.data.options;
-      const optionEnabled = (id: string, fallback: boolean) => (id in options ? options[id] === true : fallback);
+      const optionEnabled = (id: string, fallback: boolean) =>
+        id in options ? options[id] === true : fallback;
       const nameMode = entry.data.nameMode;
       const teamMode = optionEnabled('teamMode', false);
 
@@ -364,18 +390,34 @@ export class QuizListComponent implements OnInit {
         anonymousMode: nameMode === 'anonymousMode',
         showLeaderboard: optionEnabled('showLeaderboard', defaultSettings.showLeaderboard),
         defaultTimer: optionEnabled('defaultTimer', defaultSettings.defaultTimer !== null)
-          ? defaultSettings.defaultTimer ?? 60
+          ? (defaultSettings.defaultTimer ?? 60)
           : null,
-        enableRewardEffects: optionEnabled('enableRewardEffects', defaultSettings.enableRewardEffects),
-        enableMotivationMessages: optionEnabled('enableMotivationMessages', defaultSettings.enableMotivationMessages),
-        enableEmojiReactions: optionEnabled('enableEmojiReactions', defaultSettings.enableEmojiReactions),
+        enableRewardEffects: optionEnabled(
+          'enableRewardEffects',
+          defaultSettings.enableRewardEffects,
+        ),
+        enableMotivationMessages: optionEnabled(
+          'enableMotivationMessages',
+          defaultSettings.enableMotivationMessages,
+        ),
+        enableEmojiReactions: optionEnabled(
+          'enableEmojiReactions',
+          defaultSettings.enableEmojiReactions,
+        ),
         enableSoundEffects: optionEnabled('enableSoundEffects', defaultSettings.enableSoundEffects),
-        readingPhaseEnabled: optionEnabled('readingPhaseEnabled', defaultSettings.readingPhaseEnabled),
+        readingPhaseEnabled: optionEnabled(
+          'readingPhaseEnabled',
+          defaultSettings.readingPhaseEnabled,
+        ),
         teamMode,
-        teamAssignment: optionEnabled('teamAssignment', false) ? ('MANUAL' as TeamAssignment) : 'AUTO',
+        teamAssignment: optionEnabled('teamAssignment', false)
+          ? ('MANUAL' as TeamAssignment)
+          : 'AUTO',
         teamCount: teamMode ? entry.data.teamCountValue : null,
         backgroundMusic: null,
-        bonusTokenCount: optionEnabled('bonusTokenCount', false) ? defaultSettings.bonusTokenCount ?? 3 : null,
+        bonusTokenCount: optionEnabled('bonusTokenCount', false)
+          ? (defaultSettings.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT)
+          : null,
       };
     } catch {
       return defaultSettings;
@@ -415,7 +457,11 @@ export class QuizListComponent implements OnInit {
     return this.activeLiveQuizIds().has(quizId);
   }
 
-  async openLiveStartDialog(quizId: string, quizName: string, questionCount: number): Promise<void> {
+  async openLiveStartDialog(
+    quizId: string,
+    quizName: string,
+    questionCount: number,
+  ): Promise<void> {
     if (this.liveStartPending()) {
       return;
     }
@@ -480,15 +526,11 @@ export class QuizListComponent implements OnInit {
     }
 
     const syncedQuizzes = await this.waitForSyncImportSnapshot();
-    this.snackBar.open(
-      this.buildSyncImportMessage(syncedQuizzes),
-      '',
-      {
-        duration: 9000,
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-      },
-    );
+    this.snackBar.open(this.buildSyncImportMessage(syncedQuizzes), '', {
+      duration: 9000,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+    });
     await this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { syncImported: null },
@@ -507,7 +549,11 @@ export class QuizListComponent implements OnInit {
       const startedAt = Date.now();
       const poll = (): void => {
         const quizzes = this.quizzes();
-        if (quizzes.length > 0 || this.syncConnectionState() !== 'connecting' || Date.now() - startedAt >= 4000) {
+        if (
+          quizzes.length > 0 ||
+          this.syncConnectionState() !== 'connecting' ||
+          Date.now() - startedAt >= 4000
+        ) {
           resolve(quizzes);
           return;
         }
@@ -609,15 +655,17 @@ export class QuizListComponent implements OnInit {
               readingPhaseEnabled: optionEnabled('readingPhaseEnabled'),
               teamMode: effectiveTeamMode,
               teamAssignment: optionEnabled('teamMode')
-                ? (optionEnabled('teamAssignment') ? 'MANUAL' : 'AUTO')
+                ? optionEnabled('teamAssignment')
+                  ? 'MANUAL'
+                  : 'AUTO'
                 : (payload.teamAssignment ?? 'AUTO'),
               teamCount: optionEnabled('teamMode')
                 ? (entry.data.teamCountValue ?? payload.teamCount)
                 : payload.teamCount,
               bonusTokenCount: optionEnabled('bonusTokenCount')
-                ? (payload.bonusTokenCount ?? 3)
+                ? (payload.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT)
                 : payload.bonusTokenCount,
-              defaultTimer: optionEnabled('defaultTimer') ? payload.defaultTimer ?? 60 : null,
+              defaultTimer: optionEnabled('defaultTimer') ? (payload.defaultTimer ?? 60) : null,
               backgroundMusic: null,
             };
           }
@@ -665,11 +713,12 @@ export class QuizListComponent implements OnInit {
 
   private buildExportFilename(quizName: string): string {
     const date = new Date().toISOString().slice(0, 10);
-    const safeName = quizName
-      .trim()
-      .replace(/[^a-zA-Z0-9-_ ]/g, '')
-      .replace(/\s+/g, '-')
-      .slice(0, 80) || 'quiz';
+    const safeName =
+      quizName
+        .trim()
+        .replace(/[^a-zA-Z0-9-_ ]/g, '')
+        .replace(/\s+/g, '-')
+        .slice(0, 80) || 'quiz';
     return `${safeName}_${date}.json`;
   }
 }
@@ -700,7 +749,9 @@ function parseAiImportPayload(raw: string): unknown {
   throw directParse.error ?? new Error('Import fehlgeschlagen.');
 }
 
-function tryParseJson(value: string): { ok: true; value: unknown } | { ok: false; error: Error | null } {
+function tryParseJson(
+  value: string,
+): { ok: true; value: unknown } | { ok: false; error: Error | null } {
   try {
     return { ok: true, value: JSON.parse(value) as unknown };
   } catch (error) {

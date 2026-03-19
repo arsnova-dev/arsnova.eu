@@ -43,6 +43,7 @@ import {
   UpdateSessionPresetInputSchema,
   SendEmojiReactionInputSchema,
   EMOJI_REACTIONS,
+  DEFAULT_TEAM_COUNT,
 } from '@arsnova/shared-types';
 import { questionCountsTowardsTotalQuestions, questionAffectsStreak } from '../lib/quizScoring';
 
@@ -120,7 +121,10 @@ async function ensureUniqueSessionCode(): Promise<string> {
     const existing = await prisma.session.findUnique({ where: { code } });
     if (!existing) return code;
   }
-  throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Konnte keinen freien Session-Code erzeugen.' });
+  throw new TRPCError({
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Konnte keinen freien Session-Code erzeugen.',
+  });
 }
 
 function buildDefaultTeamName(index: number): string {
@@ -184,12 +188,15 @@ function buildSessionChannels(session: {
 
   return {
     quiz: {
-      enabled: session.type !== 'Q_AND_A' && (typeof session.quizId === 'string' || session.quiz !== null),
+      enabled:
+        session.type !== 'Q_AND_A' && (typeof session.quizId === 'string' || session.quiz !== null),
     },
     qa: {
       enabled: qaEnabled,
-      title: qaEnabled ? session.qaTitle ?? session.title ?? null : null,
-      moderationMode: qaEnabled ? (session.qaModerationMode ?? session.moderationMode ?? false) : false,
+      title: qaEnabled ? (session.qaTitle ?? session.title ?? null) : null,
+      moderationMode: qaEnabled
+        ? (session.qaModerationMode ?? session.moderationMode ?? false)
+        : false,
     },
     quickFeedback: {
       enabled: session.quickFeedbackEnabled === true,
@@ -222,7 +229,14 @@ async function buildRoundComparison(
 
   type VoteWithAnswers = { participantId: string; selectedAnswers: { answerOptionId: string }[] };
 
-  const buildDistribution = async (round: number): Promise<{ total: number; dist: RoundDistributionEntry[]; correctCount: number; votes: VoteWithAnswers[] }> => {
+  const buildDistribution = async (
+    round: number,
+  ): Promise<{
+    total: number;
+    dist: RoundDistributionEntry[];
+    correctCount: number;
+    votes: VoteWithAnswers[];
+  }> => {
     const votes = await prisma.vote.findMany({
       where: { sessionId, questionId, round },
       include: { selectedAnswers: true },
@@ -241,14 +255,17 @@ async function buildRoundComparison(
       voteCount: counts.get(a.id) ?? 0,
       votePercentage: total > 0 ? Math.round(((counts.get(a.id) ?? 0) / total) * 100) : 0,
     }));
-    const correctCount = correctIds.size > 0
-      ? votes.filter((v) => {
-          const selected = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
-          if (selected.size !== correctIds.size) return false;
-          for (const id of correctIds) { if (!selected.has(id)) return false; }
-          return true;
-        }).length
-      : 0;
+    const correctCount =
+      correctIds.size > 0
+        ? votes.filter((v) => {
+            const selected = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
+            if (selected.size !== correctIds.size) return false;
+            for (const id of correctIds) {
+              if (!selected.has(id)) return false;
+            }
+            return true;
+          }).length
+        : 0;
     return { total, dist, correctCount, votes };
   };
 
@@ -259,12 +276,17 @@ async function buildRoundComparison(
     if (correctIds.size === 0) return false;
     const sel = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
     if (sel.size !== correctIds.size) return false;
-    for (const id of correctIds) { if (!sel.has(id)) return false; }
+    for (const id of correctIds) {
+      if (!sel.has(id)) return false;
+    }
     return true;
   };
 
   const answerKey = (v: VoteWithAnswers): string =>
-    v.selectedAnswers.map((sa) => sa.answerOptionId).sort().join(',');
+    v.selectedAnswers
+      .map((sa) => sa.answerOptionId)
+      .sort()
+      .join(',');
 
   const r1ByParticipant = new Map(r1.votes.map((v) => [v.participantId, v]));
   const r2ByParticipant = new Map(r2.votes.map((v) => [v.participantId, v]));
@@ -317,16 +339,17 @@ async function buildRoundComparison(
     round2Distribution: r2.dist,
     round1CorrectCount: r1.correctCount,
     round2CorrectCount: r2.correctCount,
-    opinionShift: bothRoundsCount > 0
-      ? {
-          bothRoundsCount,
-          changedCount,
-          changedPercentage: Math.round((changedCount / bothRoundsCount) * 100),
-          wrongToCorrectCount: correctIds.size > 0 ? wrongToCorrectCount : undefined,
-          correctToWrongCount: correctIds.size > 0 ? correctToWrongCount : undefined,
-          migrations: migrations.length > 0 ? migrations : undefined,
-        }
-      : undefined,
+    opinionShift:
+      bothRoundsCount > 0
+        ? {
+            bothRoundsCount,
+            changedCount,
+            changedPercentage: Math.round((changedCount / bothRoundsCount) * 100),
+            wrongToCorrectCount: correctIds.size > 0 ? wrongToCorrectCount : undefined,
+            correctToWrongCount: correctIds.size > 0 ? correctToWrongCount : undefined,
+            migrations: migrations.length > 0 ? migrations : undefined,
+          }
+        : undefined,
   };
 }
 
@@ -415,12 +438,14 @@ export const sessionRouter = router({
       const isQaOnlySession = input.type === 'Q_AND_A';
       const qaEnabled = isQaOnlySession || input.qaEnabled === true;
       const qaTitle = qaEnabled ? input.qaTitle?.trim() || input.title?.trim() || null : null;
-      const qaModerationMode = qaEnabled ? input.qaModerationMode ?? input.moderationMode ?? false : false;
+      const qaModerationMode = qaEnabled
+        ? (input.qaModerationMode ?? input.moderationMode ?? false)
+        : false;
       const session = await prisma.session.create({
         data: {
           code,
           type: input.type ?? 'QUIZ',
-          quizId: isQaOnlySession ? null : input.quizId ?? null,
+          quizId: isQaOnlySession ? null : (input.quizId ?? null),
           title: isQaOnlySession ? qaTitle : null,
           moderationMode: isQaOnlySession ? qaModerationMode : false,
           qaEnabled,
@@ -429,10 +454,16 @@ export const sessionRouter = router({
           quickFeedbackEnabled: input.quickFeedbackEnabled ?? false,
           status: 'LOBBY',
         },
-        include: { quiz: { select: { name: true, teamMode: true, teamCount: true, teamNames: true } } },
+        include: {
+          quiz: { select: { name: true, teamMode: true, teamCount: true, teamNames: true } },
+        },
       });
       if (session.type === 'QUIZ' && session.quiz?.teamMode) {
-        await ensureSessionTeams(session.id, session.quiz.teamCount ?? 2, session.quiz.teamNames);
+        await ensureSessionTeams(
+          session.id,
+          session.quiz.teamCount ?? DEFAULT_TEAM_COUNT,
+          session.quiz.teamNames,
+        );
       }
       return {
         sessionId: session.id,
@@ -598,7 +629,11 @@ export const sessionRouter = router({
         return { teams: [], teamCount: 0 };
       }
 
-      const teams = await ensureSessionTeams(session.id, session.quiz.teamCount ?? 2, session.quiz.teamNames);
+      const teams = await ensureSessionTeams(
+        session.id,
+        session.quiz.teamCount ?? DEFAULT_TEAM_COUNT,
+        session.quiz.teamNames,
+      );
       return {
         teams: teams.map((team) => ({
           id: team.id,
@@ -670,60 +705,68 @@ export const sessionRouter = router({
       return { preset: input.preset };
     }),
 
-  onStatusChanged: publicProcedure
-    .input(GetSessionInfoInputSchema)
-    .subscription(async function* ({ input }) {
-      const code = input.code.toUpperCase();
-      let lastJson = '';
-      while (true) {
-        const session = await prisma.session.findUnique({
-          where: { code },
-          select: {
-            status: true,
-            currentQuestion: true,
-            currentRound: true,
-            statusChangedAt: true,
-            quiz: {
-              select: {
-                preset: true,
-                defaultTimer: true,
-                questions: { orderBy: { order: 'asc' }, select: { timer: true } },
-              },
+  onStatusChanged: publicProcedure.input(GetSessionInfoInputSchema).subscription(async function* ({
+    input,
+  }) {
+    const code = input.code.toUpperCase();
+    let lastJson = '';
+    while (true) {
+      const session = await prisma.session.findUnique({
+        where: { code },
+        select: {
+          status: true,
+          currentQuestion: true,
+          currentRound: true,
+          statusChangedAt: true,
+          quiz: {
+            select: {
+              preset: true,
+              defaultTimer: true,
+              questions: { orderBy: { order: 'asc' }, select: { timer: true } },
             },
           },
-        });
-        if (!session) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
-        }
-        const isActive = session.status === 'ACTIVE';
-        const currentTimer = isActive && session.currentQuestion !== null
-          ? resolveQuestionTimer(
-            session.quiz?.questions[session.currentQuestion]?.timer,
-            session.quiz?.defaultTimer,
-            session.quiz?.preset as 'PLAYFUL' | 'SERIOUS' | undefined,
-          )
-          : null;
-        const payload: { status: string; currentQuestion: number | null; activeAt?: string; timer?: number | null; preset?: string; currentRound?: number } = {
-          status: session.status,
-          currentQuestion: session.currentQuestion,
-          currentRound: session.currentRound,
-          preset: (session.quiz?.preset as 'PLAYFUL' | 'SERIOUS') || undefined,
-          ...(isActive && {
-            activeAt: session.statusChangedAt.toISOString(),
-            timer: currentTimer,
-          }),
-        };
-        const json = JSON.stringify(payload);
-        if (json !== lastJson) {
-          lastJson = json;
-          yield payload;
-        }
-        const pollMs = FAST_STATUS_POLL_SET.has(session.status)
-          ? STATUS_SUBSCRIPTION_FAST_POLL_MS
-          : STATUS_SUBSCRIPTION_SLOW_POLL_MS;
-        await new Promise((r) => setTimeout(r, pollMs));
+        },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
-    }),
+      const isActive = session.status === 'ACTIVE';
+      const currentTimer =
+        isActive && session.currentQuestion !== null
+          ? resolveQuestionTimer(
+              session.quiz?.questions[session.currentQuestion]?.timer,
+              session.quiz?.defaultTimer,
+              session.quiz?.preset as 'PLAYFUL' | 'SERIOUS' | undefined,
+            )
+          : null;
+      const payload: {
+        status: string;
+        currentQuestion: number | null;
+        activeAt?: string;
+        timer?: number | null;
+        preset?: string;
+        currentRound?: number;
+      } = {
+        status: session.status,
+        currentQuestion: session.currentQuestion,
+        currentRound: session.currentRound,
+        preset: (session.quiz?.preset as 'PLAYFUL' | 'SERIOUS') || undefined,
+        ...(isActive && {
+          activeAt: session.statusChangedAt.toISOString(),
+          timer: currentTimer,
+        }),
+      };
+      const json = JSON.stringify(payload);
+      if (json !== lastJson) {
+        lastJson = json;
+        yield payload;
+      }
+      const pollMs = FAST_STATUS_POLL_SET.has(session.status)
+        ? STATUS_SUBSCRIPTION_FAST_POLL_MS
+        : STATUS_SUBSCRIPTION_SLOW_POLL_MS;
+      await new Promise((r) => setTimeout(r, pollMs));
+    }
+  }),
 
   /** Nächste Frage öffnen (Story 2.3). LOBBY/PAUSED/RESULTS → QUESTION_OPEN oder ACTIVE; bei Lesephase aus: direkt ACTIVE. */
   nextQuestion: publicProcedure
@@ -767,19 +810,31 @@ export const sessionRouter = router({
         const now = new Date();
         await prisma.session.update({
           where: { id: session.id },
-          data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: now, endedAt: now },
+          data: {
+            status: 'FINISHED',
+            currentQuestion: null,
+            currentRound: 1,
+            statusChangedAt: now,
+            endedAt: now,
+          },
         });
         await generateBonusTokens(session);
         return { status: 'FINISHED' as const, currentQuestion: null, currentRound: 1 };
       }
 
       const nextQuestion = session.quiz.questions[nextIdx];
-      const skipReadingPhaseForType = nextQuestion?.type === 'SURVEY' || nextQuestion?.type === 'RATING';
+      const skipReadingPhaseForType =
+        nextQuestion?.type === 'SURVEY' || nextQuestion?.type === 'RATING';
       const readingPhase = session.quiz.readingPhaseEnabled && !skipReadingPhaseForType;
       const newStatus = readingPhase ? ('QUESTION_OPEN' as const) : ('ACTIVE' as const);
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: newStatus, currentQuestion: nextIdx, currentRound: 1, statusChangedAt: new Date() },
+        data: {
+          status: newStatus,
+          currentQuestion: nextIdx,
+          currentRound: 1,
+          statusChangedAt: new Date(),
+        },
       });
       return {
         status: newStatus,
@@ -861,7 +916,10 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
       if (session.status !== 'ACTIVE') {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Diskussionsphase nur aus Status ACTIVE.' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Diskussionsphase nur aus Status ACTIVE.',
+        });
       }
       if (session.currentRound !== 1) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Diskussionsphase nur nach Runde 1.' });
@@ -890,7 +948,10 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
       if (session.status !== 'DISCUSSION') {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Zweite Runde nur aus Status DISCUSSION.' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Zweite Runde nur aus Status DISCUSSION.',
+        });
       }
       await prisma.session.update({
         where: { id: session.id },
@@ -947,7 +1008,12 @@ export const sessionRouter = router({
         order: question.order,
         totalQuestions: questions.length,
         text: question.text,
-        type: question.type as 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREETEXT' | 'RATING' | 'SURVEY',
+        type: question.type as
+          | 'SINGLE_CHOICE'
+          | 'MULTIPLE_CHOICE'
+          | 'FREETEXT'
+          | 'RATING'
+          | 'SURVEY',
         timer: resolveQuestionTimer(
           question.timer,
           session.quiz.defaultTimer,
@@ -974,15 +1040,24 @@ export const sessionRouter = router({
             where: voteWhere,
             select: { ratingValue: true },
           });
-          const values = ratingVotes.map((v) => v.ratingValue).filter((v): v is number => v !== null && v !== undefined);
+          const values = ratingVotes
+            .map((v) => v.ratingValue)
+            .filter((v): v is number => v !== null && v !== undefined);
           const count = values.length;
-          const avg = count > 0 ? Math.round((values.reduce((s, v) => s + v, 0) / count) * 10) / 10 : null;
+          const avg =
+            count > 0 ? Math.round((values.reduce((s, v) => s + v, 0) / count) * 10) / 10 : null;
           const dist: Record<string, number> = {};
           for (const v of values) {
             const key = String(v);
             dist[key] = (dist[key] ?? 0) + 1;
           }
-          return { ...base, ratingAvg: avg, ratingCount: count, ratingDistribution: dist, totalVotes: count };
+          return {
+            ...base,
+            ratingAvg: avg,
+            ratingCount: count,
+            ratingDistribution: dist,
+            totalVotes: count,
+          };
         }
 
         if (question.type === 'FREETEXT') {
@@ -1005,28 +1080,33 @@ export const sessionRouter = router({
         const answerVoteCounts = new Map<string, number>();
         for (const v of choiceVotes) {
           for (const sa of v.selectedAnswers) {
-            answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
+            answerVoteCounts.set(
+              sa.answerOptionId,
+              (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1,
+            );
           }
         }
 
-        const correctIds = new Set(
-          question.answers.filter((a) => a.isCorrect).map((a) => a.id),
-        );
-        const correctVoterCount = correctIds.size > 0
-          ? choiceVotes.filter((v) => {
-              const selected = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
-              if (selected.size !== correctIds.size) return false;
-              for (const id of correctIds) { if (!selected.has(id)) return false; }
-              return true;
-            }).length
-          : undefined;
+        const correctIds = new Set(question.answers.filter((a) => a.isCorrect).map((a) => a.id));
+        const correctVoterCount =
+          correctIds.size > 0
+            ? choiceVotes.filter((v) => {
+                const selected = new Set(v.selectedAnswers.map((sa) => sa.answerOptionId));
+                if (selected.size !== correctIds.size) return false;
+                for (const id of correctIds) {
+                  if (!selected.has(id)) return false;
+                }
+                return true;
+              }).length
+            : undefined;
 
         const voteDistribution = question.answers.map((a) => ({
           id: a.id,
           text: a.text,
           isCorrect: a.isCorrect,
           voteCount: answerVoteCounts.get(a.id) ?? 0,
-          votePercentage: totalVotes > 0 ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100) : 0,
+          votePercentage:
+            totalVotes > 0 ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100) : 0,
         }));
 
         let roundComparison: RoundComparisonDTO | undefined;
@@ -1158,7 +1238,10 @@ export const sessionRouter = router({
           totalVotes = votes.length;
           for (const v of votes) {
             for (const sa of v.selectedAnswers) {
-              answerVoteCounts.set(sa.answerOptionId, (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1);
+              answerVoteCounts.set(
+                sa.answerOptionId,
+                (answerVoteCounts.get(sa.answerOptionId) ?? 0) + 1,
+              );
             }
           }
         }
@@ -1174,7 +1257,10 @@ export const sessionRouter = router({
             text: a.text,
             isCorrect: a.isCorrect,
             voteCount: answerVoteCounts.get(a.id) ?? 0,
-            votePercentage: totalVotes > 0 ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100) : 0,
+            votePercentage:
+              totalVotes > 0
+                ? Math.round(((answerVoteCounts.get(a.id) ?? 0) / totalVotes) * 100)
+                : 0,
           })),
           freeTextResponses,
           totalVotes,
@@ -1185,22 +1271,20 @@ export const sessionRouter = router({
     }),
 
   /** Quiz-IDs mit laufender Session (Story 1.10: Löschsperre in Quiz-Liste). */
-  getActiveQuizIds: publicProcedure
-    .output(ActiveQuizIdsDTOSchema)
-    .query(async () => {
-      const sessions = await prisma.session.findMany({
-        where: {
-          status: { not: 'FINISHED' },
-          quizId: { not: null },
-        },
-        select: { quizId: true },
-        distinct: ['quizId'],
-      });
+  getActiveQuizIds: publicProcedure.output(ActiveQuizIdsDTOSchema).query(async () => {
+    const sessions = await prisma.session.findMany({
+      where: {
+        status: { not: 'FINISHED' },
+        quizId: { not: null },
+      },
+      select: { quizId: true },
+      distinct: ['quizId'],
+    });
 
-      return sessions
-        .map((session) => session.quizId)
-        .filter((quizId): quizId is string => typeof quizId === 'string');
-    }),
+    return sessions
+      .map((session) => session.quizId)
+      .filter((quizId): quizId is string => typeof quizId === 'string');
+  }),
 
   /** Live-Freitextdaten der aktuell aktiven Frage (Story 1.14, polling-ready). */
   getLiveFreetext: publicProcedure
@@ -1230,7 +1314,8 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
 
-      const question = session.quiz?.questions.find((entry) => entry.order === session.currentQuestion) ?? null;
+      const question =
+        session.quiz?.questions.find((entry) => entry.order === session.currentQuestion) ?? null;
       if (!question || question.type !== 'FREETEXT') {
         return {
           sessionId: session.id,
@@ -1382,7 +1467,8 @@ export const sessionRouter = router({
         if (after.locked) {
           throw new TRPCError({
             code: 'TOO_MANY_REQUESTS',
-            message: 'Ungültiger Code. Zu viele Fehlversuche – bitte warten Sie vor dem nächsten Versuch.',
+            message:
+              'Ungültiger Code. Zu viele Fehlversuche – bitte warten Sie vor dem nächsten Versuch.',
             cause: { retryAfterSeconds: after.retryAfterSeconds },
           });
         }
@@ -1396,11 +1482,14 @@ export const sessionRouter = router({
       if (session.quiz?.teamMode) {
         const teams = await ensureSessionTeams(
           session.id,
-          session.quiz.teamCount ?? 2,
+          session.quiz.teamCount ?? DEFAULT_TEAM_COUNT,
           session.quiz.teamNames,
         );
         if (teams.length === 0) {
-          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Teams konnten nicht vorbereitet werden.' });
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Teams konnten nicht vorbereitet werden.',
+          });
         }
 
         if (session.quiz.teamAssignment === 'MANUAL') {
@@ -1421,15 +1510,20 @@ export const sessionRouter = router({
           assignedTeamName = autoTeam.name;
         }
       }
-      const participant = await prisma.participant.create({
-        data: {
-          sessionId: session.id,
-          nickname: input.nickname.trim().slice(0, 30),
-          teamId: assignedTeamId,
-        },
-      }).catch(() => {
-        throw new TRPCError({ code: 'CONFLICT', message: 'Dieser Nickname ist in dieser Session bereits vergeben.' });
-      });
+      const participant = await prisma.participant
+        .create({
+          data: {
+            sessionId: session.id,
+            nickname: input.nickname.trim().slice(0, 30),
+            teamId: assignedTeamId,
+          },
+        })
+        .catch(() => {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'Dieser Nickname ist in dieser Session bereits vergeben.',
+          });
+        });
       return {
         id: session.id,
         code: session.code,
@@ -1469,8 +1563,8 @@ export const sessionRouter = router({
         return [];
       }
 
-      const totalScoredQuestions = session.quiz.questions.filter(
-        (q) => questionCountsTowardsTotalQuestions(q.type as QuestionType),
+      const totalScoredQuestions = session.quiz.questions.filter((q) =>
+        questionCountsTowardsTotalQuestions(q.type as QuestionType),
       ).length;
 
       const votes = await prisma.vote.findMany({
@@ -1484,7 +1578,10 @@ export const sessionRouter = router({
         },
       });
 
-      const stats = new Map<string, { totalScore: number; correctCount: number; totalResponseTimeMs: number }>();
+      const stats = new Map<
+        string,
+        { totalScore: number; correctCount: number; totalResponseTimeMs: number }
+      >();
       for (const p of session.participants) {
         stats.set(p.id, { totalScore: 0, correctCount: 0, totalResponseTimeMs: 0 });
       }
@@ -1497,8 +1594,8 @@ export const sessionRouter = router({
 
         if (questionCountsTowardsTotalQuestions(v.question.type as QuestionType)) {
           const correctIds = v.selectedAnswers.filter((sa) => sa.answerOption.isCorrect);
-          const allCorrect = correctIds.length > 0 &&
-            correctIds.length === v.selectedAnswers.length;
+          const allCorrect =
+            correctIds.length > 0 && correctIds.length === v.selectedAnswers.length;
           if (allCorrect) s.correctCount++;
         }
       }
@@ -1515,7 +1612,9 @@ export const sessionRouter = router({
           totalResponseTimeMs: s.totalResponseTimeMs,
         }))
         .filter((e) => e.totalScore > 0)
-        .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+        .sort(
+          (a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs,
+        );
 
       for (let i = 0; i < entries.length; i++) {
         entries[i].rank = i + 1;
@@ -1542,7 +1641,11 @@ export const sessionRouter = router({
         return [];
       }
 
-      const teams = await ensureSessionTeams(session.id, session.quiz.teamCount ?? 2, session.quiz.teamNames);
+      const teams = await ensureSessionTeams(
+        session.id,
+        session.quiz.teamCount ?? DEFAULT_TEAM_COUNT,
+        session.quiz.teamNames,
+      );
       const participants = await prisma.participant.findMany({
         where: { sessionId: session.id },
         select: { id: true, teamId: true },
@@ -1552,7 +1655,10 @@ export const sessionRouter = router({
         select: { participantId: true, score: true },
       });
 
-      const teamStats = new Map<string, { teamName: string; teamColor: string | null; totalScore: number; memberCount: number }>();
+      const teamStats = new Map<
+        string,
+        { teamName: string; teamColor: string | null; totalScore: number; memberCount: number }
+      >();
       for (const team of teams) {
         teamStats.set(team.id, {
           teamName: team.name,
@@ -1582,14 +1688,20 @@ export const sessionRouter = router({
 
       const entries: TeamLeaderboardEntryDTO[] = [...teamStats.values()]
         .filter((team) => team.memberCount > 0)
-        .sort((a, b) => b.totalScore - a.totalScore || b.memberCount - a.memberCount || a.teamName.localeCompare(b.teamName))
+        .sort(
+          (a, b) =>
+            b.totalScore - a.totalScore ||
+            b.memberCount - a.memberCount ||
+            a.teamName.localeCompare(b.teamName),
+        )
         .map((team, index) => ({
           rank: index + 1,
           teamName: team.teamName,
           teamColor: team.teamColor,
           totalScore: team.totalScore,
           memberCount: team.memberCount,
-          averageScore: team.memberCount > 0 ? Number((team.totalScore / team.memberCount).toFixed(2)) : 0,
+          averageScore:
+            team.memberCount > 0 ? Number((team.totalScore / team.memberCount).toFixed(2)) : 0,
         }));
 
       return entries;
@@ -1626,7 +1738,13 @@ export const sessionRouter = router({
       const now = new Date();
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: 'FINISHED', currentQuestion: null, currentRound: 1, statusChangedAt: now, endedAt: now },
+        data: {
+          status: 'FINISHED',
+          currentQuestion: null,
+          currentRound: 1,
+          statusChangedAt: now,
+          endedAt: now,
+        },
       });
 
       await generateBonusTokens(session);
@@ -1666,12 +1784,14 @@ export const sessionRouter = router({
 
   /** Persönliche Scorecard nach einer Frage (Story 5.6). Abrufbar bei Status RESULTS oder FINISHED. */
   getPersonalScorecard: publicProcedure
-    .input(z.object({
-      code: z.string().length(6),
-      participantId: z.string().uuid(),
-      questionIndex: z.number().int().min(0),
-      round: z.number().int().min(1).max(2).optional().default(1),
-    }))
+    .input(
+      z.object({
+        code: z.string().length(6),
+        participantId: z.string().uuid(),
+        questionIndex: z.number().int().min(0),
+        round: z.number().int().min(1).max(2).optional().default(1),
+      }),
+    )
     .output(PersonalScorecardDTOSchema)
     .query(async ({ input }) => {
       const session = await prisma.session.findUnique({
@@ -1692,7 +1812,10 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session oder Quiz nicht gefunden.' });
       }
       if (!['RESULTS', 'FINISHED', 'DISCUSSION', 'PAUSED'].includes(session.status)) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Scorecard nur bei RESULTS, DISCUSSION, PAUSED oder FINISHED verfügbar.' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Scorecard nur bei RESULTS, DISCUSSION, PAUSED oder FINISHED verfügbar.',
+        });
       }
 
       const question = session.quiz.questions[input.questionIndex];
@@ -1713,12 +1836,20 @@ export const sessionRouter = router({
             round: input.round,
           },
         },
-        select: { score: true, streakCount: true, streakBonus: true, selectedAnswers: { select: { answerOptionId: true } } },
+        select: {
+          score: true,
+          streakCount: true,
+          streakBonus: true,
+          selectedAnswers: { select: { answerOptionId: true } },
+        },
       });
 
-      const baseScore = myVote && isScored
-        ? (myVote.streakBonus > 0 ? Math.round(myVote.score / myVote.streakBonus) : myVote.score)
-        : 0;
+      const baseScore =
+        myVote && isScored
+          ? myVote.streakBonus > 0
+            ? Math.round(myVote.score / myVote.streakBonus)
+            : myVote.score
+          : 0;
       const streakCount = myVote?.streakCount ?? 0;
       const streakMultiplier = myVote?.streakBonus ?? 1.0;
       const questionScore = myVote?.score ?? 0;
@@ -1727,11 +1858,15 @@ export const sessionRouter = router({
       if (isScored && myVote) {
         const selectedSet = new Set(myVote.selectedAnswers.map((a) => a.answerOptionId));
         const correctSet = new Set(correctIds);
-        wasCorrect = selectedSet.size === correctSet.size && [...selectedSet].every((id) => correctSet.has(id));
+        wasCorrect =
+          selectedSet.size === correctSet.size &&
+          [...selectedSet].every((id) => correctSet.has(id));
       }
 
       // Alle Votes bis einschließlich dieser Frage (für Ranking)
-      const questionsUpToNow = session.quiz.questions.slice(0, input.questionIndex + 1).map((q) => q.id);
+      const questionsUpToNow = session.quiz.questions
+        .slice(0, input.questionIndex + 1)
+        .map((q) => q.id);
       const allVotes = await prisma.vote.findMany({
         where: {
           sessionId: session.id,
@@ -1753,9 +1888,15 @@ export const sessionRouter = router({
       }
 
       const ranked = [...totals.entries()]
-        .map(([pid, s]) => ({ pid, totalScore: Number(s.totalScore) || 0, totalResponseTimeMs: s.totalResponseTimeMs }))
+        .map(([pid, s]) => ({
+          pid,
+          totalScore: Number(s.totalScore) || 0,
+          totalResponseTimeMs: s.totalResponseTimeMs,
+        }))
         .filter((e) => e.totalScore > 0)
-        .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+        .sort(
+          (a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs,
+        );
       const totalScore = totals.get(input.participantId)?.totalScore ?? 0;
       const myIdx = ranked.findIndex((e) => e.pid === input.participantId);
       const currentRank = totalScore > 0 && myIdx >= 0 ? myIdx + 1 : 0;
@@ -1763,7 +1904,9 @@ export const sessionRouter = router({
       // Vorheriger Rang (nach vorheriger Frage)
       let previousRank: number | null = null;
       if (input.questionIndex > 0) {
-        const prevQuestionIds = session.quiz.questions.slice(0, input.questionIndex).map((q) => q.id);
+        const prevQuestionIds = session.quiz.questions
+          .slice(0, input.questionIndex)
+          .map((q) => q.id);
         const prevVotes = await prisma.vote.findMany({
           where: {
             sessionId: session.id,
@@ -1783,17 +1926,24 @@ export const sessionRouter = router({
           t.totalResponseTimeMs += v.responseTimeMs ?? 0;
         }
         const prevRanked = [...prevTotals.entries()]
-          .map(([pid, s]) => ({ pid, totalScore: Number(s.totalScore) || 0, totalResponseTimeMs: s.totalResponseTimeMs }))
+          .map(([pid, s]) => ({
+            pid,
+            totalScore: Number(s.totalScore) || 0,
+            totalResponseTimeMs: s.totalResponseTimeMs,
+          }))
           .filter((e) => e.totalScore > 0)
-          .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+          .sort(
+            (a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs,
+          );
         const prevScore = prevTotals.get(input.participantId)?.totalScore ?? 0;
         const prevIdx = prevRanked.findIndex((e) => e.pid === input.participantId);
         previousRank = prevScore > 0 && prevIdx >= 0 ? prevIdx + 1 : 0;
       }
 
-      const rankChange = (previousRank !== null && currentRank > 0 && previousRank > 0)
-        ? previousRank - currentRank
-        : 0;
+      const rankChange =
+        previousRank !== null && currentRank > 0 && previousRank > 0
+          ? previousRank - currentRank
+          : 0;
 
       const totalQuestions = session.quiz.questions.length;
       return {
@@ -1814,15 +1964,19 @@ export const sessionRouter = router({
 
   /** Persönliches Ergebnis für einen Studenten (Story 4.6: Bonus-Code). */
   getPersonalResult: publicProcedure
-    .input(z.object({
-      code: z.string().length(6),
-      participantId: z.string().uuid(),
-    }))
-    .output(z.object({
-      totalScore: z.number(),
-      rank: z.number(),
-      bonusToken: z.string().nullable(),
-    }))
+    .input(
+      z.object({
+        code: z.string().length(6),
+        participantId: z.string().uuid(),
+      }),
+    )
+    .output(
+      z.object({
+        totalScore: z.number(),
+        rank: z.number(),
+        bonusToken: z.string().nullable(),
+      }),
+    )
     .query(async ({ input }) => {
       const session = await prisma.session.findUnique({
         where: { code: input.code.toUpperCase() },
@@ -1836,7 +1990,10 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
       if (session.status !== 'FINISHED') {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Ergebnis nur nach Session-Ende verfügbar.' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Ergebnis nur nach Session-Ende verfügbar.',
+        });
       }
 
       const votes = await prisma.vote.findMany({
@@ -1858,7 +2015,9 @@ export const sessionRouter = router({
       const ranked = [...stats.entries()]
         .map(([pid, s]) => ({ pid, ...s }))
         .filter((e) => e.totalScore > 0)
-        .sort((a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs);
+        .sort(
+          (a, b) => b.totalScore - a.totalScore || a.totalResponseTimeMs - b.totalResponseTimeMs,
+        );
 
       const myStat = stats.get(input.participantId);
       const myScore = myStat?.totalScore ?? 0;
@@ -1932,104 +2091,115 @@ export const sessionRouter = router({
         votesByQuestion.set(vote.questionId, list);
       }
 
-      const questionEntries: QuestionExportEntry[] = questions.map((q: QuestionWithAnswersForExport) => {
-        const votes: VoteForExport[] = votesByQuestion.get(q.id) ?? [];
-        const participantCount = votes.length;
+      const questionEntries: QuestionExportEntry[] = questions.map(
+        (q: QuestionWithAnswersForExport) => {
+          const votes: VoteForExport[] = votesByQuestion.get(q.id) ?? [];
+          const participantCount = votes.length;
 
-        let optionDistribution: OptionDistributionEntry[] | undefined;
-        let freetextAggregates: FreetextAggregateEntry[] | undefined;
-        let ratingDistribution: Record<string, number> | undefined;
-        let ratingAverage: number | undefined;
-        let ratingStandardDeviation: number | undefined;
-        let averageScore: number | undefined;
+          let optionDistribution: OptionDistributionEntry[] | undefined;
+          let freetextAggregates: FreetextAggregateEntry[] | undefined;
+          let ratingDistribution: Record<string, number> | undefined;
+          let ratingAverage: number | undefined;
+          let ratingStandardDeviation: number | undefined;
+          let averageScore: number | undefined;
 
-        switch (q.type) {
-          case 'MULTIPLE_CHOICE':
-          case 'SINGLE_CHOICE': {
-            const optionCounts = new Map<string, { count: number; isCorrect?: boolean }>();
-            for (const opt of q.answers as Array<{ id: string; text: string; isCorrect: boolean }>) {
-              optionCounts.set(opt.id, { count: 0, isCorrect: opt.isCorrect });
-            }
-            for (const v of votes) {
-              for (const sa of v.selectedAnswers) {
-                const key = sa.answerOptionId;
-                const cur = optionCounts.get(key);
-                if (cur) {
-                  cur.count += 1;
+          switch (q.type) {
+            case 'MULTIPLE_CHOICE':
+            case 'SINGLE_CHOICE': {
+              const optionCounts = new Map<string, { count: number; isCorrect?: boolean }>();
+              for (const opt of q.answers as Array<{
+                id: string;
+                text: string;
+                isCorrect: boolean;
+              }>) {
+                optionCounts.set(opt.id, { count: 0, isCorrect: opt.isCorrect });
+              }
+              for (const v of votes) {
+                for (const sa of v.selectedAnswers) {
+                  const key = sa.answerOptionId;
+                  const cur = optionCounts.get(key);
+                  if (cur) {
+                    cur.count += 1;
+                  }
                 }
               }
+              const total = votes.length || 1;
+              optionDistribution = (
+                q.answers as Array<{ id: string; text: string; isCorrect: boolean }>
+              ).map((opt) => {
+                const { count, isCorrect } = optionCounts.get(opt.id) ?? { count: 0 };
+                return {
+                  text: opt.text,
+                  count,
+                  percentage: Math.round((count / total) * 1000) / 10,
+                  isCorrect,
+                };
+              });
+              break;
             }
-            const total = votes.length || 1;
-            optionDistribution = (q.answers as Array<{ id: string; text: string; isCorrect: boolean }>).map((opt) => {
-              const { count, isCorrect } = optionCounts.get(opt.id) ?? { count: 0 };
-              return {
-                text: opt.text,
-                count,
-                percentage: Math.round((count / total) * 1000) / 10,
-                isCorrect,
-              };
-            });
-            break;
-          }
-          case 'FREETEXT': {
-            const byText = new Map<string, number>();
-            for (const v of votes as VoteForExport[]) {
-              const t = (v.freeText ?? '').trim() || '(leer)';
-            byText.set(t, (byText.get(t) ?? 0) + 1);
-            }
-            freetextAggregates = Array.from(byText.entries(), ([text, count]) => ({ text, count }));
-            break;
-          }
-          case 'RATING': {
-            const dist: Record<string, number> = {};
-            let sum = 0;
-            for (const v of votes as VoteForExport[]) {
-              if (v.ratingValue !== null && v.ratingValue !== undefined) {
-                const key = String(v.ratingValue);
-                dist[key] = (dist[key] ?? 0) + 1;
-                sum += v.ratingValue;
+            case 'FREETEXT': {
+              const byText = new Map<string, number>();
+              for (const v of votes as VoteForExport[]) {
+                const t = (v.freeText ?? '').trim() || '(leer)';
+                byText.set(t, (byText.get(t) ?? 0) + 1);
               }
+              freetextAggregates = Array.from(byText.entries(), ([text, count]) => ({
+                text,
+                count,
+              }));
+              break;
             }
-            ratingDistribution = Object.keys(dist).length > 0 ? dist : undefined;
-            if (votes.length > 0 && Object.keys(dist).length > 0) {
-              ratingAverage = Math.round((sum / votes.length) * 100) / 100;
-              const avg = sum / votes.length;
-              let variance = 0;
+            case 'RATING': {
+              const dist: Record<string, number> = {};
+              let sum = 0;
               for (const v of votes as VoteForExport[]) {
                 if (v.ratingValue !== null && v.ratingValue !== undefined) {
-                  variance += (v.ratingValue - avg) ** 2;
+                  const key = String(v.ratingValue);
+                  dist[key] = (dist[key] ?? 0) + 1;
+                  sum += v.ratingValue;
                 }
               }
-              ratingStandardDeviation =
-                Math.round(Math.sqrt(variance / votes.length) * 100) / 100;
+              ratingDistribution = Object.keys(dist).length > 0 ? dist : undefined;
+              if (votes.length > 0 && Object.keys(dist).length > 0) {
+                ratingAverage = Math.round((sum / votes.length) * 100) / 100;
+                const avg = sum / votes.length;
+                let variance = 0;
+                for (const v of votes as VoteForExport[]) {
+                  if (v.ratingValue !== null && v.ratingValue !== undefined) {
+                    variance += (v.ratingValue - avg) ** 2;
+                  }
+                }
+                ratingStandardDeviation =
+                  Math.round(Math.sqrt(variance / votes.length) * 100) / 100;
+              }
+              break;
             }
-            break;
+            case 'SURVEY':
+              // Keine spezielle Verteilung im Export-Schema; participantCount reicht
+              break;
+            default:
+              break;
           }
-          case 'SURVEY':
-            // Keine spezielle Verteilung im Export-Schema; participantCount reicht
-            break;
-          default:
-            break;
-        }
 
-        if (votes.length > 0 && votes.some((v: VoteForExport) => (v.score ?? 0) > 0)) {
-          const totalScore = votes.reduce((a: number, v: VoteForExport) => a + (v.score ?? 0), 0);
-          averageScore = Math.round((totalScore / votes.length) * 100) / 100;
-        }
+          if (votes.length > 0 && votes.some((v: VoteForExport) => (v.score ?? 0) > 0)) {
+            const totalScore = votes.reduce((a: number, v: VoteForExport) => a + (v.score ?? 0), 0);
+            averageScore = Math.round((totalScore / votes.length) * 100) / 100;
+          }
 
-        return {
-          questionOrder: q.order,
-          questionTextShort: q.text.slice(0, QUESTION_TEXT_SHORT_MAX),
-          type: q.type as QuestionType,
-          participantCount,
-          optionDistribution,
-          freetextAggregates,
-          ratingDistribution,
-          ratingAverage,
-          ratingStandardDeviation,
-          averageScore,
-        };
-      });
+          return {
+            questionOrder: q.order,
+            questionTextShort: q.text.slice(0, QUESTION_TEXT_SHORT_MAX),
+            type: q.type as QuestionType,
+            participantCount,
+            optionDistribution,
+            freetextAggregates,
+            ratingDistribution,
+            ratingAverage,
+            ratingStandardDeviation,
+            averageScore,
+          };
+        },
+      );
 
       const bonusTokens: BonusTokenEntryDTO[] | undefined = session.bonusTokens.length
         ? session.bonusTokens.map((t: BonusTokenForExport) => ({
@@ -2068,11 +2238,16 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
       if (session.status !== 'FINISHED') {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Bewertung nur nach Session-Ende möglich.' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Bewertung nur nach Session-Ende möglich.',
+        });
       }
 
       const existing = await prisma.sessionFeedback.findUnique({
-        where: { sessionId_participantId: { sessionId: session.id, participantId: input.participantId } },
+        where: {
+          sessionId_participantId: { sessionId: session.id, participantId: input.participantId },
+        },
       });
       if (existing) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Du hast bereits bewertet.' });
@@ -2092,10 +2267,12 @@ export const sessionRouter = router({
 
   /** Prüfen, ob dieser Teilnehmer bereits eine Session-Bewertung abgegeben hat (Story 4.8). */
   getHasSubmittedFeedback: publicProcedure
-    .input(z.object({
-      code: z.string().length(6),
-      participantId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        code: z.string().length(6),
+        participantId: z.string().uuid(),
+      }),
+    )
     .output(z.object({ submitted: z.boolean() }))
     .query(async ({ input }) => {
       const session = await prisma.session.findUnique({
@@ -2191,13 +2368,18 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
       }
       if (session.status !== 'ACTIVE' && session.status !== 'RESULTS') {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen nur während Abstimmung oder Ergebnis-Phase.' });
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Emoji-Reaktionen nur während Abstimmung oder Ergebnis-Phase.',
+        });
       }
 
-      const quiz = session.quizId ? await prisma.quiz.findUnique({
-        where: { id: session.quizId },
-        select: { enableEmojiReactions: true },
-      }) : null;
+      const quiz = session.quizId
+        ? await prisma.quiz.findUnique({
+            where: { id: session.quizId },
+            select: { enableEmojiReactions: true },
+          })
+        : null;
       if (!quiz?.enableEmojiReactions) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen sind deaktiviert.' });
       }
@@ -2216,14 +2398,18 @@ export const sessionRouter = router({
 
   /** Emoji-Reaktionen für eine Frage abrufen (Story 5.8, Host/Beamer). */
   getReactions: publicProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      questionId: z.string().uuid(),
-    }))
-    .output(z.object({
-      reactions: z.record(z.string(), z.number()),
-      total: z.number(),
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        questionId: z.string().uuid(),
+      }),
+    )
+    .output(
+      z.object({
+        reactions: z.record(z.string(), z.number()),
+        total: z.number(),
+      }),
+    )
     .query(({ input }) => {
       const key = getEmojiKey(input.sessionId, input.questionId);
       const map = emojiStore.get(key);

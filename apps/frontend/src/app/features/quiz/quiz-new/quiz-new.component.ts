@@ -3,17 +3,15 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { Router, RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
-import {
-  MatCard,
-  MatCardActions,
-  MatCardContent,
-} from '@angular/material/card';
+import { MatCard, MatCardActions, MatCardContent } from '@angular/material/card';
 import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import {
+  DEFAULT_BONUS_TOKEN_COUNT,
+  DEFAULT_TEAM_COUNT,
   QUIZ_PRESETS,
   type NicknameTheme,
   type QuizPreset,
@@ -93,14 +91,14 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     anonymousMode: [false],
     readingPhaseEnabled: [false],
     teamMode: [false],
-    teamCount: this.formBuilder.control<number | null>(null, {
+    teamCount: this.formBuilder.control<number | null>(DEFAULT_TEAM_COUNT, {
       validators: [Validators.min(2), Validators.max(8)],
     }),
     teamAssignment: this.formBuilder.control<TeamAssignment>('AUTO'),
     teamNamesText: [''],
     nicknameTheme: this.formBuilder.control<NicknameTheme>('NOBEL_LAUREATES'),
     bonusEnabled: [false],
-    bonusTokenCount: this.formBuilder.control<number | null>(null, {
+    bonusTokenCount: this.formBuilder.control<number | null>(DEFAULT_BONUS_TOKEN_COUNT, {
       validators: [Validators.min(1), Validators.max(50)],
     }),
   });
@@ -173,8 +171,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
       current.enableEmojiReactions ===
         (target.enableEmojiReactions ?? current.enableEmojiReactions) &&
       current.anonymousMode === (target.anonymousMode ?? current.anonymousMode) &&
-      current.readingPhaseEnabled ===
-        (target.readingPhaseEnabled ?? current.readingPhaseEnabled) &&
+      current.readingPhaseEnabled === (target.readingPhaseEnabled ?? current.readingPhaseEnabled) &&
       current.defaultTimer === (target.defaultTimer ?? current.defaultTimer)
     );
   }
@@ -196,10 +193,10 @@ export class QuizNewComponent implements OnInit, OnDestroy {
       backgroundMusic: null,
       nicknameTheme: this.form.controls.nicknameTheme.value ?? 'NOBEL_LAUREATES',
       bonusTokenCount: this.form.controls.bonusEnabled.value
-        ? (this.bonusTokenCountControl.value ?? 3)
+        ? (this.bonusTokenCountControl.value ?? DEFAULT_BONUS_TOKEN_COUNT)
         : null,
       readingPhaseEnabled: this.form.controls.readingPhaseEnabled.value,
-      preset: this.themePreset.preset() === 'serious' ? 'SERIOUS' as const : 'PLAYFUL' as const,
+      preset: this.themePreset.preset() === 'serious' ? ('SERIOUS' as const) : ('PLAYFUL' as const),
     };
   }
 
@@ -245,7 +242,10 @@ function parseTeamNamesText(value: string): string[] {
 function buildEffectiveTeamNames(value: string, teamCount: number | null | undefined): string[] {
   const customNames = parseTeamNamesText(value);
   const effectiveCount = normalizeTeamCount(teamCount);
-  return Array.from({ length: effectiveCount }, (_, index) => customNames[index] ?? buildDefaultTeamName(index));
+  return Array.from(
+    { length: effectiveCount },
+    (_, index) => customNames[index] ?? buildDefaultTeamName(index),
+  );
 }
 
 function applyTeamNamesValidation(
@@ -277,7 +277,7 @@ function applyTeamNamesValidation(
 }
 
 function normalizeTeamCount(teamCount: number | null | undefined): number {
-  return Math.min(8, Math.max(2, teamCount ?? 2));
+  return Math.min(8, Math.max(DEFAULT_TEAM_COUNT, teamCount ?? DEFAULT_TEAM_COUNT));
 }
 
 function buildDefaultTeamName(index: number): string {

@@ -58,13 +58,7 @@ export const TeamNamesSchema = z
   });
 export type TeamNames = z.infer<typeof TeamNamesSchema>;
 
-export const QaQuestionStatusEnum = z.enum([
-  'PENDING',
-  'ACTIVE',
-  'PINNED',
-  'ARCHIVED',
-  'DELETED',
-]);
+export const QaQuestionStatusEnum = z.enum(['PENDING', 'ACTIVE', 'PINNED', 'ARCHIVED', 'DELETED']);
 export type QaQuestionStatus = z.infer<typeof QaQuestionStatusEnum>;
 
 export const SessionTypeEnum = z.enum(['QUIZ', 'Q_AND_A']);
@@ -100,6 +94,12 @@ export const EMOJI_REACTIONS = ['👏', '🎉', '😮', '😂', '😢'] as const
 export type EmojiReaction = (typeof EMOJI_REACTIONS)[number];
 
 // ---------------------------------------------------------------------------
+// Defaults – zentrale Konstanten für Quiz-Einstellungen
+// ---------------------------------------------------------------------------
+export const DEFAULT_TEAM_COUNT = 2;
+export const DEFAULT_BONUS_TOKEN_COUNT = 3;
+
+// ---------------------------------------------------------------------------
 // Quiz-Schemas (Zod) – werden in Backend (Validierung) & Frontend (Forms) genutzt
 // ---------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ export const CreateQuizInputSchema = z.object({
   enableEmojiReactions: z.boolean().optional().default(true),
   anonymousMode: z.boolean().optional().default(false),
   teamMode: z.boolean().optional().default(false),
-  teamCount: z.number().int().min(2).max(8).optional(),
+  teamCount: z.number().int().min(2).max(8).optional().default(DEFAULT_TEAM_COUNT),
   teamAssignment: TeamAssignmentEnum.optional().default('AUTO'),
   teamNames: TeamNamesSchema.optional().default([]),
   backgroundMusic: z.string().max(50).nullable().optional().default(null),
@@ -142,10 +142,10 @@ export const AddQuestionInputSchema = z.object({
   difficulty: DifficultyEnum.optional().default('MEDIUM'),
   order: z.number().int().min(0),
   answers: z.array(AnswerOptionInputSchema).max(10),
-  ratingMin: z.number().int().min(0).max(10).optional(),    // Nur bei RATING
-  ratingMax: z.number().int().min(1).max(10).optional(),    // Nur bei RATING
-  ratingLabelMin: z.string().max(50).optional(),            // Nur bei RATING
-  ratingLabelMax: z.string().max(50).optional(),            // Nur bei RATING
+  ratingMin: z.number().int().min(0).max(10).optional(), // Nur bei RATING
+  ratingMax: z.number().int().min(1).max(10).optional(), // Nur bei RATING
+  ratingLabelMin: z.string().max(50).optional(), // Nur bei RATING
+  ratingLabelMax: z.string().max(50).optional(), // Nur bei RATING
 });
 export type AddQuestionInput = z.infer<typeof AddQuestionInputSchema>;
 
@@ -170,7 +170,9 @@ export const QuizUploadInputSchema = z.object({
   bonusTokenCount: z.number().int().min(1).max(50).nullable().optional(), // Story 4.6
   readingPhaseEnabled: z.boolean().optional(),
   preset: QuizPresetEnum.optional(),
-  questions: z.array(AddQuestionInputSchema).min(1, { error: 'Mindestens eine Frage erforderlich' }),
+  questions: z
+    .array(AddQuestionInputSchema)
+    .min(1, { error: 'Mindestens eine Frage erforderlich' }),
 });
 export type QuizUploadInput = z.infer<typeof QuizUploadInputSchema>;
 
@@ -185,38 +187,40 @@ export type QuizUploadOutput = z.infer<typeof QuizUploadOutputSchema>;
 // ---------------------------------------------------------------------------
 
 /** Input: Eine neue Live-Session starten */
-export const CreateSessionInputSchema = z.object({
-  type: SessionTypeEnum.optional().default('QUIZ'),       // Story 8.1: Quiz oder Q&A
-  quizId: z.uuid().optional(),                    // Pflicht bei QUIZ, null bei Q_AND_A
-  title: z.string().trim().max(200).optional(),          // Story 8.1: Titel für Q&A-Runde
-  moderationMode: z.boolean().optional().default(false),   // Story 8.4: Q&A-Fragen moderieren
-  qaEnabled: z.boolean().optional().default(false),        // ADR-0009: Q&A-Kanal in Quiz-Session
-  qaTitle: z.string().trim().max(200).optional(),          // ADR-0009: Titel des Q&A-Tabs
-  qaModerationMode: z.boolean().optional(),                // ADR-0009: Vorab-Moderation für Q&A
-  quickFeedbackEnabled: z.boolean().optional().default(false), // ADR-0009: Blitz-Feedback-Kanal
-}).superRefine((value, ctx) => {
-  const isQuickFeedbackOnlySession =
-    value.type === 'QUIZ' &&
-    !value.quizId &&
-    value.qaEnabled !== true &&
-    value.quickFeedbackEnabled === true;
+export const CreateSessionInputSchema = z
+  .object({
+    type: SessionTypeEnum.optional().default('QUIZ'), // Story 8.1: Quiz oder Q&A
+    quizId: z.uuid().optional(), // Pflicht bei QUIZ, null bei Q_AND_A
+    title: z.string().trim().max(200).optional(), // Story 8.1: Titel für Q&A-Runde
+    moderationMode: z.boolean().optional().default(false), // Story 8.4: Q&A-Fragen moderieren
+    qaEnabled: z.boolean().optional().default(false), // ADR-0009: Q&A-Kanal in Quiz-Session
+    qaTitle: z.string().trim().max(200).optional(), // ADR-0009: Titel des Q&A-Tabs
+    qaModerationMode: z.boolean().optional(), // ADR-0009: Vorab-Moderation für Q&A
+    quickFeedbackEnabled: z.boolean().optional().default(false), // ADR-0009: Blitz-Feedback-Kanal
+  })
+  .superRefine((value, ctx) => {
+    const isQuickFeedbackOnlySession =
+      value.type === 'QUIZ' &&
+      !value.quizId &&
+      value.qaEnabled !== true &&
+      value.quickFeedbackEnabled === true;
 
-  if (value.type === 'QUIZ' && !value.quizId && !isQuickFeedbackOnlySession) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['quizId'],
-      message: 'Für Quiz-Sessions ist eine quizId erforderlich.',
-    });
-  }
+    if (value.type === 'QUIZ' && !value.quizId && !isQuickFeedbackOnlySession) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['quizId'],
+        message: 'Für Quiz-Sessions ist eine quizId erforderlich.',
+      });
+    }
 
-  if (value.type === 'Q_AND_A' && value.quizId) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['quizId'],
-      message: 'Q&A-Sessions dürfen keine quizId enthalten.',
-    });
-  }
-});
+    if (value.type === 'Q_AND_A' && value.quizId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['quizId'],
+        message: 'Q&A-Sessions dürfen keine quizId enthalten.',
+      });
+    }
+  });
 export type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
 
 /** Output: Antwort auf session.create (Story 2.1a). */
@@ -303,11 +307,13 @@ export const HostCurrentQuestionDTOSchema = z.object({
   text: z.string(),
   type: QuestionTypeEnum,
   timer: z.number().nullable().optional(),
-  answers: z.array(z.object({
-    id: z.uuid(),
-    text: z.string(),
-    isCorrect: z.boolean(),
-  })),
+  answers: z.array(
+    z.object({
+      id: z.uuid(),
+      text: z.string(),
+      isCorrect: z.boolean(),
+    }),
+  ),
   ratingMin: z.number().nullable().optional(),
   ratingMax: z.number().nullable().optional(),
   ratingLabelMin: z.string().nullable().optional(),
@@ -316,13 +322,17 @@ export const HostCurrentQuestionDTOSchema = z.object({
   ratingCount: z.number().int().optional(),
   ratingDistribution: z.record(z.string(), z.number()).optional(),
   freeTextResponses: z.array(z.string()).optional(),
-  voteDistribution: z.array(z.object({
-    id: z.uuid(),
-    text: z.string(),
-    isCorrect: z.boolean(),
-    voteCount: z.number().int(),
-    votePercentage: z.number().int(),
-  })).optional(),
+  voteDistribution: z
+    .array(
+      z.object({
+        id: z.uuid(),
+        text: z.string(),
+        isCorrect: z.boolean(),
+        voteCount: z.number().int(),
+        votePercentage: z.number().int(),
+      }),
+    )
+    .optional(),
   totalVotes: z.number().int().optional(),
   correctVoterCount: z.number().int().optional(),
   currentRound: z.number().int().min(1).max(2).optional(),
@@ -386,8 +396,8 @@ export const AnswerOptionRevealedDTOSchema = z.object({
   id: z.uuid(),
   text: z.string(),
   isCorrect: z.boolean(),
-  voteCount: z.number(),        // Anzahl Votes für diese Option
-  votePercentage: z.number(),   // Prozentualer Anteil (0–100)
+  voteCount: z.number(), // Anzahl Votes für diese Option
+  votePercentage: z.number(), // Prozentualer Anteil (0–100)
 });
 export type AnswerOptionRevealedDTO = z.infer<typeof AnswerOptionRevealedDTOSchema>;
 
@@ -441,10 +451,10 @@ export const QuestionPreviewDTOSchema = z.object({
   order: z.number(),
   /** Gesamtanzahl Fragen (für Client-Hinweis „Letzte Frage“). */
   totalQuestions: z.number().int().min(1).optional(),
-  ratingMin: z.number().nullable().optional(),        // Nur bei RATING
-  ratingMax: z.number().nullable().optional(),        // Nur bei RATING
-  ratingLabelMin: z.string().nullable().optional(),   // Nur bei RATING
-  ratingLabelMax: z.string().nullable().optional(),   // Nur bei RATING
+  ratingMin: z.number().nullable().optional(), // Nur bei RATING
+  ratingMax: z.number().nullable().optional(), // Nur bei RATING
+  ratingLabelMin: z.string().nullable().optional(), // Nur bei RATING
+  ratingLabelMax: z.string().nullable().optional(), // Nur bei RATING
 });
 export type QuestionPreviewDTO = z.infer<typeof QuestionPreviewDTOSchema>;
 
@@ -559,27 +569,27 @@ export type SessionTeamsPayload = z.infer<typeof SessionTeamsPayloadSchema>;
 export const LeaderboardEntryDTOSchema = z.object({
   rank: z.number(),
   nickname: z.string(),
-  totalScore: z.number(),        // Gesamtpunkte (Schwierigkeit × Zeitbonus)
-  correctCount: z.number(),      // Anzahl richtiger Antworten
-  totalQuestions: z.number(),     // Gesamtanzahl Fragen
+  totalScore: z.number(), // Gesamtpunkte (Schwierigkeit × Zeitbonus)
+  correctCount: z.number(), // Anzahl richtiger Antworten
+  totalQuestions: z.number(), // Gesamtanzahl Fragen
   totalResponseTimeMs: z.number(), // Gesamtantwortzeit in ms (Tiebreaker)
 });
 export type LeaderboardEntryDTO = z.infer<typeof LeaderboardEntryDTOSchema>;
 
 /** DTO: Persönliche Scorecard nach jeder Frage (Story 5.6) */
 export const PersonalScorecardDTOSchema = z.object({
-  questionOrder: z.number(),         // Frage-Nr. (1-basiert)
-  totalQuestions: z.number(),        // Gesamtanzahl Fragen im Quiz
+  questionOrder: z.number(), // Frage-Nr. (1-basiert)
+  totalQuestions: z.number(), // Gesamtanzahl Fragen im Quiz
   wasCorrect: z.boolean().nullable(), // null bei SURVEY/FREETEXT
   correctAnswerIds: z.array(z.uuid()).optional(), // Korrekte Antwort-IDs (bei Falsch)
-  questionScore: z.number(),         // Punkte für diese Frage (inkl. Streak)
-  baseScore: z.number(),             // Punkte vor Streak-Multiplikator
-  streakCount: z.number(),           // Aktuelle Serie
-  streakMultiplier: z.number(),      // Angewandter Streak-Faktor
-  currentRank: z.number(),           // Aktueller Rang
+  questionScore: z.number(), // Punkte für diese Frage (inkl. Streak)
+  baseScore: z.number(), // Punkte vor Streak-Multiplikator
+  streakCount: z.number(), // Aktuelle Serie
+  streakMultiplier: z.number(), // Angewandter Streak-Faktor
+  currentRank: z.number(), // Aktueller Rang
   previousRank: z.number().nullable(), // Rang nach vorheriger Frage (null bei 1. Frage)
-  rankChange: z.number(),            // Differenz (positiv = aufgestiegen)
-  totalScore: z.number(),            // Gesamtpunktzahl bisher
+  rankChange: z.number(), // Differenz (positiv = aufgestiegen)
+  totalScore: z.number(), // Gesamtpunktzahl bisher
   bonusToken: z.string().nullable().optional(), // Story 4.6: Token-Code (nur für Top-X, sonst null)
 });
 export type PersonalScorecardDTO = z.infer<typeof PersonalScorecardDTOSchema>;
@@ -589,9 +599,9 @@ export const TeamLeaderboardEntryDTOSchema = z.object({
   rank: z.number(),
   teamName: z.string(),
   teamColor: z.string().nullable(),
-  totalScore: z.number(),           // Summe aller Mitglieder-Scores
+  totalScore: z.number(), // Summe aller Mitglieder-Scores
   memberCount: z.number(),
-  averageScore: z.number(),         // Durchschnitt pro Mitglied
+  averageScore: z.number(), // Durchschnitt pro Mitglied
 });
 export type TeamLeaderboardEntryDTO = z.infer<typeof TeamLeaderboardEntryDTOSchema>;
 
@@ -656,16 +666,16 @@ const ExportedQuestionSchema = z.object({
   difficulty: DifficultyEnum,
   order: z.number(),
   answers: z.array(ExportedAnswerOptionSchema),
-  ratingMin: z.number().nullable().optional(),           // Nur bei RATING
-  ratingMax: z.number().nullable().optional(),           // Nur bei RATING
-  ratingLabelMin: z.string().nullable().optional(),      // Nur bei RATING
-  ratingLabelMax: z.string().nullable().optional(),      // Nur bei RATING
+  ratingMin: z.number().nullable().optional(), // Nur bei RATING
+  ratingMax: z.number().nullable().optional(), // Nur bei RATING
+  ratingLabelMin: z.string().nullable().optional(), // Nur bei RATING
+  ratingLabelMax: z.string().nullable().optional(), // Nur bei RATING
 });
 
 /** Schema für das gesamte Quiz-Export-Format */
 export const QuizExportSchema = z.object({
   exportVersion: z.number().int().min(1),
-  exportedAt: z.string(),         // ISO-8601 Timestamp
+  exportedAt: z.string(), // ISO-8601 Timestamp
   quiz: z.object({
     name: z.string().min(1).max(200),
     description: z.string().max(1000).optional(),
@@ -721,12 +731,12 @@ export type RatingResultDTO = z.infer<typeof RatingResultDTOSchema>;
 
 /** DTO: Einzelner Bonus-Token-Eintrag in der Dozenten-Liste */
 export const BonusTokenEntryDTOSchema = z.object({
-  token: z.string(),               // z.B. "BNS-A3F7-K2M9"
-  nickname: z.string(),            // Pseudonym (Snapshot)
-  quizName: z.string(),            // Quiz-Name (Snapshot)
-  totalScore: z.number(),          // Erreichte Gesamtpunktzahl
-  rank: z.number(),                // Platzierung (1-basiert)
-  generatedAt: z.string(),         // ISO-8601 Timestamp
+  token: z.string(), // z.B. "BNS-A3F7-K2M9"
+  nickname: z.string(), // Pseudonym (Snapshot)
+  quizName: z.string(), // Quiz-Name (Snapshot)
+  totalScore: z.number(), // Erreichte Gesamtpunktzahl
+  rank: z.number(), // Platzierung (1-basiert)
+  generatedAt: z.string(), // ISO-8601 Timestamp
 });
 export type BonusTokenEntryDTO = z.infer<typeof BonusTokenEntryDTOSchema>;
 
@@ -785,12 +795,12 @@ export type FreetextSessionExportDTO = z.infer<typeof FreetextSessionExportDTOSc
 /** Ein Eintrag pro Frage im Session-Export (aggregiert, keine Nicknames) */
 export const QuestionExportEntrySchema = z.object({
   questionOrder: z.number(),
-  questionTextShort: z.string(),       // z. B. erste 100 Zeichen des Fragenstamms
+  questionTextShort: z.string(), // z. B. erste 100 Zeichen des Fragenstamms
   type: QuestionTypeEnum,
-  participantCount: z.number(),        // Anzahl abgegebener Votes für diese Frage
+  participantCount: z.number(), // Anzahl abgegebener Votes für diese Frage
   optionDistribution: z.array(OptionDistributionEntrySchema).optional(), // MC/SC
   freetextAggregates: z.array(FreetextAggregateEntrySchema).optional(), // FREETEXT
-  ratingDistribution: z.record(z.string(), z.number()).optional(),       // RATING: "1" -> 5, "2" -> 12
+  ratingDistribution: z.record(z.string(), z.number()).optional(), // RATING: "1" -> 5, "2" -> 12
   ratingAverage: z.number().optional(),
   ratingStandardDeviation: z.number().optional(),
   averageScore: z.number().optional(), // Durchschnittspunkte (wenn gescored)
@@ -802,7 +812,7 @@ export const SessionExportDTOSchema = z.object({
   sessionId: z.uuid(),
   sessionCode: z.string(),
   quizName: z.string(),
-  finishedAt: z.string(),             // ISO-8601
+  finishedAt: z.string(), // ISO-8601
   participantCount: z.number(),
   questions: z.array(QuestionExportEntrySchema),
   bonusTokens: z.array(BonusTokenEntryDTOSchema).optional(), // optional einbeziehen (Pseudonyme)
@@ -849,11 +859,7 @@ export const AdminGetSessionDetailInputSchema = z.object({
 export type AdminGetSessionDetailInput = z.infer<typeof AdminGetSessionDetailInputSchema>;
 
 /** Recherchefenster laut Epic 9 (A/B/C). */
-export const AdminRetentionWindowEnum = z.enum([
-  'RUNNING',
-  'POST_SESSION_24H',
-  'PURGED',
-]);
+export const AdminRetentionWindowEnum = z.enum(['RUNNING', 'POST_SESSION_24H', 'PURGED']);
 export type AdminRetentionWindow = z.infer<typeof AdminRetentionWindowEnum>;
 
 /** Retention-Status inkl. optionalem Legal Hold. */
@@ -891,17 +897,23 @@ export type AdminSessionListDTO = z.infer<typeof AdminSessionListDTOSchema>;
 export const AdminSessionDetailDTOSchema = z.object({
   session: AdminSessionSummaryDTOSchema,
   title: z.string().nullable().optional(),
-  questions: z.array(z.object({
-    id: z.uuid(),
-    order: z.number().int().min(0),
-    text: z.string(),
-    type: QuestionTypeEnum,
-    answers: z.array(z.object({
-      id: z.uuid(),
-      text: z.string(),
-      isCorrect: z.boolean(),
-    })),
-  })).optional(),
+  questions: z
+    .array(
+      z.object({
+        id: z.uuid(),
+        order: z.number().int().min(0),
+        text: z.string(),
+        type: QuestionTypeEnum,
+        answers: z.array(
+          z.object({
+            id: z.uuid(),
+            text: z.string(),
+            isCorrect: z.boolean(),
+          }),
+        ),
+      }),
+    )
+    .optional(),
 });
 export type AdminSessionDetailDTO = z.infer<typeof AdminSessionDetailDTOSchema>;
 
@@ -1078,11 +1090,11 @@ export type ScFormat = z.infer<typeof ScFormatEnum>;
 
 /** Vorkonfigurierte Antwortoptionen pro SC-Format (Texte werden bei i18n lokalisiert) */
 export const SC_FORMAT_PRESETS: Record<ScFormat, { label: string; answers: string[] }> = {
-  YES_NO:            { label: 'Ja / Nein',              answers: ['Ja', 'Nein'] },
-  YES_NO_MAYBE:      { label: 'Ja / Nein / Vielleicht', answers: ['Ja', 'Nein', 'Vielleicht'] },
-  YES_NO_DONT_KNOW:  { label: 'Ja / Nein / Weiß nicht', answers: ['Ja', 'Nein', 'Weiß nicht'] },
-  TRUE_FALSE:        { label: 'Wahr / Falsch',          answers: ['Wahr', 'Falsch'] },
-  ABCD:              { label: 'A / B / C / D',          answers: ['A', 'B', 'C', 'D'] },
+  YES_NO: { label: 'Ja / Nein', answers: ['Ja', 'Nein'] },
+  YES_NO_MAYBE: { label: 'Ja / Nein / Vielleicht', answers: ['Ja', 'Nein', 'Vielleicht'] },
+  YES_NO_DONT_KNOW: { label: 'Ja / Nein / Weiß nicht', answers: ['Ja', 'Nein', 'Weiß nicht'] },
+  TRUE_FALSE: { label: 'Wahr / Falsch', answers: ['Wahr', 'Falsch'] },
+  ABCD: { label: 'A / B / C / D', answers: ['A', 'B', 'C', 'D'] },
 };
 
 /** Preset-Konfigurationen (Story 1.11) — clientseitig angewandt */
@@ -1094,7 +1106,7 @@ export const QUIZ_PRESETS: Record<QuizPreset, Partial<CreateQuizInput>> = {
     enableMotivationMessages: true,
     enableEmojiReactions: true,
     anonymousMode: false,
-    readingPhaseEnabled: false,    // Story 2.6: Schnelles Spieltempo
+    readingPhaseEnabled: false, // Story 2.6: Schnelles Spieltempo
   },
   SERIOUS: {
     showLeaderboard: false,
@@ -1103,8 +1115,8 @@ export const QUIZ_PRESETS: Record<QuizPreset, Partial<CreateQuizInput>> = {
     enableMotivationMessages: false,
     enableEmojiReactions: false,
     anonymousMode: true,
-    defaultTimer: null,          // Offene Antwortphase (kein Countdown)
-    readingPhaseEnabled: true,    // Story 2.6: Frage zuerst lesen
+    defaultTimer: null, // Offene Antwortphase (kein Countdown)
+    readingPhaseEnabled: true, // Story 2.6: Frage zuerst lesen
   },
 };
 
@@ -1115,11 +1127,7 @@ export const QUIZ_PRESETS: Record<QuizPreset, Partial<CreateQuizInput>> = {
 /** Aktuelle Export-Schema-Version für Preset-Dateien */
 export const PRESET_EXPORT_VERSION = 1;
 
-export const NameModeEnum = z.enum([
-  'nicknameTheme',
-  'allowCustomNicknames',
-  'anonymousMode',
-]);
+export const NameModeEnum = z.enum(['nicknameTheme', 'allowCustomNicknames', 'anonymousMode']);
 export type NameMode = z.infer<typeof NameModeEnum>;
 
 export const PresetStorageEntrySchema = z.object({

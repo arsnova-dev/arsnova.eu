@@ -13,6 +13,7 @@ import {
   PRESET_EXPORT_VERSION,
   PresetConfigExportSchema,
   PresetStorageEntrySchema,
+  DEFAULT_TEAM_COUNT,
   type NameMode as PresetNameMode,
   type NicknameTheme,
   type PresetConfigExport,
@@ -36,16 +37,66 @@ const PRESET_CATEGORIES = [
 type CategoryId = (typeof PRESET_CATEGORIES)[number]['id'];
 
 export const PRESET_OPTION_IDS = [
-  { id: 'showLeaderboard', label: $localize`Rangliste mit Punkten und Plätzen`, icon: 'leaderboard', categoryId: 'gamification' as CategoryId },
-  { id: 'enableRewardEffects', label: $localize`Effekte bei richtiger Antwort`, icon: 'auto_awesome', categoryId: 'gamification' as CategoryId },
-  { id: 'enableMotivationMessages', label: $localize`Anfeuerung nach jeder Antwort`, icon: 'campaign', categoryId: 'gamification' as CategoryId },
-  { id: 'enableEmojiReactions', label: $localize`Emoji-Reaktionen`, icon: 'emoji_emotions', categoryId: 'gamification' as CategoryId },
-  { id: 'bonusTokenCount', label: $localize`Bonus-Code für Top-Plätze`, icon: 'emoji_events', categoryId: 'gamification' as CategoryId },
-  { id: 'defaultTimer', label: $localize`Zeitlimit pro Frage`, icon: 'timer', categoryId: 'flow' as CategoryId },
-  { id: 'readingPhaseEnabled', label: $localize`Zuerst lesen, dann antworten`, icon: 'menu_book', categoryId: 'flow' as CategoryId },
-  { id: 'teamMode', label: $localize`In Teams spielen`, icon: 'groups', categoryId: 'team' as CategoryId },
-  { id: 'teamAssignment', label: $localize`Automatisch oder manuell zuweisen`, icon: 'shuffle', categoryId: 'team' as CategoryId },
-  { id: 'enableSoundEffects', label: $localize`Sounds bei Aktionen`, icon: 'volume_up', categoryId: 'audio' as CategoryId },
+  {
+    id: 'showLeaderboard',
+    label: $localize`Rangliste mit Punkten und Plätzen`,
+    icon: 'leaderboard',
+    categoryId: 'gamification' as CategoryId,
+  },
+  {
+    id: 'enableRewardEffects',
+    label: $localize`Effekte bei richtiger Antwort`,
+    icon: 'auto_awesome',
+    categoryId: 'gamification' as CategoryId,
+  },
+  {
+    id: 'enableMotivationMessages',
+    label: $localize`Anfeuerung nach jeder Antwort`,
+    icon: 'campaign',
+    categoryId: 'gamification' as CategoryId,
+  },
+  {
+    id: 'enableEmojiReactions',
+    label: $localize`Emoji-Reaktionen`,
+    icon: 'emoji_emotions',
+    categoryId: 'gamification' as CategoryId,
+  },
+  {
+    id: 'bonusTokenCount',
+    label: $localize`Bonus-Code für Top-Plätze`,
+    icon: 'emoji_events',
+    categoryId: 'gamification' as CategoryId,
+  },
+  {
+    id: 'defaultTimer',
+    label: $localize`Zeitlimit pro Frage`,
+    icon: 'timer',
+    categoryId: 'flow' as CategoryId,
+  },
+  {
+    id: 'readingPhaseEnabled',
+    label: $localize`Zuerst lesen, dann antworten`,
+    icon: 'menu_book',
+    categoryId: 'flow' as CategoryId,
+  },
+  {
+    id: 'teamMode',
+    label: $localize`In Teams spielen`,
+    icon: 'groups',
+    categoryId: 'team' as CategoryId,
+  },
+  {
+    id: 'teamAssignment',
+    label: $localize`Automatisch oder manuell zuweisen`,
+    icon: 'shuffle',
+    categoryId: 'team' as CategoryId,
+  },
+  {
+    id: 'enableSoundEffects',
+    label: $localize`Sounds bei Aktionen`,
+    icon: 'volume_up',
+    categoryId: 'audio' as CategoryId,
+  },
 ] as const;
 
 export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon: string }[] = [
@@ -56,7 +107,10 @@ export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon
   { value: 'HIGH_SCHOOL', label: $localize`Oberstufe`, icon: 'school' },
 ];
 
-export const TEAM_COUNT_OPTIONS = [2, 3, 4, 5, 6, 7, 8].map((n) => ({ value: n, label: $localize`:@@presetTeamCount:${n} Teams` }));
+export const TEAM_COUNT_OPTIONS = [2, 3, 4, 5, 6, 7, 8].map((n) => ({
+  value: n,
+  label: $localize`:@@presetTeamCount:${n} Teams`,
+}));
 
 export type NameMode = PresetNameMode;
 
@@ -120,7 +174,7 @@ export class PresetToastComponent implements OnInit {
   optionState = signal<PresetOptionState>({});
   nameMode = signal<NameMode>('nicknameTheme');
   nicknameThemeValue = signal<NicknameTheme>('NOBEL_LAUREATES');
-  teamCountValue = signal<number>(2);
+  teamCountValue = signal<number>(DEFAULT_TEAM_COUNT);
 
   toastTitle = signal('');
   toastIcon = signal('school');
@@ -161,7 +215,7 @@ export class PresetToastComponent implements OnInit {
 
   optionsByCategory = computed(() => {
     this.optionState();
-    const byCat = new Map<CategoryId, typeof PRESET_OPTION_IDS[number][]>();
+    const byCat = new Map<CategoryId, (typeof PRESET_OPTION_IDS)[number][]>();
     for (const opt of this.optionList) {
       const list = byCat.get(opt.categoryId) ?? [];
       list.push(opt);
@@ -232,7 +286,7 @@ export class PresetToastComponent implements OnInit {
     this.optionState.set(getPresetDefaults(preset));
     this.nameMode.set(preset === 'serious' ? 'anonymousMode' : 'nicknameTheme');
     this.nicknameThemeValue.set('NOBEL_LAUREATES');
-    this.teamCountValue.set(2);
+    this.teamCountValue.set(DEFAULT_TEAM_COUNT);
   }
 
   saveAndClose(): void {
@@ -246,7 +300,9 @@ export class PresetToastComponent implements OnInit {
       const key = PRESET_OPTIONS_STORAGE_PREFIX + this.themePreset.preset();
       localStorage.setItem(key, JSON.stringify(payload));
       globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
-    } catch { /* quota or unavailable */ }
+    } catch {
+      /* quota or unavailable */
+    }
     this.themePreset.setPreset(this.themePreset.preset());
     this.closed.emit();
   }
@@ -266,7 +322,9 @@ export class PresetToastComponent implements OnInit {
       };
       const parsed = PresetConfigExportSchema.safeParse(payload);
       if (!parsed.success) {
-        throw new Error(parsed.error.issues[0]?.message ?? $localize`Ungültige Preset-Exportdaten.`);
+        throw new Error(
+          parsed.error.issues[0]?.message ?? $localize`Ungültige Preset-Exportdaten.`,
+        );
       }
 
       const blob = new Blob([JSON.stringify(parsed.data, null, 2)], {
@@ -343,7 +401,7 @@ export class PresetToastComponent implements OnInit {
     this.toastHint.set(
       preset === 'serious'
         ? $localize`Anonym, ohne Wettbewerb, Fokus auf Inhalte.`
-        : $localize`Mit Rangliste, Sounds, Anfeuerung und Countdown auf allen Handys – für mehr Motivation.`
+        : $localize`Mit Rangliste, Sounds, Anfeuerung und Countdown auf allen Handys – für mehr Motivation.`,
     );
 
     const data = this.readStoredPreset(preset);
@@ -357,7 +415,7 @@ export class PresetToastComponent implements OnInit {
     let state: PresetOptionState = getPresetDefaults(preset);
     let nm: NameMode = preset === 'serious' ? 'anonymousMode' : 'nicknameTheme';
     let themeVal: NicknameTheme = 'NOBEL_LAUREATES';
-    let teamCount = 2;
+    let teamCount = DEFAULT_TEAM_COUNT;
 
     try {
       const key = PRESET_OPTIONS_STORAGE_PREFIX + preset;
@@ -392,5 +450,4 @@ export class PresetToastComponent implements OnInit {
       teamCountValue: teamCount,
     };
   }
-
 }
