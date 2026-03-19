@@ -46,7 +46,9 @@ describe('QuizListComponent', () => {
     originBrowserLabel: signal<string | null>(null),
     currentDeviceLabel: signal('Mac'),
     currentBrowserLabel: signal('Firefox'),
-    syncPeerInfos: signal<Array<{ deviceId: string; deviceLabel: string; browserLabel: string }>>([]),
+    syncPeerInfos: signal<Array<{ deviceId: string; deviceLabel: string; browserLabel: string }>>(
+      [],
+    ),
     duplicateQuiz: vi.fn(),
     deleteQuiz: vi.fn(),
     exportQuiz: vi.fn(),
@@ -96,8 +98,8 @@ describe('QuizListComponent', () => {
     const fixture = TestBed.createComponent(QuizListComponent);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Deine Quiz-Bibliothek ist noch leer.');
-    expect(fixture.nativeElement.textContent).toContain('Erstes Quiz erstellen');
+    expect(fixture.nativeElement.textContent).toContain('Willkommen in deiner Quiz-Bibliothek!');
+    expect(fixture.nativeElement.textContent).toContain('Eigenes Quiz erstellen');
   });
 
   it('zeigt den Sync-Button mit Hilfetext in der Bibliothek', () => {
@@ -166,22 +168,22 @@ describe('QuizListComponent', () => {
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
-    await (fixture.componentInstance as QuizListComponent & {
-      handleSyncImportNoticeIfRequested: () => Promise<void>;
-    }).handleSyncImportNoticeIfRequested();
+    await (
+      fixture.componentInstance as QuizListComponent & {
+        handleSyncImportNoticeIfRequested: () => Promise<void>;
+      }
+    ).handleSyncImportNoticeIfRequested();
 
     expect(snackBarOpenMock).toHaveBeenCalledTimes(1);
-    expect(snackBarOpenMock.mock.calls[0]?.[0]).toContain('Quiz-Bibliothek erfolgreich synchronisiert.');
-    expect(snackBarOpenMock.mock.calls[0]?.[0]).toContain('Neuester Stand vom');
-    expect(snackBarOpenMock).toHaveBeenCalledWith(
-      expect.any(String),
-      '',
-      {
-        duration: 9000,
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-      },
+    expect(snackBarOpenMock.mock.calls[0]?.[0]).toContain(
+      'Quiz-Bibliothek erfolgreich synchronisiert.',
     );
+    expect(snackBarOpenMock.mock.calls[0]?.[0]).toContain('Neuester Stand vom');
+    expect(snackBarOpenMock).toHaveBeenCalledWith(expect.any(String), '', {
+      duration: 9000,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+    });
   });
 
   it('zeigt gespeicherte Quizzes in der Liste', () => {
@@ -222,7 +224,9 @@ describe('QuizListComponent', () => {
     const fixture = TestBed.createComponent(QuizListComponent);
     fixture.detectChanges();
 
-    const description = fixture.nativeElement.querySelector('.quiz-list-item__description') as HTMLElement;
+    const description = fixture.nativeElement.querySelector(
+      '.quiz-list-item__description',
+    ) as HTMLElement;
     expect(description.innerHTML).toContain('<strong>Deep Learning</strong>');
   });
 
@@ -243,7 +247,9 @@ describe('QuizListComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const trigger = fixture.nativeElement.querySelector('.quiz-list-item__menu-trigger') as HTMLButtonElement;
+    const trigger = fixture.nativeElement.querySelector(
+      '.quiz-list-item__menu-trigger',
+    ) as HTMLButtonElement;
     trigger.click();
     fixture.detectChanges();
     await fixture.whenStable();
@@ -369,14 +375,12 @@ Viel Erfolg beim Import.`);
       .spyOn(fixture.componentInstance, 'openLiveStartDialog' as keyof QuizListComponent)
       .mockResolvedValue(undefined);
 
-    await (fixture.componentInstance as QuizListComponent & {
-      activateLiveStartShortcutIfRequested: () => Promise<void>;
-    }).activateLiveStartShortcutIfRequested();
+    await (
+      fixture.componentInstance as QuizListComponent & {
+        activateLiveStartShortcutIfRequested: () => Promise<void>;
+      }
+    ).activateLiveStartShortcutIfRequested();
 
-    expect(openSpy).toHaveBeenCalledWith(
-      'bb0cd69b-a0d2-4373-b83e-c1abb0a8b58a',
-      'Netzwerke',
-      3,
-    );
+    expect(openSpy).toHaveBeenCalledWith('bb0cd69b-a0d2-4373-b83e-c1abb0a8b58a', 'Netzwerke', 3);
   });
 });

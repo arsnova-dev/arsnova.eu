@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
+  DEMO_QUIZ_ID,
   QUIZ_STORAGE_KEY,
   QuizStoreService,
   type QuizDocument,
@@ -35,9 +36,10 @@ describe('QuizStoreService', () => {
     });
 
     expect(created.id).toBeTruthy();
-    expect(service.quizzes().length).toBe(1);
-    expect(service.quizzes()[0]?.name).toBe('Einführung Informatik');
-    expect(service.quizzes()[0]?.questionCount).toBe(0);
+    const userQuizzes = service.quizzes().filter((q) => q.id !== DEMO_QUIZ_ID);
+    expect(userQuizzes.length).toBe(1);
+    expect(userQuizzes[0]?.name).toBe('Einführung Informatik');
+    expect(userQuizzes[0]?.questionCount).toBe(0);
 
     const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
     expect(raw).toBeTruthy();
@@ -79,9 +81,10 @@ describe('QuizStoreService', () => {
 
     const service = TestBed.inject(QuizStoreService);
 
-    expect(service.quizzes().length).toBe(1);
-    expect(service.quizzes()[0]?.name).toBe('Vorlesung 1');
-    expect(service.quizzes()[0]?.questionCount).toBe(1);
+    const vorlesung = service.quizzes().find((q) => q.name === 'Vorlesung 1');
+    expect(vorlesung).toBeTruthy();
+    expect(service.quizzes().filter((q) => q.id !== DEMO_QUIZ_ID).length).toBe(1);
+    expect(vorlesung?.questionCount).toBe(1);
     expect(service.getQuizById('6b442f6f-2f8a-4bad-95da-69f5e9cd2649')?.questions.length).toBe(1);
   });
 
@@ -331,7 +334,7 @@ describe('QuizStoreService', () => {
 
     const service = TestBed.inject(QuizStoreService);
 
-    expect(service.quizzes()).toEqual([]);
+    expect(service.quizzes().filter((q) => q.id !== DEMO_QUIZ_ID)).toEqual([]);
   });
 
   it('setzt fehlende Einstellungen aus altem Storage auf Defaults', () => {

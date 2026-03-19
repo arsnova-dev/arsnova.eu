@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { QuizExport } from '@arsnova/shared-types';
-import { QUIZ_STORAGE_KEY, QuizStoreService } from './quiz-store.service';
+import { DEMO_QUIZ_ID, QUIZ_STORAGE_KEY, QuizStoreService } from './quiz-store.service';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 
 import singleChoiceQuiz from '../../../../../../../docs/examples/quiz-import/quiz-single-choice-realistisch.json';
@@ -93,7 +93,9 @@ describe('Quiz example imports (all formats)', () => {
             break;
           case 'MULTIPLE_CHOICE':
             expect(question.answers.length).toBeGreaterThanOrEqual(2);
-            expect(question.answers.filter((answer) => answer.isCorrect).length).toBeGreaterThanOrEqual(1);
+            expect(
+              question.answers.filter((answer) => answer.isCorrect).length,
+            ).toBeGreaterThanOrEqual(1);
             break;
           case 'SURVEY':
             expect(question.answers.length).toBeGreaterThanOrEqual(2);
@@ -113,7 +115,7 @@ describe('Quiz example imports (all formats)', () => {
       }
     }
 
-    expect(service.quizzes().length).toBe(fixtures.length);
+    expect(service.quizzes().filter((q) => q.id !== DEMO_QUIZ_ID).length).toBe(fixtures.length);
     expect(localStorage.getItem(QUIZ_STORAGE_KEY)).toBeTruthy();
   });
 

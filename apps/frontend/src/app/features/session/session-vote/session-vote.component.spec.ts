@@ -156,7 +156,13 @@ describe('SessionVoteComponent', () => {
     const fixture = TestBed.createComponent(SessionVoteComponent);
     fixture.detectChanges();
     await fixture.whenStable();
-    await (fixture.componentInstance as unknown as { loadTeamRewardState: () => Promise<void> }).loadTeamRewardState();
+    // refreshQuestion wird erst beim Polling (alle 2s) aufgerufen – manuell auslösen
+    await (
+      fixture.componentInstance as unknown as { refreshQuestion: () => Promise<void> }
+    ).refreshQuestion();
+    await (
+      fixture.componentInstance as unknown as { loadTeamRewardState: () => Promise<void> }
+    ).loadTeamRewardState();
     await new Promise((r) => setTimeout(r, 50));
     fixture.detectChanges();
 
