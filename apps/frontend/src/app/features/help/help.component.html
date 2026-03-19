@@ -1,6 +1,12 @@
 <div class="help-page l-page l-section">
   <nav class="content-back" aria-label="Navigation">
-    <button mat-button type="button" (click)="back()" i18n-aria-label="@@contentPage.backAria" aria-label="Zurück zur vorherigen Seite">
+    <button
+      mat-button
+      type="button"
+      (click)="back()"
+      i18n-aria-label="@@contentPage.backAria"
+      aria-label="Zurück zur vorherigen Seite"
+    >
       <mat-icon>arrow_back</mat-icon>
       <span i18n="@@contentPage.back">Zurück</span>
     </button>
@@ -8,115 +14,230 @@
   <article class="legal-article">
     <h1 i18n>Hilfe</h1>
     <p i18n>
-      arsnova.eu ist eine Plattform für Quiz und Q&A, Blitzlicht und Abstimmungen – ohne Anmeldung, direkt im Browser.
+      arsnova.eu unterstützt dich bei Quiz, Q&amp;A und Blitzlicht in Lehrveranstaltungen, Workshops
+      und Events. Ohne Anmeldung – du startest, deine Teilnehmenden machen mit.
     </p>
 
     <section class="help-section--demo">
-      <h2 i18n>Demo spielen</h2>
+      <h2 i18n>Demo-Quiz</h2>
       <p i18n="@@help.demoCardHint">
-        Auf der Startseite in der Karte <strong>Veranstaltung starten</strong> führt der Link <strong>Demo spielen</strong> in ein vorinstalliertes Beispiel-Quiz. Du siehst alle Frageformate (Multiple Choice, Freitext, Bewertungsskala usw.) inkl. KaTeX-Formeln und Markdown – ohne etwas anlegen zu müssen.
+        Ein vorinstalliertes Beispiel-Quiz zeigt alle Frageformate (Multiple Choice, Freitext,
+        Bewertungsskala usw.) inkl. KaTeX-Formeln und Markdown – ohne etwas anlegen zu müssen. Du
+        findest es in deiner Quiz-Bibliothek („Meine Quiz-Bibliothek") und kannst es dort in der
+        Vorschau öffnen.
       </p>
       <p i18n>
-        <strong>Onboarding:</strong> Die Demo eignet sich gut, um Teilnehmende vor der ersten echten Session mit der App vertraut zu machen. Einfach den Link oder „Demo spielen" weitergeben; sie klicken sich durch und lernen Ablauf und Oberfläche kennen.
+        <strong>Tipp:</strong> Gib deinen Teilnehmenden vor der ersten echten Session den Link zur
+        Vorschau – so lernen sie Ablauf und Oberfläche kennen, ohne Druck.
       </p>
-      <p i18n>Das Demo-Quiz liegt auch in deiner Quiz-Liste („Meine Quizze") und kann von dort aus in der Vorschau geöffnet werden.</p>
     </section>
 
     <section>
       <h2 i18n>Schnellstart</h2>
       <ol class="help-steps">
-        <li i18n><strong>Quiz erstellen:</strong> Auf der Startseite „Neues Quiz erstellen" wählen, Fragen anlegen und Einstellungen festlegen.</li>
-        <li i18n><strong>Code teilen:</strong> Nach dem Start siehst du den 6-stelligen Code; Teilnehmende geben ihn auf der Startseite ein oder scannen den QR-Code.</li>
-        <li i18n><strong>Live spielen:</strong> Fragen nacheinander freigeben, alle stimmen ab, Ergebnisse live anzeigen.</li>
+        <li i18n>
+          <strong>Quiz anlegen:</strong> „Meine Quiz-Bibliothek" öffnen, neues Quiz erstellen,
+          Fragen und Einstellungen festlegen.
+        </li>
+        <li i18n>
+          <strong>Veranstaltung starten:</strong> In der Bibliothek „Veranstaltung starten" wählen –
+          ein 6-stelliger Code entsteht. Code oder QR-Code mit deinen Teilnehmenden teilen.
+        </li>
+        <li i18n>
+          <strong>Live durchführen:</strong> Fragen nacheinander freigeben, abstimmen lassen,
+          Ergebnisse live anzeigen.
+        </li>
       </ol>
     </section>
 
     <section>
-      <h2 i18n="@@help.epic8Title">Neu seit Epic 8</h2>
+      <h2 i18n>Veranstaltung leiten</h2>
+      <p i18n="@@help.hostLead">
+        Du startest eine Live-Session, teilst den Code und steuerst Quiz, Q&amp;A und Blitzlicht.
+      </p>
       <ul>
-        <li i18n="@@help.epic8Unified"><strong>Ein Code, drei Live-Bereiche:</strong> Quiz, Q&amp;A und Blitzlicht laufen in einer gemeinsamen Veranstaltung.</li>
-        <li i18n="@@help.epic8Tabs"><strong>Kanalwechsel live:</strong> Host, Teilnehmende und Präsentationsansicht wechseln per Tabs zwischen den Bereichen.</li>
-        <li i18n="@@help.epic8Sound"><strong>Soundsteuerung im Host:</strong> Musik direkt während der Session an/aus schalten und Tracks auswählen.</li>
-        <li i18n="@@help.epic8Footer"><strong>Statushilfe im Footer:</strong> Ein Hilfe-Popup erklärt die Server-Statusanzeige und Kennzahlen.</li>
+        <li i18n="@@help.hostStartStep">
+          <strong>Session starten:</strong> In deiner Quiz-Bibliothek eine Veranstaltung starten und
+          festlegen, ob sie mit Quiz oder Q&amp;A beginnt. Dann entsteht ein 6-stelliger Code.
+        </li>
+        <li i18n>
+          <strong>Lobby:</strong> Du siehst, wer beigetreten ist; ein QR-Code zum Beitritt wird
+          angezeigt.
+        </li>
+        <li i18n>
+          <strong>Beamer-Ansicht:</strong> Große Darstellung von Frage, Antworten, Countdown und
+          Ergebnissen für die Projektion im Raum.
+        </li>
+        <li i18n>
+          <strong>Steuerung:</strong> Mit „Nächste Frage" blendest du die Frage ein. Optional zuerst
+          nur den Text (Lesephase), dann „Antworten freigeben", danach können alle abstimmen.
+          Anschließend „Ergebnis zeigen".
+        </li>
+        <li i18n>
+          <strong>Peer Instruction (Doppelrunden):</strong> Bei Quiz- und Blitzlicht-Fragen: Erst
+          abstimmen lassen → „Diskussionsphase" starten („Diskutiert mit eurem Nachbarn") → „Zweite
+          Abstimmung" – Vorher/Nachher-Vergleich zeigt, wie sich die Meinung durch den Austausch
+          verändert hat.
+        </li>
+        <li i18n>
+          <strong>Einstellungen:</strong> Beim Start legst du den Stil („Seriös" oder „Spielerisch")
+          und die Optionen fest (Rangliste, Sound, Lesephase, Team-Modus, Nicknamen, Timer). Deine
+          Teilnehmenden übernehmen automatisch dein Theme.
+        </li>
       </ul>
     </section>
 
     <section>
       <h2 i18n>Blitzlicht</h2>
-      <p i18n="@@help.quickFeedbackIntro">Schnelle Abstimmung als Live-Bereich in deiner Veranstaltung oder direkt von der Startseite.</p>
+      <p i18n="@@help.quickFeedbackIntro">
+        Schnelle Stimmungsabfragen – z. B. vor der Pause, zum Einstieg oder für spontane
+        Wissenschecks. Als Live-Bereich in deiner Veranstaltung oder direkt von der Startseite.
+      </p>
       <ul>
         <li i18n><strong>Stimmungsbild</strong> (😊😐😟): Wie geht es den Teilnehmenden?</li>
-        <li i18n><strong>Ja / Nein / Vielleicht</strong> (👍👎🤷): Schnelle Zustimmungs-Abfrage.</li>
-        <li i18n="@@help.quickFeedbackYesNo"><strong>Ja / Nein</strong> (👍👎): Klare Zwei-Optionen-Abfrage ohne Mittelweg.</li>
-        <li i18n="@@help.quickFeedbackTrueFalseUnknown"><strong>Wahr / Falsch / Weiß nicht</strong> (✔️✖️❔): Für schnelle Einschätzungen oder Wissenschecks.</li>
-        <li i18n="@@help.quickFeedbackAbc"><strong>ABC</strong> (A B C): Drei Antwortoptionen für spontane Auswahlfragen.</li>
-        <li i18n><strong>ABCD-Voting</strong> (A B C D): Vier Antwortoptionen, z. B. für spontane Quizfragen.</li>
+        <li i18n>
+          <strong>Ja / Nein / Vielleicht</strong> (👍👎🤷): Schnelle Zustimmungs-Abfrage.
+        </li>
+        <li i18n="@@help.quickFeedbackYesNo">
+          <strong>Ja / Nein</strong> (👍👎): Klare Zwei-Optionen-Abfrage ohne Mittelweg.
+        </li>
+        <li i18n="@@help.quickFeedbackTrueFalseUnknown">
+          <strong>Wahr / Falsch / Weiß nicht</strong> (✔️✖️❔): Für schnelle Einschätzungen oder
+          Wissenschecks.
+        </li>
+        <li i18n="@@help.quickFeedbackAbc">
+          <strong>ABC</strong> (A B C): Drei Antwortoptionen für spontane Auswahlfragen.
+        </li>
+        <li i18n>
+          <strong>ABCD-Voting</strong> (A B C D): Vier Antwortoptionen, z. B. für spontane
+          Quizfragen.
+        </li>
       </ul>
-      <p i18n="@@help.quickFeedbackStartFlow">Du startest die Runde im Host-Bereich deiner Live-Session oder direkt über die Blitzlicht-Karte auf der Startseite. Teilnehmende stimmen mit einem Tipp ab, und du siehst die Ergebnisse live als Balkendiagramm.</p>
+      <p i18n="@@help.quickFeedbackStartFlow">
+        Du startest die Runde im Host-Bereich deiner Live-Session oder direkt über die
+        Blitzlicht-Karte „Live starten" auf der Startseite. Deine Teilnehmenden stimmen mit einem
+        Tipp ab; du siehst die Ergebnisse live als Balkendiagramm.
+      </p>
       <ul>
-        <li i18n><strong>Stopp:</strong> Abstimmung einfrieren – Teilnehmende sehen „Abstimmung ist pausiert" und können nicht mehr abstimmen, bis du „Fortsetzen" wählst.</li>
-        <li i18n><strong>Zurücksetzen:</strong> Alle Stimmen löschen und erneut abstimmen lassen.</li>
-        <li i18n><strong>Neue Runde:</strong> Neuen Code erzeugen und eine frische Runde starten.</li>
-        <li i18n><strong>Link kopieren:</strong> Beitrittslink in die Zwischenablage kopieren, z. B. zum Teilen per Chat.</li>
+        <li i18n>
+          <strong>Peer Instruction (Doppelrunden):</strong> Erste Runde – Ergebnis nicht auflösen –
+          „Diskussionsphase" starten („Diskutiert mit eurem Nachbarn") – „Zweite Abstimmung".
+          Vorher/Nachher-Vergleich zeigt den Lerneffekt durch den Austausch.
+        </li>
+        <li i18n>
+          <strong>Stopp:</strong> Abstimmung einfrieren – Teilnehmende sehen „Abstimmung ist
+          pausiert" und können nicht mehr abstimmen, bis du „Fortsetzen" wählst.
+        </li>
+        <li i18n>
+          <strong>Zurücksetzen:</strong> Alle Stimmen löschen und erneut abstimmen lassen.
+        </li>
+        <li i18n>
+          <strong>Neue Runde:</strong> Neuen Code erzeugen und eine frische Runde starten.
+        </li>
+        <li i18n>
+          <strong>Link kopieren:</strong> Beitrittslink in die Zwischenablage kopieren, z. B. zum
+          Teilen per Chat.
+        </li>
       </ul>
     </section>
 
     <section>
-      <h2 i18n>Quiz veranstalten</h2>
-      <p i18n="@@help.hostLead">Du startest eine Live-Session, teilst den Code und steuerst Quiz, Q&amp;A und weitere Live-Bereiche.</p>
+      <h2 i18n>Für deine Teilnehmenden</h2>
+      <p i18n>So kannst du es deinen Teilnehmenden kurz erklären:</p>
       <ul>
-        <li i18n="@@help.hostStartStep"><strong>Session starten:</strong> In deiner Quiz-Bibliothek eine Veranstaltung starten und festlegen, ob sie mit Quiz oder Q&amp;A beginnt. Dann entsteht ein 6-stelliger Code.</li>
-        <li i18n><strong>Lobby:</strong> Du siehst, wer beigetreten ist; ein QR-Code zum Beitritt wird angezeigt.</li>
-        <li i18n><strong>Beamer-Ansicht:</strong> Große Darstellung von Frage, Antworten, Countdown und Ergebnissen für die Projektion im Raum.</li>
-        <li i18n><strong>Steuerung:</strong> Mit „Nächste Frage" blendest du die Frage ein. Optional zuerst nur den Text (Lesephase), dann „Antworten freigeben", danach können alle abstimmen. Anschließend „Ergebnis zeigen".</li>
-        <li i18n><strong>Einstellungen:</strong> Beim Start legst du den Stil („Seriös" oder „Spielerisch") und die Optionen fest (Rangliste, Sound, Lesephase, Team-Modus, Nicknamen, Timer). Teilnehmende übernehmen automatisch dein Theme und Preset.</li>
+        <li i18n>
+          <strong>Beitreten:</strong> 6-stelligen Code auf arsnova.eu eingeben und „Los geht's" –
+          funktioniert für Quiz, Q&amp;A und Blitzlicht. Keine Anmeldung nötig.
+        </li>
+        <li i18n>
+          <strong>Nicknamen:</strong> Je nach deiner Einstellung vorgegebene Namen, eigener Name
+          oder anonym.
+        </li>
+        <li i18n>
+          <strong>Abstimmung:</strong> Frage erscheint auf dem Gerät, Antwort wählen und absenden.
+          Bei Zeitlimit läuft ein Countdown.
+        </li>
       </ul>
     </section>
 
     <section>
-      <h2 i18n>Dabei sein</h2>
-      <p i18n>Ohne Anmeldung mit dem Code beitreten. Stil und Optionen gibt die Session vor.</p>
+      <h2 i18n>Meine Quiz-Bibliothek</h2>
+      <p i18n>Hier legst du deine Quizze an und bereitest sie vor.</p>
       <ul>
-        <li i18n><strong>Beitreten:</strong> 6-stelligen Code auf der Startseite eingeben und „Los geht's" tippen – funktioniert für Quiz- und Q&amp;A-Sessions sowie für Blitzlicht.</li>
-        <li i18n><strong>Nicknamen:</strong> Je nach Einstellung vorgegebene Namen (nach Altersgruppe), eigener Name oder anonym.</li>
-        <li i18n><strong>Abstimmung:</strong> Die aktuelle Frage erscheint auf deinem Gerät; du wählst eine oder mehrere Antworten und sendest ab. Bei Zeitlimit läuft ein Countdown.</li>
-        <li i18n><strong>Ergebnis:</strong> Nach der Auflösung siehst du, ob deine Antwort richtig war, bekommst Punkte und siehst deine Scorecard.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2 i18n>Meine Quizze</h2>
-      <p i18n>Unter „Meine Quizze" findest du alle lokal gespeicherten Quizze.</p>
-      <ul>
-        <li i18n><strong>Editor:</strong> Fragen per Drag-and-Drop sortieren, auf- und zuklappen, Vorschau mit Dot-Navigation.</li>
-        <li i18n><strong>Fragetypen:</strong> Multiple Choice, Single Choice, Freitext, Umfrage, Bewertungsskala – pro Frage optional mit Timer und Schwierigkeitsgrad.</li>
-        <li i18n><strong>Import / Export:</strong> Quiz als JSON importieren oder exportieren. Über den KI-Prompt kannst du ein Quiz mit deiner bevorzugten KI generieren und direkt importieren.</li>
-        <li i18n="@@help.demoQuizHint"><strong>Demo-Quiz:</strong> Ein vorinstalliertes Quiz zeigt alle Frageformate mit Beispielen inkl. KaTeX-Formeln und Markdown. Direkt von der Startseite über „Demo spielen" (Karte „Veranstaltung starten") oder in der Quiz-Bibliothek in der Vorschau öffnen.</li>
+        <li i18n>
+          <strong>Editor:</strong> Fragen per Drag-and-Drop sortieren, auf- und zuklappen, Vorschau
+          prüfen.
+        </li>
+        <li i18n>
+          <strong>Fragetypen:</strong> Multiple Choice, Single Choice, Freitext, Umfrage,
+          Bewertungsskala – pro Frage optional mit Timer und Schwierigkeitsgrad.
+        </li>
+        <li i18n>
+          <strong>Import / Export:</strong> Quiz als JSON importieren oder exportieren. Über den
+          KI-Prompt kannst du ein Quiz mit deiner bevorzugten KI generieren und direkt importieren –
+          deine Lehrmaterialien werden nicht an arsnova.eu gesendet, du nutzt deine eigene KI.
+        </li>
+        <li i18n>
+          <strong>Sync:</strong> Mit Sync-ID oder Sync-Link die Bibliothek mit Kolleg:innen teilen
+          oder auf anderen Geräten weiterarbeiten.
+        </li>
+        <li i18n="@@help.demoQuizHint">
+          <strong>Demo-Quiz:</strong> Ein vorinstalliertes Quiz zeigt alle Frageformate mit
+          Beispielen inkl. KaTeX-Formeln und Markdown. In der Quiz-Bibliothek in der Vorschau
+          öffnen.
+        </li>
       </ul>
     </section>
 
     <section>
       <h2 i18n>Seriös und Spielerisch</h2>
-      <p i18n>Zwei Voreinstellungen, wählbar auf der Startseite und in den Quiz-Einstellungen.</p>
+      <p i18n>
+        Zwei Stile für unterschiedliche Situationen – wählbar auf der Startseite und beim
+        Session-Start.
+      </p>
       <ul>
-        <li i18n><strong>Seriös:</strong> Anonym, ohne Rangliste, Fokus auf den Inhalt – ideal für Feedback und Abstimmungen.</li>
-        <li i18n><strong>Spielerisch:</strong> Mit Rangliste, Sounds, Anfeuerung und Effekten – ideal für Quiz-Wettbewerbe.</li>
+        <li i18n>
+          <strong>Seriös:</strong> Anonym, ohne Rangliste – ideal für formative Assessments,
+          Prüfungsvorbereitung und sensible Themen.
+        </li>
+        <li i18n>
+          <strong>Spielerisch:</strong> Mit Rangliste, Sounds und Anfeuerung – ideal für
+          Auflockerung, Wettbewerbe und motivierende Quizze.
+        </li>
       </ul>
-      <p i18n>Alle Optionen (Rangliste, Sound, Lesephase, Team, Bonus) lassen sich einzeln an- und ausschalten.</p>
+      <p i18n>
+        Alle Optionen (Rangliste, Sound, Lesephase, Team, Bonus) lassen sich einzeln an- und
+        ausschalten.
+      </p>
     </section>
 
     <section>
       <h2 i18n>Weitere Funktionen</h2>
       <ul>
-        <li i18n><strong>Bonus-Option:</strong> Top-Platzierte erhalten einen einlösbaren Code (z. B. für Bonuspunkte). Du kannst die Code-Liste einsehen; personenbezogene Daten werden nicht gespeichert.</li>
-        <li i18n><strong>Team-Modus:</strong> Teilnehmende spielen in Teams mit eigenem Team-Leaderboard.</li>
-        <li i18n><strong>Gamification:</strong> Sound-Effekte, Belohnungseffekte für Top-Plätze, Motivationsmeldungen.</li>
+        <li i18n>
+          <strong>Bonus-Codes:</strong> Top-Platzierte erhalten einen einlösbaren Code (z. B. für
+          Bonuspunkte). Du siehst die Code-Liste; personenbezogene Daten werden nicht gespeichert.
+        </li>
+        <li i18n>
+          <strong>Team-Modus:</strong> Deine Teilnehmenden spielen in Teams mit eigenem
+          Team-Leaderboard – z. B. für Gruppenwettbewerbe im Seminar.
+        </li>
+        <li i18n>
+          <strong>Gamification:</strong> Sound-Effekte, Belohnungseffekte für Top-Plätze,
+          Motivationsmeldungen – im Spielerisch-Modus.
+        </li>
       </ul>
     </section>
 
     <section>
       <h2 i18n>Datenschutz und Technik</h2>
-      <p i18n>arsnova.eu ist kostenlos, Open Source und DSGVO-konform. Quiz-Inhalte werden lokal im Browser gespeichert (Local-First). Blitzlicht-Runden laufen über Redis und verfallen automatisch nach 30 Minuten. Keine Anmeldung nötig.</p>
+      <p i18n>
+        arsnova.eu ist kostenlos, Open Source und 100&nbsp;% DSGVO-konform – geeignet für Schulen,
+        Unis und Events. Quiz-Inhalte werden lokal im Browser gespeichert. Keine Anmeldung nötig,
+        weder für dich noch für deine Teilnehmenden. Als App installierbar (PWA) – z.&nbsp;B. für
+        schnelleren Start auf dem Smartphone. Verfügbar auf Deutsch, Englisch, Französisch, Spanisch
+        und Italienisch.
+      </p>
     </section>
   </article>
 </div>
