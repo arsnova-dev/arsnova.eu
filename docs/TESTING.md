@@ -10,13 +10,13 @@
 
 ## NPM-Skripte (Root)
 
-| Befehl                 | Bedeutung                                              |
-| ---------------------- | ------------------------------------------------------ |
-| `npm run build`        | `shared-types` → Backend `tsc` → Frontend `ng build`   |
-| `npm run typecheck`    | Backend + Frontend `tsc --noEmit`                      |
-| `npm run lint`         | ESLint über `libs/` und `apps/`                        |
-| `npm test`             | **Backend** Vitest + **Frontend** Vitest (sequentiell) |
-| `npm run format:check` | Prettier (ohne Schreiben)                              |
+| Befehl                 | Bedeutung                                                             |
+| ---------------------- | --------------------------------------------------------------------- |
+| `npm run build`        | `shared-types` → Backend `tsc` → Frontend `ng build`                  |
+| `npm run typecheck`    | `shared-types` bauen (`dist`), dann Backend + Frontend `tsc --noEmit` |
+| `npm run lint`         | ESLint über `libs/` und `apps/`                                       |
+| `npm test`             | **Backend** Vitest + **Frontend** Vitest (sequentiell)                |
+| `npm run format:check` | Prettier (ohne Schreiben)                                             |
 
 Workspace-spezifisch:
 
@@ -24,6 +24,8 @@ Workspace-spezifisch:
 | ------------------- | -------------------------------------------------- | ---------------------------------------- |
 | `@arsnova/backend`  | `npm run test -w @arsnova/backend` (`vitest run`)  | `npm run typecheck -w @arsnova/backend`  |
 | `@arsnova/frontend` | `npm run test -w @arsnova/frontend` (`vitest run`) | `npm run typecheck -w @arsnova/frontend` |
+
+`npm run typecheck -w @arsnova/backend` setzt ein gebautes `@arsnova/shared-types` (`libs/shared-types/dist`) voraus; das Root-Skript `npm run typecheck` baut die Library zuerst.
 
 ---
 
@@ -34,7 +36,7 @@ Auslöser: **Push** und **Pull Request** auf `main`.
 | Job / Phase                                | Inhalt                                                                                                                           |
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | **build** (Node 22)                        | `npm ci` → `prisma validate` → `prisma generate` → `tsc -b apps/backend` → Frontend `tsc --noEmit` → `build:localize` (Frontend) |
-| **typecheck** (Node 22, parallel zu build) | `npm ci` → `prisma validate` → `prisma generate` → `npm run typecheck` (Workspaces, `--noEmit`)                                  |
+| **typecheck** (Node 22, parallel zu build) | `npm ci` → `prisma validate` → `prisma generate` → `npm run typecheck` (inkl. `build` für `shared-types`, dann `--noEmit`)       |
 | **lint**                                   | `npm run lint` (nach build)                                                                                                      |
 | **audit**                                  | `npm audit --audit-level=high` (informational, blockiert nicht)                                                                  |
 | **test**                                   | `npm test` (nach build)                                                                                                          |
