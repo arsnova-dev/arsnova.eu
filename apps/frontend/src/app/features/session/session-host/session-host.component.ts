@@ -31,7 +31,9 @@ import {
   MatCardTitle,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { firstValueFrom } from 'rxjs';
@@ -177,7 +179,10 @@ function musicTracksForPhase(
     MatCardHeader,
     MatCardSubtitle,
     MatCardTitle,
+    MatFormField,
     MatIcon,
+    MatInput,
+    MatLabel,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
@@ -206,6 +211,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly qaSeenQuestionIds = signal<Set<string>>(new Set());
   readonly qaScrolledDown = signal(false);
   @ViewChild('qaListContainer') qaListContainerRef?: ElementRef<HTMLElement>;
+  @ViewChild('qaTitleInput') qaTitleInputRef?: ElementRef<HTMLInputElement>;
   @ViewChild('hostJoinMenuTrigger', { read: MatMenuTrigger })
   hostJoinMenuTrigger?: MatMenuTrigger;
   readonly qaHighlightedQuestionIds = signal<Set<string>>(new Set());
@@ -373,6 +379,14 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.session()?.title ??
       $localize`:@@sessionTabs.qaTitleDefault:Fragen zur Veranstaltung...`,
   );
+  readonly qaTitleDraft = signal('');
+  readonly qaTitleEditing = signal(false);
+  readonly qaTitleSaving = signal(false);
+  readonly qaTitleSaveDisabled = computed(() => {
+    const server = (this.session()?.channels?.qa?.title ?? '').trim();
+    const draft = this.qaTitleDraft().trim();
+    return draft === server || this.qaTitleSaving();
+  });
   readonly qaShowPinnedOnly = signal(false);
   readonly qaFilteredQuestions = computed(() => {
     const all = this.qaQuestions();
@@ -658,6 +672,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     try {
       const session = await trpc.session.getInfo.query({ code: this.code.toUpperCase() });
       this.session.set(session);
+      this.syncQaTitleDraftFromSession();
       await this.refreshParticipantsPayload();
       await this.refreshLobbyTeams();
       await this.refreshQaQuestions();
@@ -1413,8 +1428,84 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   selectChannel(channel: string): void {
     if (channel === 'quiz' || channel === 'qa' || channel === 'quickFeedback') {
+      const prev = this.activeChannel();
+      if (prev === 'qa' && channel !== 'qa') {
+        this.qaTitleEditing.set(false);
+      }
       this.activeChannel.set(channel);
+      if (channel === 'qa') {
+        this.qaTitleEditing.set(false);
+        this.syncQaTitleDraftFromSession();
+      }
       this.ensureActiveChannel();
+    }
+  }
+
+  private syncQaTitleDraftFromSession(): void {
+    this.qaTitleDraft.set(this.session()?.channels?.qa?.title ?? '');
+  }
+
+  startQaTitleEdit(): void {
+    this.syncQaTitleDraftFromSession();
+    this.qaTitleEditing.set(true);
+    afterNextRender(
+      () => {
+        const el = this.qaTitleInputRef?.nativeElement;
+        el?.focus();
+        el?.select();
+      },
+      { injector: this.injector },
+    );
+  }
+
+  cancelQaTitleEdit(): void {
+    this.syncQaTitleDraftFromSession();
+    this.qaTitleEditing.set(false);
+  }
+
+  onQaTitleInputKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      void this.saveQaHostTitle();
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cancelQaTitleEdit();
+    }
+  }
+
+  async saveQaHostTitle(): Promise<void> {
+    if (this.qaTitleSaveDisabled() || !this.code) {
+      return;
+    }
+    this.qaTitleSaving.set(true);
+    this.qaError.set(null);
+    try {
+      const result = await trpc.session.updateQaTitle.mutate({
+        code: this.code.toUpperCase(),
+        qaTitle: this.qaTitleDraft().trim() || undefined,
+      });
+      const displayTitle = result.qaTitle ?? result.title ?? null;
+      this.session.update((s) => {
+        if (!s?.channels) return s;
+        return {
+          ...s,
+          title: s.type === 'Q_AND_A' ? result.title : s.title,
+          channels: {
+            ...s.channels,
+            qa: { ...s.channels.qa, title: displayTitle },
+          },
+        };
+      });
+      this.syncQaTitleDraftFromSession();
+      this.qaTitleEditing.set(false);
+    } catch {
+      this.qaError.set(
+        $localize`:@@sessionHost.qaTitleSaveError:Titel konnte nicht gespeichert werden.`,
+      );
+    } finally {
+      this.qaTitleSaving.set(false);
     }
   }
 

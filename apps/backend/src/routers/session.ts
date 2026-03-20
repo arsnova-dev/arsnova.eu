@@ -41,6 +41,8 @@ import {
   type RoundDistributionEntry,
   type VoterMigrationEntry,
   UpdateSessionPresetInputSchema,
+  UpdateSessionQaTitleInputSchema,
+  UpdateSessionQaTitleOutputSchema,
   SendEmojiReactionInputSchema,
   EMOJI_REACTIONS,
   DEFAULT_TEAM_COUNT,
@@ -716,6 +718,40 @@ export const sessionRouter = router({
         data: { preset: input.preset },
       });
       return { preset: input.preset };
+    }),
+
+  /** Q&A-Kanaltitel ändern (Host; Teilnehmende sehen den Titel beim nächsten getInfo-Poll). */
+  updateQaTitle: publicProcedure
+    .input(UpdateSessionQaTitleInputSchema)
+    .output(UpdateSessionQaTitleOutputSchema)
+    .mutation(async ({ input }) => {
+      const code = input.code.toUpperCase();
+      const session = await prisma.session.findUnique({
+        where: { code },
+        select: { id: true, type: true, qaEnabled: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      const qaActive = session.type === 'Q_AND_A' || session.qaEnabled === true;
+      if (!qaActive) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Q&A-Kanal ist nicht aktiv.' });
+      }
+      const trimmed = input.qaTitle?.trim() ?? '';
+      const value = trimmed.length > 0 ? trimmed.slice(0, 200) : null;
+      const data: { qaTitle: string | null; title?: string | null } = { qaTitle: value };
+      if (session.type === 'Q_AND_A') {
+        data.title = value;
+      }
+      const updated = await prisma.session.update({
+        where: { id: session.id },
+        data,
+        select: { qaTitle: true, title: true },
+      });
+      return {
+        qaTitle: updated.qaTitle,
+        title: updated.title,
+      };
     }),
 
   onStatusChanged: publicProcedure.input(GetSessionInfoInputSchema).subscription(async function* ({

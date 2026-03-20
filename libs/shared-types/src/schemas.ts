@@ -246,6 +246,20 @@ export const UpdateSessionPresetInputSchema = z.object({
 });
 export type UpdateSessionPresetInput = z.infer<typeof UpdateSessionPresetInputSchema>;
 
+/** Input: Q&A-Kanaltitel zur Laufzeit setzen (Host, ADR-0009). */
+export const UpdateSessionQaTitleInputSchema = z.object({
+  code: z.string().length(6),
+  /** Leer oder weglassen → in der DB null (Anzeige-Default im Client). */
+  qaTitle: z.string().trim().max(200).optional(),
+});
+export type UpdateSessionQaTitleInput = z.infer<typeof UpdateSessionQaTitleInputSchema>;
+
+export const UpdateSessionQaTitleOutputSchema = z.object({
+  qaTitle: z.string().nullable(),
+  title: z.string().nullable(),
+});
+export type UpdateSessionQaTitleOutput = z.infer<typeof UpdateSessionQaTitleOutputSchema>;
+
 /** Output: Status-Update nach nextQuestion / revealAnswers / revealResults (Story 2.3, 3.5). */
 export const SessionStatusUpdateSchema = z.object({
   status: SessionStatusEnum,

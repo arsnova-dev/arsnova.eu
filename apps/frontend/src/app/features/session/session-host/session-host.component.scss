@@ -283,6 +283,70 @@
   gap: 1rem;
 }
 
+.session-channel-card__header--qa-title {
+  align-items: stretch;
+}
+
+.session-host__qa-title-block {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.session-host__qa-title-view {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.session-host__qa-title-heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.session-host__qa-title-edit-btn {
+  flex-shrink: 0;
+  color: var(--mat-sys-on-surface-variant);
+  opacity: 0.62;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      opacity 140ms ease,
+      color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  &:hover {
+    opacity: 1;
+    color: var(--mat-sys-on-surface);
+  }
+}
+
+.session-host__qa-title-edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.35rem 0.5rem;
+}
+
+.session-host__qa-title-field {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.session-host__qa-title-icon-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.1rem;
+}
+
+.session-host__qa-title-confirm-btn .mat-icon {
+  font-weight: 600;
+}
+
 .session-channel-card__eyebrow {
   margin: 0;
   font: var(--mat-sys-label-large);

@@ -1386,10 +1386,74 @@
             <mat-card-content
               class="session-channel-card__content session-channel-card__content--left"
             >
-              <div class="session-channel-card__header">
-                <div>
+              <div class="session-channel-card__header session-channel-card__header--qa-title">
+                <div class="session-host__qa-title-block">
                   <p class="session-channel-card__eyebrow">{{ channelLabel('qa') }}</p>
-                  <h2 class="session-channel-card__title">{{ qaHeading() }}</h2>
+                  @if (!qaTitleEditing()) {
+                    <div class="session-host__qa-title-view">
+                      <h2 class="session-channel-card__title session-host__qa-title-heading">
+                        {{ qaHeading() }}
+                      </h2>
+                      <button
+                        mat-icon-button
+                        type="button"
+                        class="session-host__qa-title-edit-btn"
+                        (click)="startQaTitleEdit()"
+                        i18n-aria-label="@@sessionHost.qaTitleEditAria"
+                        aria-label="Q&amp;A-Titel bearbeiten"
+                      >
+                        <mat-icon aria-hidden="true">edit</mat-icon>
+                      </button>
+                    </div>
+                  } @else {
+                    <div class="session-host__qa-title-edit">
+                      <mat-form-field
+                        appearance="outline"
+                        subscriptSizing="dynamic"
+                        class="session-host__qa-title-field"
+                      >
+                        <mat-label i18n="@@sessionHost.qaTitleFieldLabel"
+                          >Titel für Q&amp;A</mat-label
+                        >
+                        <input
+                          #qaTitleInput
+                          matInput
+                          type="text"
+                          maxlength="200"
+                          [value]="qaTitleDraft()"
+                          (input)="qaTitleDraft.set($any($event.target).value)"
+                          (keydown)="onQaTitleInputKeydown($event)"
+                          i18n-placeholder="@@sessionTabs.qaTitleDefault"
+                          placeholder="Fragen zur Veranstaltung..."
+                        />
+                      </mat-form-field>
+                      <div class="session-host__qa-title-icon-actions">
+                        <button
+                          mat-icon-button
+                          type="button"
+                          color="primary"
+                          class="session-host__qa-title-confirm-btn"
+                          [disabled]="qaTitleSaveDisabled()"
+                          (click)="saveQaHostTitle()"
+                          i18n-aria-label="@@sessionHost.qaTitleConfirmAria"
+                          aria-label="Titel speichern"
+                        >
+                          <mat-icon aria-hidden="true">check</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          type="button"
+                          class="session-host__qa-title-discard-btn"
+                          [disabled]="qaTitleSaving()"
+                          (click)="cancelQaTitleEdit()"
+                          i18n-aria-label="@@sessionHost.qaTitleDiscardAria"
+                          aria-label="Bearbeiten abbrechen"
+                        >
+                          <mat-icon aria-hidden="true">close</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  }
                 </div>
               </div>
 

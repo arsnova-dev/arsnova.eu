@@ -10,9 +10,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
 
 export interface LiveSessionDialogData {
   quizName: string;
@@ -30,17 +28,7 @@ export interface LiveSessionDialogResult {
 @Component({
   selector: 'app-live-session-dialog',
   standalone: true,
-  imports: [
-    MatButton,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogContent,
-    MatDialogTitle,
-    MatFormField,
-    MatIcon,
-    MatInput,
-    MatLabel,
-  ],
+  imports: [MatButton, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle, MatIcon],
   template: `
     <h2 mat-dialog-title>
       <span class="live-session-dialog__title-content">
@@ -156,25 +144,6 @@ export interface LiveSessionDialogResult {
             </span>
           </button>
         </div>
-
-        @if (enableQa()) {
-          <div class="live-session-dialog__field-row">
-            <mat-form-field appearance="outline" class="live-session-dialog__field">
-              <mat-label i18n="@@quizList.liveDialog.qaTitleLabel"
-                >Q&amp;A-Titel (optional)</mat-label
-              >
-              <input
-                matInput
-                type="text"
-                maxlength="200"
-                [value]="qaTitle()"
-                (input)="qaTitle.set($any($event.target).value)"
-                i18n-placeholder="@@sessionTabs.qaTitleDefault"
-                placeholder="Fragen zur Veranstaltung..."
-              />
-            </mat-form-field>
-          </div>
-        }
       </div>
     </mat-dialog-content>
 
@@ -361,15 +330,6 @@ export interface LiveSessionDialogResult {
         transform: translateX(1.02rem);
       }
 
-      .live-session-dialog__field-row {
-        padding-inline: 0;
-      }
-
-      .live-session-dialog__field {
-        width: 100%;
-        margin-top: 0.15rem;
-      }
-
       mat-dialog-actions {
         margin-top: 0.25rem;
         border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 28%, transparent);
@@ -432,7 +392,6 @@ export class LiveSessionDialogComponent {
   readonly enableQuiz = signal(this.data.quizCanStart);
   readonly enableQa = signal(true);
   readonly enableQuickFeedback = signal(true);
-  readonly qaTitle = signal('');
   readonly startChannel = signal<'quiz' | 'qa' | 'quickFeedback'>(
     this.data.quizCanStart ? 'quiz' : 'qa',
   );
@@ -562,14 +521,9 @@ export class LiveSessionDialogComponent {
 
     this.dialogRef.close({
       startChannel: this.startChannel(),
-      startMode: this.enableQuiz() ? 'QUIZ' : 'Q_AND_A',
       enableQuiz: this.enableQuiz(),
       enableQa: this.enableQa(),
       enableQuickFeedback: this.enableQuickFeedback(),
-      title: this.enableQa()
-        ? this.qaTitle().trim() ||
-          $localize`:@@sessionTabs.qaTitleDefault:Fragen zur Veranstaltung...`
-        : undefined,
     });
   }
 

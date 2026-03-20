@@ -268,7 +268,6 @@ export class QuizPreviewComponent implements OnDestroy {
       includeQuiz: result.enableQuiz,
       includeQa: result.enableQa,
       includeQuickFeedback: result.enableQuickFeedback,
-      qaTitle: result.title,
       startWithQa: result.startChannel === 'qa',
       initialTab: result.startChannel,
     });
@@ -536,7 +535,6 @@ export class QuizPreviewComponent implements OnDestroy {
     includeQuiz: boolean;
     includeQa: boolean;
     includeQuickFeedback: boolean;
-    qaTitle?: string;
     startWithQa: boolean;
     initialTab: 'quiz' | 'qa' | 'quickFeedback';
   }): Promise<void> {
@@ -595,13 +593,11 @@ export class QuizPreviewComponent implements OnDestroy {
           quizId: uploadedQuizId,
           type: 'QUIZ',
           qaEnabled: options.includeQa,
-          qaTitle: options.includeQa ? options.qaTitle?.trim() || undefined : undefined,
           quickFeedbackEnabled: options.includeQuickFeedback,
         });
       } else {
         result = await trpc.session.create.mutate({
           type: 'Q_AND_A',
-          title: options.qaTitle?.trim() || undefined,
           quickFeedbackEnabled: options.includeQuickFeedback,
         });
       }

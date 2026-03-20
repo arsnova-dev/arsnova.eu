@@ -504,7 +504,6 @@ export class QuizListComponent implements OnInit {
       includeQuiz: result.enableQuiz,
       includeQa: result.enableQa,
       includeQuickFeedback: result.enableQuickFeedback,
-      qaTitle: result.title,
       startWithQa: result.startChannel === 'qa',
       initialTab: result.startChannel,
     });
@@ -634,7 +633,6 @@ export class QuizListComponent implements OnInit {
     includeQuiz: boolean;
     includeQa: boolean;
     includeQuickFeedback: boolean;
-    qaTitle?: string;
     startWithQa: boolean;
     initialTab: 'quiz' | 'qa' | 'quickFeedback';
   }): Promise<void> {
@@ -693,13 +691,11 @@ export class QuizListComponent implements OnInit {
           quizId: uploadedQuizId,
           type: 'QUIZ',
           qaEnabled: options.includeQa,
-          qaTitle: options.includeQa ? options.qaTitle?.trim() || undefined : undefined,
           quickFeedbackEnabled: options.includeQuickFeedback,
         });
       } else {
         result = await trpc.session.create.mutate({
           type: options.includeQa ? 'Q_AND_A' : 'QUIZ',
-          title: options.includeQa ? options.qaTitle?.trim() || undefined : undefined,
           quickFeedbackEnabled: options.includeQuickFeedback,
         });
       }
