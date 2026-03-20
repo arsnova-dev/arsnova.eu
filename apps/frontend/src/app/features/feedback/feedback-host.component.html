@@ -1,11 +1,19 @@
 @if (showEmbeddedEmptyState()) {
-  <mat-card appearance="outlined" class="session-channel-card app-live-channel-shell" [class.session-channel-card--embedded-feedback]="embeddedInSession()">
+  <mat-card
+    appearance="outlined"
+    class="session-channel-card app-live-channel-shell"
+    [class.session-channel-card--embedded-feedback]="embeddedInSession()"
+  >
     <mat-card-content class="session-channel-card__content">
       <mat-icon class="session-channel-card__icon" aria-hidden="true">bolt</mat-icon>
       <p class="session-channel-card__eyebrow" i18n="@@sessionTabs.quickFeedback">Blitzlicht</p>
-      <h2 class="session-channel-card__title" i18n="@@sessionTabs.quickFeedbackHostTitle">Blitzlicht direkt starten</h2>
+      @if (!embeddedInSession()) {
+        <h2 class="session-channel-card__title" i18n="@@sessionTabs.quickFeedbackHostTitle">
+          Blitzlicht direkt starten
+        </h2>
+      }
       <p class="session-channel-card__text" i18n="@@sessionTabs.quickFeedbackHostPlaceholder">
-        Wähle ein Format und hole dir in Sekunden ein Stimmungsbild aus der Gruppe.
+        Wähle ein Format – in Sekunden siehst du die Stimmung.
       </p>
       <div class="feedback-host__template-switch">
         @for (chip of presetChips; track chip.type) {
@@ -43,132 +51,356 @@
 } @else if (error(); as err) {
   <mat-card appearance="outlined" class="feedback-host__error" role="alert">
     <mat-card-content class="feedback-host__state">
-      <mat-icon class="feedback-host__state-icon feedback-host__state-icon--error">error_outline</mat-icon>
+      <mat-icon class="feedback-host__state-icon feedback-host__state-icon--error"
+        >error_outline</mat-icon
+      >
       <p class="feedback-host__state-text">{{ err }}</p>
     </mat-card-content>
   </mat-card>
 } @else if (result(); as data) {
-  <div class="feedback-host app-live-channel-shell" [class.feedback-host--embedded]="embeddedInSession()">
+  <div
+    class="feedback-host app-live-channel-shell"
+    [class.feedback-host--embedded]="embeddedInSession()"
+  >
     <div class="feedback-host__wrapper">
-    <section class="feedback-host__join" [class.feedback-host__join--embedded]="embeddedInSession()">
-      @if (!embeddedInSession()) {
-        @if (qrDataUrl()) {
-          <img
-            [src]="qrDataUrl()"
-            i18n-alt
-            alt="QR-Code zum Beitreten"
-            class="feedback-host__qr app-qr-image"
-            width="320"
-            height="320"
-          />
+      <section
+        class="feedback-host__join"
+        [class.feedback-host__join--embedded]="embeddedInSession()"
+      >
+        @if (!embeddedInSession()) {
+          @if (qrDataUrl()) {
+            <img
+              [src]="qrDataUrl()"
+              i18n-alt
+              alt="QR-Code zum Beitreten"
+              class="feedback-host__qr app-qr-image"
+              width="320"
+              height="320"
+            />
+          }
+          <p class="feedback-host__code">{{ code() }}</p>
+          <p class="feedback-host__url">{{ joinUrl }}</p>
         }
-        <p class="feedback-host__code">{{ code() }}</p>
-        <p class="feedback-host__url">{{ joinUrl }}</p>
-      }
-      <div class="feedback-host__actions">
-        @if (isDiscussion()) {
-          <button
-            mat-flat-button
-            color="primary"
-            type="button"
-            class="feedback-host__next-round-cta"
-            (click)="startSecondRound()"
-            i18n-aria-label
-            aria-label="Zweite Abstimmung starten"
-          >
-            <mat-icon>replay</mat-icon>
-            <span i18n>Zweite Abstimmung</span>
-          </button>
-        } @else if (!isRound2()) {
-          <button mat-button type="button" (click)="toggleLock()" [attr.aria-label]="lockToggleAriaLabel()">
-            <mat-icon>{{ locked() ? 'play_arrow' : 'stop' }}</mat-icon>
-            {{ lockToggleLabel() }}
-          </button>
-          @if (data.totalVotes > 0) {
+        <div class="feedback-host__actions">
+          @if (isDiscussion()) {
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              class="feedback-host__next-round-cta"
+              (click)="startSecondRound()"
+              i18n-aria-label
+              aria-label="Zweite Abstimmung starten"
+            >
+              <mat-icon>replay</mat-icon>
+              <span i18n>Zweite Abstimmung</span>
+            </button>
+          } @else if (!isRound2()) {
             <button
               mat-button
               type="button"
-              (click)="startDiscussion()"
-              i18n-aria-label="@@feedback.compareRoundStartAria"
-              aria-label="Vergleichsrunde starten"
+              (click)="toggleLock()"
+              [attr.aria-label]="lockToggleAriaLabel()"
             >
-              <mat-icon>groups</mat-icon>
-              <span i18n="@@feedback.compareRoundLabel">Vergleichsrunde</span>
+              <mat-icon>{{ locked() ? 'play_arrow' : 'stop' }}</mat-icon>
+              {{ lockToggleLabel() }}
+            </button>
+            @if (data.totalVotes > 0) {
+              <button
+                mat-button
+                type="button"
+                (click)="startDiscussion()"
+                i18n-aria-label="@@feedback.compareRoundStartAria"
+                aria-label="Vergleichsrunde starten"
+              >
+                <mat-icon>groups</mat-icon>
+                <span i18n="@@feedback.compareRoundLabel">Vergleichsrunde</span>
+              </button>
+            }
+          } @else {
+            <button
+              mat-button
+              type="button"
+              (click)="toggleLock()"
+              [attr.aria-label]="lockToggleAriaLabel()"
+            >
+              <mat-icon>{{ locked() ? 'play_arrow' : 'stop' }}</mat-icon>
+              {{ lockToggleLabel() }}
             </button>
           }
-        } @else {
-          <button mat-button type="button" (click)="toggleLock()" [attr.aria-label]="lockToggleAriaLabel()">
-            <mat-icon>{{ locked() ? 'play_arrow' : 'stop' }}</mat-icon>
-            {{ lockToggleLabel() }}
-          </button>
-        }
-        <button mat-button type="button" (click)="copyLink()" i18n-aria-label aria-label="Beitrittslink kopieren">
-          <mat-icon>{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
-          @if (copied()) { <span i18n>Kopiert</span> } @else { <span i18n>Link kopieren</span> }
-        </button>
-        <button mat-button type="button" (click)="resetRound()" [disabled]="resetting()" i18n-aria-label aria-label="Ergebnisse zurücksetzen">
-          <mat-icon>restart_alt</mat-icon>
-          <span i18n>Zurücksetzen</span>
-        </button>
-        <button mat-button type="button" class="feedback-host__action-link feedback-host__end-session-link" (click)="endSession()">
-          <mat-icon>stop_circle</mat-icon>
-          <span i18n>Session beenden</span>
-        </button>
-      </div>
-      <div class="feedback-host__template-switch">
-        @for (chip of presetChips; track chip.type) {
           <button
             mat-button
             type="button"
-            class="feedback-host__template-action"
-            [class.feedback-host__template-action--active]="data.type === chip.type"
-            [disabled]="data.type === chip.type"
-            (click)="startRound(chip.type)"
-            [attr.aria-label]="chip.label"
+            (click)="copyLink()"
+            i18n-aria-label
+            aria-label="Beitrittslink kopieren"
           >
-            <span class="feedback-host__template-icons" aria-hidden="true">
-              @for (icon of chip.icons; track icon) {
-                @if (icon.kind === 'mat') {
-                  <mat-icon
-                    class="feedback-host__template-icon"
-                    [class.feedback-host__template-icon--positive]="icon.tone === 'positive'"
-                    [class.feedback-host__template-icon--negative]="icon.tone === 'negative'"
-                    [class.feedback-host__template-icon--neutral]="icon.tone === 'neutral'"
-                  >
-                    {{ icon.value }}
-                  </mat-icon>
-                } @else {
-                  <span class="feedback-host__template-icon">{{ icon.value }}</span>
-                }
-              }
-            </span>
-            @if (chip.showLabel !== false) {
-              <span class="feedback-host__template-label">{{ chip.label }}</span>
+            <mat-icon>{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+            @if (copied()) {
+              <span i18n>Kopiert</span>
+            } @else {
+              <span i18n>Link kopieren</span>
             }
           </button>
-        }
-      </div>
-    </section>
-
-    <section class="feedback-host__results">
-      <h2 class="feedback-host__title">{{ feedbackTitle(data.type) }}</h2>
-
-      @if (isDiscussion()) {
-        <div class="feedback-host__discussion" role="status" aria-live="polite">
-          <mat-icon class="feedback-host__discussion-icon">groups</mat-icon>
-          <p class="feedback-host__discussion-text" i18n="@@feedback.compareRoundHeadline">Jetzt zum Vergleich ein zweites Blitzlicht...</p>
-          <p class="feedback-host__discussion-hint" i18n="@@feedback.compareRoundSummary">Runde 1: {{ data.round1Total ?? 0 }} Stimmen erfasst.</p>
+          <button
+            mat-button
+            type="button"
+            (click)="resetRound()"
+            [disabled]="resetting()"
+            i18n-aria-label
+            aria-label="Ergebnisse zurücksetzen"
+          >
+            <mat-icon>restart_alt</mat-icon>
+            <span i18n>Zurücksetzen</span>
+          </button>
+          <button
+            mat-button
+            type="button"
+            class="feedback-host__action-link feedback-host__end-session-link"
+            (click)="endSession()"
+          >
+            <mat-icon>stop_circle</mat-icon>
+            <span i18n>Session beenden</span>
+          </button>
         </div>
-      } @else if (hasComparison()) {
-        <!-- Vorher/Nachher-Vergleich (Story 2.7) -->
-        <div class="feedback-host__comparison">
-          <div class="feedback-host__comparison-header">
-            <span class="feedback-host__comparison-label feedback-host__comparison-label--r1" i18n>Runde 1 ({{ data.round1Total }} Stimmen)</span>
-            <span class="feedback-host__comparison-label feedback-host__comparison-label--r2" i18n>Runde 2 ({{ data.totalVotes }} Stimmen)</span>
+        <div class="feedback-host__template-switch">
+          @for (chip of presetChips; track chip.type) {
+            <button
+              mat-button
+              type="button"
+              class="feedback-host__template-action"
+              [class.feedback-host__template-action--active]="data.type === chip.type"
+              [disabled]="data.type === chip.type"
+              (click)="startRound(chip.type)"
+              [attr.aria-label]="chip.label"
+            >
+              <span class="feedback-host__template-icons" aria-hidden="true">
+                @for (icon of chip.icons; track icon) {
+                  @if (icon.kind === 'mat') {
+                    <mat-icon
+                      class="feedback-host__template-icon"
+                      [class.feedback-host__template-icon--positive]="icon.tone === 'positive'"
+                      [class.feedback-host__template-icon--negative]="icon.tone === 'negative'"
+                      [class.feedback-host__template-icon--neutral]="icon.tone === 'neutral'"
+                    >
+                      {{ icon.value }}
+                    </mat-icon>
+                  } @else {
+                    <span class="feedback-host__template-icon">{{ icon.value }}</span>
+                  }
+                }
+              </span>
+              @if (chip.showLabel !== false) {
+                <span class="feedback-host__template-label">{{ chip.label }}</span>
+              }
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="feedback-host__results">
+        <h2 class="feedback-host__title">{{ feedbackTitle(data.type) }}</h2>
+
+        @if (isDiscussion()) {
+          <div class="feedback-host__discussion" role="status" aria-live="polite">
+            <mat-icon class="feedback-host__discussion-icon">groups</mat-icon>
+            <p class="feedback-host__discussion-text" i18n="@@feedback.compareRoundHeadline">
+              Jetzt zum Vergleich ein zweites Blitzlicht...
+            </p>
+            <p class="feedback-host__discussion-hint" i18n="@@feedback.compareRoundSummary">
+              Runde 1: {{ data.round1Total ?? 0 }} Stimmen erfasst.
+            </p>
           </div>
-          <div class="feedback-host__comparison-bars" role="list">
+        } @else if (hasComparison()) {
+          <!-- Vorher/Nachher-Vergleich (Story 2.7) -->
+          <div class="feedback-host__comparison">
+            <div class="feedback-host__comparison-header">
+              <span class="feedback-host__comparison-label feedback-host__comparison-label--r1" i18n
+                >Runde 1 ({{ data.round1Total }} Stimmen)</span
+              >
+              <span class="feedback-host__comparison-label feedback-host__comparison-label--r2" i18n
+                >Runde 2 ({{ data.totalVotes }} Stimmen)</span
+              >
+            </div>
+            <div class="feedback-host__comparison-bars" role="list">
+              @for (entry of orderedEntries(); track entry.key) {
+                <div class="feedback-host__comparison-row" role="listitem">
+                  <span class="feedback-host__bar-label" aria-hidden="true">
+                    @if (displayIcon(entry.key, data.type); as icon) {
+                      @if (icon.kind === 'mat') {
+                        <mat-icon
+                          class="feedback-host__bar-icon"
+                          [class.feedback-host__bar-icon--positive]="icon.tone === 'positive'"
+                          [class.feedback-host__bar-icon--negative]="icon.tone === 'negative'"
+                          [class.feedback-host__bar-icon--neutral]="icon.tone === 'neutral'"
+                          aria-hidden="true"
+                        >
+                          {{ icon.value }}
+                        </mat-icon>
+                      } @else {
+                        <span
+                          class="feedback-host__bar-glyph"
+                          [class.feedback-host__bar-glyph--letter]="
+                            data.type === 'ABC' || data.type === 'ABCD'
+                          "
+                          aria-hidden="true"
+                        >
+                          {{ icon.value }}
+                        </span>
+                      }
+                    } @else {
+                      <span
+                        class="feedback-host__bar-glyph"
+                        [class.feedback-host__bar-glyph--letter]="
+                          data.type === 'ABC' || data.type === 'ABCD'
+                        "
+                        aria-hidden="true"
+                      >
+                        {{ displayLabel(entry.key, data.type) }}
+                      </span>
+                    }
+                  </span>
+                  <div class="feedback-host__comparison-tracks">
+                    <div class="feedback-host__comparison-track">
+                      <span
+                        class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r1"
+                        i18n
+                        >R1</span
+                      >
+                      <div class="feedback-host__bar-track">
+                        <div
+                          class="feedback-host__bar-fill feedback-host__bar-fill--r1"
+                          [style.width.%]="round1Percentage(entry.key)"
+                        ></div>
+                      </div>
+                      <span class="feedback-host__comparison-pct feedback-host__comparison-pct--r1"
+                        >{{ round1Percentage(entry.key) }}&nbsp;%</span
+                      >
+                    </div>
+                    <div class="feedback-host__comparison-track">
+                      <span
+                        class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r2"
+                        i18n
+                        >R2</span
+                      >
+                      <div class="feedback-host__bar-track">
+                        <div
+                          class="feedback-host__bar-fill feedback-host__bar-fill--r2"
+                          [style.width.%]="round2Percentage(entry.key)"
+                        ></div>
+                      </div>
+                      <span class="feedback-host__comparison-pct feedback-host__comparison-pct--r2"
+                        >{{ round2Percentage(entry.key) }}&nbsp;%</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+            @if (data.opinionShift; as shift) {
+              <div class="feedback-host__opinion-shift" role="status">
+                <mat-icon>swap_horiz</mat-icon>
+                <span i18n
+                  >{{ shift.changedCount }} von {{ shift.bothRoundsCount }} ({{
+                    shift.changedPercentage
+                  }}&nbsp;%) änderten ihre Meinung</span
+                >
+                @if (shift.migrations && shift.migrations.length > 0) {
+                  <ul class="feedback-host__migrations" role="list">
+                    @for (m of shift.migrations; track m.from + m.to) {
+                      <li class="feedback-host__migration-item">
+                        <span class="feedback-host__migration-count">{{ m.count }}×</span>
+                        <span class="feedback-host__migration-from">
+                          @if (displayIcon(m.from, data.type); as icon) {
+                            @if (icon.kind === 'mat') {
+                              <mat-icon
+                                class="feedback-host__bar-icon"
+                                [class.feedback-host__bar-icon--positive]="icon.tone === 'positive'"
+                                [class.feedback-host__bar-icon--negative]="icon.tone === 'negative'"
+                                [class.feedback-host__bar-icon--neutral]="icon.tone === 'neutral'"
+                                aria-hidden="true"
+                              >
+                                {{ icon.value }}
+                              </mat-icon>
+                            } @else {
+                              <span
+                                class="feedback-host__migration-glyph"
+                                [class.feedback-host__migration-glyph--letter]="
+                                  data.type === 'ABC' || data.type === 'ABCD'
+                                "
+                                aria-hidden="true"
+                              >
+                                {{ icon.value }}
+                              </span>
+                            }
+                          } @else {
+                            {{ displayLabel(m.from, data.type) }}
+                          }
+                        </span>
+                        <mat-icon class="feedback-host__migration-arrow">east</mat-icon>
+                        <span class="feedback-host__migration-to">
+                          @if (displayIcon(m.to, data.type); as icon) {
+                            @if (icon.kind === 'mat') {
+                              <mat-icon
+                                class="feedback-host__bar-icon"
+                                [class.feedback-host__bar-icon--positive]="icon.tone === 'positive'"
+                                [class.feedback-host__bar-icon--negative]="icon.tone === 'negative'"
+                                [class.feedback-host__bar-icon--neutral]="icon.tone === 'neutral'"
+                                aria-hidden="true"
+                              >
+                                {{ icon.value }}
+                              </mat-icon>
+                            } @else {
+                              <span
+                                class="feedback-host__migration-glyph"
+                                [class.feedback-host__migration-glyph--letter]="
+                                  data.type === 'ABC' || data.type === 'ABCD'
+                                "
+                                aria-hidden="true"
+                              >
+                                {{ icon.value }}
+                              </span>
+                            }
+                          } @else {
+                            {{ displayLabel(m.to, data.type) }}
+                          }
+                        </span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="feedback-host__votes" aria-live="polite" aria-atomic="true">
+            @if (isRound2()) {
+              <span class="feedback-host__round-tag" i18n>2. Runde</span>
+            }
+            <span i18n>{data.totalVotes, plural,
+              =1 {1 Stimme}
+              other {{{ data.totalVotes }} Stimmen}
+            }</span>
+          </p>
+
+          <div
+            class="feedback-host__bars"
+            role="list"
+            [attr.aria-label]="resultsAriaLabel(data.type)"
+          >
             @for (entry of orderedEntries(); track entry.key) {
-              <div class="feedback-host__comparison-row" role="listitem">
+              <div
+                class="feedback-host__bar-row"
+                role="listitem"
+                [attr.aria-label]="
+                  displayLabel(entry.key, data.type) +
+                  ': ' +
+                  entry.value +
+                  ' (' +
+                  percentage(entry.key) +
+                  ' %)'
+                "
+              >
                 <span class="feedback-host__bar-label" aria-hidden="true">
                   @if (displayIcon(entry.key, data.type); as icon) {
                     @if (icon.kind === 'mat') {
@@ -184,7 +416,9 @@
                     } @else {
                       <span
                         class="feedback-host__bar-glyph"
-                        [class.feedback-host__bar-glyph--letter]="data.type === 'ABC' || data.type === 'ABCD'"
+                        [class.feedback-host__bar-glyph--letter]="
+                          data.type === 'ABC' || data.type === 'ABCD'
+                        "
                         aria-hidden="true"
                       >
                         {{ icon.value }}
@@ -193,163 +427,39 @@
                   } @else {
                     <span
                       class="feedback-host__bar-glyph"
-                      [class.feedback-host__bar-glyph--letter]="data.type === 'ABC' || data.type === 'ABCD'"
+                      [class.feedback-host__bar-glyph--letter]="
+                        data.type === 'ABC' || data.type === 'ABCD'
+                      "
                       aria-hidden="true"
                     >
                       {{ displayLabel(entry.key, data.type) }}
                     </span>
                   }
                 </span>
-                <div class="feedback-host__comparison-tracks">
-                  <div class="feedback-host__comparison-track">
-                    <span class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r1" i18n>R1</span>
-                    <div class="feedback-host__bar-track">
-                      <div class="feedback-host__bar-fill feedback-host__bar-fill--r1" [style.width.%]="round1Percentage(entry.key)"></div>
-                    </div>
-                    <span class="feedback-host__comparison-pct feedback-host__comparison-pct--r1">{{ round1Percentage(entry.key) }}&nbsp;%</span>
-                  </div>
-                  <div class="feedback-host__comparison-track">
-                    <span class="feedback-host__comparison-round-tag feedback-host__comparison-round-tag--r2" i18n>R2</span>
-                    <div class="feedback-host__bar-track">
-                      <div class="feedback-host__bar-fill feedback-host__bar-fill--r2" [style.width.%]="round2Percentage(entry.key)"></div>
-                    </div>
-                    <span class="feedback-host__comparison-pct feedback-host__comparison-pct--r2">{{ round2Percentage(entry.key) }}&nbsp;%</span>
-                  </div>
+                <div
+                  class="feedback-host__bar-track"
+                  role="progressbar"
+                  [attr.aria-valuenow]="entry.value"
+                  [attr.aria-valuemin]="0"
+                  [attr.aria-valuemax]="data.totalVotes || 1"
+                  [attr.aria-label]="displayLabel(entry.key, data.type)"
+                >
+                  <div
+                    class="feedback-host__bar-fill"
+                    [class.feedback-host__bar-fill--leading]="
+                      entry.value > 0 && entry.value === maxVotes()
+                    "
+                    [style.width.%]="barWidth(entry.value)"
+                  ></div>
                 </div>
+                <span class="feedback-host__bar-count" aria-hidden="true"
+                  >{{ entry.value }} ({{ percentage(entry.key) }} %)</span
+                >
               </div>
             }
           </div>
-          @if (data.opinionShift; as shift) {
-            <div class="feedback-host__opinion-shift" role="status">
-              <mat-icon>swap_horiz</mat-icon>
-              <span i18n>{{ shift.changedCount }} von {{ shift.bothRoundsCount }} ({{ shift.changedPercentage }}&nbsp;%) änderten ihre Meinung</span>
-              @if (shift.migrations && shift.migrations.length > 0) {
-                <ul class="feedback-host__migrations" role="list">
-                  @for (m of shift.migrations; track m.from + m.to) {
-                    <li class="feedback-host__migration-item">
-                      <span class="feedback-host__migration-count">{{ m.count }}×</span>
-                      <span class="feedback-host__migration-from">
-                        @if (displayIcon(m.from, data.type); as icon) {
-                          @if (icon.kind === 'mat') {
-                            <mat-icon
-                              class="feedback-host__bar-icon"
-                              [class.feedback-host__bar-icon--positive]="icon.tone === 'positive'"
-                              [class.feedback-host__bar-icon--negative]="icon.tone === 'negative'"
-                              [class.feedback-host__bar-icon--neutral]="icon.tone === 'neutral'"
-                              aria-hidden="true"
-                            >
-                              {{ icon.value }}
-                            </mat-icon>
-                          } @else {
-                            <span
-                              class="feedback-host__migration-glyph"
-                              [class.feedback-host__migration-glyph--letter]="data.type === 'ABC' || data.type === 'ABCD'"
-                              aria-hidden="true"
-                            >
-                              {{ icon.value }}
-                            </span>
-                          }
-                        } @else {
-                          {{ displayLabel(m.from, data.type) }}
-                        }
-                      </span>
-                      <mat-icon class="feedback-host__migration-arrow">east</mat-icon>
-                      <span class="feedback-host__migration-to">
-                        @if (displayIcon(m.to, data.type); as icon) {
-                          @if (icon.kind === 'mat') {
-                            <mat-icon
-                              class="feedback-host__bar-icon"
-                              [class.feedback-host__bar-icon--positive]="icon.tone === 'positive'"
-                              [class.feedback-host__bar-icon--negative]="icon.tone === 'negative'"
-                              [class.feedback-host__bar-icon--neutral]="icon.tone === 'neutral'"
-                              aria-hidden="true"
-                            >
-                              {{ icon.value }}
-                            </mat-icon>
-                          } @else {
-                            <span
-                              class="feedback-host__migration-glyph"
-                              [class.feedback-host__migration-glyph--letter]="data.type === 'ABC' || data.type === 'ABCD'"
-                              aria-hidden="true"
-                            >
-                              {{ icon.value }}
-                            </span>
-                          }
-                        } @else {
-                          {{ displayLabel(m.to, data.type) }}
-                        }
-                      </span>
-                    </li>
-                  }
-                </ul>
-              }
-            </div>
-          }
-        </div>
-      } @else {
-        <p class="feedback-host__votes" aria-live="polite" aria-atomic="true">
-          @if (isRound2()) { <span class="feedback-host__round-tag" i18n>2. Runde</span> }
-          <span i18n>{data.totalVotes, plural, =1 {1 Stimme} other {{{ data.totalVotes }} Stimmen}}</span>
-        </p>
-
-        <div class="feedback-host__bars" role="list" [attr.aria-label]="resultsAriaLabel(data.type)">
-          @for (entry of orderedEntries(); track entry.key) {
-            <div
-              class="feedback-host__bar-row"
-              role="listitem"
-              [attr.aria-label]="displayLabel(entry.key, data.type) + ': ' + entry.value + ' (' + percentage(entry.key) + ' %)'"
-            >
-              <span class="feedback-host__bar-label" aria-hidden="true">
-                @if (displayIcon(entry.key, data.type); as icon) {
-                  @if (icon.kind === 'mat') {
-                    <mat-icon
-                      class="feedback-host__bar-icon"
-                      [class.feedback-host__bar-icon--positive]="icon.tone === 'positive'"
-                      [class.feedback-host__bar-icon--negative]="icon.tone === 'negative'"
-                      [class.feedback-host__bar-icon--neutral]="icon.tone === 'neutral'"
-                      aria-hidden="true"
-                    >
-                      {{ icon.value }}
-                    </mat-icon>
-                  } @else {
-                    <span
-                      class="feedback-host__bar-glyph"
-                      [class.feedback-host__bar-glyph--letter]="data.type === 'ABC' || data.type === 'ABCD'"
-                      aria-hidden="true"
-                    >
-                      {{ icon.value }}
-                    </span>
-                  }
-                } @else {
-                  <span
-                    class="feedback-host__bar-glyph"
-                    [class.feedback-host__bar-glyph--letter]="data.type === 'ABC' || data.type === 'ABCD'"
-                    aria-hidden="true"
-                  >
-                    {{ displayLabel(entry.key, data.type) }}
-                  </span>
-                }
-              </span>
-              <div
-                class="feedback-host__bar-track"
-                role="progressbar"
-                [attr.aria-valuenow]="entry.value"
-                [attr.aria-valuemin]="0"
-                [attr.aria-valuemax]="data.totalVotes || 1"
-                [attr.aria-label]="displayLabel(entry.key, data.type)"
-              >
-                <div
-                  class="feedback-host__bar-fill"
-                  [class.feedback-host__bar-fill--leading]="entry.value > 0 && entry.value === maxVotes()"
-                  [style.width.%]="barWidth(entry.value)"
-                ></div>
-              </div>
-              <span class="feedback-host__bar-count" aria-hidden="true">{{ entry.value }} ({{ percentage(entry.key) }} %)</span>
-            </div>
-          }
-        </div>
-      }
-    </section>
+        }
+      </section>
     </div>
   </div>
 } @else {

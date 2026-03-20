@@ -37,7 +37,7 @@ Um die Ziele des Projekts zu erreichen, müssen alle Entwickler folgende drei ar
 
 ### 3.1 Local-First & Zero-Knowledge (Die Yjs-Engine)
 
-Die **Quiz-Bibliothek** der Dozenten wird *nicht dauerhaft* auf dem Server gespeichert. Wenn ein Dozent ein Quiz erstellt, lebt dieses als **CRDT-Dokument (Conflict-free Replicated Data Type)** über `Yjs` primär in der lokalen IndexedDB seines Browsers. Das Backend dient für die Quiz-Erstellung lediglich als "dummer" WebSocket-Relay-Server, um E2E-verschlüsselte Deltas (Änderungen) zwischen den Endgeräten des Dozenten (z.B. PC und iPad) zu synchronisieren. Damit der Dozent dasselbe Quiz auf einem anderen Gerät öffnen kann, erhält er einen **Sync-Link** bzw. **Sync-Code** (Story 1.6a); nur wer diesen Key hat, kann das Quiz bearbeiten oder live steuern. Der Session-Beitrittscode für Studenten gewährt keinen Zugriff auf die Quiz-Bearbeitung. Beim **Start einer Live-Session** wird eine **Kopie** des gewählten Quiz an den Server übermittelt (Quiz-Upload, Story 2.1a); diese Kopie wird nur für die Dauer der Session in PostgreSQL gehalten. Die dauerhafte "Single Source of Truth" der Quiz-Inhalte bleibt die lokale Yjs/IndexedDB des Dozenten.
+Die **Quiz-Bibliothek** der Dozenten wird _nicht dauerhaft_ auf dem Server gespeichert. Wenn ein Dozent ein Quiz erstellt, lebt dieses als **CRDT-Dokument (Conflict-free Replicated Data Type)** über `Yjs` primär in der lokalen IndexedDB seines Browsers. Das Backend dient für die Quiz-Erstellung lediglich als "dummer" WebSocket-Relay-Server, um E2E-verschlüsselte Deltas (Änderungen) zwischen den Endgeräten des Dozenten (z.B. PC und iPad) zu synchronisieren. Damit der Dozent dasselbe Quiz auf einem anderen Gerät öffnen kann, erhält er einen **Sync-Link** bzw. **Sync-Code** (Story 1.6a); nur wer diesen Key hat, kann das Quiz bearbeiten oder live steuern. Der Session-Beitrittscode für Studenten gewährt keinen Zugriff auf die Quiz-Bearbeitung. Beim **Start einer Live-Session** wird eine **Kopie** des gewählten Quiz an den Server übermittelt (Quiz-Upload, Story 2.1a); diese Kopie wird nur für die Dauer der Session in PostgreSQL gehalten. Die dauerhafte "Single Source of Truth" der Quiz-Inhalte bleibt die lokale Yjs/IndexedDB des Dozenten.
 
 ### 3.2 End-to-End Typsicherheit (tRPC)
 
@@ -69,6 +69,8 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 - [ADR-0009: Unified Live-Session Channels (Quiz, Q&A, Blitzlicht)](./decisions/0009-unified-live-session-channels.md)
 - [ADR-0010: Blitzlicht als Kernmodus mit konsistenter UX in Startseite und Live-Session](./decisions/0010-blitzlicht-as-core-live-mode.md)
 - [ADR-0011: Delegierbare Moderatorrolle für Live-Sessions](./decisions/0011-delegated-moderator-role-for-live-sessions.md)
+- [ADR-0015: Markdown-Bilder nur per URL und Lightbox-Ansicht](./decisions/0015-markdown-images-url-only-and-lightbox.md)
+- [ADR-0016: Markdown/KaTeX-Editor — Split-View und eigene MD3-Toolbar](./decisions/0016-markdown-katex-editor-split-view-and-md3-toolbar.md)
 
 **Vertiefende Architektur-Dokumente:**
 

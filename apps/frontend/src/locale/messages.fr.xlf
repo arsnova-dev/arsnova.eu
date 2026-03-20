@@ -207,8 +207,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="sessionTabs.quickFeedbackHostPlaceholder" datatype="html">
-        <source> Wähle ein Format und hole dir in Sekunden ein Stimmungsbild aus der Gruppe.</source>
-        <target>Choisis un format et obtiens en quelques secondes une tendance du groupe.</target>
+        <source> Wähle ein Format – in Sekunden siehst du die Stimmung.</source>
+        <target>Choisis un format – en quelques secondes tu vois l&apos;ambiance.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">8,10</context>
