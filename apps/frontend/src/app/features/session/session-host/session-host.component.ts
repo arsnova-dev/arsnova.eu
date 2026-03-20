@@ -3,9 +3,11 @@ import {
   Component,
   ElementRef,
   HostListener,
+  Injector,
   OnDestroy,
   OnInit,
   ViewChild,
+  afterNextRender,
   inject,
   signal,
   computed,
@@ -198,6 +200,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly qaSeenQuestionIds = signal<Set<string>>(new Set());
   readonly qaScrolledDown = signal(false);
   @ViewChild('qaListContainer') qaListContainerRef?: ElementRef<HTMLElement>;
+  @ViewChild('hostJoinMenuTrigger', { read: MatMenuTrigger })
+  hostJoinMenuTrigger?: MatMenuTrigger;
   readonly qaHighlightedQuestionIds = signal<Set<string>>(new Set());
   readonly quickFeedbackResult = signal<QuickFeedbackResult | null>(null);
   readonly quickFeedbackSeenVoteCount = signal(0);
@@ -215,6 +219,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   readonly code = this.route.parent?.snapshot.paramMap.get('code') ?? '';
   private readonly requestedInitialTab = this.route.snapshot?.queryParamMap?.get('tab') ?? null;
+  /** Nach einmaligem Anwenden von `?tab=` nicht erneut erzwingen (sonst kein Kanalwechsel möglich). */
+  private initialUrlTabApplied = false;
   readonly freetextResponses = signal<string[]>([]);
   readonly wordCloudInfo = signal($localize`Warte auf Live-Freitextdaten …`);
   readonly currentQuestionLabel = signal<string | null>(null);
@@ -290,6 +296,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly isRunningSession = computed(() => {
     const status = this.effectiveStatus();
     return this.session() !== null && status !== 'LOBBY' && status !== 'FINISHED';
+  });
+  /**
+   * Quiz-Kanal: ACTIVE (z. B. nach Fragerunden-Start), aber noch keine Quiz-Frage – kein Voting,
+   * daher keine „Ergebnis zeigen“-Steuerung; erste Frage explizit starten.
+   */
+  readonly isQuizAwaitingFirstQuestion = computed(() => {
+    if (this.isQaSession()) return false;
+    if (!this.channels().quiz) return false;
+    if (this.effectiveStatus() !== 'ACTIVE') return false;
+    return this.currentQuestionForHost() === null;
   });
   readonly isImmersiveMode = computed(() => this.hostDisplayMode.immersiveHostActive());
   readonly isFullscreenSupported = computed(() => {
@@ -449,6 +465,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   });
 
   private previousStatus: string | null = null;
+  private priorLobbyForAutoJoinMenu = false;
+  private priorQrReadyForJoinMenu = false;
+  /** Verhindert geplantes Öffnen des Join-Menüs nach ngOnDestroy (z. B. Vitest). */
+  private suppressJoinMenuAutopen = false;
+
+  private readonly injector = inject(Injector);
 
   constructor() {
     effect(() => {
@@ -540,6 +562,38 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         this.sound.stopAllSfx();
       }
     });
+    /** Beitritts-Menü in der Lobby einmal automatisch öffnen (nach Render, wenn Trigger existiert). */
+    effect(() => {
+      const su = this.statusUpdate();
+      const s = this.session();
+      const status = su?.status ?? s?.status ?? null;
+      const inLobby = status === 'LOBBY';
+      const qr = this.qrDataUrl();
+      const hasQr = qr.length > 0;
+
+      const enteredLobby = inLobby && !this.priorLobbyForAutoJoinMenu;
+      const qrBecameReady = inLobby && hasQr && !this.priorQrReadyForJoinMenu;
+
+      if (enteredLobby || qrBecameReady) {
+        afterNextRender(
+          () => {
+            if (this.suppressJoinMenuAutopen || this.effectiveStatus() !== 'LOBBY') return;
+            queueMicrotask(() => {
+              if (this.suppressJoinMenuAutopen) return;
+              try {
+                this.hostJoinMenuTrigger?.openMenu();
+              } catch {
+                /* Menü/View ggf. schon zerstört (Tests, schnelle Navigation) */
+              }
+            });
+          },
+          { injector: this.injector },
+        );
+      }
+
+      this.priorLobbyForAutoJoinMenu = inLobby;
+      this.priorQrReadyForJoinMenu = hasQr;
+    });
   }
 
   getColor(index: number): string {
@@ -578,6 +632,20 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         ? this.document.defaultView.location.origin
         : '';
     return origin ? `${origin}/join/${this.code}` : `/join/${this.code}`;
+  }
+
+  /** Host der Beitritts-URL ohne Schema und ohne Pfad (Hostname, ggf. Port), für das Join-Menü. */
+  joinOriginForMenu(): string {
+    const url = this.joinUrl;
+    try {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return new URL(url).host;
+      }
+    } catch {
+      /* ungültige URL */
+    }
+    const host = this.document?.defaultView?.location?.host;
+    return typeof host === 'string' && host.length > 0 ? host : '';
   }
 
   /** QR-Code als Data-URL für joinUrl (Beamer-tauglich, Story 2.1b). */
@@ -671,6 +739,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.suppressJoinMenuAutopen = true;
     this.hostDisplayMode.setHostSessionActive(false);
     this.participantSub?.unsubscribe();
     this.participantSub = null;
@@ -1383,12 +1452,16 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const urlTab = this.requestedInitialTab;
     if (
-      (this.requestedInitialTab === 'qa' || this.requestedInitialTab === 'quickFeedback') &&
-      visible.includes(this.requestedInitialTab) &&
-      active !== this.requestedInitialTab
+      !this.initialUrlTabApplied &&
+      (urlTab === 'qa' || urlTab === 'quickFeedback') &&
+      visible.includes(urlTab)
     ) {
-      this.activeChannel.set(this.requestedInitialTab);
+      if (active !== urlTab) {
+        this.activeChannel.set(urlTab);
+      }
+      this.initialUrlTabApplied = true;
     }
   }
 

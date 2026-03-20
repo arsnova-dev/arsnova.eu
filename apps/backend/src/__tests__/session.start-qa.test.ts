@@ -46,9 +46,7 @@ describe('session.startQa (Story 8.1)', () => {
     expect(result.status).toBe('ACTIVE');
     expect(result.currentQuestion).toBeNull();
     expect(result.currentRound).toBe(1);
-    expect(result.activeAt).toMatch(
-      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
-    );
+    expect(result.activeAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
     expect(prismaMock.session.findUnique).toHaveBeenCalledWith({
       where: { code: 'ABC123' },
       select: { id: true, status: true, type: true, qaEnabled: true },
@@ -59,7 +57,7 @@ describe('session.startQa (Story 8.1)', () => {
     });
   });
 
-  it('startet auch quizbasierte Sessions mit aktiviertem Fragen-Kanal', async () => {
+  it('lässt Quiz-Sessions mit Fragen-Kanal in der Lobby (Beitrittsphase fürs Quiz bleibt)', async () => {
     prismaMock.session.findUnique.mockResolvedValue({
       id: SESSION_ID,
       type: 'QUIZ',
@@ -69,8 +67,10 @@ describe('session.startQa (Story 8.1)', () => {
 
     const result = await caller.startQa({ code: 'ABC123' });
 
-    expect(result.status).toBe('ACTIVE');
-    expect(prismaMock.session.update).toHaveBeenCalled();
+    expect(result.status).toBe('LOBBY');
+    expect(result.currentQuestion).toBeNull();
+    expect(result.currentRound).toBe(1);
+    expect(prismaMock.session.update).not.toHaveBeenCalled();
   });
 
   it('lehnt den Start außerhalb der Lobby ab', async () => {

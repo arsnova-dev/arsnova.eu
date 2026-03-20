@@ -475,7 +475,9 @@ export const sessionRouter = router({
       };
     }),
 
-  /** Q&A-Session aus der Lobby starten (Story 8.1). LOBBY → ACTIVE ohne Quiz-Fragenfluss. */
+  /** Q&A-Session aus der Lobby starten (Story 8.1).
+   * - Nur Q&A (ohne Quiz): LOBBY → ACTIVE, Teilnehmer sehen „Fragerunde läuft“.
+   * - Quiz mit Fragen-Kanal: Status bleibt LOBBY – Q&A ist nutzbar, die Quiz-Beitrittsphase (Lobby) bleibt erhalten bis zur ersten Frage. */
   startQa: publicProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
@@ -498,6 +500,15 @@ export const sessionRouter = router({
           code: 'BAD_REQUEST',
           message: `Q&A-Session kann nur aus Status LOBBY gestartet werden. Aktuell: ${session.status}.`,
         });
+      }
+
+      const isQuizWithQaChannel = session.type === 'QUIZ' && session.qaEnabled === true;
+      if (isQuizWithQaChannel) {
+        return {
+          status: 'LOBBY' as const,
+          currentQuestion: null,
+          currentRound: 1,
+        };
       }
 
       const activeAt = new Date().toISOString();
@@ -770,7 +781,8 @@ export const sessionRouter = router({
     }
   }),
 
-  /** Nächste Frage öffnen (Story 2.3). LOBBY/PAUSED/RESULTS → QUESTION_OPEN oder ACTIVE; bei Lesephase aus: direkt ACTIVE. */
+  /** Nächste Frage öffnen (Story 2.3). LOBBY/PAUSED/RESULTS/DISCUSSION → QUESTION_OPEN oder ACTIVE; bei Lesephase aus: direkt ACTIVE.
+   * Zusätzlich: ACTIVE + currentQuestion null (z. B. nach Q&A-Start aus der Lobby) erlaubt den Start der ersten Quiz-Frage. */
   nextQuestion: publicProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
@@ -798,10 +810,12 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Quiz hat keine Fragen.' });
       }
       const allowedFrom = ['LOBBY', 'PAUSED', 'RESULTS', 'DISCUSSION'];
-      if (!allowedFrom.includes(session.status)) {
+      const awaitingFirstQuizQuestion =
+        session.status === 'ACTIVE' && session.currentQuestion === null;
+      if (!allowedFrom.includes(session.status) && !awaitingFirstQuizQuestion) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Nächste Frage nur aus Status LOBBY, PAUSED, RESULTS oder DISCUSSION. Aktuell: ${session.status}.`,
+          message: `Nächste Frage nur aus Status LOBBY, PAUSED, RESULTS oder DISCUSSION — oder ACTIVE ohne laufende Frage. Aktuell: ${session.status}.`,
         });
       }
 

@@ -158,6 +158,34 @@ describe('session.nextQuestion (Story 2.3)', () => {
       message: /Nächste Frage nur aus Status/,
     });
   });
+
+  it('erlaubt erste Frage bei ACTIVE ohne currentQuestion (nach Q&A-Start)', async () => {
+    prismaMock.session.findUnique.mockResolvedValue({
+      id: SESSION_ID,
+      status: 'ACTIVE',
+      currentQuestion: null,
+      quiz: {
+        readingPhaseEnabled: false,
+        questions: [{ id: 'q1' }],
+      },
+    });
+    prismaMock.session.update.mockResolvedValue({
+      id: SESSION_ID,
+      status: 'ACTIVE',
+      currentQuestion: 0,
+    });
+
+    const result = await caller.nextQuestion({ code: CODE });
+
+    expect(result.status).toBe('ACTIVE');
+    expect(result.currentQuestion).toBe(0);
+    expect(prismaMock.session.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: SESSION_ID },
+        data: expect.objectContaining({ status: 'ACTIVE', currentQuestion: 0 }),
+      }),
+    );
+  });
 });
 
 describe('session.revealAnswers (Story 2.3)', () => {

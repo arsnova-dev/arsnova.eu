@@ -158,6 +158,7 @@
         <div class="session-host__live-banner-main">
           <div class="session-host__live-access">
             <button
+              #hostJoinMenuTrigger="matMenuTrigger"
               mat-icon-button
               type="button"
               class="session-host__live-join-control"
@@ -237,9 +238,19 @@
             </div>
           </div>
         </div>
-        <mat-menu #hostJoinMenu="matMenu" xPosition="before">
+        <!-- LTR: xPosition after = Panel rechts vom Beitritt-Button; below = unterhalb der Oberkante. -->
+        <mat-menu
+          #hostJoinMenu="matMenu"
+          xPosition="after"
+          yPosition="below"
+          [overlapTrigger]="false"
+          class="session-host__join-menu-overlay-panel"
+        >
           <div class="session-host__join-menu-panel" (click)="$event.stopPropagation()">
-            <p class="session-host__join-menu-title" i18n>Beitritt</p>
+            <div class="session-host__join-menu-head">
+              <p class="session-host__join-menu-lead" i18n="@@sessionHost.joinMenuLead">Gehe auf</p>
+              <p class="session-host__join-menu-origin">{{ joinOriginForMenu() }}</p>
+            </div>
             @if (qrDataUrl()) {
               <div class="session-host__join-menu-qr-wrap">
                 <img
@@ -251,14 +262,12 @@
                 />
               </div>
             }
-            <p class="session-host__join-menu-label" i18n>Direkt-Link</p>
-            <a
-              class="session-host__join-menu-link"
-              [href]="joinUrl"
-              target="_blank"
-              rel="noopener"
-              >{{ joinUrl }}</a
+            <p
+              class="session-host__join-menu-origin session-host__join-menu-origin--code"
+              [attr.aria-label]="'Session-Code ' + s.code"
             >
+              {{ s.code }}
+            </p>
           </div>
         </mat-menu>
       </section>
@@ -267,7 +276,7 @@
     <div class="session-host__channel-stage">
       @if (showPrimaryLiveView()) {
         @if (effectiveStatus() === 'LOBBY') {
-          <!-- Lobby: Code, QR (Story 2.1b), Beitritts-URL, Teilnehmerzahl. -->
+          <!-- Lobby: Start-CTA, Teams/Teilnehmende; Beitritt per Live-Leiste / automatisch geöffnetes Menü. -->
           <div class="session-lobby">
             @if (sessionHeading(); as heading) {
               <section class="session-lobby__hero-card">
@@ -1106,9 +1115,16 @@
                   </div>
                 }
               } @else {
-                <p class="session-host__no-question" i18n>
-                  Keine Frage aktiv. Mit „Nächste Frage“ starten.
-                </p>
+                @if (isQuizAwaitingFirstQuestion()) {
+                  <p class="session-host__no-question" i18n="@@sessionHost.quizAwaitingFirstHint">
+                    Noch keine Quiz-Frage. Starte die erste Frage, wenn du mit dem Quiz beginnen
+                    möchtest.
+                  </p>
+                } @else {
+                  <p class="session-host__no-question" i18n>
+                    Keine Frage aktiv. Mit „Nächste Frage“ starten.
+                  </p>
+                }
               }
 
               @if (
@@ -1254,7 +1270,10 @@
                     <span i18n="@@sessionHost.endQa">Fragerunde beenden</span>
                   </button>
                 }
-                @if (effectiveStatus() === 'ACTIVE' && !isQaSession()) {
+                @if (
+                  effectiveStatus() === 'ACTIVE' && !isQaSession() && currentQuestionForHost();
+                  as liveQ
+                ) {
                   <button
                     mat-flat-button
                     color="primary"
@@ -1264,10 +1283,7 @@
                   >
                     <span i18n>Ergebnis zeigen</span>
                   </button>
-                  @if (
-                    currentQuestionForHost()?.currentRound === 1 &&
-                    (currentQuestionForHost()?.totalVotes ?? 0) > 0
-                  ) {
+                  @if (liveQ.currentRound === 1 && (liveQ.totalVotes ?? 0) > 0) {
                     <button
                       matButton="tonal"
                       type="button"
@@ -1281,6 +1297,17 @@
                       <span i18n>Diskussionsphase</span>
                     </button>
                   }
+                }
+                @if (isQuizAwaitingFirstQuestion()) {
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    type="button"
+                    [disabled]="controlPending()"
+                    (click)="nextQuestion()"
+                  >
+                    <span i18n>Erste Frage starten</span>
+                  </button>
                 }
                 @if (effectiveStatus() === 'DISCUSSION') {
                   <button
@@ -1364,7 +1391,6 @@
                   <p class="session-channel-card__eyebrow">{{ channelLabel('qa') }}</p>
                   <h2 class="session-channel-card__title">{{ qaHeading() }}</h2>
                 </div>
-                <mat-icon class="session-channel-card__icon" aria-hidden="true">forum</mat-icon>
               </div>
 
               @if (qaError(); as error) {
@@ -1393,7 +1419,7 @@
                 <div class="session-qa-empty">
                   <mat-icon class="session-qa-empty__icon" aria-hidden="true">forum</mat-icon>
                   <p class="session-qa-empty__text" i18n="@@sessionTabs.qaHostPlaceholder">
-                    Noch keine Fragen – sobald Teilnehmende Fragen stellen, erscheinen sie hier.
+                    Noch keine Fragen, neue erscheinen hier.
                   </p>
                 </div>
               } @else {

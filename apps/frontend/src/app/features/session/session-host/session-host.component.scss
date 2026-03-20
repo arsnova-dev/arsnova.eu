@@ -264,18 +264,12 @@
 }
 
 .session-channel-card--qa .session-channel-card__content--left {
-  gap: 0.6rem;
+  gap: 0.85rem;
 }
 
 .session-channel-card--qa .session-channel-card__header {
   gap: 0.75rem;
   padding-bottom: 0.15rem;
-}
-
-.session-channel-card--qa .session-channel-card__icon {
-  width: 2rem;
-  height: 2rem;
-  font-size: 2rem;
 }
 
 .session-channel-card--qa .session-channel-card__title {
@@ -287,14 +281,6 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-}
-
-.session-channel-card__icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 2.5rem;
-  margin: 0 auto;
-  color: var(--mat-sys-primary);
 }
 
 .session-channel-card__eyebrow {
@@ -458,46 +444,71 @@
 
 .session-host__join-menu-panel {
   display: grid;
-  gap: 0.7rem;
-  width: min(16rem, calc(100vw - 2rem));
-  padding: 0.85rem 0.95rem 1rem;
+  gap: 1rem;
+  width: min(24rem, calc(100vw - 1.5rem));
+  padding: 1.05rem 1.15rem 1.2rem;
+  box-sizing: border-box;
+  text-align: center;
 }
 
-.session-host__join-menu-title {
+.session-host__join-menu-head {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: center;
+  text-align: center;
+  padding-block: 0.15rem 0.25rem;
+}
+
+.session-host__join-menu-lead {
   margin: 0;
   font: var(--mat-sys-title-small);
-  color: var(--mat-sys-on-surface);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.3;
+}
+
+/* Wie .session-host__live-code in der Tab-/Live-Leiste (auffällig, Primary) */
+.session-host__join-menu-origin {
+  margin: 0;
+  justify-self: center;
+  width: 100%;
+  max-width: 100%;
+  color: var(--mat-sys-primary);
+  font-size: clamp(1.3rem, 3.2vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.05;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-wrap: balance;
+}
+
+.session-host__join-menu-origin--code {
+  font-size: clamp(1.65rem, 5vw, 2.45rem);
+  letter-spacing: 0.2em;
+  line-height: 1.08;
 }
 
 .session-host__join-menu-qr-wrap {
   display: flex;
   justify-content: center;
-  padding: 0.25rem 0;
+  align-items: center;
+  padding: 0.35rem 0;
+  box-sizing: border-box;
 }
 
 .session-host__join-menu-qr {
-  width: min(10rem, 100%);
-  height: auto;
-  object-fit: contain;
-}
-
-.session-host__join-menu-label {
+  display: block;
+  width: min(14rem, 100%) !important;
+  height: auto !important;
+  max-width: 100%;
   margin: 0;
-  font: var(--mat-sys-label-medium);
-  color: var(--mat-sys-on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.session-host__join-menu-link {
-  color: var(--mat-sys-primary);
-  text-decoration: none;
-  overflow-wrap: anywhere;
-  font: var(--mat-sys-body-medium);
-
-  &:hover {
-    text-decoration: underline;
-  }
+  object-fit: contain;
+  border: none !important;
+  padding: 0.15rem;
+  box-shadow: none;
 }
 
 @media (min-width: 840px) {
@@ -574,6 +585,16 @@
     letter-spacing: 0.06em;
   }
 
+  .session-host__join-menu-origin {
+    font-size: clamp(0.95rem, 4vw, 1.05rem);
+    letter-spacing: 0.06em;
+  }
+
+  .session-host__join-menu-origin--code {
+    font-size: clamp(1.2rem, 7vw, 1.55rem);
+    letter-spacing: 0.12em;
+  }
+
   .session-host__live-participants {
     font: var(--mat-sys-label-small);
   }
@@ -623,14 +644,17 @@
 .session-qa-moderation-toggle {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.7rem;
+  margin-block: 0.2rem 0.35rem;
+  padding-block: 0.55rem 0.45rem;
 }
 
 .session-qa-moderation-hint {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-small);
-  line-height: 1.4;
+  line-height: 1.55;
+  max-width: 40rem;
 }
 
 .session-qa-empty {
@@ -1037,19 +1061,19 @@
 
 @media (max-width: 599px) {
   .session-channel-card--qa .session-channel-card__content--left {
-    gap: 0.5rem;
+    gap: 0.72rem;
     padding: 0.85rem;
+  }
+
+  .session-qa-moderation-toggle {
+    gap: 0.65rem;
+    padding-block: 0.5rem 0.4rem;
+    margin-block: 0.1rem 0.3rem;
   }
 
   .session-channel-card--qa .session-channel-card__header {
     gap: 0.55rem;
     padding-bottom: 0;
-  }
-
-  .session-channel-card--qa .session-channel-card__icon {
-    width: 1.65rem;
-    height: 1.65rem;
-    font-size: 1.65rem;
   }
 
   .session-qa-summary {
@@ -1169,16 +1193,6 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   line-height: 1.1;
-}
-
-.session-lobby__qr {
-  display: flex;
-  justify-content: center;
-  margin: 1.5rem;
-}
-
-.session-lobby__qr--compact {
-  margin: 0;
 }
 
 .session-lobby__hero {
