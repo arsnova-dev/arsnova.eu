@@ -1069,8 +1069,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.quickFeedbackStartFlow" datatype="html">
-        <source> Du startest die Runde im Host-Bereich deiner Live-Session oder direkt über die Blitzlicht-Karte „Live starten&quot; auf der Startseite. Deine Teilnehmenden stimmen mit einem Tipp ab; du siehst die Ergebnisse live als Balkendiagramm.</source>
-        <target>Inicias la ronda en la vista de anfitrión de tu sesión en directo o directamente desde la tarjeta Blitzlicht de la página de inicio. Las personas participantes votan con un toque y ves los resultados al instante en un gráfico de barras.</target>
+        <source> Du startest die Runde im Host-Bereich deiner Live-Session oder direkt über die Blitzlicht-Karte „Live mit einem Klick&quot; auf der Startseite. Deine Teilnehmenden stimmen mit einem Tipp ab; du siehst die Ergebnisse live als Balkendiagramm.</source>
+        <target>Inicias la ronda en la vista de anfitrión de tu sesión en directo o directamente desde la tarjeta Blitzlicht «En vivo con un clic» en la página de inicio. Las personas participantes votan con un toque y ves los resultados al instante en un gráfico de barras.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">117,121</context>
@@ -1501,8 +1501,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="homeFeedbackCard.title" datatype="html">
-        <source>Live starten</source>
-        <target>Empezar en directo</target>
+        <source>Live mit einem Klick</source>
+        <target>En vivo con un clic</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">175,177</context>

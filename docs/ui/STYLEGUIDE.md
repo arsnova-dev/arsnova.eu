@@ -81,7 +81,7 @@ Regeln:
 
 #### Beispiel im Code: Blitzlicht von der Startseite (Standalone-Host)
 
-- **Kontext:** Nach „Live starten“ auf der Startseite landet die Veranstaltende auf der **Blitzlicht-Host-Ansicht** (`FeedbackHostComponent`, Route `feedback/:code`, **nicht** eingebettet in Session-Host).
+- **Kontext:** Nach „Live mit einem Klick“ auf der Startseite landet die Veranstaltende auf der **Blitzlicht-Host-Ansicht** (`FeedbackHostComponent`, Route `feedback/:code`, **nicht** eingebettet in Session-Host).
 - **Above-the-fold-Umsetzung:**
   - **Ergebnisbereich zuerst** (CSS `order` im Wrapper): Balken/Titel/Stimmen-Zeile liegen im oberen Viewport; Steueraktionen und Formatwahl folgen in derselben Karte darunter.
   - **Beitritt / QR** in einer **kompakten Live-Leiste** unterhalb der Ergebnisse (analog Quiz-Live-Kanal): QR-Icon oeffnet ein **`mat-menu`** mit grossem QR und Code; das Menue oeffnet nach dem Laden **einmal automatisch** (wie Lobby-Join-Menue beim Session-Host).
