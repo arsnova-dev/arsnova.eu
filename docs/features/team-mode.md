@@ -1,13 +1,14 @@
 # Team-Modus (Story 7.1)
 
-> **Zielgruppe:** Product Owner, Entwickler
+> **Zielgruppe:** Product Owner, Entwickler  
+> **Stand:** 2026-03-20 (Abgleich mit `apps/backend/src/routers/session.ts`: `ensureSessionTeams`, `join`, `getTeamLeaderboard`)
 
 ## Konzept
 
-Der Team-Modus ermoeglicht es, Teilnehmende in **2 bis 8 Teams** aufzuteilen.
-Teams koennen automatisch (Round-Robin) oder manuell (Teilnehmende waehlen selbst)
-zugewiesen werden. Der Dozent kann eigene Team-Namen vergeben oder die Standardnamen
-(Team A, Team B, ...) nutzen.
+Der Team-Modus ermöglicht es, Teilnehmende in **2 bis 8 Teams** aufzuteilen.
+Teams können automatisch (**Round-Robin nach Beitrittsreihenfolge**, nicht nach kleinster
+Mitgliederzahl) oder manuell (Teilnehmende wählen selbst) zugewiesen werden. Der Dozent kann
+eigene Team-Namen vergeben oder die Standardnamen (Team A, Team B, …) nutzen.
 
 ---
 
@@ -87,7 +88,7 @@ flowchart TD
   SKIP --> E(( ))
 
   CHECK -- "[ja]" --> EXIST{"Teams bereits vorhanden?"}
-  EXIST -- "[ja]" --> RETURN["Bestehende Teams zurueckgeben"]
+  EXIST -- "[ja]" --> RETURN["Bestehende Teams zurückgeben"]
   RETURN --> E
 
   EXIST -- "[nein]" --> CALC["effectiveTeamCount = clamp(2, teamCount, 8)"]
@@ -149,28 +150,29 @@ Beispiel fuer `teamCount = 4`, `teamNames = ['Rot', 'Blau']`:
 ```mermaid
 sequenceDiagram
   actor T as Teilnehmer
-  participant Join as :JoinPage
-  participant Router as :sessionRouter
-  participant DB as :PostgreSQL
+  participant Join as JoinComponent
+  participant Router as sessionRouter
+  participant DB as PostgreSQL
 
   T ->> Join: Session-Code eingeben
   Join ->> Router: session.getInfo()
   Router -->> Join: teamMode=true, teamAssignment=AUTO
 
-  Join ->> Join: Vorschau: "Du wirst automatisch zugewiesen"
+  Join ->> Join: Hinweis Round-Robin nach Beitrittsreihenfolge
 
   T ->> Join: Nickname eingeben, beitreten
   Join ->> Router: session.join(code, nickname)
   Router ->> DB: ensureSessionTeams()
-  DB -->> Router: Teams mit memberCount
+  DB -->> Router: teams nach Name aufsteigend sortiert
 
-  Router ->> Router: Kleinstes Team waehlen
-  Note right of Router: Sortierung: memberCount ASC, name ASC
+  Router ->> Router: participantIndex = bisherige Teilnehmerzahl
+  Router ->> Router: teamIndex = participantIndex mod teams.length
+  Note right of Router: Kein Ausgleich nach memberCount<br/>Zuweisung teams[teamIndex]
 
   Router ->> DB: participant.create(teamId)
   Router -->> Join: teamId, teamName
 
-  Join -->> T: "Du bist in Team B"
+  Join -->> T: Du bist im zugewiesenen Team
 ```
 
 ### MANUAL-Modus
@@ -178,9 +180,9 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   actor T as Teilnehmer
-  participant Join as :JoinPage
-  participant Router as :sessionRouter
-  participant DB as :PostgreSQL
+  participant Join as JoinComponent
+  participant Router as sessionRouter
+  participant DB as PostgreSQL
 
   T ->> Join: Session-Code eingeben
   Join ->> Router: session.getInfo()
@@ -190,14 +192,14 @@ sequenceDiagram
 
   Join ->> Join: Team-Karten anzeigen
 
-  T ->> Join: Team auswaehlen + beitreten
+  T ->> Join: Team auswählen + beitreten
   Join ->> Router: session.join(code, nickname, teamId)
 
   Router ->> Router: teamId validieren
   Router ->> DB: participant.create(teamId)
   Router -->> Join: teamId, teamName
 
-  Join -->> T: "Du bist in Rot"
+  Join -->> T: Du bist im gewählten Team
 ```
 
 ### Zuweisungsalgorithmus (AUTO)
@@ -207,15 +209,18 @@ flowchart TD
   S(( )) --> INDEX["participantIndex = session._count.participants"]
   INDEX --> SORT["Teams alphabetisch nach Name sortieren"]
   SORT --> MOD["teamIndex = participantIndex mod teams.length"]
-  MOD --> PICK["teams[teamIndex] waehlen"]
+  MOD --> PICK["teams[teamIndex] wählen"]
   PICK --> ASSIGN["participant.create mit teamId"]
   ASSIGN --> E(( ))
 ```
 
-Dieses Verfahren ergibt eine **gleichmaessige Round-Robin-Verteilung**:
+Dieses Verfahren ergibt eine **Round-Robin-Verteilung in Beitrittsreihenfolge** über die
+**alphabetisch nach `Team.name` sortierte** Teamliste aus `ensureSessionTeams()` (entspricht
+`teamIndex = participantIndex % teams.length` vor dem `participant.create`).
 
-1. Teilnehmer → Team A, 2. → Team B, 3. → Team C, … dann wieder von vorn.
-   Bei 4 Teams und 8 Teilnehmenden erhaelt jedes Team genau 2 Mitglieder.
+1. Teilnehmer → Index 0, 2. → Index 1, … bei 4 Teams: 5. wieder Team an Position 0 usw.
+   Bei gleichmäßigem Join sind die Gruppengrößen annähernd ausgeglichen; es gibt **keine**
+   serverseitige „kleinste Gruppe zuerst“-Logik.
 
 ---
 
@@ -224,7 +229,7 @@ Dieses Verfahren ergibt eine **gleichmaessige Round-Robin-Verteilung**:
 ```mermaid
 flowchart TD
   S(( )) --> TCHECK{"teamMode aktiv?"}
-  TCHECK -- "[nein]" --> EMPTY["Leeres Array zurueckgeben"]
+  TCHECK -- "[nein]" --> EMPTY["Leeres Array zurückgeben"]
   EMPTY --> E(( ))
 
   TCHECK -- "[ja]" --> LOAD["Teams, Participants, Votes laden"]
@@ -236,6 +241,15 @@ flowchart TD
   SORT --> RANK["Rang zuweisen (1-basiert)"]
   RANK --> E
 ```
+
+Entspricht `getTeamLeaderboard` in `session.ts`: Sortierung `totalScore` absteigend, bei Gleichstand
+`memberCount` absteigend, dann `teamName` lexikographisch.
+
+### Darstellung in der UI
+
+Es gibt **keine** eigene `TeamLeaderboardComponent`. Die Daten kommen per
+`session.getTeamLeaderboard` und werden in **SessionHost**, **SessionPresent** und **SessionVote**
+eingebunden (Signals / Templates in den jeweiligen Session-Komponenten).
 
 ### Berechnungsbeispiel
 

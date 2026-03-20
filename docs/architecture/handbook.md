@@ -74,6 +74,8 @@ Wir dokumentieren jede signifikante Änderung an der Architektur, neue Bibliothe
 
 **Vertiefende Architektur-Dokumente:**
 
+- [Dokumentations-Landkarte (`docs/README.md`)](../README.md) · [Umgebungsvariablen (`docs/ENVIRONMENT.md`)](../ENVIRONMENT.md) · [Sicherheitsüberblick](../SECURITY-OVERVIEW.md) · [Tests & CI](../TESTING.md)
+- [Projekt-Glossar (Begriffe, UI, Workflows)](../GLOSSAR.md)
 - [Quiz-Bibliothek Synchronisierung](./quiz-library-sync.md)
 - [Epic 6: Akzeptanzkriterien & Prüfung](../EPIC6-AC-PRUEFUNG.md) (inkl. Story 6.6 — Thinking Aloud / UX-Umsetzung)
 

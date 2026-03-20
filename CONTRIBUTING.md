@@ -7,7 +7,8 @@ Dieses Projekt wird im **Vibe-Coding-Modus** weiterentwickelt: Ihr übernehmt di
 ## 1. Einmalig: Umgebung & Kontext
 
 1. **Setup:** [docs/onboarding.md](docs/onboarding.md) – Quickstart (Clone/Fork, `.env`, Docker, `npm install`, Prisma, `npm run dev`).  
-   **Wichtig nach Fork/Clone:** PostgreSQL und Redis müssen laufen und das Datenbankschema muss angewendet sein (`npm run docker:up:dev` bzw. `docker compose up -d postgres redis`, danach `npm run prisma:push` und `npm run prisma:generate`). So ist die DB auf dem aktuellen Stand (inkl. aller Tabellen). Alternativ einmalig: `npm run setup:dev`, dann `npm run dev`.
+   **Wichtig nach Fork/Clone:** PostgreSQL und Redis müssen laufen und das Datenbankschema muss angewendet sein (`npm run docker:up:dev` bzw. `docker compose up -d postgres redis`, danach `npm run prisma:push` und `npm run prisma:generate`). So ist die DB auf dem aktuellen Stand (inkl. aller Tabellen). Alternativ einmalig: `npm run setup:dev`, dann `npm run dev`.  
+   **Variablen:** [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) · **Doku-Überblick:** [docs/README.md](docs/README.md) · **Tests/CI:** [docs/TESTING.md](docs/TESTING.md) · **Sicherheit:** [docs/SECURITY-OVERVIEW.md](docs/SECURITY-OVERVIEW.md).
 2. **Pflichtlektüre (vor der ersten Story):**
    - [AGENT.md](AGENT.md) – Regeln für die KI (Baby-Steps, Signals, DTO-Stripping, Styling). **Immer zuerst in den KI-Kontext laden.**
    - [Backlog.md](Backlog.md) – Storys, Prioritäten (🔴 Must, 🟡 Should, 🟢 Could), Definition of Done (DoD).
@@ -43,7 +44,7 @@ Dieses Projekt wird im **Vibe-Coding-Modus** weiterentwickelt: Ihr übernehmt di
 
 ## 5. Bei Problemen
 
-- **Technik/Architektur:** [docs/architecture/handbook.md](docs/architecture/handbook.md), [docs/architecture/decisions/](docs/architecture/decisions/) (ADRs).
+- **Technik/Architektur:** [docs/README.md](docs/README.md), [docs/architecture/handbook.md](docs/architecture/handbook.md), [docs/architecture/decisions/](docs/architecture/decisions/) (ADRs).
 - **UI/Design:** [docs/ui/STYLEGUIDE.md](docs/ui/STYLEGUIDE.md), [docs/ui/TOKENS.md](docs/ui/TOKENS.md), ADR 0005 (Material 3 ohne Tailwind).
 - **Zurücksetzen:** `git reset --hard v0-epic0` (Stand nach Epic 0), siehe [README.md](README.md#-zurücksetzen-auf-einen-bekannten-zustand).
 

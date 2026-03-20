@@ -3,7 +3,7 @@
 # Quiz-Bibliothek Synchronisierung
 
 **Zielgruppe:** Entwicklerinnen, Entwickler und technisch interessierte Personen  
-**Stand:** 2026-03-16  
+**Stand:** 2026-03-20  
 **Status:** Living Document
 
 ## 1. Zweck

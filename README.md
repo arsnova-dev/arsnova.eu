@@ -4,12 +4,11 @@
 > **click.arsnova.eu**. Alle Beispiele in der Dokumentation beziehen sich auf
 > diese Domain; bei einem späteren Umzug muss das entsprechend angepasst werden.
 
-
 [![CI](https://github.com/kqc-real/arsnova.eu/actions/workflows/ci.yml/badge.svg)](https://github.com/kqc-real/arsnova.eu/actions/workflows/ci.yml)
 [![Tech Stack: Angular](https://img.shields.io/badge/Frontend-Angular%2021-DD0031.svg?style=flat-square&logo=angular)](https://angular.dev/)
 [![Tech Stack: tRPC](https://img.shields.io/badge/API-tRPC-2596be.svg?style=flat-square&logo=trpc)](https://trpc.io/)
 [![Tech Stack: Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748.svg?style=flat-square&logo=prisma)](https://www.prisma.io/)
-[![Documentation: ADRs](https://img.shields.io/badge/Docs-ADRs%20(DaC)-007A8A.svg?style=flat-square)](./docs/architecture/)
+[![Documentation: ADRs](<https://img.shields.io/badge/Docs-ADRs%20(DaC)-007A8A.svg?style=flat-square>)](./docs/architecture/)
 
 > **Quizzen, abstimmen – gemeinsam und live.**  
 > Ein modernes, kostenloses und 100 % DSGVO-konformes Audience-Response-System – ohne Anmeldung, Open Source. Entwickelt im Rahmen des Hochschul-Moduls „Software Engineering & Vibe Coding“.
@@ -27,10 +26,10 @@
 
 ### Alleinstellungsmerkmale
 
-* **Stil-Auswahl:** Die Lehrperson wählt beim Start der Session den Stil (**Seriös** oder **Spielerisch**) und kann Optionen anpassen (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer). So passt sich die Session an – Kita bis Uni. Teilnehmende können den Stil nicht ändern. Im Preset **Spielerisch** pulsieren auf der Startseite Logo und Hero-Icons (nur bei normaler Bewegungspräferenz); im Team-Modus kommen zusätzlich farbige Teamkarten, motivierende Effekte im Join-/Lobby-Flow, ein teamzentrierter Lobby-Moment auf dem Beamer sowie ein klar fokussiertes Team-Finale auf Teilnehmergerät und Beamer dazu.
-* **Bonus-Option für die Besten:** Top-Platzierte erhalten einen **einlösbaren Code**, den sie bei der Quizleitung einlösen können (z. B. für Bonuspunkte oder Anerkennung). Die App dient nicht als autorisiertes Prüfungsinstrument; die Einlösung liegt bei der Lehrperson.
-* **Zero-Knowledge / Local-First:** Keine Accounts nötig. Quiz-Inhalte werden lokal im Browser des Erstellers gespeichert; beim Start einer Live-Session wird nur temporär eine Kopie an den Server übertragen. Nach Ende der Session werden die Daten bereinigt. Der Server ist reiner Relay für Echtzeit-Abstimmungen.
-* **Admin-Kontrollpfad für Recht & Betrieb (Epic 9):** Betreiber können Sessions über `/admin` inspizieren, rechtlich begründet löschen und Behördenauszüge erzeugen (PDF/JSON, mit Audit-Log und ohne unnötige PII).
+- **Stil-Auswahl:** Die Lehrperson wählt beim Start der Session den Stil (**Seriös** oder **Spielerisch**) und kann Optionen anpassen (Rangliste, Sound, Lesephase, Team-Modus, Nicknames, Timer). So passt sich die Session an – Kita bis Uni. Teilnehmende können den Stil nicht ändern. Im Preset **Spielerisch** pulsieren auf der Startseite Logo und Hero-Icons (nur bei normaler Bewegungspräferenz); im Team-Modus kommen zusätzlich farbige Teamkarten, motivierende Effekte im Join-/Lobby-Flow, ein teamzentrierter Lobby-Moment auf dem Beamer sowie ein klar fokussiertes Team-Finale auf Teilnehmergerät und Beamer dazu.
+- **Bonus-Option für die Besten:** Top-Platzierte erhalten einen **einlösbaren Code**, den sie bei der Quizleitung einlösen können (z. B. für Bonuspunkte oder Anerkennung). Die App dient nicht als autorisiertes Prüfungsinstrument; die Einlösung liegt bei der Lehrperson.
+- **Zero-Knowledge / Local-First:** Keine Accounts nötig. Quiz-Inhalte werden lokal im Browser des Erstellers gespeichert; beim Start einer Live-Session wird nur temporär eine Kopie an den Server übertragen. Nach Ende der Session werden die Daten bereinigt. Der Server ist reiner Relay für Echtzeit-Abstimmungen.
+- **Admin-Kontrollpfad für Recht & Betrieb (Epic 9):** Betreiber können Sessions über `/admin` inspizieren, rechtlich begründet löschen und Behördenauszüge erzeugen (PDF/JSON, mit Audit-Log und ohne unnötige PII).
 
 Weitere Details zu Ablauf, Presets und Datenschutz stehen in der **Hilfe-Seite** der App (`/help`) sowie im [Backlog](./Backlog.md).
 
@@ -38,11 +37,11 @@ Weitere Details zu Ablauf, Presets und Datenschutz stehen in der **Hilfe-Seite**
 
 Wir setzen auf einen stark typisierten, hochmodernen Full-Stack:
 
-* **Frontend:** Angular 21 (Standalone Components, Signals, Angular Material 3; Style Guide: separate .html/.scss per component, `inject()` for DI, Vitest for unit tests)
-* **Backend:** Node.js API mit tRPC (End-to-End Typsicherheit & WebSockets)
-* **Datenbank:** PostgreSQL via Prisma ORM
-* **Echtzeit-Broker:** Redis (Pub/Sub)
-* **Offline-Sync:** Yjs (CRDTs)
+- **Frontend:** Angular 21 (Standalone Components, Signals, Angular Material 3; Style Guide: separate .html/.scss per component, `inject()` for DI, Vitest for unit tests)
+- **Backend:** Node.js API mit tRPC (End-to-End Typsicherheit & WebSockets)
+- **Datenbank:** PostgreSQL via Prisma ORM
+- **Echtzeit-Broker:** Redis (Pub/Sub)
+- **Offline-Sync:** Yjs (CRDTs)
 
 ## 📂 Projektstruktur (Monorepo)
 
@@ -52,6 +51,11 @@ Dieses Projekt ist als Monorepo (npm Workspaces) strukturiert, damit Frontend un
 arsnova.eu/
 ├── AGENT.md                 # 🤖 Leitplanken für euren KI-Assistenten
 ├── docs/
+│   ├── README.md            # 📑 Doku-Landkarte (nach Rolle & Thema)
+│   ├── ENVIRONMENT.md       # 🔧 Umgebungsvariablen-Referenz
+│   ├── SECURITY-OVERVIEW.md # 🔒 Sicherheit & DSGVO (Kurz)
+│   ├── TESTING.md           # 🧪 Tests & CI-Matrix
+│   ├── GLOSSAR.md           # 📖 App-Begriffe & Prisma-Brücke
 │   ├── architecture/        # 🏛️ Architecture Decision Records (ADRs) & Handbuch
 │   ├── implementation/      # 🛠️ Umsetzungs-/Betriebsdokus (z. B. Admin-Flow)
 │   └── ui/                  # 🎨 UI/UX-Guides und Audits
@@ -70,9 +74,9 @@ Folge diesen Schritten, um das Projekt lokal auf deiner Maschine zum Laufen zu b
 
 ### 1. Voraussetzungen
 
-* Node.js (v20 oder neuer)
-* npm (v10 oder neuer empfohlen)
-* Docker Desktop (für die lokale Datenbank)
+- Node.js (v20 oder neuer)
+- npm (v10 oder neuer empfohlen)
+- Docker Desktop (für die lokale Datenbank)
 
 ### 2. Infrastruktur & Installation
 
@@ -143,18 +147,23 @@ npm run dev
 Die App unterstützt **fünf Sprachen** (`de`, `en`, `fr`, `es`, `it`) über Angular i18n; jede Locale hat einen eigenen Build (z. B. `dist/browser/de`, `dist/browser/en`, ...). Deutsch ist Referenzsprache; UI-Texte werden in allen Zielsprachen synchron gepflegt. Damit du die lokalisierten Varianten **mit funktionierender API und WebSockets** testen kannst, ist ein **eigener Proxy-Server** nötig (nicht nur `npx serve`):
 
 1. **Backend laufen lassen** (HTTP auf 3000, tRPC-WebSocket auf 3001, Yjs auf 3002):
+
    ```bash
    npm run dev -w @arsnova/backend
    ```
+
    Oder mit Frontend im anderen Terminal: `npm run dev` (dann Backend + Frontend-Dev-Server).
 
 2. **Lokalisierten Build erzeugen** (aus Repo-Root oder `apps/frontend`):
+
    ```bash
    npm run build:localize -w @arsnova/frontend
    ```
+
    Das baut alle in `angular.json` konfigurierten Locales und legt die Locale-Ordner in `dist/browser/` sowie eine Root-`index.html` (Redirect nach `/de/`) an.
 
 3. **Proxy starten** (serviert den Build auf Port 4200 und leitet API/WebSockets ans Backend weiter):
+
    ```bash
    npm run serve:localize:api -w @arsnova/frontend
    ```
@@ -313,10 +322,10 @@ Nachdem die App lokal läuft, empfiehlt sich diese Lesereihenfolge:
 
 Falls etwas schiefgeht oder du komplett neu anfangen möchtest, setze auf den Rücksprung-Tag zurück:
 
-| Tag | Beschreibung |
-|-----|--------------|
+| Tag            | Beschreibung                                                                       |
+| -------------- | ---------------------------------------------------------------------------------- |
 | **`v0-epic0`** | Stand nach Epic 0, Routen für Epic 1 vorstrukturiert (empfohlener Rücksprungpunkt) |
-| **`epic-9`** | Aktueller Stand inkl. Admin-Flow (Stories 9.1–9.3) |
+| **`epic-9`**   | Aktueller Stand inkl. Admin-Flow (Stories 9.1–9.3)                                 |
 
 ```bash
 git fetch --tags
@@ -327,4 +336,5 @@ npm install
 > **Achtung:** `git reset --hard` löscht alle nicht-committeten Änderungen unwiderruflich. Committe oder stashe deine Arbeit vorher, falls du sie behalten willst.
 
 ---
-*Viel Erfolg beim Bauen der Zukunft des digitalen Lernens!* 🚀
+
+_Viel Erfolg beim Bauen der Zukunft des digitalen Lernens!_ 🚀

@@ -19,7 +19,7 @@ Dieses Dokument ist die **kanonische Referenz** für Struktur, Stack, Konvention
 - **Frontend:** `apps/frontend/` – Angular 21, Standalone Components, Signals, Angular Material 3.
 - **Shared Types:** `libs/shared-types/` – Zod-Schemas, TypeScript-Typen, DTO-Definitionen. Import: `@arsnova/shared-types`.
 - **Prisma:** `prisma/schema.prisma` – Datenmodell; Migrationen und Client-Generierung wie üblich.
-- **Dokumentation:** `docs/` – architecture, diagrams, onboarding, vibe-coding; `Backlog.md` im Repo-Root.
+- **Dokumentation:** `docs/README.md` (Landkarte), `docs/ENVIRONMENT.md` (Variablen), `docs/GLOSSAR.md` (Begriffe), `docs/SECURITY-OVERVIEW.md`, `docs/TESTING.md`; außerdem architecture, diagrams, onboarding, vibe-coding; `Backlog.md` im Repo-Root.
 
 ---
 
@@ -46,10 +46,10 @@ Dieses Dokument ist die **kanonische Referenz** für Struktur, Stack, Konvention
 
 - **DTO-Pattern:** Daten werden serverseitig durch DTOs gefiltert, bevor sie an Clients gehen. Kein direktes Durchreichen von Prisma-Modellen.
 - **isCorrect:** Das Feld `AnswerOption.isCorrect` (richtige Lösung) darf **niemals** im Session-Status `ACTIVE` an Studenten gesendet werden. Erst nach Wechsel zu `RESULTS` und Auflösung durch den Dozenten werden Lösungen sichtbar (QuestionRevealedDTO, AnswerOptionRevealedDTO).
-- **DTOs nach Phase:**  
-  - `QUESTION_OPEN` (Lesephase, Story 2.6): QuestionPreviewDTO – nur Fragenstamm, keine Antwortoptionen.  
-  - `ACTIVE`: QuestionStudentDTO – Frage inkl. Antwortoptionen, **ohne** isCorrect.  
-  - `RESULTS`: QuestionRevealedDTO – inkl. isCorrect.  
+- **DTOs nach Phase:**
+  - `QUESTION_OPEN` (Lesephase, Story 2.6): QuestionPreviewDTO – nur Fragenstamm, keine Antwortoptionen.
+  - `ACTIVE`: QuestionStudentDTO – Frage inkl. Antwortoptionen, **ohne** isCorrect.
+  - `RESULTS`: QuestionRevealedDTO – inkl. isCorrect.
 - **Typsicherheit:** Im Frontend Typen aus shared-types oder aus dem tRPC-Client nutzen; kein `any`.
 
 ---
@@ -149,7 +149,7 @@ Priorisierung: 🔴 Must, 🟡 Should, 🟢 Could. Abhängigkeiten: Epic 0 → 1
 - **Hintergrund / Ökosystem:** docs/background-arsnova-ecosystem.md (Kurzüberblick ARSnova-Familie, Bezug zu diesem Repo); docs/deep-research-arsnova.click/ARSnova-Recherche.pdf (Deep Research zu arsnova.click, Genealogie, Publikationen).
 - **Mitwirken / Handover:** CONTRIBUTING.md – Einstieg für Studis (Setup, Story-Wahl, DoD vor PR, Branch/PR); bei Fragen zu Workflow oder „wie starte ich?“ darauf verweisen.
 - **Schema:** prisma/schema.prisma; libs/shared-types/src/schemas.ts (Zod, DTOs).
-- **Router:** apps/backend/src/routers/index.ts, apps/backend/src/routers/*.ts.
+- **Router:** apps/backend/src/routers/index.ts, apps/backend/src/routers/\*.ts.
 - **Diagramme:** docs/diagrams/diagrams.md (detailliert), docs/diagrams/architecture-overview.md (Übersicht).
 - **Regeln:** .cursorrules (Pfade, Monorepo, Stack, UX-Design-Regeln); AGENT.md (Arbeitsweise, Baby-Steps, Tests, Design-Leitplanken).
 

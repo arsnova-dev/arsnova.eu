@@ -150,6 +150,7 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
 - Neue/geänderte tRPC-Endpunkte sind mit JSDoc-Kommentaren versehen.
 - Bei Architektur-Änderungen: ADR erstellt oder bestehendes ADR aktualisiert (`docs/architecture/decisions/`).
 - Prisma-Schema, Zod-Schemas und Backlog sind synchron (keine Widersprüche zwischen den drei Artefakten).
+- Neue oder geänderte **nutzerrelevante UI-/Workflow-Begriffe** sind in `docs/GLOSSAR.md` ergänzt oder dort per Verweis abgedeckt (siehe Pflegehinweis in der Datei).
 
 ### Deployment
 

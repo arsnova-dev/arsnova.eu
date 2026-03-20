@@ -3,7 +3,7 @@
 # Diagramme: arsnova.eu
 
 Alle Diagramme sind in Mermaid geschrieben und werden von GitHub nativ gerendert.
-**Stand:** 2026-03-16 · **Epics 0–5, 7.1, 8, 9 umgesetzt;** **Epic 6.5 offen.** `Blitzlicht` ist als Startseiten-Shortcut und Session-Kanal konsolidiert. Rollen/Routen/Autorisierung siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ADR-0009](../architecture/decisions/0009-unified-live-session-channels.md), [ADR-0010](../architecture/decisions/0010-blitzlicht-as-core-live-mode.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
+**Stand:** 2026-03-20 · **Epics 0–5, 7.1, 8, 9 umgesetzt;** Epic 6 größtenteils umgesetzt (**6.5 Barrierefreiheit** und **6.6 Thinking Aloud** noch offen). Geplante Markdown-Erweiterungen: Stories **1.7a** / **1.7b** ([ADR-0015](../architecture/decisions/0015-markdown-images-url-only-and-lightbox.md), [ADR-0016](../architecture/decisions/0016-markdown-katex-editor-split-view-and-md3-toolbar.md)). `Blitzlicht` ist als Startseiten-Shortcut und Session-Kanal konsolidiert. Rollen/Routen/Autorisierung siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ADR-0009](../architecture/decisions/0009-unified-live-session-channels.md), [ADR-0010](../architecture/decisions/0010-blitzlicht-as-core-live-mode.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 > **VS Code:** Mermaid wird in der Standard-Markdown-Vorschau nicht gerendert. Bitte die Erweiterung **„Markdown Preview Mermaid Support“** (`bierner.markdown-mermaid`) installieren. Siehe [README.md](./README.md) in diesem Ordner.
 
@@ -735,7 +735,7 @@ flowchart LR
     end
 
     subgraph Host["Host-Flow"]
-        F1[Blitzlicht-Format waehlen]
+        F1[Blitzlicht-Format wählen]
         F2[Blitzlicht starten]
         F3[Antworten sammeln]
         F4[Vergleichsrunde starten]
@@ -743,12 +743,12 @@ flowchart LR
         F6[Reset oder Beenden]
     end
 
-    subgraph Backend["Backend / Redis"]
-        B1[quickFeedback.create oder changeType]
-        B2[quickFeedback.onResults]
-        B3[quickFeedback.startDiscussion]
-        B4[quickFeedback.startSecondRound]
-        B5[quickFeedback.reset oder end]
+    subgraph Backend["Backend Redis · quickFeedback.*"]
+        B1[create · changeType]
+        B2[onResults Sub · results Query]
+        B3[startDiscussion]
+        B4[startSecondRound]
+        B5[reset · end · optional toggleLock · updateStyle]
     end
 
     subgraph Vote["Teilnehmer-Flow"]
@@ -772,4 +772,4 @@ flowchart LR
     F3 --> F6 --> B5
 ```
 
-**Hinweis:** Standalone-Blitzlicht (`/feedback/:code`, `/feedback/:code/vote`) und Blitzlicht im Session-Kanal teilen sich denselben Fachkern. Unterschiedlich ist nur der Einstiegskontext, nicht die Grundlogik.
+**Hinweis:** Standalone-Blitzlicht (`/feedback/:code`, `/feedback/:code/vote`) und Blitzlicht im Session-Kanal teilen sich denselben Fachkern. Unterschiedlich ist nur der Einstiegskontext, nicht die Grundlogik. **Technische Procedure-Namen und Tabelle:** [blitzlicht-quickfeedback-api.md](../features/blitzlicht-quickfeedback-api.md). Produktbegriffe (z. B. „Vergleichsrunde“) siehe [ADR-0010](../architecture/decisions/0010-blitzlicht-as-core-live-mode.md) und [BLITZLICHT-GUIDELINES.md](../ui/BLITZLICHT-GUIDELINES.md).

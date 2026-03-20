@@ -125,6 +125,7 @@ Sie konkretisiert ADR `docs/architecture/decisions/0010-blitzlicht-as-core-live-
 
 ## Technische Leitplanken
 
+- **Router & Procedures:** fachlich Blitzlicht, technisch `quickFeedback.*` — Übersicht und Mermaid-Ablauf in [`docs/features/blitzlicht-quickfeedback-api.md`](../features/blitzlicht-quickfeedback-api.md).
 - Shared Types fuer Blitzlicht-Input/Output zuerst in `@arsnova/shared-types` definieren.
 - Frontend und Backend muessen fuer neue Blitzlicht-Formate oder Mutationen gemeinsam angepasst werden.
 - Lokale WebSocket-Pfade fuer `tRPC` und `Yjs` muessen im Dev-Betrieb robust und konsistent sein.

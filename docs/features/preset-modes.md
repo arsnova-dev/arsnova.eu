@@ -1,16 +1,18 @@
 # Preset-Modi (Session-Voreinstellungen)
 
+> **Stand:** 2026-03-20 · Abgleich mit `ThemePresetService`, `preset-toast.component.ts`, `PresetStorageEntrySchema` (`@arsnova/shared-types`)
+
 Die Preset-Modi sind ein zentrales Unterscheidungsmerkmal von arsnova.eu. Sie erlauben es Dozenten, mit **einem Klick** eine komplette Session-Konfiguration zu laden – optimiert für den jeweiligen Einsatzzweck. Kein langwieriges Zusammenklicken einzelner Optionen, kein versehentliches Vergessen eines Toggles.
 
 ## Konzept & Motivation
 
 In klassischen Audience-Response-Systemen (Kahoot!, Mentimeter) gibt es meist einen einzigen Modus. arsnova.eu erkennt, dass Hörsaal-Quizze je nach Kontext **fundamental verschiedene Anforderungen** haben:
 
-| Szenario | Bedürfnis |
-|----------|-----------|
-| Prüfungsvorbereitung | Kein sozialer Druck, Fokus auf Inhalt, anonyme Teilnahme |
-| Auflockerung in der Vorlesung | Wettbewerb, Rangliste, Sound, Emoji-Reaktionen |
-| Teamarbeit im Seminar | Gruppenbildung, kooperative Auswertung |
+| Szenario                      | Bedürfnis                                                |
+| ----------------------------- | -------------------------------------------------------- |
+| Prüfungsvorbereitung          | Kein sozialer Druck, Fokus auf Inhalt, anonyme Teilnahme |
+| Auflockerung in der Vorlesung | Wettbewerb, Rangliste, Sound, Emoji-Reaktionen           |
+| Teamarbeit im Seminar         | Gruppenbildung, kooperative Auswertung                   |
 
 Die Preset-Modi lösen dieses Problem mit **zwei Grundkonfigurationen**, die der Dozent jederzeit individuell anpassen kann.
 
@@ -18,11 +20,12 @@ Die Preset-Modi lösen dieses Problem mit **zwei Grundkonfigurationen**, die der
 
 ### Seriös
 
-> *Druckfrei, anonym, Fokus auf Inhalt.*
+> _Druckfrei, anonym, Fokus auf Inhalt._
 
 ![Preset: Seriös](preset-serioes.png)
 
 **Defaults:**
+
 - Alle Gamification-Features **aus** (keine Rangliste, keine Effekte, keine Sounds)
 - Namensmodus: **Anonym**
 - Lesephase: **an** (Studierende lesen zuerst die Frage, bevor die Antwortphase startet)
@@ -32,11 +35,12 @@ Die Preset-Modi lösen dieses Problem mit **zwei Grundkonfigurationen**, die der
 
 ### Spielerisch
 
-> *Rangliste, Sound & Effekte, Motivation & Wettbewerb.*
+> _Rangliste, Sound & Effekte, Motivation & Wettbewerb._
 
 ![Preset: Spielerisch](preset-spielerisch.png)
 
 **Defaults:**
+
 - Rangliste: **an**
 - Effekte bei richtiger Antwort: **an**
 - Anfeuerungstexte: **an**
@@ -65,45 +69,46 @@ Jede Option ist ein Toggle (an/aus) und gehört zu einer Kategorie:
 
 ### Gamification & Auswertung
 
-| Option | Icon | Beschreibung |
-|--------|------|-------------|
-| Rangliste (Punkte & Platzierung) | `leaderboard` | Zeigt eine Live-Rangliste nach jeder Frage |
-| Effekte bei richtiger Antwort | `auto_awesome` | Visuelle Belohnungseffekte bei korrekter Antwort |
-| Anfeuerungstexte nach Antwort | `campaign` | Motivierende Nachrichten nach der Antwortabgabe |
-| Emoji-Reaktionen zulassen | `emoji_emotions` | Teilnehmer können mit Emojis reagieren |
-| Bonus-Token für Top-Plätze | `emoji_events` | Belohnungen für die besten Platzierungen |
+| Option                           | Icon             | Beschreibung                                     |
+| -------------------------------- | ---------------- | ------------------------------------------------ |
+| Rangliste (Punkte & Platzierung) | `leaderboard`    | Zeigt eine Live-Rangliste nach jeder Frage       |
+| Effekte bei richtiger Antwort    | `auto_awesome`   | Visuelle Belohnungseffekte bei korrekter Antwort |
+| Anfeuerungstexte nach Antwort    | `campaign`       | Motivierende Nachrichten nach der Antwortabgabe  |
+| Emoji-Reaktionen zulassen        | `emoji_emotions` | Teilnehmer können mit Emojis reagieren           |
+| Bonus-Token für Top-Plätze       | `emoji_events`   | Belohnungen für die besten Platzierungen         |
 
 ### Teilnahme & Nicknames
 
 Der Namensmodus bestimmt, wie Teilnehmer im Quiz erscheinen:
 
-| Modus | Icon | Beschreibung |
-|-------|------|-------------|
-| **Nicks** | `theater_comedy` | Vordefinierte Pseudonyme aus einer Altersgruppe (s. Nickname-Themes) |
-| **Eigen** | `edit` | Teilnehmer wählen frei einen Nickname |
-| **Anonym** | `visibility_off` | Keine sichtbaren Namen, vollständige Anonymität |
+| Modus      | Icon             | Beschreibung                                                         |
+| ---------- | ---------------- | -------------------------------------------------------------------- |
+| **Nicks**  | `theater_comedy` | Vordefinierte Pseudonyme aus einer Altersgruppe (s. Nickname-Themes) |
+| **Eigen**  | `edit`           | Teilnehmer wählen frei einen Nickname                                |
+| **Anonym** | `visibility_off` | Keine sichtbaren Namen, vollständige Anonymität                      |
 
 ### Ablauf & Zeit
 
-| Option | Icon | Beschreibung |
-|--------|------|-------------|
-| Zeitlimit pro Frage (Countdown) | `timer` | Countdown-Timer für jede Frage |
-| Zuerst lesen, dann antworten | `menu_book` | Zwei-Phasen-Modus: Lesephase → Antwortphase |
+| Option                          | Icon        | Beschreibung                                |
+| ------------------------------- | ----------- | ------------------------------------------- |
+| Zeitlimit pro Frage (Countdown) | `timer`     | Countdown-Timer für jede Frage              |
+| Zuerst lesen, dann antworten    | `menu_book` | Zwei-Phasen-Modus: Lesephase → Antwortphase |
 
 ### Team
 
-| Option | Icon | Beschreibung |
-|--------|------|-------------|
-| In Teams spielen | `groups` | Aktiviert den Team-Modus (2–8 Teams wählbar) |
-| Teams auto/manuell zuweisen | `shuffle` | Art der Teamzuweisung (nur aktiv wenn Team-Modus an) |
-| Eigene Team-Namen | `edit_note` | Optional: eigene Namen statt `Team A`, `Team B`, …; Vorschau der effektiv entstehenden Teams im Quiz-Setup |
+| Option                      | Icon        | Beschreibung                                                                                               |
+| --------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
+| In Teams spielen            | `groups`    | Aktiviert den Team-Modus (2–8 Teams wählbar)                                                               |
+| Teams auto/manuell zuweisen | `shuffle`   | Art der Teamzuweisung (nur aktiv wenn Team-Modus an)                                                       |
+| Eigene Team-Namen           | `edit_note` | Optional: eigene Namen statt `Team A`, `Team B`, …; Vorschau der effektiv entstehenden Teams im Quiz-Setup |
 
 ### Audio
 
-| Option | Icon | Beschreibung |
-|--------|------|-------------|
-| Sound bei Aktionen | `volume_up` | Akustisches Feedback bei Aktionen |
-| Hintergrundmusik in Lobby | `music_note` | Musik während der Wartelobby |
+| Option             | Icon        | Beschreibung                                                         |
+| ------------------ | ----------- | -------------------------------------------------------------------- |
+| Sound bei Aktionen | `volume_up` | Akustisches Feedback bei Aktionen (Preset-Chip `enableSoundEffects`) |
+
+**Hintergrundmusik** (`backgroundMusic` am Quiz) wird **nicht** im Preset-Toast gesteuert, sondern im **Quiz-Editor** bzw. in den Quiz-Einstellungen (Yjs / Formular) — siehe `Quiz`-Modell und Session-Start.
 
 ### Optionsabhängigkeiten
 
@@ -131,28 +136,30 @@ Im Modus **Nicks** wählt der Dozent eine Altersgruppe, die den Nickname-Pool be
 
 ![Nickname-Theme-Auswahl](preset-nickname-theme.png)
 
-| Theme | Icon | Beschreibung |
-|-------|------|-------------|
+| Theme            | Icon            | Beschreibung                               |
+| ---------------- | --------------- | ------------------------------------------ |
 | Nobelpreisträger | `military_tech` | Namen berühmter Nobelpreisträger (Default) |
-| Kita | `child_care` | Kindgerechte, einfache Tiernamen o.Ä. |
-| Grundschule | `abc` | Altersgerechte Fantasienamen |
-| Mittelstufe | `calculate` | Wissenschaftliche Begriffe |
-| Oberstufe | `school` | Komplexere, akademische Pseudonyme |
+| Kita             | `child_care`    | Kindgerechte, einfache Tiernamen o.Ä.      |
+| Grundschule      | `abc`           | Altersgerechte Fantasienamen               |
+| Mittelstufe      | `calculate`     | Wissenschaftliche Begriffe                 |
+| Oberstufe        | `school`        | Komplexere, akademische Pseudonyme         |
 
 Die Themes sind als Zod-Enum `NicknameThemeEnum` in `libs/shared-types/src/schemas.ts` definiert und werden sowohl im Frontend als auch im Backend validiert.
 
 ## Persistenz (localStorage)
 
-Alle Einstellungen werden **pro Preset** im Browser des Dozenten gespeichert. Es gibt keinen Server-Roundtrip – das passt zum Zero-Knowledge-Prinzip.
+Alle Preset-Toast-Einstellungen werden **pro Preset** im Browser des Dozenten gespeichert. Es gibt dafür keinen Server-Roundtrip – das passt zum Zero-Knowledge-Prinzip.
 
-| Key | Inhalt |
-|-----|--------|
-| `home-preset` | Aktives Preset (`serious` \| `spielerisch`) |
-| `home-preset-options-serious` | JSON mit Optionen, Namensmodus, Theme, Teamanzahl |
-| `home-preset-options-spielerisch` | JSON mit Optionen, Namensmodus, Theme, Teamanzahl |
-| `home-theme` | UI-Theme (`system` \| `dark` \| `light`) |
+| Key                               | Inhalt                                                                                                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `home-preset`                     | Aktives Preset (`serious` \| `spielerisch`; Legacy `serioes` wird beim Lesen zu `serious` migriert, siehe `ThemePresetService`) |
+| `home-preset-options-serious`     | JSON gemäß `PresetStorageEntrySchema`                                                                                           |
+| `home-preset-options-spielerisch` | JSON gemäß `PresetStorageEntrySchema`                                                                                           |
+| `home-theme`                      | UI-Theme (`system` \| `dark` \| `light`)                                                                                        |
 
-**Payload-Struktur** (Beispiel):
+**Zusätzlich (Yjs):** Für die **Quiz-Bibliothek** synchronisiert `QuizStoreService` u. a. `home-presets` / gespiegelte Preset-Keys über CRDT — das ist die Multi-Device-Spiegelung der Startseiten-Presets, nicht identisch mit den rein lokalen Keys bevor Sync aktiv ist.
+
+**Payload-Struktur** (`PresetStorageEntrySchema`, vereinfachtes Beispiel):
 
 ```json
 {
@@ -166,8 +173,7 @@ Alle Einstellungen werden **pro Preset** im Browser des Dozenten gespeichert. Es
     "readingPhaseEnabled": false,
     "teamMode": false,
     "teamAssignment": false,
-    "enableSoundEffects": true,
-    "backgroundMusic": false
+    "enableSoundEffects": true
   },
   "nameMode": "nicknameTheme",
   "nicknameThemeValue": "NOBEL_LAUREATES",
@@ -175,23 +181,25 @@ Alle Einstellungen werden **pro Preset** im Browser des Dozenten gespeichert. Es
 }
 ```
 
+Schlüssel in `options` entsprechen `PRESET_OPTION_IDS` in `preset-toast.component.ts` (Booleans). Ist der Chip **Bonus-Code** aktiv, setzt die Live-Schaltung beim Quiz typischerweise eine konkrete Anzahl (`DEFAULT_BONUS_TOKEN_COUNT` = 3 in shared-types, überschreibbar im Editor).
+
 ## Komponenten-Architektur
 
 ```mermaid
 graph TD
-    HC["HomeComponent<br/><small>Orchestrierung, Session-Code, Navigation</small>"]
-    PTC["PresetToastComponent<br/><small>Preset-UI, Optionen, Speichern</small>"]
-    TPS["ThemePresetService<br/><small>Globaler State: Preset + Theme</small>"]
-    LS["localStorage<br/><small>Persistenz pro Preset</small>"]
-    ST["@arsnova/shared-types<br/><small>NicknameThemeEnum (Zod)</small>"]
+    HC["HomeComponent<br/><small>features/home</small>"]
+    PTC["PresetToastComponent<br/><small>shared/preset-toast</small>"]
+    TPS["ThemePresetService<br/><small>core/theme-preset.service</small>"]
+    LS["localStorage<br/><small>home-preset, home-preset-options-*</small>"]
+    ST["@arsnova/shared-types<br/><small>PresetStorageEntrySchema, NicknameThemeEnum</small>"]
 
     HC -->|"presetToastVisible signal"| PTC
     PTC -->|"closed output"| HC
     PTC -->|"inject()"| TPS
     PTC -->|"saveAndClose()"| LS
     PTC -->|"loadPreset()"| LS
-    TPS -->|"setPreset()"| LS
-    PTC -->|"NicknameThemeEnum.safeParse()"| ST
+    TPS -->|"setPreset / setTheme"| LS
+    PTC -->|"safeParse / Import-Export"| ST
 
     style HC fill:#1a1a2e,stroke:#e94560,color:#fff
     style PTC fill:#1a1a2e,stroke:#0f3460,color:#fff
@@ -230,10 +238,11 @@ flowchart TD
 
 ## Erweiterungspunkte
 
-| Was | Wo | Aufwand |
-|-----|-----|---------|
-| Neues Nickname-Theme | `NicknameThemeEnum` in `libs/shared-types`, `NICKNAME_THEME_OPTIONS` in `preset-toast.component.ts` | Gering |
-| Neue Preset-Option | `PRESET_OPTION_IDS` + Kategorie in `preset-toast.component.ts`, `getPresetDefaults()` anpassen | Gering |
-| Neue Kategorie | `PRESET_CATEGORIES` erweitern | Gering |
-| Drittes Preset (z.B. „Prüfung") | `PresetValue`-Type in `ThemePresetService`, neuer Default-Block in `getPresetDefaults()`, Header-Toggle erweitern | Mittel |
-| Server-seitige Preset-Sync | Neuer tRPC-Endpoint, Prisma-Schema erweitern | Hoch |
+| Was                             | Wo                                                                                                              | Aufwand |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------- |
+| Neues Nickname-Theme            | `NicknameThemeEnum` in `libs/shared-types`, `NICKNAME_THEME_OPTIONS` in `preset-toast.component.ts`             | Gering  |
+| Neue Preset-Option              | `PRESET_OPTION_IDS` + ggf. `OPTION_REQUIRES_PARENT_ON`, Kategorie in `PRESET_CATEGORIES`, `getPresetDefaults()` | Gering  |
+| Neue Kategorie                  | `PRESET_CATEGORIES` erweitern                                                                                   | Gering  |
+| Drittes Preset (z.B. „Prüfung") | `PresetValue` in `theme-preset.service.ts`, Defaults in `getPresetDefaults()`, Header-Toggle + Storage-Keys     | Mittel  |
+| Server-seitige Preset-Sync      | Neuer tRPC-Endpoint, Prisma-Schema erweitern                                                                    | Hoch    |
+| Multi-Device-Spiegelung         | `QuizStoreService` / Yjs `home-presets` (bestehend erweitern)                                                   | Mittel  |

@@ -3,10 +3,10 @@
 # 🏗️ Architektur-Übersicht: arsnova.eu
 
 **Erstellt:** 2026-02-20  
-**Zuletzt aktualisiert:** 2026-03-16  
+**Zuletzt aktualisiert:** 2026-03-20  
 **Zweck:** Visualisierung der gesamten Codebasis-Struktur und Architektur
 
-**Status:** Epics 0–5, 7.1, 8, 9 umgesetzt · Epic 6.5 offen. Blitzlicht ist als Startseiten-Shortcut und Session-Kanal konsolidiert. Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ADR-0009](../architecture/decisions/0009-unified-live-session-channels.md), [ADR-0010](../architecture/decisions/0010-blitzlicht-as-core-live-mode.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
+**Status:** Epics 0–5, 7.1, 8, 9 umgesetzt · Epic 6 größtenteils umgesetzt (6.5, 6.6 offen) · geplante Markdown-Stories 1.7a/1.7b siehe [ADR-0015](../architecture/decisions/0015-markdown-images-url-only-and-lightbox.md), [ADR-0016](../architecture/decisions/0016-markdown-katex-editor-split-view-and-md3-toolbar.md). Blitzlicht ist als Startseiten-Shortcut und Session-Kanal konsolidiert. Rollen/Routen/Autorisierung inkl. Admin siehe [ADR-0006](../architecture/decisions/0006-roles-routes-authorization-host-admin.md), [ADR-0009](../architecture/decisions/0009-unified-live-session-channels.md), [ADR-0010](../architecture/decisions/0010-blitzlicht-as-core-live-mode.md), [ROUTES_AND_STORIES.md](../ROUTES_AND_STORIES.md).
 
 ## System-Architektur-Diagramm
 
@@ -20,7 +20,7 @@ graph LR
             FE_ROUTES["Routing<br/>/quiz<br/>/session/:code/(host|present|vote)<br/>/join/:code · /feedback/:code · /feedback/:code/vote<br/>/admin · /help · /legal/*<br/>optional locale prefix:<br/>/de /en /fr /es /it"]
             FE_SERVICES[Core Services<br/>tRPC Client · ws-connection · theme-preset<br/>locale guard · sound]
         end
-        
+
         subgraph "Backend - Node.js + tRPC (Epic 0 ✅)"
             BE[Express Server<br/>Port 3000]
             TRPC["tRPC Router<br/>/trpc"]
@@ -28,29 +28,29 @@ graph LR
             SERVICES[Domain/Infra Layer<br/>quizScoring · rateLimit · sessionCleanup · adminAuth]
             DTO[DTO Layer<br/>Data Stripping<br/>QuestionPreviewDTO<br/>QuestionStudentDTO<br/>QuestionRevealedDTO]
         end
-        
+
         subgraph "Shared Library"
             SHARED[shared-types Library<br/>Zod Schemas<br/>Type Definitions]
         end
     end
-    
+
     subgraph "Datenbanken & Storage (Epic 0.1 ✅)"
         PG[(PostgreSQL<br/>Prisma ORM<br/>Sessions · Votes<br/>Participants)]
         REDIS[(Redis<br/>Pub/Sub · Rate-Limit<br/>Docker Compose)]
         IDB[(IndexedDB<br/>Yjs CRDT<br/>Local-First Quizzes)]
     end
-    
+
     subgraph "Externe Clients"
         DOZENT[Dozent Client<br/>Quiz-Erstellung<br/>Session-Steuerung]
         STUDENT[Teilnehmer-Client<br/>Quiz · Q&A · Blitzlicht<br/>Voting · Leaderboard]
         ADMIN["Admin Client<br/>/admin · Inspektion<br/>Löschen · Auszug"]
     end
-    
+
     subgraph "Echtzeit-Kommunikation (Epic 0.2, 0.3 ✅)"
         WS[WebSocket<br/>tRPC Subscriptions<br/>Port 3001]
         YWS[y-websocket<br/>Yjs Sync Relay<br/>Port 3002]
     end
-    
+
     %% Frontend-Verbindungen
     FE --> FE_COMP
     FE --> FE_ROUTES
@@ -59,7 +59,7 @@ graph LR
     FE_SERVICES --> WS
     FE_SERVICES --> YWS
     FE_SERVICES --> IDB
-    
+
     %% Backend-Verbindungen
     BE --> TRPC
     TRPC --> ROUTERS
@@ -69,25 +69,25 @@ graph LR
     SERVICES --> REDIS
     ROUTERS --> SHARED
     DTO --> SHARED
-    
+
     %% Echtzeit-Verbindungen
     WS --> BE
     YWS --> BE
     REDIS --> WS
-    
+
     %% Client-Verbindungen
     DOZENT --> FE
     STUDENT --> FE
     ADMIN --> FE
     DOZENT --> IDB
-    
+
     %% Styling
     classDef frontend fill:#DD0031,stroke:#333,stroke-width:2px,color:#fff
     classDef backend fill:#2596be,stroke:#333,stroke-width:2px,color:#fff
     classDef shared fill:#2D3748,stroke:#333,stroke-width:2px,color:#fff
     classDef database fill:#4A90E2,stroke:#333,stroke-width:2px,color:#fff
     classDef client fill:#7B68EE,stroke:#333,stroke-width:2px,color:#fff
-    
+
     class FE,FE_COMP,FE_ROUTES,FE_SERVICES frontend
     class BE,TRPC,ROUTERS,SERVICES,DTO backend
     class SHARED shared
@@ -106,7 +106,7 @@ sequenceDiagram
     participant PG as PostgreSQL
     participant R as Redis
     participant S as Student
-    
+
     Note over D,YJS: Local-First: Quiz wird lokal gespeichert
     D->>FE: Quiz erstellen/bearbeiten
     FE->>YJS: CRDT-Dokument speichern
@@ -125,14 +125,14 @@ sequenceDiagram
     BE->>PG: Session speichern
     BE->>R: Code registrieren
     BE-->>FE: Session-Code zurück
-    
+
     Note over S,BE: Student tritt bei
     S->>FE: Code eingeben
     FE->>BE: session.join()
     BE->>PG: Participant erstellen
     BE->>R: Pub/Sub: onParticipantJoined
     R-->>D: Echtzeit-Update
-    
+
     Note over D,S: Frage wird gestartet (Story 2.6: Zwei-Phasen optional)
     D->>FE: Nächste Frage
     FE->>BE: session.nextQuestion()
@@ -154,7 +154,7 @@ sequenceDiagram
     BE->>PG: Vote speichern
     BE->>R: Pub/Sub: onVoteCountUpdate
     R-->>D: Live-Update
-    
+
     Note over D,S: Ergebnisse werden aufgelöst
     D->>FE: Ergebnisse zeigen
     FE->>BE: session.revealResults()
@@ -162,6 +162,8 @@ sequenceDiagram
     BE->>BE: Scoring berechnen
     BE->>R: Pub/Sub: onResultsRevealed (MIT isCorrect!)
     R-->>S: Ergebnisse + Punkte
+
+    Note over D,S: Zwischen Fragen: PAUSED, dann erneut nextQuestion; Session-Ende: session.end → FINISHED
 ```
 
 ### Admin-Datenfluss (Epic 9)

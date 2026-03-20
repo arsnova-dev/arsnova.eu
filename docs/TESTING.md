@@ -1,0 +1,71 @@
+<!-- markdownlint-disable MD013 -->
+
+# Tests & CI — Referenz
+
+**Lokal** vor PR: mindestens `npm run build`, `npm run lint`, `npm test` (entspricht den wesentlichen CI-Gates). Vollständige DoD: [Backlog.md](../Backlog.md) „Definition of Done“.
+
+**Stand:** 2026-03-20 · Workflow: [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
+
+---
+
+## NPM-Skripte (Root)
+
+| Befehl                 | Bedeutung                                              |
+| ---------------------- | ------------------------------------------------------ |
+| `npm run build`        | `shared-types` → Backend `tsc` → Frontend `ng build`   |
+| `npm run typecheck`    | Backend + Frontend `tsc --noEmit`                      |
+| `npm run lint`         | ESLint über `libs/` und `apps/`                        |
+| `npm test`             | **Backend** Vitest + **Frontend** Vitest (sequentiell) |
+| `npm run format:check` | Prettier (ohne Schreiben)                              |
+
+Workspace-spezifisch:
+
+| Workspace           | Tests                                              | Typcheck                                 |
+| ------------------- | -------------------------------------------------- | ---------------------------------------- |
+| `@arsnova/backend`  | `npm run test -w @arsnova/backend` (`vitest run`)  | `npm run typecheck -w @arsnova/backend`  |
+| `@arsnova/frontend` | `npm run test -w @arsnova/frontend` (`vitest run`) | `npm run typecheck -w @arsnova/frontend` |
+
+---
+
+## CI-Pipeline (GitHub Actions, `main`)
+
+Auslöser: **Push** und **Pull Request** auf `main`.
+
+| Job / Phase                                | Inhalt                                                                                                                           |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| **build** (Node 22)                        | `npm ci` → `prisma validate` → `prisma generate` → `tsc -b apps/backend` → Frontend `tsc --noEmit` → `build:localize` (Frontend) |
+| **typecheck** (Node 22, parallel zu build) | `npm ci` → `prisma validate` → `prisma generate` → `npm run typecheck` (Workspaces, `--noEmit`)                                  |
+| **lint**                                   | `npm run lint` (nach build)                                                                                                      |
+| **audit**                                  | `npm audit --audit-level=high` (informational, blockiert nicht)                                                                  |
+| **test**                                   | `npm test` (nach build)                                                                                                          |
+| **docker**                                 | Docker-Image-Build (ohne Push), nach build                                                                                       |
+| **deploy**                                 | Nur bei Push auf konfigurierten Branch + `DEPLOY_ENABLED`; nach lint, test, docker, typecheck                                    |
+
+Matrix aktuell **eine** Node-Version (**22**).
+
+---
+
+## Optionale / manuelle Checks (nicht immer CI)
+
+| Befehl (Frontend-Workspace) | Zweck                       |
+| --------------------------- | --------------------------- |
+| `check:viewport`            | Viewport 320px-Smoke        |
+| `smoke:unified-session`     | Unified-Session-Flow-Skript |
+| `lighthouse:a11y`           | Lighthouse A11y (lokal)     |
+
+Prisma-Schema lokal: `npx prisma validate` (in CI ohne DB).
+
+---
+
+## Wo Tests liegen
+
+- **Backend:** `apps/backend/src/__tests__/*.test.ts`, Vitest.
+- **Frontend:** `*.spec.ts` neben Komponenten/Services (Angular/Vitest), siehe [AGENT.md](../AGENT.md).
+
+---
+
+## Verwandte Dokumente
+
+- [CONTRIBUTING.md](../CONTRIBUTING.md) — PR-Checkliste
+- [ENVIRONMENT.md](ENVIRONMENT.md) — lokale Ausführung
+- [README.md](../README.md) — `npm run dev`, Setup
