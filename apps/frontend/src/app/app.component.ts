@@ -407,10 +407,28 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private updateRouteFlags(): void {
-    const pathname = typeof window !== 'undefined' ? window.location.pathname : this.router.url;
-    const normalizedPath = pathname.replace(/^\/(?:de|en|fr|it|es)(?=\/|$)/, '') || '/';
-    this.isFeedbackRoute.set(normalizedPath.startsWith('/feedback/'));
-    this.isPreviewRoute.set(this.matchesPreviewRoute(pathname));
+    // Router-URL und window.location können bei NavigationEnd kurz auseinanderlaufen
+    // (v. a. Mobile/Safari). Beide auswerten, damit Footer/Layout nach Klicks von der
+    // Startseite zuverlässig zu /feedback/… passen.
+    const routerPath = AppComponent.stripQueryAndHash(this.router.url);
+    const windowPath = typeof window !== 'undefined' ? window.location.pathname : routerPath;
+    const fromRouter = AppComponent.withoutLocalePath(routerPath);
+    const fromWindow = AppComponent.withoutLocalePath(windowPath);
+    this.isFeedbackRoute.set(
+      fromRouter.startsWith('/feedback/') || fromWindow.startsWith('/feedback/'),
+    );
+    this.isPreviewRoute.set(
+      this.matchesPreviewRoute(routerPath) || this.matchesPreviewRoute(windowPath),
+    );
+  }
+
+  private static stripQueryAndHash(url: string): string {
+    return url.split(/[?#]/)[0];
+  }
+
+  private static withoutLocalePath(path: string): string {
+    const withSlash = path.startsWith('/') ? path : `/${path}`;
+    return withSlash.replace(/^\/(?:de|en|fr|it|es)(?=\/|$)/, '') || '/';
   }
 
   private matchesPreviewRoute(pathname: string): boolean {
