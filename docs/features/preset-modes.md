@@ -1,6 +1,6 @@
 # Preset-Modi (Session-Voreinstellungen)
 
-> **Stand:** 2026-03-20 · Abgleich mit `ThemePresetService`, `preset-toast.component.ts`, `PresetStorageEntrySchema` (`@arsnova/shared-types`)
+> **Stand:** 2026-03-21 · Abgleich mit `ThemePresetService`, `preset-toast.component.ts`, `PresetStorageEntrySchema` (`@arsnova/shared-types`)
 
 Die Preset-Modi sind ein zentrales Unterscheidungsmerkmal von arsnova.eu. Sie erlauben es Dozenten, mit **einem Klick** eine komplette Session-Konfiguration zu laden – optimiert für den jeweiligen Einsatzzweck. Kein langwieriges Zusammenklicken einzelner Optionen, kein versehentliches Vergessen eines Toggles.
 
@@ -182,6 +182,19 @@ Alle Preset-Toast-Einstellungen werden **pro Preset** im Browser des Dozenten ge
 ```
 
 Schlüssel in `options` entsprechen `PRESET_OPTION_IDS` in `preset-toast.component.ts` (Booleans). Ist der Chip **Bonus-Code** aktiv, setzt die Live-Schaltung beim Quiz typischerweise eine konkrete Anzahl (`DEFAULT_BONUS_TOKEN_COUNT` = 3 in shared-types, überschreibbar im Editor).
+
+### Live-Start (`quiz.upload`): Quiz vs. Preset
+
+Beim **Live-Schalten** wird zuerst `QuizStoreService.getUploadPayload(quizId)` gebaut (**Quelle der Wahrheit: lokales Quiz-Dokument**). Anschließend können Werte aus dem aktuell gewählten Home-Preset (`home-preset-options-{serious|spielerisch}`) **gezielt überschreiben**.
+
+**Regel (Quiz-Vorschau + Quiz-Sammlung, gleiche Logik):**
+
+- Für jeden booleschen Chip in `options` gilt: **Nur wenn der Schlüssel im gespeicherten JSON wirklich vorkommt** (`id in options`), wird `true`/`false` aus dem Preset übernommen.
+- **Fehlt** der Schlüssel (z. B. ältere gespeicherte Daten, importierter Teilstand), bleibt der Wert aus dem **Quiz-Upload-Payload** — insbesondere wichtig für `readingPhaseEnabled` und die übrigen `PRESET_OPTION_IDS`.
+
+Namensmodus, `nicknameThemeValue` und `teamCountValue` kommen weiterhin aus dem Preset-Eintrag (nicht aus dem sparse-`options`-Record allein).
+
+**Implementierung:** `quiz-preview.component.ts` und `quiz-list.component.ts` (`startLiveSession`).
 
 ## Komponenten-Architektur
 

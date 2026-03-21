@@ -190,6 +190,7 @@ Dieses Dokument bewusst kompakt und stabil halten. Bei größeren Änderungen (n
 - Input-Schemas: CreateSessionInputSchema, JoinSessionInputSchema, CreateQuizInputSchema, QuizUploadInputSchema, SubmitVoteInputSchema, AddQuestionInputSchema, AnswerOptionInputSchema, GetExportDataInputSchema (Story 4.7).
 - DTO-Schemas: SessionInfoDTOSchema, QuestionPreviewDTOSchema, QuestionStudentDTOSchema, QuestionRevealedDTOSchema (AnswerOptionRevealedDTO), LeaderboardEntryDTOSchema, PersonalScorecardDTOSchema, BonusTokenListDTO, SessionExportDTOSchema (Story 4.7); ParticipantDTO, QuizExportSchema.
 - Presets: QUIZ_PRESETS (PLAYFUL, SERIOUS) mit readingPhaseEnabled, defaultTimer, anonymousMode etc.
+- **Live-Start (`quiz.upload`):** Payload aus `getUploadPayload` (Quiz); Home-Preset überschreibt nur boolesche Chips, deren Schlüssel **explizit** in `localStorage` `options` steht (`id in options`). Fehlender Schlüssel → Quiz-Wert. Details: `docs/features/preset-modes.md` § Live-Start.
 - Typen: Alle via z.infer von den genannten Schemas exportieren; keine Duplikate als interface, außer wo für API-Kompatibilität nötig.
 
 ---

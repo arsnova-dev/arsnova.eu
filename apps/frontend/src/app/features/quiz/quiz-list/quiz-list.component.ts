@@ -673,34 +673,48 @@ export class QuizListComponent implements OnInit {
           const parsed = raw ? (JSON.parse(raw) as unknown) : null;
           const entry = PresetStorageEntrySchema.safeParse(parsed);
           if (entry.success) {
-            const options = entry.data.options;
-            const optionEnabled = (id: string) => options[id] === true;
+            const storedOptions = entry.data.options;
+            /** Fehlender Chip-Schlüssel = Quiz-Wert behalten (wie Quiz-Vorschau). */
+            const optionEnabled = (id: string, fallback: boolean) =>
+              id in storedOptions ? storedOptions[id] === true : fallback;
             const nameMode = entry.data.nameMode;
-            const effectiveTeamMode = optionEnabled('teamMode') || payload.teamMode;
+            const effectiveTeamMode = optionEnabled('teamMode', false) || payload.teamMode;
             payload = {
               ...payload,
               nicknameTheme: entry.data.nicknameThemeValue,
               allowCustomNicknames: nameMode === 'allowCustomNicknames',
               anonymousMode: nameMode === 'anonymousMode',
-              showLeaderboard: optionEnabled('showLeaderboard'),
-              enableRewardEffects: optionEnabled('enableRewardEffects'),
-              enableMotivationMessages: optionEnabled('enableMotivationMessages'),
-              enableEmojiReactions: optionEnabled('enableEmojiReactions'),
-              enableSoundEffects: optionEnabled('enableSoundEffects'),
-              readingPhaseEnabled: optionEnabled('readingPhaseEnabled'),
+              showLeaderboard: optionEnabled('showLeaderboard', payload.showLeaderboard),
+              enableRewardEffects: optionEnabled(
+                'enableRewardEffects',
+                payload.enableRewardEffects,
+              ),
+              enableMotivationMessages: optionEnabled(
+                'enableMotivationMessages',
+                payload.enableMotivationMessages,
+              ),
+              enableEmojiReactions: optionEnabled(
+                'enableEmojiReactions',
+                payload.enableEmojiReactions,
+              ),
+              enableSoundEffects: optionEnabled('enableSoundEffects', payload.enableSoundEffects),
+              readingPhaseEnabled: optionEnabled(
+                'readingPhaseEnabled',
+                payload.readingPhaseEnabled ?? true,
+              ),
               teamMode: effectiveTeamMode,
-              teamAssignment: optionEnabled('teamMode')
-                ? optionEnabled('teamAssignment')
+              teamAssignment: optionEnabled('teamMode', false)
+                ? optionEnabled('teamAssignment', false)
                   ? 'MANUAL'
                   : 'AUTO'
                 : (payload.teamAssignment ?? 'AUTO'),
-              teamCount: optionEnabled('teamMode')
+              teamCount: optionEnabled('teamMode', false)
                 ? (entry.data.teamCountValue ?? payload.teamCount)
                 : payload.teamCount,
-              bonusTokenCount: optionEnabled('bonusTokenCount')
+              bonusTokenCount: optionEnabled('bonusTokenCount', false)
                 ? (payload.bonusTokenCount ?? DEFAULT_BONUS_TOKEN_COUNT)
                 : payload.bonusTokenCount,
-              defaultTimer: optionEnabled('defaultTimer')
+              defaultTimer: optionEnabled('defaultTimer', typeof payload.defaultTimer === 'number')
                 ? (payload.defaultTimer ?? DEFAULT_TIMER_SECONDS)
                 : null,
               backgroundMusic: null,
