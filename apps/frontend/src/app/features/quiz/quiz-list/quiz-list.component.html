@@ -36,18 +36,15 @@
 
   @if (showAiImport()) {
     <mat-card appearance="outlined" class="quiz-list__ai-card">
-      <mat-card-content class="quiz-list__ai-content l-stack l-stack--xs">
-        <h2 class="quiz-list__ai-title" i18n="@@quizList.aiImport.title">
-          Mit unserem Prompt zum fertigen Quiz
-        </h2>
-        <p class="quiz-list__ai-hint" i18n="@@quizList.aiImport.hint">
-          In drei kurzen Schritten kommst du vom KI-Chat direkt zu einem neuen Quiz.
-        </p>
-        <p class="quiz-list__ai-token-hint" i18n="@@quizList.aiImport.tokenReassurance">
-          Für gängige KI-Chats ist die Länge der Textvorlage völlig normal – etwa wie eine
-          ausführliche Anleitung, nicht wie ein ganzes Skript. Für deine Nachrichten und Anhänge
-          bleibt danach noch reichlich Platz.
-        </p>
+      <mat-card-content class="quiz-list__ai-content">
+        <div class="quiz-list__ai-intro">
+          <h2 class="quiz-list__ai-title" i18n="@@quizList.aiImport.title">
+            Mit unserem Prompt zum fertigen Quiz
+          </h2>
+          <p class="quiz-list__ai-hint" i18n="@@quizList.aiImport.hint">
+            In drei kurzen Schritten kommst du vom KI-Chat direkt zu einem neuen Quiz.
+          </p>
+        </div>
         <div
           class="quiz-list__ai-steps"
           aria-label="KI-Import Schritte"
@@ -118,7 +115,7 @@
                   Antwort einfügen
                 </h3>
                 <p class="quiz-list__ai-step-text" i18n="@@quizList.aiImport.stepTwoText">
-                  Kopiere am besten nur den JSON-Codeblock aus dem KI-Chat und füge ihn hier ein.
+                  Kopiere den JSON-Codeblock aus dem KI-Chat und füge ihn hier ein.
                 </p>
               </div>
             </div>
@@ -134,10 +131,6 @@
                 [value]="aiJsonInput()"
                 (input)="updateAiJsonInput(aiJsonTextarea.value)"
               ></textarea>
-              <mat-hint i18n="@@quizList.aiImport.responseHint">
-                Am einfachsten klappt es mit dem Codeblock. Falls du die ganze Chat-Antwort
-                kopierst, versuchen wir den JSON-Teil automatisch zu erkennen.
-              </mat-hint>
             </mat-form-field>
           </section>
 
@@ -175,15 +168,13 @@
   }
 
   @if (!hasUserQuizzes()) {
-    <mat-card appearance="outlined" class="quiz-empty-state">
-      <mat-card-content class="quiz-empty-state__content">
+    <div class="quiz-empty-state">
+      <div class="quiz-empty-state__content">
         <mat-icon class="quiz-empty-state__icon">library_books</mat-icon>
         <p class="quiz-empty-state__text" i18n>Willkommen in deiner Quiz-Sammlung!</p>
-        <p class="quiz-empty-state__hint" i18n>
-          Mit dem Demo-Quiz unten starten oder die Aktionen oben nutzen.
-        </p>
-      </mat-card-content>
-    </mat-card>
+        <p class="quiz-empty-state__hint" i18n>Starte mit der Demo und lerne so die App kennen.</p>
+      </div>
+    </div>
   }
   @if (quizzes().length > 0) {
     <div class="quiz-list__items l-stack l-stack--sm">
@@ -430,7 +421,7 @@
       </div>
     }
     <a
-      matButton="tonal"
+      matButton="text"
       class="quiz-list__sync-cta"
       [routerLink]="['sync', syncRoomId()]"
       i18n-aria-label="@@quizList.syncCta"

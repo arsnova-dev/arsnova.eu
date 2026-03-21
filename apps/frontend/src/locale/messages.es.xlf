@@ -3632,14 +3632,6 @@
           <context context-type="linenumber">44,46</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="quizList.aiImport.tokenReassurance" datatype="html">
-        <source> Für gängige KI-Chats ist die Länge der Textvorlage völlig normal – etwa wie eine ausführliche Anleitung, nicht wie ein ganzes Skript. Für deine Nachrichten und Anhänge bleibt danach noch reichlich Platz.</source>
-        <target>En chats de IA habituales, la longitud de la plantilla es totalmente normal: como una guía detallada, no como un guion entero. Aún queda mucho espacio para tus mensajes y archivos.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
-          <context context-type="linenumber">47,51</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="quizList.aiImport.stepsAria" datatype="html">
         <source>KI-Import Schritte</source>
         <target>Pasos para importar desde IA</target>
@@ -3705,8 +3697,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="quizList.aiImport.stepTwoText" datatype="html">
-        <source> Kopiere am besten nur den JSON-Codeblock aus dem KI-Chat und füge ihn hier ein.</source>
-        <target>Lo ideal es copiar solo el bloque de código JSON del chat de IA y pegarlo aquí.</target>
+        <source>Kopiere den JSON-Codeblock aus dem KI-Chat und füge ihn hier ein.</source>
+        <target>Copia el bloque de código JSON del chat de IA y pégalo aquí.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">121,123</context>
@@ -3718,14 +3710,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">127,129</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="quizList.aiImport.responseHint" datatype="html">
-        <source> Am einfachsten klappt es mit dem Codeblock. Falls du die ganze Chat-Antwort kopierst, versuchen wir den JSON-Teil automatisch zu erkennen.</source>
-        <target>Lo más fácil es pegar el bloque de código. Si copias toda la respuesta del chat, intentaremos detectar automáticamente la parte JSON.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
-          <context context-type="linenumber">138,140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quizList.aiImport.stepThreeTitle" datatype="html">
@@ -3761,8 +3745,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4742318017246395898" datatype="html">
-        <source> Mit dem Demo-Quiz unten starten oder die Aktionen oben nutzen.</source>
-        <target>Comience con el cuestionario de demostración a continuación o utilice las acciones anteriores.</target>
+        <source>Starte mit der Demo und lerne so die App kennen.</source>
+        <target>Empieza con la demo y así conoce la app.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">183,184</context>
