@@ -390,6 +390,19 @@
         </div>
 
         <div class="quiz-list-item__actions">
+          @if (quiz.hasBonus) {
+            <button
+              mat-button
+              type="button"
+              [disabled]="!quiz.lastServerQuizId"
+              [matTooltip]="bonusCodesAfterLiveTooltip"
+              [matTooltipDisabled]="!!quiz.lastServerQuizId"
+              (click)="openBonusCodesDialog(quiz)"
+            >
+              <mat-icon>card_giftcard</mat-icon>
+              <span i18n="@@quizList.bonusCodes">Bonus-Codes</span>
+            </button>
+          }
           <a
             mat-button
             type="button"

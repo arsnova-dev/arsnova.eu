@@ -312,6 +312,10 @@
 
 .vote-live-banner__participants {
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em;
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
 }
@@ -374,8 +378,8 @@
     text-align: center;
   }
 
-  .vote-live-banner__url {
-    max-width: 100%;
+  .vote-live-banner__participants {
+    justify-content: center;
   }
 
   .vote-countdown-floating,

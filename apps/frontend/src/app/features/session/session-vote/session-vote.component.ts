@@ -21,6 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { ThemePresetService } from '../../../core/theme-preset.service';
+import * as vpc from './session-vote-participant-copy';
 import { localizePath } from '../../../core/locale-router';
 import type {
   ParticipantDTO,
@@ -66,7 +67,7 @@ const ANSWER_SHAPES = [
   '\u2B20',
   '\u2BC6',
 ];
-const MESSAGES_CORRECT = [
+const MESSAGES_CORRECT_PLAYFUL = [
   $localize`Perfekt! 🎯`,
   $localize`Richtig! 💪`,
   $localize`Volltreffer! ⭐`,
@@ -75,24 +76,43 @@ const MESSAGES_CORRECT = [
   $localize`Läuft bei dir! 🎸`,
   $localize`Nailed it! 👏`,
 ];
-const MESSAGES_WRONG = [
+const MESSAGES_CORRECT_SERIOUS = [
+  $localize`:@@sessionVote.msgCorrectS1:Richtig.`,
+  $localize`:@@sessionVote.msgCorrectS2:Korrekt.`,
+  $localize`:@@sessionVote.msgCorrectS3:Antwort stimmt.`,
+];
+const MESSAGES_WRONG_PLAYFUL = [
   $localize`Knapp daneben! 🤏`,
   $localize`Nächstes Mal! 💡`,
   $localize`Weiter dranbleiben! 🔄`,
   $localize`Das wird schon! 📈`,
   $localize`Nicht aufgeben! 💪`,
 ];
-const MESSAGES_NEUTRAL = [
+const MESSAGES_WRONG_SERIOUS = [
+  $localize`:@@sessionVote.msgWrongS1:Nicht richtig.`,
+  $localize`:@@sessionVote.msgWrongS2:Leider falsch.`,
+  $localize`:@@sessionVote.msgWrongS3:Versuch es bei der nächsten Frage erneut.`,
+];
+const MESSAGES_NEUTRAL_PLAYFUL = [
   $localize`Antwort gespeichert! ✓`,
   $localize`Danke für deine Antwort! 📝`,
   $localize`Weiter so! 🚀`,
 ];
-const MESSAGES_TIMEOUT = [
+const MESSAGES_NEUTRAL_SERIOUS = [
+  $localize`:@@sessionVote.msgNeutralS1:Antwort gespeichert.`,
+  $localize`:@@sessionVote.msgNeutralS2:Danke, deine Antwort wurde übernommen.`,
+];
+const MESSAGES_TIMEOUT_PLAYFUL = [
   $localize`Knapp verpasst – nächste Runde! ⏱️`,
   $localize`Die Zeit war zu kurz – du schaffst das! 💪`,
   $localize`Beim nächsten Mal klappt's! 🔄`,
   $localize`Kopf hoch – gleich geht's weiter! 🚀`,
   $localize`Tick-tock – nächste Chance kommt! ⏰`,
+];
+const MESSAGES_TIMEOUT_SERIOUS = [
+  $localize`:@@sessionVote.msgTimeoutS1:Zeit abgelaufen.`,
+  $localize`:@@sessionVote.msgTimeoutS2:Die Zeit ist um – warte auf die nächste Frage.`,
+  $localize`:@@sessionVote.msgTimeoutS3:Zu spät abgestimmt. Nächste Chance folgt.`,
 ];
 function pickRandom(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -102,31 +122,46 @@ function pickRandom(arr: string[]): string {
  * Kontextbasierte Motivationsmeldung aus Scorecard-Daten (Story 5.7).
  * Liefert eine passende Meldung basierend auf wasCorrect, streakCount, rankChange, currentRank und totalParticipants.
  */
-function getContextMotivation(sc: PersonalScorecardDTO, totalParticipants: number): string {
+function getContextMotivation(
+  sc: PersonalScorecardDTO,
+  totalParticipants: number,
+  playful: boolean,
+): string {
   if (sc.wasCorrect === true) {
-    if (sc.streakCount >= 3) return $localize`On fire! 🔥 ${sc.streakCount}er-Serie!`;
-    if (sc.rankChange > 0) {
-      return sc.rankChange === 1
-        ? $localize`${sc.rankChange} Platz aufgestiegen! 🚀`
-        : $localize`${sc.rankChange} Plätze aufgestiegen! 🚀`;
+    if (sc.streakCount >= 3) {
+      return playful
+        ? $localize`:@@sessionVote.motivStreakPlayful:On fire! 🔥 ${sc.streakCount}:c:er-Serie!`
+        : $localize`:@@sessionVote.motivStreakSerious:${sc.streakCount}:c: richtige Antworten in Folge.`;
     }
-    return pickRandom([
-      $localize`Perfekt! 🎯`,
-      $localize`Richtig! 💪`,
-      $localize`Volltreffer! ⭐`,
-      $localize`Stark! 🔥`,
-      $localize`Nailed it! 👏`,
-    ]);
+    if (sc.rankChange > 0) {
+      if (sc.rankChange === 1) {
+        return playful
+          ? $localize`:@@sessionVote.motivRank1Playful:Ein Platz nach oben! 🚀`
+          : $localize`:@@sessionVote.motivRank1Serious:Ein Rang nach oben.`;
+      }
+      return playful
+        ? $localize`:@@sessionVote.motivRankNPlayful:${sc.rankChange}:n: Plätze nach oben! 🚀`
+        : $localize`:@@sessionVote.motivRankNSerious:${sc.rankChange}:n: Plätze nach oben.`;
+    }
+    return pickRandom(playful ? MESSAGES_CORRECT_PLAYFUL : MESSAGES_CORRECT_SERIOUS);
   }
   if (sc.wasCorrect === false) {
     if (sc.streakCount === 0 && sc.previousRank !== null && sc.previousRank < sc.currentRank) {
-      return $localize`Streak gerissen! Nächste Runde! 💪`;
+      return playful
+        ? $localize`:@@sessionVote.motivStreakBreakPlayful:Streak gerissen! Nächste Runde! 💪`
+        : $localize`:@@sessionVote.motivStreakBreakSerious:Serie beendet – nächste Frage zählt.`;
     }
     const topThird = Math.ceil(totalParticipants / 3);
-    if (sc.currentRank <= topThird) return $localize`Kopf hoch – du liegst noch gut! 🏅`;
-    return $localize`Weiter so – jede Frage ist eine neue Chance! 🌟`;
+    if (sc.currentRank <= topThird) {
+      return playful
+        ? $localize`:@@sessionVote.motivTopPlayful:Kopf hoch – du liegst noch gut! 🏅`
+        : $localize`:@@sessionVote.motivTopSerious:Du befindest dich weiter vorn in der Rangliste.`;
+    }
+    return playful
+      ? $localize`:@@sessionVote.motivChasePlayful:Weiter so – jede Frage ist eine neue Chance! 🌟`
+      : $localize`:@@sessionVote.motivChaseSerious:Weiter üben – die nächste Frage bringt neue Punkte.`;
   }
-  return pickRandom(MESSAGES_NEUTRAL);
+  return pickRandom(playful ? MESSAGES_NEUTRAL_PLAYFUL : MESSAGES_NEUTRAL_SERIOUS);
 }
 
 @Component({
@@ -147,6 +182,8 @@ function getContextMotivation(sc: PersonalScorecardDTO, totalParticipants: numbe
   styleUrl: './session-vote.component.scss',
 })
 export class SessionVoteComponent implements OnInit, OnDestroy {
+  /** Preset-abhängige Teilnehmer-Texte (Template: vpc.*) */
+  readonly vpc = vpc;
   readonly localizedPath = localizePath;
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
@@ -536,12 +573,12 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     }
     if (this.isFinished()) {
       return entry.rank === 1
-        ? $localize`${entry.teamName} gewinnt das Teamduell`
-        : $localize`${entry.teamName} ist im Ziel`;
+        ? $localize`:@@sessionVote.teamRewardTitleWinFin:Team-Sieg!`
+        : $localize`:@@sessionVote.teamRewardTitleFinishedOther:Im Ziel`;
     }
     return entry.rank === 1
-      ? $localize`${entry.teamName} führt gerade`
-      : $localize`${entry.teamName} bleibt im Rennen`;
+      ? $localize`:@@sessionVote.teamRewardTitleLeading:Ihr führt gerade`
+      : $localize`:@@sessionVote.teamRewardTitleChasing:Weitermachen`;
   }
 
   teamRewardMessage(): string {
@@ -551,14 +588,17 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     }
     if (this.isFinished()) {
       if (entry.rank === 1) {
-        return $localize`Gemeinsam geschafft: ${entry.teamName} holt ${entry.totalScore}:totalScore: Punkte und Platz 1.`;
+        return $localize`:@@sessionVote.teamRewardMsgWinFin:Gemeinsam geschafft: ${entry.totalScore}:totalScore: Punkte und Platz 1.`;
       }
-      return $localize`${entry.teamName} beendet das Quiz mit ${entry.totalScore}:totalScore: Punkten auf Platz ${entry.rank}:teamRank:.`;
+      return $localize`:@@sessionVote.teamRewardMsgFinishedOther:Ihr beendet mit ${entry.totalScore}:totalScore: Punkten auf Platz ${entry.rank}:teamRank:.`;
     }
     if (entry.rank === 1) {
-      return $localize`Gemeinsam stark: ${entry.teamName} liegt mit ${entry.totalScore}:totalScore: Punkten vorn.`;
+      if (entry.totalScore === 0) {
+        return $localize`:@@sessionVote.teamRewardMsgLeadingZero:Noch ohne Punkte – trotzdem seid ihr vorn.`;
+      }
+      return $localize`:@@sessionVote.teamRewardMsgLeading:Mit ${entry.totalScore}:totalScore: Punkten führt ihr.`;
     }
-    return $localize`${entry.teamName} steht aktuell auf Platz ${entry.rank}:teamRank: mit ${entry.totalScore}:totalScore: Punkten.`;
+    return $localize`:@@sessionVote.teamRewardMsgChasing:Aktuell Platz ${entry.rank}:teamRank: mit ${entry.totalScore}:totalScore: Punkten.`;
   }
 
   teamRewardLeaderHint(): string | null {
@@ -567,7 +607,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     if (!ownEntry || !leader || leader.teamName === ownEntry.teamName) {
       return null;
     }
-    return $localize`Vorne liegt ${leader.teamName}:leaderName: mit ${leader.totalScore}:leaderScore: Punkten.`;
+    return this.isPlayfulPreset()
+      ? vpc.voteTeamLeaderHintPlayful(leader.teamName, leader.totalScore)
+      : vpc.voteTeamLeaderHintSerious(leader.teamName, leader.totalScore);
   }
 
   teamStandingAriaLabel(entry: TeamLeaderboardEntryDTO): string {
@@ -788,7 +830,11 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         this.stopCountdown();
         this.countdownSeconds.set(0);
         if (!this.voteSent()) {
-          this.timeoutMessage.set(pickRandom(MESSAGES_TIMEOUT));
+          this.timeoutMessage.set(
+            pickRandom(
+              this.isPlayfulPreset() ? MESSAGES_TIMEOUT_PLAYFUL : MESSAGES_TIMEOUT_SERIOUS,
+            ),
+          );
         }
         this.fingerHideTimeout = setTimeout(() => {
           this.countdownSeconds.set(null);
@@ -1196,10 +1242,25 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
             this.showRewardEffect.set(true);
           }
           if (settings.enableMotivationMessages) {
-            this.motivationMessage.set(pickRandom(allCorrect ? MESSAGES_CORRECT : MESSAGES_WRONG));
+            const playful = this.isPlayfulPreset();
+            this.motivationMessage.set(
+              pickRandom(
+                allCorrect
+                  ? playful
+                    ? MESSAGES_CORRECT_PLAYFUL
+                    : MESSAGES_CORRECT_SERIOUS
+                  : playful
+                    ? MESSAGES_WRONG_PLAYFUL
+                    : MESSAGES_WRONG_SERIOUS,
+              ),
+            );
           }
         } else if (settings.enableMotivationMessages) {
-          this.motivationMessage.set(pickRandom(MESSAGES_NEUTRAL));
+          this.motivationMessage.set(
+            pickRandom(
+              this.isPlayfulPreset() ? MESSAGES_NEUTRAL_PLAYFUL : MESSAGES_NEUTRAL_SERIOUS,
+            ),
+          );
         }
       }
 
@@ -1341,7 +1402,9 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       const settings = this.sessionSettings();
       if (settings.enableMotivationMessages) {
         const totalParticipants = settings.participantCount ?? 1;
-        this.motivationMessage.set(getContextMotivation(sc, totalParticipants));
+        this.motivationMessage.set(
+          getContextMotivation(sc, totalParticipants, this.isPlayfulPreset()),
+        );
       }
     } catch {
       /* noop */
@@ -1459,7 +1522,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         wouldRepeat: this.feedbackRepeat() ?? undefined,
       });
       this.feedbackSubmitted.set(true);
-      this.snackBar.open($localize`Danke für dein Feedback!`, '', { duration: 2000 });
+      this.snackBar.open(vpc.voteFeedbackSnack(this.isPlayfulPreset()), '', { duration: 2000 });
       void this.loadFeedbackSummary();
     } catch (err: unknown) {
       const msg =

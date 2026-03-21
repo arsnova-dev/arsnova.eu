@@ -26,6 +26,8 @@ import {
   LeaderboardEntryDTOSchema,
   TeamLeaderboardEntryDTOSchema,
   BonusTokenListDTOSchema,
+  GetBonusTokensForQuizInputSchema,
+  BonusTokensForQuizOutputSchema,
   SubmitSessionFeedbackInputSchema,
   SessionFeedbackSummarySchema,
   PersonalScorecardDTOSchema,
@@ -1830,6 +1832,46 @@ export const sessionRouter = router({
           totalScore: t.totalScore,
           rank: t.rank,
           generatedAt: t.generatedAt.toISOString(),
+        })),
+      };
+    }),
+
+  /**
+   * Bonus-Codes aller beendeten Durchläufe zu einer Server-Quiz-ID (Story 4.6).
+   * Nicht auf dem Live-Host anzeigen (Mitzeichnen-Risiko) – Abruf in der Quiz-Sammlung.
+   */
+  getBonusTokensForQuiz: publicProcedure
+    .input(GetBonusTokensForQuizInputSchema)
+    .output(BonusTokensForQuizOutputSchema)
+    .query(async ({ input }) => {
+      const sessions = await prisma.session.findMany({
+        where: {
+          quizId: input.quizId,
+          status: 'FINISHED',
+          bonusTokens: { some: {} },
+        },
+        orderBy: [{ endedAt: 'desc' }, { startedAt: 'desc' }],
+        take: 25,
+        include: {
+          quiz: { select: { name: true } },
+          bonusTokens: { orderBy: { rank: 'asc' } },
+        },
+      });
+
+      return {
+        sessions: sessions.map((session) => ({
+          sessionId: session.id,
+          sessionCode: session.code,
+          quizName: session.quiz?.name ?? '',
+          endedAt: session.endedAt?.toISOString() ?? null,
+          tokens: session.bonusTokens.map((t) => ({
+            token: t.token,
+            nickname: t.nickname,
+            quizName: t.quizName,
+            totalScore: t.totalScore,
+            rank: t.rank,
+            generatedAt: t.generatedAt.toISOString(),
+          })),
         })),
       };
     }),

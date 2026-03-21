@@ -603,6 +603,7 @@ export class QuizPreviewComponent implements OnDestroy {
         }
 
         const { quizId: uploadedQuizId } = await trpc.quiz.upload.mutate(payload);
+        this.quizStore.setLastServerQuizId(this.id, uploadedQuizId);
         result = await trpc.session.create.mutate({
           quizId: uploadedQuizId,
           type: 'QUIZ',

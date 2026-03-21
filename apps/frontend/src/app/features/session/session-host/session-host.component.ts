@@ -50,7 +50,6 @@ import {
   type ConfirmLeaveDialogData,
 } from '../../../shared/confirm-leave-dialog/confirm-leave-dialog.component';
 import type {
-  BonusTokenEntryDTO,
   HostCurrentQuestionDTO,
   LeaderboardEntryDTO,
   QaQuestionDTO,
@@ -242,7 +241,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly teamLeaderboard = signal<TeamLeaderboardEntryDTO[]>([]);
   readonly lobbyTeams = signal<TeamDTO[]>([]);
   readonly leaderboardLoading = signal(false);
-  readonly bonusTokens = signal<BonusTokenEntryDTO[]>([]);
   readonly feedbackSummary = signal<SessionFeedbackSummary | null>(null);
   /** Aktuelle Frage für Host (Text + Antwortoptionen), null wenn keine Frage aktiv. */
   readonly currentQuestionForHost = signal<HostCurrentQuestionDTO | null>(null);
@@ -1814,18 +1812,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.leaderboardLoading.set(false);
     }
     if (this.effectiveStatus() === 'FINISHED') {
-      this.loadBonusTokens();
       this.loadFeedbackSummary();
-    }
-  }
-
-  async loadBonusTokens(): Promise<void> {
-    if (!this.code) return;
-    try {
-      const result = await trpc.session.getBonusTokens.query({ code: this.code.toUpperCase() });
-      this.bonusTokens.set(result.tokens);
-    } catch {
-      this.bonusTokens.set([]);
     }
   }
 
@@ -1841,23 +1828,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     } catch {
       /* noop */
     }
-  }
-
-  exportBonusTokensCsv(): void {
-    const tokens = this.bonusTokens();
-    if (tokens.length === 0) return;
-    const header = 'Rang;Nickname;Code;Punkte;Generiert am';
-    const rows = tokens.map(
-      (t) => `${t.rank};${t.nickname};${t.token};${t.totalScore};${t.generatedAt}`,
-    );
-    const csv = [header, ...rows].join('\n');
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = this.document.createElement('a');
-    a.href = url;
-    a.download = `bonus-codes-${this.code}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
   }
 
   async exportSessionResultsCsv(): Promise<void> {

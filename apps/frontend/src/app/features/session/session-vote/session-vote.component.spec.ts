@@ -167,7 +167,7 @@ describe('SessionVoteComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Dein Team');
+    expect(text).toContain('Euer Team');
     expect(text).toContain('Rot');
     expect(text).toContain('Team-Punkte');
     expect(getTeamLeaderboardQueryMock).toHaveBeenCalledWith({ code: 'ABC123' });
@@ -196,11 +196,11 @@ describe('SessionVoteComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Session beendet');
-    expect(text).toContain('Zur Startseite');
-    expect(text).toContain('Dein Team');
-    expect(text).toContain('Rot gewinnt das Teamduell');
-    expect(text).toContain('Teamrang');
+    expect(text).toContain('Runde aus – stark mitgemacht!');
+    expect(text).toContain('Zurück zur Startseite');
+    expect(text).toContain('Euer Team');
+    expect(text).toContain('Team-Sieg!');
+    expect(text).toContain('Team-Rang');
     fixture.destroy();
   });
 
@@ -213,6 +213,7 @@ describe('SessionVoteComponent', () => {
       quizName: null,
       title: 'Offene Fragen',
       participantCount: 6,
+      preset: 'SERIOUS',
     });
     currentQuestionQueryMock.mockResolvedValue(null);
 

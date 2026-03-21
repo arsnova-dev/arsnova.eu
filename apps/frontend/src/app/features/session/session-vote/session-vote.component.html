@@ -72,13 +72,18 @@
             </div>
           }
           <div class="vote-live-banner__code-block">
-            <p class="vote-live-banner__label" aria-hidden="true" i18n>Session-Code</p>
-            <p class="vote-live-banner__code" [attr.aria-label]="'Session-Code ' + code">
+            <p class="vote-live-banner__label" aria-hidden="true">
+              {{ vpc.voteLiveBannerCodeLabel(isPlayfulPreset()) }}
+            </p>
+            <p
+              class="vote-live-banner__code"
+              [attr.aria-label]="vpc.voteLiveBannerCodeLabel(isPlayfulPreset()) + ' ' + code"
+            >
               {{ code }}
             </p>
             <p class="vote-live-banner__participants">
               <span class="vote-live-banner__participants-count">{{ liveParticipantCount() }}</span>
-              <span i18n>Teilnehmende</span>
+              <span>{{ vpc.voteLiveBannerParticipantsLabel(isPlayfulPreset()) }}</span>
             </p>
           </div>
         </div>
@@ -88,9 +93,6 @@
             <p class="vote-live-banner__heading">{{ heading }}</p>
           }
           <p class="vote-live-banner__status">{{ channelLabel(activeChannel()) }}</p>
-          <p class="vote-live-banner__url">
-            <a [href]="joinUrl" target="_blank" rel="noopener">{{ joinUrl }}</a>
-          </p>
         </div>
       </div>
     </section>
@@ -99,8 +101,13 @@
   @if (showPrimaryLiveView()) {
     @if (isLobby()) {
       <div class="vote-lobby">
-        <p class="vote-lobby__badge" role="status" i18n>Du bist dabei</p>
-        <p class="vote-lobby__code" [attr.aria-label]="'Session-Code ' + code">{{ code }}</p>
+        <p class="vote-lobby__badge" role="status">{{ vpc.voteLobbyBadge(isPlayfulPreset()) }}</p>
+        <p
+          class="vote-lobby__code"
+          [attr.aria-label]="vpc.voteLiveBannerCodeLabel(isPlayfulPreset()) + ' ' + code"
+        >
+          {{ code }}
+        </p>
         @if (sessionSettings().quizName) {
           <p class="vote-lobby__quiz">{{ sessionSettings().quizName }}</p>
         } @else if (sessionSettings().title) {
@@ -108,25 +115,19 @@
         }
         <div class="vote-lobby__wait" role="status">
           <mat-icon class="vote-lobby__icon" aria-hidden="true">schedule</mat-icon>
-          <p class="vote-lobby__text" i18n>Warte auf den Start durch den Dozenten</p>
+          <p class="vote-lobby__text">{{ vpc.voteLobbyWaitTitle(isPlayfulPreset()) }}</p>
           @if (sessionSettings().type === 'Q_AND_A') {
-            <p class="vote-lobby__hint" i18n="@@sessionVote.qaLobbyHint">
-              Die Fragerunde startet automatisch. Halte diese Seite offen.
-            </p>
+            <p class="vote-lobby__hint">{{ vpc.voteLobbyHintQa(isPlayfulPreset()) }}</p>
           } @else {
-            <p class="vote-lobby__hint" i18n>
-              Die erste Frage erscheint automatisch – Gerät bereithalten.
-            </p>
+            <p class="vote-lobby__hint">{{ vpc.voteLobbyHintQuiz(isPlayfulPreset()) }}</p>
           }
         </div>
       </div>
     } @else if (isActive() && sessionSettings().type === 'Q_AND_A') {
       <div class="vote-lobby vote-lobby--active">
         <mat-icon class="vote-lobby__icon" aria-hidden="true">forum</mat-icon>
-        <p class="vote-lobby__text" i18n="@@sessionVote.qaActiveTitle">Fragerunde läuft</p>
-        <p class="vote-lobby__hint" i18n="@@sessionVote.qaActiveHint">
-          Du bist verbunden. Neue Inhalte erscheinen hier automatisch.
-        </p>
+        <p class="vote-lobby__text">{{ vpc.voteQaActiveTitle(isPlayfulPreset()) }}</p>
+        <p class="vote-lobby__hint">{{ vpc.voteQaActiveHint(isPlayfulPreset()) }}</p>
       </div>
     } @else if (isFinished()) {
       <div class="vote-finished-page">
@@ -139,26 +140,32 @@
           [class.vote-finished-hero--rank3]="personalRank() === 3"
         >
           <mat-icon class="vote-finished-hero__icon" aria-hidden="true">emoji_events</mat-icon>
-          <h1 class="vote-finished-hero__title" id="finished-heading" i18n>Session beendet</h1>
+          <h1 class="vote-finished-hero__title" id="finished-heading">
+            {{ vpc.voteFinishedHeroTitle(isPlayfulPreset()) }}
+          </h1>
           @if (personalResultLoaded()) {
             <div class="vote-finished-hero__stats">
               <div class="vote-finished-hero__stat">
                 <span class="vote-finished-hero__stat-value">{{
                   personalRank() === 0 ? '—' : '#' + personalRank()
                 }}</span>
-                <span class="vote-finished-hero__stat-label" i18n>Platz</span>
+                <span class="vote-finished-hero__stat-label">{{
+                  vpc.voteFinishedRankLabel(isPlayfulPreset())
+                }}</span>
               </div>
               <span class="vote-finished-hero__divider" aria-hidden="true"></span>
               <div class="vote-finished-hero__stat">
                 <span class="vote-finished-hero__stat-value">{{ personalScore() | number }}</span>
-                <span class="vote-finished-hero__stat-label" i18n>Punkte</span>
+                <span class="vote-finished-hero__stat-label">{{
+                  vpc.voteFinishedPointsLabel(isPlayfulPreset())
+                }}</span>
               </div>
             </div>
           }
           <div class="vote-finished-hero__actions">
             <a matButton="filled" [routerLink]="localizedPath('/')">
               <mat-icon>home</mat-icon>
-              <span i18n>Zur Startseite</span>
+              <span>{{ vpc.voteBackHomeCta(isPlayfulPreset()) }}</span>
             </a>
           </div>
         </section>
@@ -178,7 +185,7 @@
               </div>
             }
             <div class="vote-team-reward__head">
-              <p class="vote-team-reward__eyebrow" i18n>Dein Team</p>
+              <p class="vote-team-reward__eyebrow">{{ vpc.voteTeamEyebrow(isPlayfulPreset()) }}</p>
               <h2 class="vote-team-reward__title" id="team-reward-heading-finished">
                 {{ teamRewardTitle() }}
               </h2>
@@ -197,15 +204,21 @@
             <div class="vote-team-reward__stats">
               <div class="vote-team-reward__stat">
                 <span class="vote-team-reward__stat-value">#{{ ownTeam.rank }}</span>
-                <span class="vote-team-reward__stat-label" i18n>Teamrang</span>
+                <span class="vote-team-reward__stat-label">{{
+                  vpc.voteTeamStatRank(isPlayfulPreset())
+                }}</span>
               </div>
               <div class="vote-team-reward__stat">
                 <span class="vote-team-reward__stat-value">{{ ownTeam.totalScore | number }}</span>
-                <span class="vote-team-reward__stat-label" i18n>Team-Punkte</span>
+                <span class="vote-team-reward__stat-label">{{
+                  vpc.voteTeamStatPoints(isPlayfulPreset())
+                }}</span>
               </div>
               <div class="vote-team-reward__stat">
                 <span class="vote-team-reward__stat-value">{{ ownTeam.memberCount }}</span>
-                <span class="vote-team-reward__stat-label" i18n>Mitglieder</span>
+                <span class="vote-team-reward__stat-label">{{
+                  vpc.voteTeamStatMembers(isPlayfulPreset())
+                }}</span>
               </div>
             </div>
             @if (visibleTeamLeaderboard().length > 0) {
@@ -255,7 +268,7 @@
           <section class="vote-bonus-card" aria-labelledby="bonus-heading">
             <h2 class="vote-bonus-card__title" id="bonus-heading">
               <mat-icon aria-hidden="true">school</mat-icon>
-              <span i18n>Dein Bonus-Code</span>
+              <span>{{ vpc.voteBonusTitle(isPlayfulPreset()) }}</span>
             </h2>
             <p class="vote-bonus-card__code">{{ token }}</p>
             <button
@@ -265,12 +278,9 @@
               (click)="copyBonusCode()"
             >
               <mat-icon>content_copy</mat-icon>
-              <span i18n>Code kopieren</span>
+              <span>{{ vpc.voteBonusCopyCta(isPlayfulPreset()) }}</span>
             </button>
-            <p class="vote-bonus-card__hint" i18n>
-              Sende diesen Code per E-Mail an deinen Dozenten, um Bonuspunkte zu erhalten. Deine
-              Anonymität bleibt gewahrt, solange du den Code nicht einreichst.
-            </p>
+            <p class="vote-bonus-card__hint">{{ vpc.voteBonusHint(isPlayfulPreset()) }}</p>
           </section>
         }
 
@@ -282,17 +292,18 @@
             [class.vote-feedback-card--playful]="isPlayfulPreset()"
             [class.vote-feedback-card--serious]="!isPlayfulPreset()"
           >
-            <h2 class="vote-feedback-card__title" id="feedback-heading" i18n>
-              Deine Meinung zählt
+            <h2 class="vote-feedback-card__title" id="feedback-heading">
+              {{ vpc.voteFeedbackTitle(isPlayfulPreset()) }}
             </h2>
 
             <fieldset class="vote-feedback-card__group">
-              <legend class="vote-feedback-card__label" i18n>Wie hat dir das Quiz gefallen?</legend>
+              <legend class="vote-feedback-card__label">
+                {{ vpc.voteFeedbackLegendOverall(isPlayfulPreset()) }}
+              </legend>
               <div
                 class="vote-feedback-card__stars"
                 role="radiogroup"
-                i18n-aria-label
-                aria-label="Gesamtbewertung"
+                [attr.aria-label]="vpc.voteFeedbackAriaOverall(isPlayfulPreset())"
               >
                 @for (s of feedbackStars(); track s) {
                   <button
@@ -310,12 +321,13 @@
             </fieldset>
 
             <fieldset class="vote-feedback-card__group">
-              <legend class="vote-feedback-card__label" i18n>Qualität der Fragen?</legend>
+              <legend class="vote-feedback-card__label">
+                {{ vpc.voteFeedbackLegendQuality(isPlayfulPreset()) }}
+              </legend>
               <div
                 class="vote-feedback-card__stars"
                 role="radiogroup"
-                i18n-aria-label
-                aria-label="Fragenqualität"
+                [attr.aria-label]="vpc.voteFeedbackAriaQuality(isPlayfulPreset())"
               >
                 @for (s of feedbackStars(); track s) {
                   <button
@@ -333,12 +345,13 @@
             </fieldset>
 
             <fieldset class="vote-feedback-card__group">
-              <legend class="vote-feedback-card__label" i18n>Nochmal mitmachen?</legend>
+              <legend class="vote-feedback-card__label">
+                {{ vpc.voteFeedbackLegendRepeat(isPlayfulPreset()) }}
+              </legend>
               <div
                 class="vote-feedback-card__repeat"
                 role="group"
-                i18n-aria-label
-                aria-label="Nochmal mitmachen?"
+                [attr.aria-label]="vpc.voteFeedbackAriaRepeat(isPlayfulPreset())"
               >
                 <button
                   matButton="tonal"
@@ -346,10 +359,10 @@
                   [class.vote-feedback-card__repeat--yes]="feedbackRepeat() === true"
                   [attr.aria-pressed]="feedbackRepeat() === true"
                   (click)="setFeedbackRepeat(true)"
-                  i18n-aria-label
-                  aria-label="Ja, gerne wieder"
+                  [attr.aria-label]="vpc.voteFeedbackAriaRepeatYes(isPlayfulPreset())"
                 >
-                  <mat-icon>thumb_up</mat-icon> <span i18n>Ja, gerne</span>
+                  <mat-icon>thumb_up</mat-icon>
+                  <span>{{ vpc.voteFeedbackRepeatYes(isPlayfulPreset()) }}</span>
                 </button>
                 <button
                   matButton="tonal"
@@ -357,10 +370,10 @@
                   [class.vote-feedback-card__repeat--no]="feedbackRepeat() === false"
                   [attr.aria-pressed]="feedbackRepeat() === false"
                   (click)="setFeedbackRepeat(false)"
-                  i18n-aria-label
-                  aria-label="Eher nicht"
+                  [attr.aria-label]="vpc.voteFeedbackAriaRepeatNo(isPlayfulPreset())"
                 >
-                  <mat-icon>thumb_down</mat-icon> <span i18n>Eher nicht</span>
+                  <mat-icon>thumb_down</mat-icon>
+                  <span>{{ vpc.voteFeedbackRepeatNo(isPlayfulPreset()) }}</span>
                 </button>
               </div>
             </fieldset>
@@ -371,21 +384,21 @@
               [disabled]="feedbackOverall() === 0 || feedbackSubmitting()"
               (click)="submitFeedback()"
             >
-              <span i18n>Bewertung absenden</span>
+              <span>{{ vpc.voteFeedbackSubmit(isPlayfulPreset()) }}</span>
             </button>
           </section>
         } @else {
           @if (feedbackSummary(); as summary) {
             <section class="vote-feedback-done" aria-labelledby="feedback-done-heading">
               <mat-icon class="vote-feedback-done__icon" aria-hidden="true">check_circle</mat-icon>
-              <h2 class="vote-feedback-done__title" id="feedback-done-heading" i18n>
-                Danke für dein Feedback
+              <h2 class="vote-feedback-done__title" id="feedback-done-heading">
+                {{ vpc.voteFeedbackDoneTitle(isPlayfulPreset()) }}
               </h2>
               <p class="vote-feedback-done__avg">
                 Ø {{ summary.overallAverage | number: '1.1-1' }} ★
               </p>
-              <p class="vote-feedback-done__count" i18n>
-                {{ summary.totalResponses }} Bewertungen insgesamt
+              <p class="vote-feedback-done__count">
+                {{ vpc.voteFeedbackDoneCount(isPlayfulPreset(), summary.totalResponses) }}
               </p>
             </section>
           }
@@ -395,18 +408,18 @@
       @if (currentQuestion(); as q) {
         <div class="vote-question">
           <p class="vote-question__label">
-            <span i18n>Frage {{ q.order + 1 }}</span>
+            <span>{{ vpc.voteQuestionLabel(isPlayfulPreset(), q.order + 1) }}</span>
             @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
-              <span class="vote-question__last-badge" i18n>Letzte Frage</span>
+              <span class="vote-question__last-badge">{{
+                vpc.voteLastQuestionBadge(isPlayfulPreset())
+              }}</span>
             }
           </p>
           <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
           <div class="vote-reading-banner" role="status" aria-live="polite">
             <mat-icon class="vote-reading-banner__icon" aria-hidden="true">menu_book</mat-icon>
-            <p class="vote-reading-banner__title" i18n>Lesephase</p>
-            <p class="vote-reading-banner__hint" i18n>
-              Lies die Frage in Ruhe – die Antwortoptionen folgen gleich.
-            </p>
+            <p class="vote-reading-banner__title">{{ vpc.voteReadingTitle(isPlayfulPreset()) }}</p>
+            <p class="vote-reading-banner__hint">{{ vpc.voteReadingHint(isPlayfulPreset()) }}</p>
           </div>
         </div>
       }
@@ -414,9 +427,11 @@
       @if (currentQuestion(); as q) {
         <div class="vote-question">
           <p class="vote-question__label">
-            <span i18n>Frage {{ q.order + 1 }}</span>
+            <span>{{ vpc.voteQuestionLabel(isPlayfulPreset(), q.order + 1) }}</span>
             @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
-              <span class="vote-question__last-badge" i18n>Letzte Frage</span>
+              <span class="vote-question__last-badge">{{
+                vpc.voteLastQuestionBadge(isPlayfulPreset())
+              }}</span>
             }
           </p>
           <div class="vote-question__text" [innerHTML]="renderMarkdown(q.text)"></div>
@@ -425,35 +440,37 @@
           <div class="vote-discussion__icon-ring">
             <mat-icon class="vote-discussion__icon">groups</mat-icon>
           </div>
-          <p class="vote-discussion__text" i18n>Tausch dich kurz mit deinem Nachbarn aus</p>
-          <p class="vote-discussion__hint" i18n>
-            Gleiche Antwort? Prima. Verschiedene Meinung? Überzeugt euch gegenseitig.
-          </p>
-          <p class="vote-discussion__next" i18n>Zweite Abstimmung folgt gleich…</p>
+          <p class="vote-discussion__text">{{ vpc.voteDiscussionTitle(isPlayfulPreset()) }}</p>
+          <p class="vote-discussion__hint">{{ vpc.voteDiscussionHint(isPlayfulPreset()) }}</p>
+          <p class="vote-discussion__next">{{ vpc.voteDiscussionNext(isPlayfulPreset()) }}</p>
         </div>
       }
     } @else if (isActive() || isResults()) {
       @if (currentQuestion(); as q) {
         <div class="vote-question" [class.vote-question--round2]="currentRound() === 2">
           @if (currentRound() === 2 && isActive() && !voteSent()) {
-            <p class="vote-round2-banner" role="status" aria-live="polite" i18n>
-              2. Runde – hat die Diskussion deine Meinung geändert?
+            <p class="vote-round2-banner" role="status" aria-live="polite">
+              {{ vpc.voteRound2Banner(isPlayfulPreset()) }}
             </p>
           }
           <div class="vote-question__header">
             <p class="vote-question__label">
-              <span i18n>Frage {{ q.order + 1 }}</span>
+              <span>{{ vpc.voteQuestionLabel(isPlayfulPreset(), q.order + 1) }}</span>
               @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
-                <span class="vote-question__last-badge" i18n>Letzte Frage</span>
+                <span class="vote-question__last-badge">{{
+                  vpc.voteLastQuestionBadge(isPlayfulPreset())
+                }}</span>
               }
               @if (currentRound() === 2) {
-                <span class="vote-question__round-badge" i18n>2. Runde</span>
+                <span class="vote-question__round-badge">{{
+                  vpc.voteRoundBadge(isPlayfulPreset())
+                }}</span>
               }
             </p>
             @if (allHaveVoted() && isActive()) {
               <span class="vote-all-voted" role="status">
                 <mat-icon>how_to_vote</mat-icon>
-                <span i18n>Alle haben abgestimmt</span>
+                <span>{{ vpc.voteAllVotedLabel(isPlayfulPreset()) }}</span>
               </span>
             }
           </div>
@@ -526,7 +543,7 @@
               "
               (click)="submitVote()"
             >
-              <span i18n>Absenden</span>
+              <span>{{ vpc.voteSubmitCta(isPlayfulPreset()) }}</span>
             </button>
           }
         } @else if ($any(q).type === 'FREETEXT' && isActive()) {
@@ -535,8 +552,7 @@
               class="vote-freetext__input"
               [value]="freeTextValue()"
               (input)="freeTextValue.set($any($event.target).value)"
-              i18n-placeholder
-              placeholder="Deine Antwort…"
+              [placeholder]="vpc.voteFreetextPlaceholder(isPlayfulPreset())"
               maxlength="500"
               rows="3"
               [disabled]="voteSent() || timerExpired()"
@@ -555,18 +571,19 @@
               "
               (click)="submitVote()"
             >
-              <span i18n>Absenden</span>
+              <span>{{ vpc.voteSubmitCta(isPlayfulPreset()) }}</span>
             </button>
           </div>
         } @else if ($any(q).type === 'FREETEXT' && isResults()) {
           <div class="vote-freetext vote-freetext--result">
             @if (freeTextValue()) {
-              <p class="vote-freetext__own" i18n>
-                Deine Antwort: <strong>{{ freeTextValue() }}</strong>
+              <p class="vote-freetext__own">
+                {{ vpc.voteFreetextOwnPrefix(isPlayfulPreset()) }}
+                <strong>{{ freeTextValue() }}</strong>
               </p>
             } @else {
-              <p class="vote-freetext__own vote-freetext__own--empty" i18n>
-                Keine Antwort abgegeben.
+              <p class="vote-freetext__own vote-freetext__own--empty">
+                {{ vpc.voteFreetextEmpty(isPlayfulPreset()) }}
               </p>
             }
           </div>
@@ -609,14 +626,15 @@
                 "
                 (click)="submitVote()"
               >
-                <span i18n>Absenden</span>
+                <span>{{ vpc.voteSubmitCta(isPlayfulPreset()) }}</span>
               </button>
             }
           </div>
         } @else if (isRating() && isResults()) {
           <div class="vote-rating vote-rating--result">
-            <p class="vote-rating__result-label" i18n>
-              Deine Bewertung: <strong>{{ ratingValue() ?? '–' }}</strong>
+            <p class="vote-rating__result-label">
+              {{ vpc.voteRatingResultPrefix(isPlayfulPreset()) }}
+              <strong>{{ ratingValue() ?? '–' }}</strong>
             </p>
           </div>
         }
@@ -628,14 +646,16 @@
         @if (voteSent()) {
           <div class="vote-sent" role="status" aria-live="polite">
             <mat-icon>check_circle</mat-icon>
-            <span i18n>Antwort gesendet</span>
+            <span>{{ vpc.voteSentLabel(isPlayfulPreset()) }}</span>
           </div>
           @if (motivationMessage()) {
             <p class="vote-motivation" aria-live="polite">{{ motivationMessage() }}</p>
           }
         }
         @if (showRewardEffect()) {
-          <div class="vote-reward" role="status" aria-live="polite" i18n>🎉 Richtig!</div>
+          <div class="vote-reward" role="status" aria-live="polite">
+            {{ vpc.voteRewardCorrect(isPlayfulPreset()) }}
+          </div>
         }
 
         @if (scorecard(); as sc) {
@@ -647,18 +667,20 @@
           >
             <h2 class="vote-scorecard__heading" id="scorecard-heading">
               <mat-icon class="vote-scorecard__heading-icon" aria-hidden="true">person</mat-icon>
-              <span i18n>Dein Ergebnis</span>
+              <span>{{ vpc.voteScorecardHeading(isPlayfulPreset()) }}</span>
             </h2>
             <p class="vote-scorecard__meta" aria-live="polite">
               <span class="vote-scorecard__progress"
                 >{{ sc.questionOrder }}/{{ sc.totalQuestions }}</span
               >
               @if (sc.questionOrder >= sc.totalQuestions) {
-                <span class="vote-scorecard__progress-badge" i18n>Letzte Frage</span>
+                <span class="vote-scorecard__progress-badge">{{
+                  vpc.voteLastQuestionBadge(isPlayfulPreset())
+                }}</span>
               }
-              <span class="vote-scorecard__hint" id="scorecard-hint" i18n
-                >Nur für dich sichtbar.</span
-              >
+              <span class="vote-scorecard__hint" id="scorecard-hint">{{
+                vpc.voteScorecardHint(isPlayfulPreset())
+              }}</span>
             </p>
             <div
               class="vote-scorecard__inner"
@@ -688,11 +710,17 @@
               }
               <div class="vote-scorecard__result">
                 @if (sc.wasCorrect === true) {
-                  <span class="vote-scorecard__correct" i18n>✓ Richtig</span>
+                  <span class="vote-scorecard__correct">{{
+                    vpc.voteScorecardCorrect(isPlayfulPreset())
+                  }}</span>
                 } @else if (sc.wasCorrect === false) {
-                  <span class="vote-scorecard__wrong" i18n>✗ Falsch</span>
+                  <span class="vote-scorecard__wrong">{{
+                    vpc.voteScorecardWrong(isPlayfulPreset())
+                  }}</span>
                 } @else {
-                  <span class="vote-scorecard__neutral" i18n>Antwort registriert</span>
+                  <span class="vote-scorecard__neutral">{{
+                    vpc.voteScorecardNeutral(isPlayfulPreset())
+                  }}</span>
                 }
               </div>
 
@@ -751,7 +779,7 @@
               </div>
             }
             <div class="vote-team-reward__head">
-              <p class="vote-team-reward__eyebrow" i18n>Dein Team</p>
+              <p class="vote-team-reward__eyebrow">{{ vpc.voteTeamEyebrow(isPlayfulPreset()) }}</p>
               <h2 class="vote-team-reward__title" id="team-reward-heading-results">
                 {{ teamRewardTitle() }}
               </h2>
@@ -770,15 +798,21 @@
             <div class="vote-team-reward__stats">
               <div class="vote-team-reward__stat">
                 <span class="vote-team-reward__stat-value">#{{ ownTeam.rank }}</span>
-                <span class="vote-team-reward__stat-label" i18n>Teamrang</span>
+                <span class="vote-team-reward__stat-label">{{
+                  vpc.voteTeamStatRank(isPlayfulPreset())
+                }}</span>
               </div>
               <div class="vote-team-reward__stat">
                 <span class="vote-team-reward__stat-value">{{ ownTeam.totalScore | number }}</span>
-                <span class="vote-team-reward__stat-label" i18n>Team-Punkte</span>
+                <span class="vote-team-reward__stat-label">{{
+                  vpc.voteTeamStatPoints(isPlayfulPreset())
+                }}</span>
               </div>
               <div class="vote-team-reward__stat">
                 <span class="vote-team-reward__stat-value">{{ ownTeam.memberCount }}</span>
-                <span class="vote-team-reward__stat-label" i18n>Mitglieder</span>
+                <span class="vote-team-reward__stat-label">{{
+                  vpc.voteTeamStatMembers(isPlayfulPreset())
+                }}</span>
               </div>
             </div>
             @if (visibleTeamLeaderboard().length > 0) {
@@ -828,9 +862,11 @@
               aria-labelledby="emoji-bar-label"
               aria-describedby="emoji-bar-hint"
             >
-              <p class="vote-emoji-bar__label" id="emoji-bar-label" i18n>Schnell reagieren</p>
-              <p class="vote-emoji-bar__hint" id="emoji-bar-hint" i18n>
-                Tippe auf ein Symbol – deine Reaktion erscheint anonym beim Dozenten (optional).
+              <p class="vote-emoji-bar__label" id="emoji-bar-label">
+                {{ vpc.voteEmojiBarLabel(isPlayfulPreset()) }}
+              </p>
+              <p class="vote-emoji-bar__hint" id="emoji-bar-hint">
+                {{ vpc.voteEmojiBarHint(isPlayfulPreset()) }}
               </p>
               <div class="vote-emoji-bar">
                 @for (emoji of emojiOptions; track emoji) {
@@ -848,7 +884,7 @@
           } @else {
             <p class="vote-emoji-sent" role="status">
               <span class="vote-emoji-sent__icon" aria-hidden="true">{{ emojiSentEmoji() }}</span>
-              <span i18n>Reaktion gesendet</span>
+              <span>{{ vpc.voteEmojiSent(isPlayfulPreset()) }}</span>
             </p>
           }
         }
@@ -856,7 +892,7 @@
     } @else {
       <div class="vote-lobby">
         <mat-icon class="vote-lobby__icon">hourglass_empty</mat-icon>
-        <p class="vote-lobby__text" i18n>Einen Moment…</p>
+        <p class="vote-lobby__text">{{ vpc.voteLobbyLoading(isPlayfulPreset()) }}</p>
       </div>
     }
   } @else if (activeChannel() === 'qa') {
@@ -874,16 +910,14 @@
       @if (sessionSettings().channels?.qa?.moderationMode) {
         <div class="session-qa-moderation-notice" role="status">
           <mat-icon aria-hidden="true">visibility</mat-icon>
-          <span i18n="@@sessionQa.moderationNotice"
-            >Deine Fragen werden vor der Veröffentlichung geprüft.</span
-          >
+          <span>{{ vpc.voteQaModerationNotice(isPlayfulPreset()) }}</span>
         </div>
       }
 
       <div class="session-qa-form">
-        <label class="session-qa-form__label" for="qa-draft" i18n="@@sessionQa.askLabel"
-          >Deine Frage</label
-        >
+        <label class="session-qa-form__label" for="qa-draft">{{
+          vpc.voteQaFormLabel(isPlayfulPreset())
+        }}</label>
         <textarea
           id="qa-draft"
           #qaTextarea
@@ -893,8 +927,7 @@
           [value]="qaDraft()"
           (input)="updateQaDraft($any($event.target).value); autoResizeTextarea($event)"
           (focus)="autoResizeTextarea($event)"
-          i18n-placeholder="@@sessionQa.askPlaceholder"
-          placeholder="Schreibe deine Frage hier"
+          [placeholder]="vpc.voteQaPlaceholder(isPlayfulPreset())"
         ></textarea>
         <div class="session-qa-form__meta">
           <span
@@ -910,7 +943,7 @@
             [disabled]="!qaCanSubmit()"
             (click)="submitQaQuestion()"
           >
-            <span i18n="@@sessionQa.askSubmit">Frage senden</span>
+            <span>{{ vpc.voteQaSubmit(isPlayfulPreset()) }}</span>
           </button>
         </div>
       </div>
@@ -925,9 +958,7 @@
       @if (qaQuestions().length === 0) {
         <div class="session-qa-empty">
           <mat-icon class="session-qa-empty__icon" aria-hidden="true">chat_bubble_outline</mat-icon>
-          <p class="session-qa-empty__text" i18n="@@sessionTabs.qaVotePlaceholder">
-            Noch keine Fragen – stell die erste!
-          </p>
+          <p class="session-qa-empty__text">{{ vpc.voteQaEmpty(isPlayfulPreset()) }}</p>
         </div>
       } @else {
         <div class="session-qa-list" role="list">
@@ -991,9 +1022,9 @@
                     </span>
                   }
                   @if (question.isOwn) {
-                    <span class="session-qa-card__own-badge" i18n="@@sessionQa.ownBadge"
-                      >Deine Frage</span
-                    >
+                    <span class="session-qa-card__own-badge">{{
+                      vpc.voteQaOwnBadge(isPlayfulPreset())
+                    }}</span>
                   }
                   <span
                     class="session-qa-card__score"

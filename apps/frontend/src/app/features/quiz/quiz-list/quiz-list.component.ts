@@ -35,6 +35,7 @@ import {
   renderMarkdownWithoutKatex,
 } from '../../../shared/markdown-katex.util';
 import { LiveSessionDialogComponent } from './live-session-dialog.component';
+import { BonusCodesDialogComponent } from './bonus-codes-dialog.component';
 
 const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
 
@@ -127,6 +128,8 @@ export class QuizListComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(html);
   });
   readonly startLiveShortcutMode = signal(false);
+  readonly bonusCodesAfterLiveTooltip = $localize`:@@quizList.bonusCodesAfterLive:Erst nach einem Live-Start dieses Quiz hier abrufbar.`;
+
   /** Wird true, während quiz.upload + session.create laufen (Story 2.1a). */
   readonly liveStartPending = signal(false);
 
@@ -543,6 +546,17 @@ export class QuizListComponent implements OnInit {
     });
   }
 
+  openBonusCodesDialog(quiz: QuizSummary): void {
+    const sid = quiz.lastServerQuizId;
+    if (!sid) return;
+    this.dialog.open(BonusCodesDialogComponent, {
+      width: 'min(560px, calc(100vw - 24px))',
+      maxHeight: 'min(90vh, 720px)',
+      autoFocus: false,
+      data: { serverQuizId: sid, quizName: quiz.name },
+    });
+  }
+
   private async activateLiveStartShortcutIfRequested(): Promise<void> {
     const requestedQuizId = this.route.snapshot.queryParamMap.get('startLiveQuiz');
     if (requestedQuizId) {
@@ -735,6 +749,7 @@ export class QuizListComponent implements OnInit {
           // Preset-Optionen nicht lesbar → Quiz-Einstellungen unverändert nutzen
         }
         const { quizId: uploadedQuizId } = await trpc.quiz.upload.mutate(payload);
+        this.quizStore.setLastServerQuizId(options.quizId, uploadedQuizId);
         result = await trpc.session.create.mutate({
           quizId: uploadedQuizId,
           type: 'QUIZ',

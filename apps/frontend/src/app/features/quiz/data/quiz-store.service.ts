@@ -76,6 +76,8 @@ export interface QuizDocument {
   updatedByDeviceId?: string | null;
   updatedByDeviceLabel?: string | null;
   updatedByBrowserLabel?: string | null;
+  /** Letzte Server-Quiz-ID nach quiz.upload (für Bonus-Codes in der Sammlung, nicht am Live-Host). */
+  lastServerQuizId?: string | null;
   settings: QuizSettings;
   questions: QuizQuestion[];
 }
@@ -89,6 +91,8 @@ export interface QuizSummary {
   questionCount: number;
   teamMode: boolean;
   hasBonus: boolean;
+  /** Server-Quiz-ID nach letztem quiz.upload (Bonus-Codes in der Sammlung). */
+  lastServerQuizId: string | null;
 }
 
 export interface AddQuizQuestionInput {
@@ -370,6 +374,7 @@ export class QuizStoreService {
         quiz.settings.bonusTokenCount !== null &&
         quiz.settings.bonusTokenCount !== undefined &&
         quiz.settings.bonusTokenCount > 0,
+      lastServerQuizId: quiz.lastServerQuizId ?? null,
     })),
   );
 
@@ -424,6 +429,7 @@ export class QuizStoreService {
       createdAt: now,
       updatedAt: now,
       ...this.currentQuizUpdateSource(),
+      lastServerQuizId: null,
       settings,
       questions: [],
     };
@@ -509,6 +515,7 @@ export class QuizStoreService {
       createdAt: now,
       updatedAt: now,
       ...this.currentQuizUpdateSource(),
+      lastServerQuizId: null,
       questions: document.questions.map((question) => ({
         ...question,
         id: generateUuid(),
@@ -522,6 +529,26 @@ export class QuizStoreService {
     this.quizDocuments.update((current) => [copy, ...current]);
     this.persistToStorage();
     return copy;
+  }
+
+  /**
+   * Nach erfolgreichem quiz.upload: Server-Quiz-ID merken (Bonus-Codes in der Sammlung).
+   */
+  setLastServerQuizId(localQuizId: string, serverQuizId: string): void {
+    if (!UUID_PATTERN.test(serverQuizId)) return;
+    this.quizDocuments.update((current) =>
+      current.map((quiz) =>
+        quiz.id === localQuizId
+          ? {
+              ...quiz,
+              lastServerQuizId: serverQuizId,
+              updatedAt: new Date().toISOString(),
+              ...this.currentQuizUpdateSource(),
+            }
+          : quiz,
+      ),
+    );
+    this.persistToStorage();
   }
 
   deleteQuiz(quizId: string): void {
@@ -1364,6 +1391,9 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
     .sort((a, b) => a.order - b.order)
     .map((question, index) => ({ ...question, order: index }));
 
+  const rawLastServer = readStringOrNull(candidate['lastServerQuizId']);
+  const lastServerQuizId = rawLastServer && UUID_PATTERN.test(rawLastServer) ? rawLastServer : null;
+
   return {
     id,
     name: metadata.data.name,
@@ -1373,6 +1403,7 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
     updatedByDeviceId: readStringOrNull(candidate['updatedByDeviceId']) ?? null,
     updatedByDeviceLabel: readStringOrNull(candidate['updatedByDeviceLabel']) ?? null,
     updatedByBrowserLabel: readStringOrNull(candidate['updatedByBrowserLabel']) ?? null,
+    lastServerQuizId,
     settings: normalizeStoredQuizSettings(candidate['settings']),
     questions,
   };

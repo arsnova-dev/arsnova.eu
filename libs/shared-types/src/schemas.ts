@@ -764,6 +764,24 @@ export const BonusTokenListDTOSchema = z.object({
 });
 export type BonusTokenListDTO = z.infer<typeof BonusTokenListDTOSchema>;
 
+/** Bonus-Token-Liste inkl. Session-Zeitstempel (Quiz-Sammlung, nicht Live-Host) */
+export const BonusTokenListWithSessionMetaDTOSchema = BonusTokenListDTOSchema.extend({
+  endedAt: z.string().nullable(),
+});
+export type BonusTokenListWithSessionMetaDTO = z.infer<
+  typeof BonusTokenListWithSessionMetaDTOSchema
+>;
+
+export const GetBonusTokensForQuizInputSchema = z.object({
+  quizId: z.string().uuid(),
+});
+export type GetBonusTokensForQuizInput = z.infer<typeof GetBonusTokensForQuizInputSchema>;
+
+export const BonusTokensForQuizOutputSchema = z.object({
+  sessions: z.array(BonusTokenListWithSessionMetaDTOSchema),
+});
+export type BonusTokensForQuizOutput = z.infer<typeof BonusTokensForQuizOutputSchema>;
+
 // ---------------------------------------------------------------------------
 // Ergebnis-Export für Dozenten (Story 4.7) – nur aggregierte/anonyme Daten
 // ---------------------------------------------------------------------------

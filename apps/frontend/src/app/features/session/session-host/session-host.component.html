@@ -520,44 +520,6 @@
                   </section>
                 }
 
-                @if (bonusTokens().length > 0) {
-                  <section class="session-host__bonus-card" aria-labelledby="bonus-heading">
-                    <h2 class="session-host__bonus-tokens-title" id="bonus-heading">
-                      <mat-icon aria-hidden="true">card_giftcard</mat-icon>
-                      <span i18n>Bonus-Codes</span>
-                    </h2>
-                    <table class="session-host__bonus-tokens-table" role="table">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th i18n>Nickname</th>
-                          <th i18n>Code</th>
-                          <th i18n>Punkte</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (t of bonusTokens(); track t.token) {
-                          <tr>
-                            <td>{{ t.rank }}</td>
-                            <td>{{ t.nickname }}</td>
-                            <td class="session-host__bonus-code-cell">{{ t.token }}</td>
-                            <td>{{ t.totalScore | number }}</td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                    <button
-                      matButton="tonal"
-                      type="button"
-                      class="session-host__bonus-export-btn"
-                      (click)="exportBonusTokensCsv()"
-                    >
-                      <mat-icon>download</mat-icon>
-                      <span i18n>CSV exportieren</span>
-                    </button>
-                  </section>
-                }
-
                 @if (feedbackSummary(); as fb) {
                   <section class="session-host__feedback-card" aria-labelledby="feedback-heading">
                     <h2 class="session-host__feedback-summary-title" id="feedback-heading">

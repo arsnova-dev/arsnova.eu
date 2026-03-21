@@ -83,6 +83,69 @@
     inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 5%, transparent);
 }
 
+// Client Vote: Team-Belohnung – Bühnen-Karte (Preset Spielerisch)
+@mixin app-playful-vote-team-reward-shell {
+  isolation: isolate;
+  border-radius: var(--mat-sys-corner-extra-large);
+  padding: clamp(1.15rem, 3.2vw, 1.55rem);
+  border-color: color-mix(in srgb, var(--mat-sys-outline-variant) 34%, var(--mat-sys-primary) 40%);
+  background:
+    linear-gradient(
+      185deg,
+      color-mix(in srgb, var(--mat-sys-inverse-on-surface) 11%, transparent) 0%,
+      transparent 44%
+    ),
+    radial-gradient(
+      ellipse 92% 56% at 50% -6%,
+      color-mix(in srgb, var(--mat-sys-primary) 24%, transparent),
+      transparent 54%
+    ),
+    radial-gradient(
+      ellipse 72% 50% at 98% 92%,
+      color-mix(in srgb, var(--mat-sys-tertiary) 16%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--mat-sys-primary-container) 36%, var(--mat-sys-surface)) 0%,
+      color-mix(in srgb, var(--mat-sys-surface-container-high) 80%, var(--mat-sys-primary) 10%) 46%,
+      color-mix(in srgb, var(--mat-sys-surface) 90%, var(--mat-sys-tertiary) 10%) 100%
+    );
+  box-shadow:
+    var(--mat-sys-level3),
+    var(--app-shadow-card-playful),
+    0 16px 40px -14px color-mix(in srgb, var(--mat-sys-primary) 26%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 14%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+}
+
+@mixin app-playful-vote-team-reward-shell-leader {
+  border-color: color-mix(in srgb, #cfa304 42%, var(--mat-sys-primary) 32%);
+  background:
+    linear-gradient(188deg, color-mix(in srgb, #fff 18%, transparent) 0%, transparent 40%),
+    radial-gradient(
+      ellipse 96% 58% at 48% -10%,
+      color-mix(in srgb, #ffd700 32%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 68% 46% at 96% 94%,
+      color-mix(in srgb, var(--mat-sys-tertiary) 14%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--mat-sys-primary-container) 56%, var(--mat-sys-surface)) 0%,
+      color-mix(in srgb, var(--mat-sys-surface-container-high) 76%, var(--mat-sys-primary) 14%) 100%
+    );
+  box-shadow:
+    var(--mat-sys-level3),
+    var(--app-shadow-card-playful),
+    0 18px 48px -12px color-mix(in srgb, #ffd700 24%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 24%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #e6b800 28%, transparent);
+}
+
 html.preset-playful {
   .quiz-list-page > .quiz-empty-state--lead {
     border-radius: var(--mat-sys-corner-extra-large);
@@ -229,18 +292,128 @@ html.preset-playful {
       inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
   }
 
+  // Team-Belohnung (Client): glänzende Bühnen-Karte + Kopf/Stats; Rangliste mit edlen Medaillen-Streifen
   .vote-page .vote-team-reward {
-    box-shadow:
-      0 0.9rem 1.8rem color-mix(in srgb, black 8%, transparent),
-      var(--app-shadow-card-playful),
-      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+    @include app-playful-vote-team-reward-shell;
+  }
 
-    &.vote-team-reward--leader {
-      box-shadow:
-        0 1rem 2rem color-mix(in srgb, #ffd700 12%, transparent),
-        var(--app-shadow-card-playful),
-        inset 0 0 0 1px color-mix(in srgb, #ffd700 22%, transparent);
-    }
+  .vote-page .vote-team-reward.vote-team-reward--leader {
+    @include app-playful-vote-team-reward-shell-leader;
+  }
+
+  .vote-page .vote-team-reward__head {
+    padding: 0.5rem 1rem;
+    border-radius: var(--mat-sys-corner-large);
+    background: linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--mat-sys-primary) 14%, transparent) 0%,
+      color-mix(in srgb, var(--mat-sys-surface) 40%, transparent) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 12%, transparent),
+      0 1px 0 color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+  }
+
+  .vote-page .vote-team-reward__title {
+    font: var(--mat-sys-headline-small);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .vote-page .vote-team-reward.vote-team-reward--leader .vote-team-reward__title {
+    color: color-mix(in srgb, var(--mat-sys-primary) 22%, var(--mat-sys-on-surface));
+  }
+
+  .vote-page .vote-team-reward__team {
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--mat-sys-corner-full);
+    background: color-mix(
+      in srgb,
+      var(--mat-sys-surface) 42%,
+      var(--mat-sys-primary-container) 58%
+    );
+    border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 32%, transparent);
+    box-shadow:
+      var(--mat-sys-level1),
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 12%, transparent);
+  }
+
+  .vote-page .vote-team-reward__stat {
+    @include app-playful-inner-card-nested;
+    padding: 0.85rem 0.55rem;
+  }
+
+  .vote-page .vote-team-reward__stat-value {
+    color: var(--mat-sys-primary);
+    font-weight: 800;
+  }
+
+  .vote-page .vote-team-reward__board {
+    gap: 0.75rem;
+  }
+
+  .vote-page .vote-team-reward__board-item--rank1 {
+    border: 1px solid color-mix(in srgb, #e6b800 48%, var(--mat-sys-outline-variant));
+    border-left-width: 4px;
+    border-left-color: color-mix(in srgb, #e6b800 92%, var(--mat-sys-outline-variant));
+    background:
+      linear-gradient(100deg, color-mix(in srgb, #ffd700 16%, transparent) 0%, transparent 58%),
+      var(--mat-sys-surface);
+    box-shadow:
+      var(--mat-sys-level1),
+      0 8px 22px -12px color-mix(in srgb, #ffd700 22%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #ffd700 7%, transparent);
+  }
+
+  .vote-page .vote-team-reward__board-item--rank2 {
+    border: 1px solid color-mix(in srgb, #9e9e9e 50%, var(--mat-sys-outline-variant));
+    border-left-width: 4px;
+    border-left-color: color-mix(in srgb, #b0b8c0 90%, var(--mat-sys-outline-variant));
+    background:
+      linear-gradient(100deg, color-mix(in srgb, #c0c0c0 12%, transparent) 0%, transparent 56%),
+      var(--mat-sys-surface);
+    box-shadow:
+      var(--mat-sys-level1),
+      0 6px 18px -12px color-mix(in srgb, #9098a0 18%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #a8a8a8 10%, transparent);
+  }
+
+  .vote-page .vote-team-reward__board-item--rank3 {
+    border: 1px solid color-mix(in srgb, #b87333 46%, var(--mat-sys-outline-variant));
+    border-left-width: 4px;
+    border-left-color: color-mix(in srgb, #cd7f32 88%, var(--mat-sys-outline-variant));
+    background:
+      linear-gradient(100deg, color-mix(in srgb, #cd7f32 12%, transparent) 0%, transparent 56%),
+      var(--mat-sys-surface);
+    box-shadow:
+      var(--mat-sys-level1),
+      0 6px 18px -12px color-mix(in srgb, #8d5a2b 18%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #b87333 9%, transparent);
+  }
+
+  .vote-page .vote-team-reward__board-item--own.vote-team-reward__board-item--rank1 {
+    background:
+      linear-gradient(100deg, color-mix(in srgb, #ffd700 14%, transparent) 0%, transparent 52%),
+      color-mix(in srgb, var(--mat-sys-primary) 11%, var(--mat-sys-surface));
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 28%, var(--mat-sys-outline-variant));
+    border-left-color: color-mix(in srgb, #e6b800 78%, var(--mat-sys-primary) 22%);
+  }
+
+  .vote-page .vote-team-reward__board-item--own.vote-team-reward__board-item--rank2 {
+    background:
+      linear-gradient(100deg, color-mix(in srgb, #c0c0c0 10%, transparent) 0%, transparent 52%),
+      color-mix(in srgb, var(--mat-sys-primary) 11%, var(--mat-sys-surface));
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 26%, var(--mat-sys-outline-variant));
+    border-left-color: color-mix(in srgb, #a8b0b8 75%, var(--mat-sys-primary) 25%);
+  }
+
+  .vote-page .vote-team-reward__board-item--own.vote-team-reward__board-item--rank3 {
+    background:
+      linear-gradient(100deg, color-mix(in srgb, #cd7f32 10%, transparent) 0%, transparent 52%),
+      color-mix(in srgb, var(--mat-sys-primary) 11%, var(--mat-sys-surface));
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 26%, var(--mat-sys-outline-variant));
+    border-left-color: color-mix(in srgb, #b87333 72%, var(--mat-sys-primary) 28%);
   }
 
   .vote-page .vote-finished-hero {
@@ -309,6 +482,187 @@ html.preset-playful {
     box-shadow:
       var(--mat-sys-level1),
       inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+  }
+
+  // Teilnehmer-Vote: zuvor ohne eigenes Playful (Section ≠ mat-card, Lobby ohne Rahmen, Quiz-Flächen)
+  .vote-page section.session-channel-card.app-live-channel-shell {
+    @include app-playful-inner-panel-channel;
+  }
+
+  .vote-page .vote-lobby {
+    @include app-playful-inner-card-nested;
+    border-radius: var(--mat-sys-corner-extra-large);
+    padding: clamp(1.5rem, 4vw, 2.35rem) 1.2rem clamp(2rem, 5vw, 2.75rem);
+    max-width: min(28rem, 100%);
+    box-shadow:
+      var(--mat-sys-level1),
+      var(--app-shadow-card-playful),
+      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 7%, transparent);
+  }
+
+  .vote-page .vote-player-badge {
+    border: 1px solid
+      color-mix(in srgb, var(--mat-sys-outline-variant) 42%, var(--mat-sys-primary) 38%);
+    background: linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--mat-sys-primary-container) 28%, var(--mat-sys-surface-container)) 0%,
+      color-mix(in srgb, var(--mat-sys-surface-container) 92%, var(--mat-sys-tertiary) 8%) 100%
+    );
+    box-shadow:
+      var(--mat-sys-level1),
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 10%, transparent);
+  }
+
+  .vote-page .vote-countdown:not(.vote-countdown--urgent) {
+    border: 2px solid color-mix(in srgb, var(--mat-sys-primary) 38%, var(--mat-sys-outline-variant));
+    box-shadow:
+      var(--mat-sys-level2),
+      var(--app-shadow-card-playful),
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 12%, transparent);
+  }
+
+  .vote-page .vote-scorecard {
+    border-radius: var(--mat-sys-corner-extra-large);
+    box-shadow:
+      0 0.8rem 1.6rem color-mix(in srgb, black 8%, transparent),
+      var(--app-shadow-card-playful),
+      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+  }
+
+  .vote-page .vote-question {
+    margin-bottom: 1.75rem;
+    padding: 1rem 1.15rem 1.15rem;
+    border-radius: var(--mat-sys-corner-extra-large);
+    @include app-playful-inner-card-nested;
+  }
+
+  .vote-page .vote-discussion {
+    border-radius: var(--mat-sys-corner-extra-large);
+    @include app-playful-inner-card-nested;
+  }
+
+  .vote-page .vote-round2-banner {
+    padding: 0.65rem 1rem;
+    border-radius: var(--mat-sys-corner-large);
+    background: color-mix(in srgb, var(--mat-sys-primary-container) 38%, var(--mat-sys-surface));
+    border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 30%, transparent);
+    color: var(--mat-sys-on-surface);
+    font-weight: 600;
+  }
+
+  .vote-page
+    .vote-answer:not(.vote-answer--correct):not(.vote-answer--wrong):not(.vote-answer--disabled) {
+    border-color: color-mix(
+      in srgb,
+      var(--mat-sys-outline-variant) 48%,
+      var(--mat-sys-primary) 26%
+    );
+    box-shadow:
+      var(--mat-sys-level1),
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 10%, transparent);
+  }
+
+  .vote-page .vote-answer--selected:not(.vote-answer--correct):not(.vote-answer--wrong) {
+    box-shadow:
+      0 4px 16px -4px color-mix(in srgb, var(--mat-sys-primary) 38%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+  }
+
+  .vote-page .vote-freetext__input {
+    border-color: color-mix(
+      in srgb,
+      var(--mat-sys-outline-variant) 40%,
+      var(--mat-sys-primary) 32%
+    );
+    box-shadow:
+      var(--mat-sys-level1),
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 8%, transparent);
+  }
+
+  .vote-page .vote-freetext__own {
+    @include app-playful-inner-card-nested;
+  }
+
+  .vote-page .vote-rating:not(.vote-rating--result) {
+    padding: 1rem 1.1rem 1.25rem;
+    border-radius: var(--mat-sys-corner-extra-large);
+    @include app-playful-inner-card-nested;
+  }
+
+  .vote-page .vote-rating--result .vote-rating__result-label {
+    @include app-playful-inner-card-nested;
+  }
+
+  .vote-page .vote-sent {
+    border-radius: var(--mat-sys-corner-large);
+    box-shadow:
+      var(--mat-sys-level1),
+      var(--app-shadow-card-playful),
+      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+  }
+
+  .vote-page .vote-emoji-wrap {
+    padding: 1rem 1.1rem 1.2rem;
+    border-radius: var(--mat-sys-corner-extra-large);
+    @include app-playful-inner-card-nested;
+  }
+
+  .vote-page .vote-emoji-bar__btn {
+    border-color: color-mix(
+      in srgb,
+      var(--mat-sys-outline-variant) 45%,
+      var(--mat-sys-primary) 32%
+    );
+    background: color-mix(
+      in srgb,
+      var(--mat-sys-surface) 55%,
+      var(--mat-sys-primary-container) 45%
+    );
+    box-shadow: var(--mat-sys-level1);
+  }
+
+  .vote-page .vote-emoji-sent {
+    padding: 0.65rem 1.15rem;
+    border-radius: var(--mat-sys-corner-full);
+    @include app-playful-inner-card-nested;
+    justify-content: center;
+  }
+
+  .vote-page .session-qa-card {
+    @include app-playful-inner-card-nested;
+    border: 1px solid
+      color-mix(in srgb, var(--mat-sys-outline-variant) 50%, var(--mat-sys-primary) 28%);
+    box-shadow:
+      var(--mat-sys-level1),
+      inset 0 1px 0 color-mix(in srgb, var(--mat-sys-inverse-on-surface) 8%, transparent);
+  }
+
+  .vote-page .session-qa-card--pinned {
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, var(--mat-sys-outline-variant));
+    box-shadow:
+      var(--mat-sys-level2),
+      0 8px 22px -10px color-mix(in srgb, var(--mat-sys-primary) 22%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+  }
+
+  .vote-page .session-qa-empty {
+    @include app-playful-inner-card-nested;
+    border-radius: var(--mat-sys-corner-large);
+  }
+
+  .vote-page .session-qa-moderation-notice {
+    box-shadow:
+      var(--mat-sys-level1),
+      inset 0 0 0 1px color-mix(in srgb, var(--mat-sys-tertiary) 15%, transparent);
+  }
+
+  .vote-page .session-qa-form__textarea {
+    border-color: color-mix(
+      in srgb,
+      var(--mat-sys-outline-variant) 42%,
+      var(--mat-sys-primary) 30%
+    );
+    box-shadow: inset 0 1px 2px color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
   }
 
   // --- Welle 5: Present / Host ---

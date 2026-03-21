@@ -53,6 +53,7 @@ describe('QuizListComponent', () => {
     deleteQuiz: vi.fn(),
     exportQuiz: vi.fn(),
     importQuiz: vi.fn(),
+    setLastServerQuizId: vi.fn(),
   };
 
   beforeEach(() => {
@@ -159,6 +160,9 @@ describe('QuizListComponent', () => {
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
     mockRoute.snapshot.queryParamMap = convertToParamMap({ syncImported: '1' });
@@ -194,6 +198,9 @@ describe('QuizListComponent', () => {
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
 
@@ -217,6 +224,9 @@ describe('QuizListComponent', () => {
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
 
@@ -238,6 +248,9 @@ describe('QuizListComponent', () => {
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
 
@@ -265,6 +278,9 @@ describe('QuizListComponent', () => {
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
     getActiveQuizIdsQueryMock.mockResolvedValue(['e31fef3f-f7b1-4705-a739-28c8ec4486bf']);
@@ -348,6 +364,9 @@ Viel Erfolg beim Import.`);
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
       {
         id: 'bb0cd69b-a0d2-4373-b83e-c1abb0a8b58a',
@@ -356,6 +375,9 @@ Viel Erfolg beim Import.`);
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 3,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
 
@@ -379,6 +401,9 @@ Viel Erfolg beim Import.`);
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:30:00.000Z',
         questionCount: 2,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
       {
         id: 'bb0cd69b-a0d2-4373-b83e-c1abb0a8b58a',
@@ -387,6 +412,9 @@ Viel Erfolg beim Import.`);
         createdAt: '2026-03-08T10:00:00.000Z',
         updatedAt: '2026-03-08T11:31:00.000Z',
         questionCount: 3,
+        teamMode: false,
+        hasBonus: false,
+        lastServerQuizId: null,
       },
     ]);
     mockRoute.snapshot.queryParamMap = convertToParamMap({
