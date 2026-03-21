@@ -13,6 +13,23 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.spec.ts'],
     setupFiles: ['src/test-setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'text-summary', 'html'],
+      reportsDirectory: './coverage',
+      exclude: [
+        '**/node_modules/**',
+        '**/*.spec.ts',
+        '**/*.config.ts',
+        'src/test-setup.ts',
+        '**/main.ts',
+        '**/main.server.ts',
+        '**/server.ts',
+        '**/polyfills.ts',
+        '**/*.{html,scss,css}',
+        '**/assets/**',
+      ],
+    },
   },
   resolve: {
     alias: {
