@@ -8,6 +8,14 @@
       </div>
     </div>
   }
+  @if (demoQuizWhenLibraryEmpty(); as quiz) {
+    <div class="quiz-list__lead-demo l-stack l-stack--sm">
+      <ng-container
+        [ngTemplateOutlet]="quizItemCard"
+        [ngTemplateOutletContext]="{ $implicit: quiz }"
+      />
+    </div>
+  }
   <div class="quiz-list__actions">
     <button
       matButton="filled"
@@ -176,157 +184,18 @@
     </mat-card>
   }
 
-  @if (quizzes().length > 0) {
+  @if (sortedQuizzesForList().length > 0) {
     <div class="quiz-list__items l-stack l-stack--sm">
-      @for (quiz of sortedQuizzes(); track quiz.id) {
-        <mat-card appearance="outlined" class="quiz-list-item">
-          <mat-card-content class="quiz-list-item__content">
-            <div class="quiz-list-item__main">
-              <a
-                class="quiz-list-item__link"
-                [routerLink]="quiz.id"
-                [attr.aria-label]="getQuizOpenAriaLabel(quiz.name)"
-              >
-                <h2 class="quiz-list-item__title">{{ quiz.name }}</h2>
-                <div class="quiz-list-item__badges">
-                  @if (quiz.id === demoQuizId) {
-                    <span
-                      class="quiz-list-item__feature-chip quiz-list-item__feature-chip--demo"
-                      i18n="@@quizList.chipDemo"
-                      >Demo</span
-                    >
-                  }
-                  @if (isQuizLive(quiz.id)) {
-                    <span
-                      class="quiz-list-item__feature-chip quiz-list-item__feature-chip--live"
-                      i18n="@@quizList.chipLive"
-                      >Live</span
-                    >
-                  }
-                </div>
-                <div class="quiz-list-item__meta">
-                  <span
-                    class="quiz-list-item__badge"
-                    [class.quiz-list-item__badge--empty]="quiz.questionCount === 0"
-                  >
-                    {{ quiz.questionCount }}
-                  </span>
-                  @if (quiz.questionCount === 0) {
-                    <span class="quiz-list-item__meta-text quiz-list-item__meta-text--warn" i18n
-                      >Noch keine Fragen</span
-                    >
-                  } @else {
-                    <span class="quiz-list-item__meta-text" i18n>{{
-                      quiz.questionCount === 1 ? 'Frage' : 'Fragen'
-                    }}</span>
-                  }
-                  <span class="quiz-list-item__meta-sep" aria-hidden="true">·</span>
-                  <span class="quiz-list-item__meta-text">
-                    <mat-icon class="quiz-list-item__meta-icon" aria-hidden="true">update</mat-icon>
-                    {{ quiz.updatedAt | date: 'shortDate' }} ·
-                    {{ quiz.updatedAt | date: 'shortTime' }}
-                  </span>
-                  @if (quiz.teamMode) {
-                    <span class="quiz-list-item__feature-chip quiz-list-item__feature-chip--team">
-                      <mat-icon aria-hidden="true">groups</mat-icon>
-                      <span i18n="@@quizList.chipTeam">Teams</span>
-                    </span>
-                  }
-                  @if (quiz.hasBonus) {
-                    <span class="quiz-list-item__feature-chip quiz-list-item__feature-chip--bonus">
-                      <mat-icon aria-hidden="true">school</mat-icon>
-                      <span i18n="@@quizList.chipBonus">Bonus</span>
-                    </span>
-                  }
-                </div>
-              </a>
-              @if (quiz.questionCount === 0) {
-                <a
-                  class="quiz-list-item__add-questions"
-                  [routerLink]="quiz.id"
-                  i18n="@@quizList.addQuestions"
-                  >Fragen hinzufügen</a
-                >
-              }
-              @if (quiz.description) {
-                <div class="quiz-list-item__description-wrap" (click)="$event.stopPropagation()">
-                  <details class="quiz-list-item__description-details">
-                    <summary class="quiz-list-item__description-summary">
-                      <span i18n>Beschreibung</span>
-                      <mat-icon class="quiz-list-item__description-chevron" aria-hidden="true"
-                        >expand_more</mat-icon
-                      >
-                    </summary>
-                    <div
-                      class="quiz-list-item__description"
-                      [innerHTML]="renderDescription(quiz.description)"
-                    ></div>
-                  </details>
-                </div>
-              }
-            </div>
-
-            <div class="quiz-list-item__actions">
-              <a
-                mat-button
-                type="button"
-                [routerLink]="[quiz.id, 'preview']"
-                [queryParams]="{ returnTo: 'list' }"
-              >
-                <mat-icon>visibility</mat-icon>
-                <span i18n>Vorschau</span>
-              </a>
-              <button
-                matButton="tonal"
-                type="button"
-                [disabled]="liveStartPending()"
-                [matTooltip]="quiz.questionCount === 0 ? tooltipMinQuestions() : null"
-                (click)="openLiveStartDialog(quiz.id, quiz.name, quiz.questionCount)"
-              >
-                <mat-icon>play_circle</mat-icon>
-                <span i18n="@@quizList.startSession">Starten</span>
-              </button>
-              <button
-                mat-icon-button
-                class="quiz-list-item__menu-trigger"
-                type="button"
-                [disableRipple]="true"
-                [matMenuTriggerFor]="quizMenu"
-                [attr.aria-label]="getQuizActionsAriaLabel(quiz.name)"
-              >
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #quizMenu="matMenu">
-                <a mat-menu-item [routerLink]="[quiz.id]">
-                  <mat-icon>edit</mat-icon>
-                  <span i18n="@@quizList.edit">Bearbeiten</span>
-                </a>
-                <button mat-menu-item type="button" (click)="exportQuiz(quiz.id)">
-                  <mat-icon>download</mat-icon>
-                  <span i18n>Exportieren</span>
-                </button>
-                <button mat-menu-item type="button" (click)="duplicateQuiz(quiz.id)">
-                  <mat-icon>content_copy</mat-icon>
-                  <span i18n>Duplizieren</span>
-                </button>
-                @if (isQuizLive(quiz.id)) {
-                  <button mat-menu-item type="button" disabled [matTooltip]="tooltipDeleteLive()">
-                    <mat-icon>delete</mat-icon>
-                    <span i18n>Löschen (live)</span>
-                  </button>
-                } @else {
-                  <button mat-menu-item type="button" (click)="deleteQuiz(quiz.id, quiz.name)">
-                    <mat-icon>delete</mat-icon>
-                    <span i18n>Löschen</span>
-                  </button>
-                }
-              </mat-menu>
-            </div>
-          </mat-card-content>
-        </mat-card>
+      @for (quiz of sortedQuizzesForList(); track quiz.id) {
+        <ng-container
+          [ngTemplateOutlet]="quizItemCard"
+          [ngTemplateOutletContext]="{ $implicit: quiz }"
+        />
       }
     </div>
   }
+
+  <hr class="quiz-list__sync-divider" aria-hidden="true" />
 
   <div class="quiz-list__sync-callout">
     @if (isSharedLibrary()) {
@@ -431,4 +300,152 @@
       <span i18n="@@quizList.syncCta">Sync-Code erzeugen</span>
     </a>
   </div>
+
+  <ng-template #quizItemCard let-quiz>
+    <mat-card appearance="outlined" class="quiz-list-item">
+      <mat-card-content class="quiz-list-item__content">
+        <div class="quiz-list-item__main">
+          <a
+            class="quiz-list-item__link"
+            [routerLink]="quiz.id"
+            [attr.aria-label]="getQuizOpenAriaLabel(quiz.name)"
+          >
+            <h2 class="quiz-list-item__title">{{ quiz.name }}</h2>
+            <div class="quiz-list-item__badges">
+              @if (quiz.id === demoQuizId) {
+                <span
+                  class="quiz-list-item__feature-chip quiz-list-item__feature-chip--demo"
+                  i18n="@@quizList.chipDemo"
+                  >Demo</span
+                >
+              }
+              @if (isQuizLive(quiz.id)) {
+                <span
+                  class="quiz-list-item__feature-chip quiz-list-item__feature-chip--live"
+                  i18n="@@quizList.chipLive"
+                  >Live</span
+                >
+              }
+            </div>
+            <div class="quiz-list-item__meta">
+              <span
+                class="quiz-list-item__badge"
+                [class.quiz-list-item__badge--empty]="quiz.questionCount === 0"
+              >
+                {{ quiz.questionCount }}
+              </span>
+              @if (quiz.questionCount === 0) {
+                <span class="quiz-list-item__meta-text quiz-list-item__meta-text--warn" i18n
+                  >Noch keine Fragen</span
+                >
+              } @else {
+                <span class="quiz-list-item__meta-text" i18n>{{
+                  quiz.questionCount === 1 ? 'Frage' : 'Fragen'
+                }}</span>
+              }
+              <span class="quiz-list-item__meta-sep" aria-hidden="true">·</span>
+              <span class="quiz-list-item__meta-text">
+                <mat-icon class="quiz-list-item__meta-icon" aria-hidden="true">update</mat-icon>
+                {{ quiz.updatedAt | date: 'shortDate' }} ·
+                {{ quiz.updatedAt | date: 'shortTime' }}
+              </span>
+              @if (quiz.teamMode) {
+                <span class="quiz-list-item__feature-chip quiz-list-item__feature-chip--team">
+                  <mat-icon aria-hidden="true">groups</mat-icon>
+                  <span i18n="@@quizList.chipTeam">Teams</span>
+                </span>
+              }
+              @if (quiz.hasBonus) {
+                <span class="quiz-list-item__feature-chip quiz-list-item__feature-chip--bonus">
+                  <mat-icon aria-hidden="true">school</mat-icon>
+                  <span i18n="@@quizList.chipBonus">Bonus</span>
+                </span>
+              }
+            </div>
+          </a>
+          @if (quiz.questionCount === 0) {
+            <a
+              class="quiz-list-item__add-questions"
+              [routerLink]="quiz.id"
+              i18n="@@quizList.addQuestions"
+              >Fragen hinzufügen</a
+            >
+          }
+          @if (quiz.description) {
+            <div class="quiz-list-item__description-wrap" (click)="$event.stopPropagation()">
+              <details class="quiz-list-item__description-details">
+                <summary class="quiz-list-item__description-summary">
+                  <span i18n>Beschreibung</span>
+                  <mat-icon class="quiz-list-item__description-chevron" aria-hidden="true"
+                    >expand_more</mat-icon
+                  >
+                </summary>
+                <div
+                  class="quiz-list-item__description"
+                  [innerHTML]="renderDescription(quiz.description)"
+                ></div>
+              </details>
+            </div>
+          }
+        </div>
+
+        <div class="quiz-list-item__actions">
+          <a
+            mat-button
+            type="button"
+            [routerLink]="[quiz.id, 'preview']"
+            [queryParams]="{ returnTo: 'list' }"
+          >
+            <mat-icon>visibility</mat-icon>
+            <span i18n>Vorschau</span>
+          </a>
+          <button
+            matButton="tonal"
+            type="button"
+            [disabled]="liveStartPending()"
+            [matTooltip]="quiz.questionCount === 0 ? tooltipMinQuestions() : null"
+            (click)="openLiveStartDialog(quiz.id, quiz.name, quiz.questionCount)"
+          >
+            <mat-icon>play_circle</mat-icon>
+            <span i18n="@@quizList.startSession">Starten</span>
+          </button>
+          <button
+            mat-icon-button
+            class="quiz-list-item__menu-trigger"
+            type="button"
+            [disableRipple]="true"
+            [matMenuTriggerFor]="quizMenu"
+            [attr.aria-label]="getQuizActionsAriaLabel(quiz.name)"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #quizMenu="matMenu">
+            <a mat-menu-item [routerLink]="[quiz.id]">
+              <mat-icon>edit</mat-icon>
+              <span i18n="@@quizList.edit">Bearbeiten</span>
+            </a>
+            <button mat-menu-item type="button" (click)="exportQuiz(quiz.id)">
+              <mat-icon>download</mat-icon>
+              <span i18n>Exportieren</span>
+            </button>
+            <button mat-menu-item type="button" (click)="duplicateQuiz(quiz.id)">
+              <mat-icon>content_copy</mat-icon>
+              <span i18n>Duplizieren</span>
+            </button>
+            @if (isQuizLive(quiz.id)) {
+              <button mat-menu-item type="button" disabled [matTooltip]="tooltipDeleteLive()">
+                <mat-icon>delete</mat-icon>
+                <span i18n>Löschen (live)</span>
+              </button>
+            } @else {
+              <button mat-menu-item type="button" (click)="deleteQuiz(quiz.id, quiz.name)">
+                <mat-icon>delete</mat-icon>
+                <span i18n>Löschen</span>
+              </button>
+            }
+          </mat-menu>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
 </section>

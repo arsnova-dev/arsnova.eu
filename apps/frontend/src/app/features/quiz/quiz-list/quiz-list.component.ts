@@ -1,5 +1,4 @@
-import { DatePipe } from '@angular/common';
-import { DOCUMENT } from '@angular/common';
+import { DatePipe, DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -49,6 +48,7 @@ const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
   imports: [
     RouterLink,
     DatePipe,
+    NgTemplateOutlet,
     MatButton,
     MatIconButton,
     MatCard,
@@ -81,6 +81,18 @@ export class QuizListComponent implements OnInit {
     ),
   );
   readonly hasUserQuizzes = computed(() => this.quizzes().some((q) => q.id !== DEMO_QUIZ_ID));
+  /** Nur-Demo-Sammlung: Demo-Karte direkt unter der Willkommenszeile, nicht in der Hauptliste. */
+  readonly demoQuizWhenLibraryEmpty = computed(() => {
+    if (this.hasUserQuizzes()) return null;
+    return this.quizzes().find((q) => q.id === DEMO_QUIZ_ID) ?? null;
+  });
+  readonly sortedQuizzesForList = computed(() => {
+    const sorted = this.sortedQuizzes();
+    if (!this.hasUserQuizzes()) {
+      return sorted.filter((q) => q.id !== DEMO_QUIZ_ID);
+    }
+    return sorted;
+  });
   readonly demoQuizId = DEMO_QUIZ_ID;
   readonly syncRoomId = this.quizStore.syncRoomId;
   readonly syncConnectionState = this.quizStore.syncConnectionState;

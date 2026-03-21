@@ -168,14 +168,15 @@ Tokenbasierte Card-Flaeche:
 
 - **Hintergrund:** Verlauf mit Primary-/Tertiary-Container (Token `--app-bg-root`).
 - **Karten:** Zusaetzlicher Schatten mit Primary-Anteil (`--app-shadow-card-playful`). Nur die ersten beiden Karten (Beitreten, Erstellen) haben Hover: leichtes Anheben + Scale aus der Mitte, nur bei `prefers-reduced-motion: no-preference`.
-- **Haupt-CTA:** Der gefuellte Button erhaelt im Spielerisch-Modus einen dezenten Glow (`--app-shadow-cta-glow`).
+- **Veranstalten-Karte (Ausnahme):** Ohne `--app-shadow-card-playful` und ohne `--app-shadow-cta-glow` am gefuellten CTA, damit der Tonal-Button „Deine Quiz-Sammlung“ nicht in einen farbigen Schleier faellt (`home-card--create` in `home.component.scss`).
+- **Haupt-CTA:** Der gefuellte Button auf der **Mitmachen**-Karte erhaelt im Spielerisch-Modus einen dezenten Glow (`--app-shadow-cta-glow`).
 - **Header:** Gradient, dezenter Primary-Rahmen, `--app-shadow-accent`.
 - **Wow-Effekt (nur bei prefers-reduced-motion: no-preference):** Brand-Icon dezentes „Atmen“ (Scale 1 → 1.05 → 1, 2.5 s).
 - Alle Werte tokenbasiert in `styles.scss` (html.preset-playful) und Home-Komponente.
 
 ## Startseite: Buttons, Snackbar und Toast
 
-- **Button-Hierarchie:** Nur ein gefuellter CTA pro Kontext (z. B. "Neues Quiz starten" auf der Veranstalten-Karte). Sekundaere Aktionen als `tonal`-Buttons nebeneinander in einer Row (`home-cta-row`). Hilfe als Text-Button ohne Umrandung.
+- **Button-Hierarchie:** Auf der Veranstalten-Karte erscheint der gefuellte CTA **„Letztes Quiz starten“** nur, wenn mindestens ein **eigenes** Quiz existiert (Demo zaehlt nicht); sonst fuehrt der Einstieg ueber **„Deine Quiz-Sammlung“** (tonal, inkl. „Neues Quiz erstellen“). Hilfe als Text-Button ohne Umrandung.
 - **Preset-Wechsel (Snackbar):** Klick auf Serioes/Spielerisch wendet das Preset sofort an und zeigt eine **Snackbar** (fixed bottom, `inverse-surface`-Farben, 5 s Auto-Dismiss). Die Snackbar enthaelt Icon, Label und einen "Anpassen"-Link, der das Detail-Modal oeffnet.
 - **Toast (Preset-Detail-Konfiguration):** Oeffnet sich nur bei Klick auf "Anpassen" in der Snackbar. Zentriertes Modal mit Close-Button; alle Optionen als **toggelbare Chips** nach Kategorien (Gamification, Teilnahme, Ablauf, Team, Audio). Abhaengige Chips (z. B. "Teams zuweisen") werden nur angezeigt wenn der Eltern-Chip aktiv ist. Speichern uebernimmt, Zuruecksetzen setzt Preset-Defaults. Einstellungen in **localStorage**; Sync ueber Yjs geplant (Story 1.6b).
 - **Abstaende:** Einheitlicher Button-/Link-Abstand auf Karten ueber `l-stack--sm` (0,5 rem).

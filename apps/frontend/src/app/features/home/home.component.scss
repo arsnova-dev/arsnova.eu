@@ -622,10 +622,17 @@ mat-card-actions.l-stack {
   margin-top: 1rem;
 }
 
+.home-card--create mat-card-actions > .home-cta-row:first-child {
+  margin-top: 0;
+}
+
 .home-cta-row .home-cta--secondary {
   flex: 1 1 0;
   min-width: 0;
   width: auto;
+  /* „Deine Quiz-Sammlung“ (mat-tonal-button): Schatten per !important gegen M3-Defaults */
+  box-shadow: none !important;
+  filter: none !important;
 }
 
 .home-card__tertiary {
@@ -971,14 +978,30 @@ mat-card-actions.l-stack {
   .home-code-segment {
     border-color: color-mix(in srgb, var(--mat-sys-primary) 30%, transparent);
   }
+  /* Veranstalten-Karte: kein Primary-Schleier/Glow – sonst wirkt es wie Halo um „Quiz-Sammlung“ */
   .home-card--create mat-card-actions .home-cta:first-child {
-    box-shadow: var(--mat-sys-level1), var(--app-shadow-cta-glow);
+    box-shadow: var(--mat-sys-level1);
   }
   .home-card--create mat-card-actions .home-cta:first-child:hover {
+    box-shadow: var(--mat-sys-level2);
+  }
+  /* Mitmachen-Karte: gefüllter CTA behält dezenten Glow */
+  .home-card:not(.home-card--create) mat-card-actions > .home-cta:first-child {
+    box-shadow: var(--mat-sys-level1), var(--app-shadow-cta-glow);
+  }
+  .home-card:not(.home-card--create) mat-card-actions > .home-cta:first-child:hover {
     box-shadow: var(--mat-sys-level2), var(--app-shadow-cta-glow);
+  }
+  .home-card--create .home-cta-row .home-cta--secondary,
+  .home-card--create .home-cta-row .home-cta--secondary:hover {
+    box-shadow: none !important;
+    filter: none !important;
   }
   .home-card {
     box-shadow: var(--mat-sys-level2), var(--app-shadow-card-playful);
+  }
+  .home-card--create.home-card {
+    box-shadow: var(--mat-sys-level2);
   }
   @media (prefers-reduced-motion: no-preference) {
     .home-main {
@@ -996,6 +1019,9 @@ mat-card-actions.l-stack {
         var(--mat-sys-level3),
         var(--app-shadow-card-playful),
         0 0 0 2px color-mix(in srgb, var(--mat-sys-primary) 28%, transparent);
+    }
+    .home-card--create.home-card:hover {
+      box-shadow: var(--mat-sys-level3);
     }
   }
 }
