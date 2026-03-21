@@ -89,6 +89,19 @@ Regeln:
   - **Popup horizontal mittig** (globales Overlay-Styling fuer `feedback-host__join-menu-overlay-panel` in `styles.scss`).
 - **Referenz-Dateien:** `apps/frontend/src/app/features/feedback/feedback-host.component.{html,scss,ts}`; Overlay-Panel-Klassen in `apps/frontend/src/styles.scss` (gemeinsam mit Session-Host-Join-Menue, wo dokumentiert).
 
+#### Eingebettet im Session-Host (Tab Blitzlicht)
+
+- **Gleiche Prioritaet wie Standalone:** Im Modifier `feedback-host--embedded` steht der **Ergebnisbereich** (Balken, Titel, Stimmen) per Flexbox-`order` **vor** Format-Chips und Steueraktionen; QR/Beitritt folgen im Anschluss (kein zusaetzlicher Ergebnisblock in der Teilnehmer-Ansicht).
+- **Referenz:** `feedback-host.component.scss` (Suche nach `feedback-host--embedded`).
+
+### Leere Zustaende und Listen-Einstieg (z. B. Quiz-Sammlung)
+
+- **Reihenfolge:** Kurzer Kontext oder Begruessung **vor** der Aktionsleiste (Import, Neues Quiz, KI-Prompt usw.), damit der erste Screen nicht nur aus CTAs besteht.
+- **Copy:** **Keine Wiederholung** des Seitentitels aus dem Parent (`h1`), wenn der Kontext bereits klar ist; Headline knapp halten (z. B. „Willkommen!“ statt erneut „Quiz-Sammlung“).
+- **Semantik:** Wirkt die Zeile wie eine zweite Ebene unter dem Seiten-`h1`, semantisch **`h2`** verwenden (nicht nur Absatz).
+- **Hervorhebung:** Nur ueber M3-Typo-Tokens (z. B. `headline-large` / `headline-medium`) und **`--mat-sys-primary`** – keine Hex-Werte.
+- **Abstand:** Optional Modifier-Klasse (z. B. `--lead`) mit **reduziertem `padding-top`**, damit der Block visuell oben ansetzt und Mobile-**Above-the-fold** entlastet.
+
 ## Accessibility und Interaktion
 
 - Kontrast und Lesbarkeit muessen in Light und Dark erfuellt sein.
@@ -250,6 +263,7 @@ Tokenbasierte Card-Flaeche:
 - **Ladezustaende:** Kurz "Wird geladen…" (ohne "Session" oder Kontext, wenn der Kontext schon klar ist).
 - **Fehlermeldungen:** Nutzerorientiert, kein Technik-Jargon. "Ungueltiger Code." statt "Ungueltiger Session-Code."; "Nicht gefunden. Code pruefen oder neu eingeben."; "Seite konnte nicht geladen werden." statt "Inhalt konnte nicht geladen werden.".
 - **Platzhalter-Hinweise:** Keine Story-/Epic-Referenzen in der UI. Stattdessen kurze nutzerorientierte Hinweise (z. B. "Hier Quizzes anlegen und verwalten.", "Lobby und Steuerung werden hier angezeigt.").
+- **Leere Tabs/Listen:** Wenn Tab-Titel oder umgebender Kontext die Funktion schon traegt, reicht ein **minimaler** Hinweis (z. B. "Noch keine Fragen.") – ohne erklaerenden Zusatzsatz, der nur wiederholt, was unten ohnehin passiert.
 - **Footer-Badges:** Reihenfolge wie auf der Startseite: "Kostenlos · 100 % DSGVO-konform · Open Source".
 - **Wiederholungs-Buttons:** Einheitlich "Nochmal versuchen" (Retry/Reconnect), mit `aria-label` wo noetig (z. B. "Verbindung erneut pruefen").
 
