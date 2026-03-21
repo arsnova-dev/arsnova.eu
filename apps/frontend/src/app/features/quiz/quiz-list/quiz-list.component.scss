@@ -19,6 +19,11 @@
   gap: 0.5rem;
 }
 
+.quiz-empty-state--lead .quiz-empty-state__content {
+  padding-top: clamp(0.25rem, 1.5vw, 0.75rem);
+  padding-bottom: clamp(1.25rem, 4vw, 2.5rem);
+}
+
 .quiz-empty-state__icon {
   font-size: 3rem;
   width: 3rem;
@@ -32,6 +37,13 @@
   margin: 0;
   font: var(--mat-sys-title-medium);
   line-height: 1.4;
+}
+
+.quiz-empty-state--lead .quiz-empty-state__text {
+  font: var(--mat-sys-headline-large);
+  line-height: 1.2;
+  color: var(--mat-sys-primary);
+  letter-spacing: -0.02em;
 }
 
 .quiz-empty-state__hint {

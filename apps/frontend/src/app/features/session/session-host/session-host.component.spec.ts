@@ -97,7 +97,11 @@ describe('SessionHostComponent', () => {
     qaListQueryMock.mockResolvedValue([]);
     qaModerateMutateMock.mockResolvedValue({});
     qaOnQuestionsUpdatedSubscribeMock.mockImplementation(() => ({ unsubscribe: unsubscribeMock }));
-    startQaMutateMock.mockResolvedValue({ status: 'ACTIVE', currentQuestion: null, currentRound: 1 });
+    startQaMutateMock.mockResolvedValue({
+      status: 'ACTIVE',
+      currentQuestion: null,
+      currentRound: 1,
+    });
   });
 
   const setup = () => {
@@ -289,10 +293,12 @@ describe('SessionHostComponent', () => {
 
   it('zeigt Steuerungs-Ansicht mit Frage und Button bei Status ACTIVE', async () => {
     getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'ACTIVE' });
-    onStatusChangedSubscribeMock.mockImplementation((_input: unknown, opts: { onData: (d: unknown) => void }) => {
-      opts.onData({ status: 'ACTIVE', currentQuestion: 0 });
-      return { unsubscribe: unsubscribeMock };
-    });
+    onStatusChangedSubscribeMock.mockImplementation(
+      (_input: unknown, opts: { onData: (d: unknown) => void }) => {
+        opts.onData({ status: 'ACTIVE', currentQuestion: 0 });
+        return { unsubscribe: unsubscribeMock };
+      },
+    );
     const question = {
       order: 0,
       text: 'Was ist 2+2?',
@@ -319,10 +325,12 @@ describe('SessionHostComponent', () => {
 
   it('zeigt in QUESTION_OPEN Fragentext und deutlichen Lesephase-Hinweis', async () => {
     getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'QUESTION_OPEN' });
-    onStatusChangedSubscribeMock.mockImplementation((_input: unknown, opts: { onData: (d: unknown) => void }) => {
-      opts.onData({ status: 'QUESTION_OPEN', currentQuestion: 0 });
-      return { unsubscribe: unsubscribeMock };
-    });
+    onStatusChangedSubscribeMock.mockImplementation(
+      (_input: unknown, opts: { onData: (d: unknown) => void }) => {
+        opts.onData({ status: 'QUESTION_OPEN', currentQuestion: 0 });
+        return { unsubscribe: unsubscribeMock };
+      },
+    );
     getCurrentQuestionForHostQueryMock.mockResolvedValue({
       order: 0,
       text: 'Lies die Frage zuerst.',
@@ -349,10 +357,12 @@ describe('SessionHostComponent', () => {
 
   it('zeigt "komplett richtig" nicht bei Single-Choice-Ergebnisfragen', async () => {
     getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'RESULTS' });
-    onStatusChangedSubscribeMock.mockImplementation((_input: unknown, opts: { onData: (d: unknown) => void }) => {
-      opts.onData({ status: 'RESULTS', currentQuestion: 0 });
-      return { unsubscribe: unsubscribeMock };
-    });
+    onStatusChangedSubscribeMock.mockImplementation(
+      (_input: unknown, opts: { onData: (d: unknown) => void }) => {
+        opts.onData({ status: 'RESULTS', currentQuestion: 0 });
+        return { unsubscribe: unsubscribeMock };
+      },
+    );
     getCurrentQuestionForHostQueryMock.mockResolvedValue({
       questionId: 'bbbbbbbb-2222-4222-8222-222222222222',
       order: 0,
@@ -364,8 +374,20 @@ describe('SessionHostComponent', () => {
         { id: 'bbbbbbbb-2222-4222-8222-222222222222', text: 'B', isCorrect: true },
       ],
       voteDistribution: [
-        { id: 'aaaaaaaa-1111-4111-8111-111111111111', text: 'A', isCorrect: false, voteCount: 0, votePercentage: 0 },
-        { id: 'bbbbbbbb-2222-4222-8222-222222222222', text: 'B', isCorrect: true, voteCount: 0, votePercentage: 0 },
+        {
+          id: 'aaaaaaaa-1111-4111-8111-111111111111',
+          text: 'A',
+          isCorrect: false,
+          voteCount: 0,
+          votePercentage: 0,
+        },
+        {
+          id: 'bbbbbbbb-2222-4222-8222-222222222222',
+          text: 'B',
+          isCorrect: true,
+          voteCount: 0,
+          votePercentage: 0,
+        },
       ],
       totalVotes: 0,
       correctVoterCount: 0,
@@ -383,10 +405,12 @@ describe('SessionHostComponent', () => {
 
   it('zeigt "komplett richtig" bei Multiple-Choice-Ergebnisfragen', async () => {
     getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'RESULTS' });
-    onStatusChangedSubscribeMock.mockImplementation((_input: unknown, opts: { onData: (d: unknown) => void }) => {
-      opts.onData({ status: 'RESULTS', currentQuestion: 0 });
-      return { unsubscribe: unsubscribeMock };
-    });
+    onStatusChangedSubscribeMock.mockImplementation(
+      (_input: unknown, opts: { onData: (d: unknown) => void }) => {
+        opts.onData({ status: 'RESULTS', currentQuestion: 0 });
+        return { unsubscribe: unsubscribeMock };
+      },
+    );
     getCurrentQuestionForHostQueryMock.mockResolvedValue({
       questionId: 'cccccccc-3333-4333-8333-333333333333',
       order: 0,
@@ -399,9 +423,27 @@ describe('SessionHostComponent', () => {
         { id: 'cccccccc-3333-4333-8333-333333333333', text: 'C', isCorrect: true },
       ],
       voteDistribution: [
-        { id: 'aaaaaaaa-1111-4111-8111-111111111111', text: 'A', isCorrect: true, voteCount: 0, votePercentage: 0 },
-        { id: 'bbbbbbbb-2222-4222-8222-222222222222', text: 'B', isCorrect: false, voteCount: 0, votePercentage: 0 },
-        { id: 'cccccccc-3333-4333-8333-333333333333', text: 'C', isCorrect: true, voteCount: 0, votePercentage: 0 },
+        {
+          id: 'aaaaaaaa-1111-4111-8111-111111111111',
+          text: 'A',
+          isCorrect: true,
+          voteCount: 0,
+          votePercentage: 0,
+        },
+        {
+          id: 'bbbbbbbb-2222-4222-8222-222222222222',
+          text: 'B',
+          isCorrect: false,
+          voteCount: 0,
+          votePercentage: 0,
+        },
+        {
+          id: 'cccccccc-3333-4333-8333-333333333333',
+          text: 'C',
+          isCorrect: true,
+          voteCount: 0,
+          votePercentage: 0,
+        },
       ],
       totalVotes: 0,
       correctVoterCount: 0,
@@ -442,10 +484,12 @@ describe('SessionHostComponent', () => {
       status: 'FINISHED',
       teamMode: true,
     });
-    onStatusChangedSubscribeMock.mockImplementation((_input: unknown, opts: { onData: (d: unknown) => void }) => {
-      opts.onData({ status: 'FINISHED', currentQuestion: null });
-      return { unsubscribe: unsubscribeMock };
-    });
+    onStatusChangedSubscribeMock.mockImplementation(
+      (_input: unknown, opts: { onData: (d: unknown) => void }) => {
+        opts.onData({ status: 'FINISHED', currentQuestion: null });
+        return { unsubscribe: unsubscribeMock };
+      },
+    );
     getLeaderboardQueryMock.mockResolvedValue([
       {
         rank: 1,
@@ -503,17 +547,19 @@ describe('SessionHostComponent', () => {
         { id: 'p3', nickname: 'Grace', teamId: 'team-b', teamName: 'Blau' },
       ],
     });
-    onParticipantJoinedSubscribeMock.mockImplementation((_input: unknown, opts: { onData: (d: unknown) => void }) => {
-      opts.onData({
-        participantCount: 3,
-        participants: [
-          { id: 'p1', nickname: 'Ada', teamId: 'team-a', teamName: 'Rot' },
-          { id: 'p2', nickname: 'Linus', teamId: 'team-a', teamName: 'Rot' },
-          { id: 'p3', nickname: 'Grace', teamId: 'team-b', teamName: 'Blau' },
-        ],
-      });
-      return { unsubscribe: unsubscribeMock };
-    });
+    onParticipantJoinedSubscribeMock.mockImplementation(
+      (_input: unknown, opts: { onData: (d: unknown) => void }) => {
+        opts.onData({
+          participantCount: 3,
+          participants: [
+            { id: 'p1', nickname: 'Ada', teamId: 'team-a', teamName: 'Rot' },
+            { id: 'p2', nickname: 'Linus', teamId: 'team-a', teamName: 'Rot' },
+            { id: 'p3', nickname: 'Grace', teamId: 'team-b', teamName: 'Blau' },
+          ],
+        });
+        return { unsubscribe: unsubscribeMock };
+      },
+    );
 
     const fixture = setup();
     fixture.detectChanges();
@@ -522,7 +568,7 @@ describe('SessionHostComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent ?? '';
-    expect(text).toContain('Teams in der Lobby');
+    expect(text).toContain('Warten auf die anderen...');
     expect(text).toContain('Rot');
     expect(text).toContain('Blau');
     expect(text).toContain('Ada');

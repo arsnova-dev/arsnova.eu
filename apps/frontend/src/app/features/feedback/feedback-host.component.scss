@@ -50,7 +50,16 @@
   gap: 1.25rem;
 }
 
+/* Session-Host: nach Start der Abstimmung zuerst Balken/Titel, darunter Chips & Aktionen (Live-Banner bleibt oben auf der Session-Seite). */
+.feedback-host--embedded .feedback-host__results {
+  order: 1;
+  width: 100%;
+  max-width: none;
+}
+
 .feedback-host--embedded .feedback-host__join {
+  order: 2;
+  width: 100%;
   gap: 0.35rem;
 }
 

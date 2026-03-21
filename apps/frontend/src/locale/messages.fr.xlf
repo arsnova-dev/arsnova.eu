@@ -3736,12 +3736,12 @@
           <context context-type="linenumber">168,169</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7193744008668294208" datatype="html">
-        <source>Willkommen in deiner Quiz-Sammlung!</source>
-        <target>Bienvenue dans ta collection de quiz !</target>
+      <trans-unit id="quizList.emptyWelcome" datatype="html">
+        <source>Willkommen!</source>
+        <target>Bienvenue !</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
-          <context context-type="linenumber">181,182</context>
+          <context context-type="linenumber">6,7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4742318017246395898" datatype="html">
@@ -4773,14 +4773,6 @@
           <context context-type="linenumber">1309,1310</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="124047329428155291" datatype="html">
-        <source> Teams in der Lobby</source>
-        <target>Équipes dans le lobby</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
-          <context context-type="linenumber">308</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1763439054012467174" datatype="html">
         <source> Session beendet</source>
         <target>Séance terminée</target>
@@ -5334,11 +5326,11 @@
         </context-group>
       </trans-unit>
       <trans-unit id="sessionTabs.qaHostPlaceholder" datatype="html">
-        <source> Noch keine Fragen, neue erscheinen hier.</source>
-        <target>Pas encore de questions, les nouvelles s&apos;affichent ici.</target>
+        <source>Noch keine Fragen.</source>
+        <target>Pas encore de questions.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
-          <context context-type="linenumber">1486,1488</context>
+          <context context-type="linenumber">1486,1487</context>
         </context-group>
       </trans-unit>
       <trans-unit id="sessionQa.summaryTotal" datatype="html">
@@ -5573,8 +5565,8 @@
         <source>Warten auf die anderen...</source>
         <target>En attendant les autres...</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
-          <context context-type="linenumber">1111</context>
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
+          <context context-type="linenumber">307,312</context>
         </context-group>
       </trans-unit>
       <trans-unit id="241839647344135361" datatype="html">

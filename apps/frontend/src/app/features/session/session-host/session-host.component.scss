@@ -1299,20 +1299,12 @@
 }
 
 .session-lobby__teams-title {
-  margin: 0 0 0.35rem;
+  margin: 0 0 1.25rem;
   text-align: center;
   font: var(--mat-sys-title-medium);
   font-weight: 700;
   color: var(--mat-sys-on-surface);
   line-height: 1.25;
-}
-
-.session-lobby__teams-subtitle {
-  margin: 0 0 1.75rem;
-  text-align: center;
-  font: var(--mat-sys-body-medium);
-  color: var(--mat-sys-on-surface-variant);
-  line-height: 1.45;
 }
 
 .session-lobby__teams-grid {

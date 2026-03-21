@@ -304,12 +304,13 @@
                 class="session-lobby__teams session-lobby__teams--hero"
                 aria-labelledby="session-lobby-teams-heading"
               >
-                <h2 class="session-lobby__teams-title" id="session-lobby-teams-heading" i18n>
-                  Teams in der Lobby
+                <h2
+                  class="session-lobby__teams-title"
+                  id="session-lobby-teams-heading"
+                  i18n="@@sessionHost.playfulLobbyTeamsLabel"
+                >
+                  Warten auf die anderen...
                 </h2>
-                @if (isPlayfulPreset()) {
-                  <p class="session-lobby__teams-subtitle">{{ playfulLobbyTeamsLabel() }}</p>
-                }
                 <div class="session-lobby__teams-grid">
                   @for (team of lobbyTeamsWithParticipants(); track team.id) {
                     <article
@@ -1483,7 +1484,7 @@
                 <div class="session-qa-empty">
                   <mat-icon class="session-qa-empty__icon" aria-hidden="true">forum</mat-icon>
                   <p class="session-qa-empty__text" i18n="@@sessionTabs.qaHostPlaceholder">
-                    Noch keine Fragen, neue erscheinen hier.
+                    Noch keine Fragen.
                   </p>
                 </div>
               } @else {

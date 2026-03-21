@@ -1107,10 +1107,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     return $localize`Noch niemand in diesem Team.`;
   }
 
-  playfulLobbyTeamsLabel(): string {
-    return $localize`:@@sessionHost.playfulLobbyTeamsLabel:Warten auf die anderen...`;
-  }
-
   /** i18n: Feedback rating count (singular). */
   feedbackRatingSingular(): string {
     return $localize`Bewertung`;

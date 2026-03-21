@@ -1,4 +1,13 @@
 <section class="quiz-list-page l-stack l-stack--sm">
+  @if (!hasUserQuizzes()) {
+    <div class="quiz-empty-state quiz-empty-state--lead">
+      <div class="quiz-empty-state__content">
+        <mat-icon class="quiz-empty-state__icon">library_books</mat-icon>
+        <h2 class="quiz-empty-state__text" i18n="@@quizList.emptyWelcome">Willkommen!</h2>
+        <p class="quiz-empty-state__hint" i18n>Starte mit der Demo und lerne so die App kennen.</p>
+      </div>
+    </div>
+  }
   <div class="quiz-list__actions">
     <button
       matButton="filled"
@@ -167,15 +176,6 @@
     </mat-card>
   }
 
-  @if (!hasUserQuizzes()) {
-    <div class="quiz-empty-state">
-      <div class="quiz-empty-state__content">
-        <mat-icon class="quiz-empty-state__icon">library_books</mat-icon>
-        <p class="quiz-empty-state__text" i18n>Willkommen in deiner Quiz-Sammlung!</p>
-        <p class="quiz-empty-state__hint" i18n>Starte mit der Demo und lerne so die App kennen.</p>
-      </div>
-    </div>
-  }
   @if (quizzes().length > 0) {
     <div class="quiz-list__items l-stack l-stack--sm">
       @for (quiz of sortedQuizzes(); track quiz.id) {

@@ -98,7 +98,7 @@ describe('QuizListComponent', () => {
     const fixture = TestBed.createComponent(QuizListComponent);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Willkommen in deiner Quiz-Sammlung!');
+    expect(fixture.nativeElement.textContent).toContain('Willkommen!');
     expect(fixture.nativeElement.textContent).toContain('Neues Quiz erstellen');
   });
 
