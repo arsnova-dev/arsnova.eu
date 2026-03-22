@@ -12,6 +12,7 @@ import type { SessionInfoDTO, TeamDTO } from '@arsnova/shared-types';
 import type { NicknameTheme } from '@arsnova/shared-types';
 import { getLocaleFromPath } from '../../core/locale-from-path';
 import { localizeCommands } from '../../core/locale-router';
+import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../core/session-code-aria';
 import { getNicknameList } from './nickname-themes';
 
 const PARTICIPANT_STORAGE_KEY = 'arsnova-participant';
@@ -59,6 +60,10 @@ export class JoinComponent implements OnInit, OnDestroy {
   readonly joining = signal(false);
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+
+  sessionCodeDisplayAria(code: string): string {
+    return i18nSessionCodeAria(code);
+  }
 
   /** Nur die Namensliste, die der Dozent für das Quiz vorgegeben hat (nicknameTheme aus Session/Quiz). */
   readonly nicknameOptions = computed(() => {

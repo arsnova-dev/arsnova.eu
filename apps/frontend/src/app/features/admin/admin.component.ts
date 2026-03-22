@@ -71,7 +71,10 @@ export class AdminComponent implements OnInit {
   }
 
   updateLookupCode(value: string): void {
-    const normalized = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    const normalized = value
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 6);
     this.lookupCode.set(normalized);
   }
 
@@ -80,7 +83,10 @@ export class AdminComponent implements OnInit {
   }
 
   updateDeleteConfirmCode(value: string): void {
-    const normalized = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    const normalized = value
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 6);
     this.deleteConfirmCode.set(normalized);
   }
 
@@ -97,7 +103,9 @@ export class AdminComponent implements OnInit {
       this.authenticated.set(true);
       await this.loadSessions();
     } catch (error) {
-      this.loginError.set(this.extractErrorMessage(error, 'Login fehlgeschlagen.'));
+      this.loginError.set(
+        this.extractErrorMessage(error, $localize`:@@admin.errorLogin:Login fehlgeschlagen.`),
+      );
       setAdminToken(null);
       this.authenticated.set(false);
     } finally {
@@ -130,7 +138,12 @@ export class AdminComponent implements OnInit {
       const detail = await trpc.admin.getSessionByCode.query({ code: this.lookupCode() });
       this.selectedDetail.set(detail);
     } catch (error) {
-      this.lookupError.set(this.extractErrorMessage(error, 'Session konnte nicht geladen werden.'));
+      this.lookupError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorLookupSession:Session konnte nicht geladen werden.`,
+        ),
+      );
     } finally {
       this.lookupLoading.set(false);
     }
@@ -152,12 +165,21 @@ export class AdminComponent implements OnInit {
       this.exportError.set(null);
       this.exportInfo.set(null);
     } catch (error) {
-      this.detailError.set(this.extractErrorMessage(error, 'Session-Detail konnte nicht geladen werden.'));
+      this.detailError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorDetailSession:Session-Detail konnte nicht geladen werden.`,
+        ),
+      );
     } finally {
       this.detailLoading.set(false);
     }
   }
 
+  /**
+   * Legal-Hold setzen/lösen. `reason` bei Aktivierung ist ein fester Audit-String (deutsch, wie im Backend
+   * vorgesehen) und wird absichtlich nicht über i18n geführt, damit Logs einheitlich bleiben.
+   */
   async setLegalHold(enabled: boolean): Promise<void> {
     const detail = this.selectedDetail();
     if (!detail || this.holdLoading()) {
@@ -174,7 +196,12 @@ export class AdminComponent implements OnInit {
       await this.openSessionDetail(detail.session.sessionId);
       await this.loadSessions();
     } catch (error) {
-      this.holdError.set(this.extractErrorMessage(error, 'Legal Hold konnte nicht aktualisiert werden.'));
+      this.holdError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorLegalHold:Legal Hold konnte nicht aktualisiert werden.`,
+        ),
+      );
     } finally {
       this.holdLoading.set(false);
     }
@@ -199,18 +226,28 @@ export class AdminComponent implements OnInit {
         sessionId: detail.session.sessionId,
         reason: this.deleteReason().trim() || undefined,
       });
-      this.deleteInfo.set(`Session ${result.sessionCode} wurde endgültig gelöscht.`);
+      this.deleteInfo.set(
+        $localize`:@@admin.sessionDeleted:Session ${result.sessionCode}:sessionCode: wurde endgültig gelöscht.`,
+      );
       this.selectedDetail.set(null);
       this.deleteReason.set('');
       this.deleteConfirmCode.set('');
       await this.loadSessions();
     } catch (error) {
-      this.deleteError.set(this.extractErrorMessage(error, 'Session konnte nicht gelöscht werden.'));
+      this.deleteError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorDeleteSession:Session konnte nicht gelöscht werden.`,
+        ),
+      );
     } finally {
       this.deleteLoading.set(false);
     }
   }
 
+  /**
+   * Behörden-Export. `reason` ist ein fester Schlüssel für die API/Audit-Spur (ASCII, nicht lokalisiert).
+   */
   async exportForAuthorities(format: 'PDF' | 'JSON' = 'PDF'): Promise<void> {
     const detail = this.selectedDetail();
     if (!detail || this.exportLoading()) {
@@ -241,9 +278,16 @@ export class AdminComponent implements OnInit {
         URL.revokeObjectURL(url);
       }
 
-      this.exportInfo.set(`Export erstellt: ${result.fileName}`);
+      this.exportInfo.set(
+        $localize`:@@admin.exportDone:Export erstellt: ${result.fileName}:fileName:`,
+      );
     } catch (error) {
-      this.exportError.set(this.extractErrorMessage(error, 'Export konnte nicht erstellt werden.'));
+      this.exportError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorExport:Export konnte nicht erstellt werden.`,
+        ),
+      );
     } finally {
       this.exportLoading.set(false);
     }
@@ -252,32 +296,36 @@ export class AdminComponent implements OnInit {
   retentionLabel(windowValue: 'RUNNING' | 'POST_SESSION_24H' | 'PURGED'): string {
     switch (windowValue) {
       case 'RUNNING':
-        return 'Laufend';
+        return $localize`:@@admin.retentionRunning:Laufend`;
       case 'POST_SESSION_24H':
-        return 'Nachlauf';
+        return $localize`:@@admin.retentionPost:Nachlauf`;
       case 'PURGED':
-        return 'Bereinigt';
+        return $localize`:@@admin.retentionPurged:Bereinigt`;
     }
   }
 
+  /**
+   * Nur für die Admin-Vorschau: Markdown/KaTeX zu lesbarem Klartext ohne Sprache
+   * (Symbole und Standard-Notation, unabhängig von der UI-Locale).
+   */
   renderMarkdownText(text: string): string {
     const normalizeKatexExpression = (expression: string): string =>
       expression
         .trim()
-        .replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '$1 durch $2')
-        .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'Wurzel aus $1')
-        .replace(/\\cdot/g, '*')
-        .replace(/\\times/g, 'x')
-        .replace(/\\geq/g, '>=')
-        .replace(/\\leq/g, '<=')
-        .replace(/\\neq/g, '!=')
-        .replace(/\\pm/g, '+/-')
-        .replace(/\\approx/g, 'ungefähr')
-        .replace(/\\infty/g, 'unendlich')
-        .replace(/\^\{([^{}]+)\}/g, ' hoch $1')
-        .replace(/\^([A-Za-z0-9]+)/g, ' hoch $1')
-        .replace(/_\{([^{}]+)\}/g, ' Index $1')
-        .replace(/_([A-Za-z0-9]+)/g, ' Index $1')
+        .replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1)/($2)')
+        .replace(/\\sqrt\s*\{([^{}]+)\}/g, '√($1)')
+        .replace(/\\cdot/g, '·')
+        .replace(/\\times/g, '×')
+        .replace(/\\geq/g, '≥')
+        .replace(/\\leq/g, '≤')
+        .replace(/\\neq/g, '≠')
+        .replace(/\\pm/g, '±')
+        .replace(/\\approx/g, '≈')
+        .replace(/\\infty/g, '∞')
+        .replace(/\^\{([^{}]+)\}/g, '^($1)')
+        .replace(/\^([A-Za-z0-9]+)/g, '^$1')
+        .replace(/_\{([^{}]+)\}/g, '_($1)')
+        .replace(/_([A-Za-z0-9]+)/g, '_$1')
         .replace(/\s+/g, ' ')
         .trim();
 
@@ -311,7 +359,12 @@ export class AdminComponent implements OnInit {
       const result = await trpc.admin.listSessions.query({ page: 1, pageSize: 25 });
       this.sessions.set(result.sessions);
     } catch (error) {
-      this.listError.set(this.extractErrorMessage(error, 'Sessions konnten nicht geladen werden.'));
+      this.listError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorListSessions:Sessions konnten nicht geladen werden.`,
+        ),
+      );
     } finally {
       this.listLoading.set(false);
     }

@@ -206,7 +206,7 @@
                   <div class="feedback-host__standalone-code-block">
                     <p
                       class="feedback-host__standalone-code"
-                      [attr.aria-label]="'Session-Code ' + code()"
+                      [attr.aria-label]="sessionCodeDisplayAria(code())"
                     >
                       {{ code() }}
                     </p>
@@ -240,7 +240,7 @@
                   }
                   <p
                     class="feedback-host__join-menu-origin feedback-host__join-menu-origin--code"
-                    [attr.aria-label]="'Session-Code ' + code()"
+                    [attr.aria-label]="sessionCodeDisplayAria(code())"
                   >
                     {{ code() }}
                   </p>

@@ -756,6 +756,386 @@
           <context context-type="linenumber">531</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="feedback.voteSessionCodeAria" datatype="html">
+        <source>Session-Code <x id="INTERPOLATION" equiv-text="code"/></source>
+        <target>Código de sesión <x id="INTERPOLATION" equiv-text="code"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session-code-aria.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/feedback/feedback-vote.component.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.loginTitle" datatype="html">
+        <source>Admin-Login</source>
+        <target>Acceso de administración</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">5,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.loginHelp" datatype="html">
+        <source> Zugang nur mit Admin-Schlüssel aus der Server-Konfiguration. </source>
+        <target>Acceso solo con la clave de administrador de la configuración del servidor.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">9,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.secretLabel" datatype="html">
+        <source>Admin-Schlüssel</source>
+        <target>Clave de administrador</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">12,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.loginButton" datatype="html">
+        <source>Anmelden</source>
+        <target>Iniciar sesión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">30,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.areaTitle" datatype="html">
+        <source>Admin-Bereich</source>
+        <target>Área de administración</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">40,41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.areaHelp" datatype="html">
+        <source> Recherchefenster A/B: laufende Sessions und Nachlaufdaten. </source>
+        <target>Ventana de investigación A/B: sesiones activas y datos posteriores a la sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">44,46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.logoutButton" datatype="html">
+        <source> Abmelden </source>
+        <target>Cerrar sesión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">48,49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.lookupCodeLabel" datatype="html">
+        <source>Session-Code (6-stellig)</source>
+        <target>Código de sesión (6 caracteres)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">54,56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.codeFieldLabel" datatype="html">
+        <source>Code</source>
+        <target>Código</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">58,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.openButton" datatype="html">
+        <source> Öffnen </source>
+        <target>Abrir</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">70,71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.listLoading" datatype="html">
+        <source>Sessions werden geladen…</source>
+        <target>Cargando sesiones…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">82,83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.listEmpty" datatype="html">
+        <source>Keine Sessions im Recherchefenster gefunden.</source>
+        <target>No se encontraron sesiones en la ventana de investigación.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">84,86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.retentionPrefix" datatype="html">
+        <source>Fenster:</source>
+        <target>Ventana:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.detailTitle" datatype="html">
+        <source>Session-Detail</source>
+        <target>Detalle de la sesión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">103,104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.detailLoading" datatype="html">
+        <source>Details werden geladen…</source>
+        <target>Cargando detalles…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">110,111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.metaCodeLabel" datatype="html">
+        <source>Code:</source>
+        <target>Código:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">114</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.metaStatusLabel" datatype="html">
+        <source>Status:</source>
+        <target>Estado:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.metaWindowLabel" datatype="html">
+        <source>Fenster:</source>
+        <target>Ventana:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">120,121</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.metaTypeLabel" datatype="html">
+        <source>Typ:</source>
+        <target>Tipo:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.metaParticipantsLabel" datatype="html">
+        <source>Teilnehmer:</source>
+        <target>Participantes:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">127,128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.metaTitleLabel" datatype="html">
+        <source>Titel:</source>
+        <target>Título:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">133,134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.legalHoldSet" datatype="html">
+        <source> Legal Hold 30 Tage setzen </source>
+        <target>Establecer retención legal (legal hold) de 30 días</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">145,146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.legalHoldRelease" datatype="html">
+        <source> Legal Hold lösen </source>
+        <target>Levantar retención legal</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">155,156</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.exportPdf" datatype="html">
+        <source> Behördenauszug (PDF) exportieren </source>
+        <target>Exportar extracto para autoridades (PDF)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">171,172</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.exportJson" datatype="html">
+        <source> JSON (optional) </source>
+        <target>JSON (opcional)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">181,182</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteSectionTitle" datatype="html">
+        <source>Session endgültig löschen</source>
+        <target>Eliminar sesión de forma definitiva</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">192,193</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteHelp" datatype="html">
+        <source> Diese Aktion ist irreversibel. Bitte begründe die Löschung und bestätige mit dem Session-Code. </source>
+        <target>Esta acción no se puede deshacer. Indica un motivo y confirma con el código de sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">194,195</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteReasonLabel" datatype="html">
+        <source>Grund (optional)</source>
+        <target>Motivo (opcional)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">197,198</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteConfirmLabel" datatype="html">
+        <source>Bestätigungscode</source>
+        <target>Código de confirmación</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">207,209</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteButton" datatype="html">
+        <source> Session endgültig löschen </source>
+        <target>Eliminar sesión de forma definitiva</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">226,227</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.questionHead" datatype="html">
+        <source> Frage <x id="INTERPOLATION" equiv-text="{{ question.order + 1 }}"/> · <x id="INTERPOLATION_1" equiv-text="{{ question.type }}"/> </source>
+        <target> Pregunta <x id="INTERPOLATION" equiv-text="{{ question.order + 1 }}"/> · <x id="INTERPOLATION_1" equiv-text="{{ question.type }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">242,243</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.answerCorrectSuffix" datatype="html">
+        <source>(korrekt)</source>
+        <target>(correcta)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">251,253</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.noQuestions" datatype="html">
+        <source>Keine Quiz-Fragen in dieser Session vorhanden.</source>
+        <target>No hay preguntas de quiz en esta sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">261,263</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.detailPlaceholder" datatype="html">
+        <source> Wähle eine Session aus der Liste oder über den Code-Lookup. </source>
+        <target>Elige una sesión de la lista o usa la búsqueda por código.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">265,267</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorLogin" datatype="html">
+        <source>Login fehlgeschlagen.</source>
+        <target>Error al iniciar sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorLookupSession" datatype="html">
+        <source>Session konnte nicht geladen werden.</source>
+        <target>No se pudo cargar la sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorDetailSession" datatype="html">
+        <source>Session-Detail konnte nicht geladen werden.</source>
+        <target>No se pudo cargar el detalle de la sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">165</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorLegalHold" datatype="html">
+        <source>Legal Hold konnte nicht aktualisiert werden.</source>
+        <target>No se pudo actualizar la retención legal.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">192</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionDeleted" datatype="html">
+        <source>Session <x id="sessionCode" equiv-text="result.sessionCode"/> wurde endgültig gelöscht.</source>
+        <target>La sesión <x id="sessionCode" equiv-text="result.sessionCode"/> se ha eliminado de forma definitiva.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">220</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorDeleteSession" datatype="html">
+        <source>Session konnte nicht gelöscht werden.</source>
+        <target>No se pudo eliminar la sesión.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">230</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.exportDone" datatype="html">
+        <source>Export erstellt: <x id="fileName" equiv-text="result.fileName"/></source>
+        <target>Exportación creada: <x id="fileName" equiv-text="result.fileName"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">269</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorExport" datatype="html">
+        <source>Export konnte nicht erstellt werden.</source>
+        <target>No se pudo crear la exportación.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">275</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.retentionRunning" datatype="html">
+        <source>Laufend</source>
+        <target>En curso</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">286</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.retentionPost" datatype="html">
+        <source>Nachlauf</source>
+        <target>Post-sesión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">288</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.retentionPurged" datatype="html">
+        <source>Bereinigt</source>
+        <target>Purgada</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">290</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorListSessions" datatype="html">
+        <source>Sessions konnten nicht geladen werden.</source>
+        <target>No se pudieron cargar las sesiones.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">348</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="sessionTabs.quickFeedbackVoteTitle" datatype="html">
         <source>Beim Blitzlicht mitmachen</source>
         <target>Participa en el Blitzlicht</target>
@@ -820,20 +1200,20 @@
           <context context-type="linenumber">61,64</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6763496546776375581" datatype="html">
+      <trans-unit id="feedback.voteChooseAnswerAria" datatype="html">
         <source>Antwort wählen</source>
         <target>Elige respuesta</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-vote.component.html</context>
-          <context context-type="linenumber">71,72</context>
+          <context context-type="linenumber">77,79</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="86284725080995480" datatype="html">
+      <trans-unit id="feedback.voteChooseMoodAria" datatype="html">
         <source>Abstimmung wählen</source>
-        <target>votar votar</target>
+        <target>Elegir voto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-vote.component.html</context>
-          <context context-type="linenumber">92,93</context>
+          <context context-type="linenumber">98,100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7366905277414998384" datatype="html">
@@ -1528,20 +1908,20 @@
           <context context-type="linenumber">8,10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1131898523277791200" datatype="html">
+      <trans-unit id="home.presetBandAria" datatype="html">
         <source>Stil wählen</source>
         <target>Elige estilo</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">10,11</context>
+          <context context-type="linenumber">13,15</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7017456685711767471" datatype="html">
+      <trans-unit id="home.presetToggleAria" datatype="html">
         <source>Stil auswählen</source>
         <target>Seleccionar estilo</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">16,17</context>
+          <context context-type="linenumber">19,20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8330667382540185922" datatype="html">
@@ -5136,14 +5516,6 @@
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
           <context context-type="linenumber">386,387</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
-          <context context-type="linenumber">45,46</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
-          <context context-type="linenumber">47,48</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="6117974931218037637" datatype="html">
         <source>Ergebnis als CSV exportieren</source>
@@ -5343,6 +5715,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
           <context context-type="linenumber">686</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.ratingDistributionAria" datatype="html">
+        <source>Bewertungsverteilung</source>
+        <target>Distribución de las valoraciones</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
+          <context context-type="linenumber">722,724</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7000635549914845512" datatype="html">
@@ -5875,6 +6255,62 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">1146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.ratingSubmittedOne" datatype="html">
+        <source><x id="voteCount" equiv-text="count"/> von <x id="participantTotal" equiv-text="totalStr"/> hat bewertet</source>
+        <target><x id="voteCount"/> de <x id="participantTotal"/> ha valorado</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1159</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.ratingSubmittedMany" datatype="html">
+        <source><x id="voteCount" equiv-text="count"/> von <x id="participantTotal" equiv-text="totalStr"/> haben bewertet</source>
+        <target><x id="voteCount"/> de <x id="participantTotal"/> han valorado</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1161</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.correctAllVoters" datatype="html">
+        <source><x id="correctCount" equiv-text="correct"/> von <x id="voteTotal" equiv-text="total"/> komplett richtig (<x id="percentage" equiv-text="pct"/> %)</source>
+        <target><x id="correctCount"/> de <x id="voteTotal"/> completamente correctos (<x id="percentage"/>%)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1167</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.opinionShiftChangedMind" datatype="html">
+        <source><x id="changed" equiv-text="changed"/> von <x id="both" equiv-text="both"/> (<x id="pct" equiv-text="pct"/> %) änderten ihre Meinung</source>
+        <target><x id="changed"/> de <x id="both"/> (<x id="pct"/>%) cambiaron de opinión</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1171</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.opinionShiftWrongToCorrect" datatype="html">
+        <source>↑ <x id="count" equiv-text="count"/> falsch → richtig</source>
+        <target>↑ <x id="count"/> incorrecto → correcto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1175</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.opinionShiftCorrectToWrong" datatype="html">
+        <source>↓ <x id="count" equiv-text="count"/> richtig → falsch</source>
+        <target>↓ <x id="count"/> correcto → incorrecto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1179</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.feedbackAvgStarsAria" datatype="html">
+        <source>Durchschnitt <x id="avg" equiv-text="formatted"/> von 5 Sternen</source>
+        <target>Media <x id="avg"/> de 5 estrellas</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">1185</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6038081262407463029" datatype="html">
@@ -8549,15 +8985,31 @@
           <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6217306908243764073" datatype="html">
+      <trans-unit id="topToolbar.brandHomeAria" datatype="html">
         <source>arsnova.eu Startseite</source>
         <target>Página de inicio de arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
-          <context context-type="linenumber">14,15</context>
+          <context context-type="linenumber">14,16</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6893266805521246911" datatype="html">
+      <trans-unit id="topToolbar.homeTooltip" datatype="html">
+        <source>Zur Startseite</source>
+        <target>A la pagina de inicio</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">45,46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="topToolbar.homeLinkAria" datatype="html">
+        <source>Zur Startseite</source>
+        <target>A la pagina de inicio</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
+          <context context-type="linenumber">47,49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="topToolbar.openMenuAria" datatype="html">
         <source>Einstellungen öffnen</source>
         <target>Abrir configuración</target>
         <context-group purpose="location">
@@ -8565,7 +9017,7 @@
           <context context-type="linenumber">61,62</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6043310746915535897" datatype="html">
+      <trans-unit id="topToolbar.choosePresetAria" datatype="html">
         <source>Preset auswählen</source>
         <target>Seleccionar preestablecido</target>
         <context-group purpose="location">
@@ -8577,19 +9029,19 @@
           <context context-type="linenumber">134,135</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7103588127254721505" datatype="html">
+      <trans-unit id="topToolbar.themeGroupAria" datatype="html">
         <source>Theme</source>
         <target>Tema</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">95,96</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/top-toolbar/top-toolbar.component.html</context>
           <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="29832309535656200" datatype="html">
+      <trans-unit id="topToolbar.themeSystemAria" datatype="html">
         <source>System</source>
         <target>sistema</target>
         <context-group purpose="location">
@@ -8601,7 +9053,7 @@
           <context context-type="linenumber">160</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3892161059518616136" datatype="html">
+      <trans-unit id="topToolbar.themeDarkAria" datatype="html">
         <source>Dark</source>
         <target>Oscuro</target>
         <context-group purpose="location">
@@ -8613,7 +9065,7 @@
           <context context-type="linenumber">163</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="413116577994876478" datatype="html">
+      <trans-unit id="topToolbar.themeLightAria" datatype="html">
         <source>Light</source>
         <target>Luz</target>
         <context-group purpose="location">
@@ -8625,7 +9077,7 @@
           <context context-type="linenumber">166</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="51574765818008149" datatype="html">
+      <trans-unit id="topToolbar.languageAria" datatype="html">
         <source>Sprache</source>
         <target>Idioma</target>
         <context-group purpose="location">

@@ -1,20 +1,37 @@
-<div class="feedback-vote app-live-channel-shell" [class.feedback-vote--embedded]="embeddedInSession()">
+<div
+  class="feedback-vote app-live-channel-shell"
+  [class.feedback-vote--embedded]="embeddedInSession()"
+>
   @if (showSessionCode()) {
-    <p class="feedback-vote__session-code" aria-label="Session-Code {{ code() }}">{{ code() }}</p>
+    <p
+      class="feedback-vote__session-code"
+      i18n-aria-label="@@feedback.voteSessionCodeAria"
+      aria-label="Session-Code {{ code() }}"
+    >
+      {{ code() }}
+    </p>
   }
   @if (error(); as err) {
     <mat-card appearance="outlined" class="feedback-vote__card" role="alert">
       <mat-card-content class="feedback-vote__done">
-        <mat-icon class="feedback-vote__status-icon feedback-vote__status-icon--error">error_outline</mat-icon>
+        <mat-icon class="feedback-vote__status-icon feedback-vote__status-icon--error"
+          >error_outline</mat-icon
+        >
         <p class="feedback-vote__done-text">{{ err }}</p>
       </mat-card-content>
     </mat-card>
   } @else if (embeddedInSession() && !feedbackType() && !loading()) {
-    <mat-card appearance="outlined" class="session-channel-card app-live-channel-shell" [class.session-channel-card--embedded-feedback]="embeddedInSession()">
+    <mat-card
+      appearance="outlined"
+      class="session-channel-card app-live-channel-shell"
+      [class.session-channel-card--embedded-feedback]="embeddedInSession()"
+    >
       <mat-card-content class="session-channel-card__content">
         <mat-icon class="session-channel-card__icon" aria-hidden="true">bolt</mat-icon>
         <p class="session-channel-card__eyebrow" i18n="@@sessionTabs.quickFeedback">Blitzlicht</p>
-        <h2 class="session-channel-card__title" i18n="@@sessionTabs.quickFeedbackVoteTitle">Beim Blitzlicht mitmachen</h2>
+        <h2 class="session-channel-card__title" i18n="@@sessionTabs.quickFeedbackVoteTitle">
+          Beim Blitzlicht mitmachen
+        </h2>
         <p class="session-channel-card__text" i18n="@@sessionTabs.quickFeedbackVotePlaceholder">
           Sobald ein Format startet, kannst du hier in Sekunden deine Einschätzung abgeben.
         </p>
@@ -23,7 +40,9 @@
   } @else if (voted()) {
     <mat-card appearance="outlined" class="feedback-vote__card">
       <mat-card-content class="feedback-vote__done">
-        <mat-icon class="feedback-vote__status-icon feedback-vote__status-icon--success">check_circle</mat-icon>
+        <mat-icon class="feedback-vote__status-icon feedback-vote__status-icon--success"
+          >check_circle</mat-icon
+        >
         <p class="feedback-vote__done-text" i18n>Danke für dein Feedback!</p>
       </mat-card-content>
     </mat-card>
@@ -37,8 +56,12 @@
       <div class="feedback-vote__discussion-ring">
         <mat-icon class="feedback-vote__discussion-icon">groups</mat-icon>
       </div>
-      <p class="feedback-vote__discussion-text" i18n="@@feedback.compareRoundHeadline">Jetzt zum Vergleich ein zweites Blitzlicht...</p>
-      <p class="feedback-vote__discussion-hint" i18n="@@feedback.compareRoundVoteHint">Gleich kannst du dein zweites Blitzlicht abgeben.</p>
+      <p class="feedback-vote__discussion-text" i18n="@@feedback.compareRoundHeadline">
+        Jetzt zum Vergleich ein zweites Blitzlicht...
+      </p>
+      <p class="feedback-vote__discussion-hint" i18n="@@feedback.compareRoundVoteHint">
+        Gleich kannst du dein zweites Blitzlicht abgeben.
+      </p>
       <p class="feedback-vote__discussion-next" i18n>Zweite Abstimmung folgt gleich…</p>
     </div>
   } @else if (locked()) {
@@ -57,7 +80,12 @@
         }
       </h1>
       @if (currentRound() === 2 && !voted()) {
-        <p class="feedback-vote__round2-hint" role="status" aria-live="polite" i18n="@@feedback.compareRoundQuestion">
+        <p
+          class="feedback-vote__round2-hint"
+          role="status"
+          aria-live="polite"
+          i18n="@@feedback.compareRoundQuestion"
+        >
           Wie ist deine Einschätzung jetzt?
         </p>
       }
@@ -67,7 +95,7 @@
           [class.feedback-vote__options--two]="currentOptions().length === 2"
           [class.feedback-vote__options--three]="currentOptions().length === 3"
           role="group"
-          i18n-aria-label
+          i18n-aria-label="@@feedback.voteChooseAnswerAria"
           aria-label="Antwort wählen"
         >
           @for (option of currentOptions(); track option.value) {
@@ -88,7 +116,7 @@
           [class.feedback-vote__options--two]="currentOptions().length === 2"
           [class.feedback-vote__options--three]="currentOptions().length === 3"
           role="group"
-          i18n-aria-label
+          i18n-aria-label="@@feedback.voteChooseMoodAria"
           aria-label="Abstimmung wählen"
         >
           @for (option of currentOptions(); track option.value) {

@@ -10,12 +10,18 @@
       <mat-card-content>
         <p class="join-card__text" role="alert">{{ error() }}</p>
         @if (errorSessionFinished()) {
-          <a [routerLink]="localizedCommands(['session', code, 'host'])" mat-button class="join-card__host-link">
+          <a
+            [routerLink]="localizedCommands(['session', code, 'host'])"
+            mat-button
+            class="join-card__host-link"
+          >
             <mat-icon>admin_panel_settings</mat-icon>
             <span i18n>Als Dozent anzeigen</span>
           </a>
         } @else {
-          <p class="join-card__hint" i18n>Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.</p>
+          <p class="join-card__hint" i18n>
+            Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.
+          </p>
         }
       </mat-card-content>
     </mat-card>
@@ -26,7 +32,9 @@
 
         <div class="join-card__session" role="group" aria-labelledby="join-session-heading">
           <p class="join-card__session-heading" id="join-session-heading" i18n>Session-Info</p>
-          <p class="join-card__code" aria-label="Session-Code {{ s.code }}">{{ s.code }}</p>
+          <p class="join-card__code" [attr.aria-label]="sessionCodeDisplayAria(s.code)">
+            {{ s.code }}
+          </p>
           @if (s.quizName) {
             <p class="join-card__quiz">{{ s.quizName }}</p>
           } @else if (s.title) {
@@ -34,13 +42,16 @@
           }
           <p class="join-card__participants">
             <span class="join-card__participants-count">{{ s.participantCount }}</span>
-            {{ s.participantCount === 1 ? participantSingular() : participantPlural() }} {{ inLobbyLabel() }}
+            {{ s.participantCount === 1 ? participantSingular() : participantPlural() }}
+            {{ inLobbyLabel() }}
           </p>
         </div>
 
         @if (showTeamInfo()) {
           <div class="join-card__nickname-group" role="group" aria-labelledby="join-team-heading">
-            <p class="join-card__nickname-heading" id="join-team-heading">{{ teamInfoHeading() }}</p>
+            <p class="join-card__nickname-heading" id="join-team-heading">
+              {{ teamInfoHeading() }}
+            </p>
             <p class="join-card__nickname-hint">{{ teamInfoHint() }}</p>
             <div class="join-card__team-grid">
               @for (team of teams(); track team.id) {
@@ -62,7 +73,9 @@
                       ></span>
                       {{ team.name }}
                     </span>
-                    <span class="join-card__team-card-meta">{{ teamMembersLabel(team.memberCount) }}</span>
+                    <span class="join-card__team-card-meta">{{
+                      teamMembersLabel(team.memberCount)
+                    }}</span>
                   </button>
                 } @else {
                   <div
@@ -78,7 +91,9 @@
                       ></span>
                       {{ team.name }}
                     </span>
-                    <span class="join-card__team-card-meta">{{ teamMembersLabel(team.memberCount) }}</span>
+                    <span class="join-card__team-card-meta">{{
+                      teamMembersLabel(team.memberCount)
+                    }}</span>
                   </div>
                 }
               }
@@ -86,7 +101,10 @@
             @if (selectedTeamLabel(); as selectedTeamLabelText) {
               <p class="join-card__team-selected" role="status">{{ selectedTeamLabelText }}</p>
             }
-            @if (isPlayfulPreset() && visibleTeamChoice() && playfulTeamReadyLabel(); as playfulReadyText) {
+            @if (
+              isPlayfulPreset() && visibleTeamChoice() && playfulTeamReadyLabel();
+              as playfulReadyText
+            ) {
               <div class="join-card__team-playful" role="status" aria-live="polite">
                 <mat-icon aria-hidden="true">celebration</mat-icon>
                 <span>{{ playfulReadyText }}</span>
@@ -98,11 +116,20 @@
         @if (showNicknameList()) {
           <div class="join-card__nickname-group">
             <mat-form-field appearance="outline" class="join-card__field">
-              <mat-select [value]="selectedNickname()" (valueChange)="selectedNickname.set($event)" i18n-placeholder placeholder="Namen auswählen">
+              <mat-select
+                [value]="selectedNickname()"
+                (valueChange)="selectedNickname.set($event)"
+                i18n-placeholder
+                placeholder="Namen auswählen"
+              >
                 <mat-option value="" i18n>— Bitte wählen —</mat-option>
                 @for (opt of nicknameOptions(); track opt) {
-                  <mat-option [value]="opt" [disabled]="isTaken(opt)" [class.join-card__option--taken]="isTaken(opt)">
-                    {{ opt }}{{ isTaken(opt) ? (' ' + takenSuffix()) : '' }}
+                  <mat-option
+                    [value]="opt"
+                    [disabled]="isTaken(opt)"
+                    [class.join-card__option--taken]="isTaken(opt)"
+                  >
+                    {{ opt }}{{ isTaken(opt) ? ' ' + takenSuffix() : '' }}
                   </mat-option>
                 }
               </mat-select>
@@ -111,7 +138,15 @@
         } @else if (showCustomNickname()) {
           <div class="join-card__nickname-group">
             <mat-form-field appearance="outline" class="join-card__field">
-              <input matInput type="text" [value]="customNickname()" (input)="customNickname.set($any($event.target).value)" i18n-placeholder placeholder="z. B. Max oder M. Mustermann" maxlength="30" />
+              <input
+                matInput
+                type="text"
+                [value]="customNickname()"
+                (input)="customNickname.set($any($event.target).value)"
+                i18n-placeholder
+                placeholder="z. B. Max oder M. Mustermann"
+                maxlength="30"
+              />
             </mat-form-field>
           </div>
         }
@@ -119,7 +154,13 @@
         @if (error()) {
           <p class="join-card__error" role="alert">{{ error() }}</p>
         }
-        <button mat-flat-button color="primary" class="join-card__submit" [disabled]="!canSubmit() || joining()" (click)="submitJoin()">
+        <button
+          mat-flat-button
+          color="primary"
+          class="join-card__submit"
+          [disabled]="!canSubmit() || joining()"
+          (click)="submitJoin()"
+        >
           {{ joining() ? joiningLabel() : joinNowLabel() }}
         </button>
       </mat-card-content>

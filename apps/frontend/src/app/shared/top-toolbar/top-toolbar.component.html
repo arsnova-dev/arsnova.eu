@@ -10,7 +10,7 @@
       <a
         [routerLink]="localizedPath('/')"
         class="top-toolbar__brand"
-        i18n-aria-label
+        i18n-aria-label="@@topToolbar.brandHomeAria"
         aria-label="arsnova.eu Startseite"
         (click)="onBrandLinkClick()"
       >
@@ -41,9 +41,9 @@
         <a
           [routerLink]="localizedPath('/')"
           class="top-toolbar__home-link"
-          i18n-matTooltip
+          i18n-matTooltip="@@topToolbar.homeTooltip"
           matTooltip="Zur Startseite"
-          i18n-aria-label
+          i18n-aria-label="@@topToolbar.homeLinkAria"
           aria-label="Zur Startseite"
         >
           <mat-icon>home</mat-icon>
@@ -57,7 +57,7 @@
       class="top-toolbar__menu-btn mobile-only"
       [attr.aria-expanded]="controlsMenuOpen() ? 'true' : 'false'"
       aria-controls="top-toolbar-mobile"
-      i18n-aria-label
+      i18n-aria-label="@@topToolbar.openMenuAria"
       aria-label="Einstellungen öffnen"
       (click)="toggleControlsMenu()"
     >
@@ -68,7 +68,7 @@
       <mat-button-toggle-group
         [value]="themePreset.preset()"
         appearance="standard"
-        i18n-aria-label
+        i18n-aria-label="@@topToolbar.choosePresetAria"
         aria-label="Preset auswählen"
         class="top-toolbar__toggles top-toolbar__toggles--preset"
       >
@@ -90,17 +90,29 @@
         [value]="themePreset.theme()"
         (change)="onThemeChange($event.value)"
         appearance="standard"
-        i18n-aria-label
+        i18n-aria-label="@@topToolbar.themeGroupAria"
         aria-label="Theme"
         class="top-toolbar__toggles"
       >
-        <mat-button-toggle value="system" i18n-aria-label aria-label="System">
+        <mat-button-toggle
+          value="system"
+          i18n-aria-label="@@topToolbar.themeSystemAria"
+          aria-label="System"
+        >
           <mat-icon>contrast</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="dark" i18n-aria-label aria-label="Dark">
+        <mat-button-toggle
+          value="dark"
+          i18n-aria-label="@@topToolbar.themeDarkAria"
+          aria-label="Dark"
+        >
           <mat-icon>dark_mode</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="light" i18n-aria-label aria-label="Light">
+        <mat-button-toggle
+          value="light"
+          i18n-aria-label="@@topToolbar.themeLightAria"
+          aria-label="Light"
+        >
           <mat-icon>light_mode</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
@@ -108,7 +120,7 @@
       <button
         matIconButton
         [matMenuTriggerFor]="langMenu"
-        i18n-aria-label
+        i18n-aria-label="@@topToolbar.languageAria"
         aria-label="Sprache"
         class="top-toolbar__icon-btn"
       >
@@ -130,7 +142,7 @@
       <mat-button-toggle-group
         [value]="themePreset.preset()"
         appearance="standard"
-        i18n-aria-label
+        i18n-aria-label="@@topToolbar.choosePresetAria"
         aria-label="Preset auswählen"
         class="top-toolbar__toggles top-toolbar__toggles--full top-toolbar__toggles--preset"
       >
@@ -152,17 +164,29 @@
         [value]="themePreset.theme()"
         (change)="onThemeChange($event.value)"
         appearance="standard"
-        i18n-aria-label
+        i18n-aria-label="@@topToolbar.themeGroupAria"
         aria-label="Theme"
         class="top-toolbar__toggles top-toolbar__toggles--full"
       >
-        <mat-button-toggle value="system" i18n-aria-label aria-label="System">
+        <mat-button-toggle
+          value="system"
+          i18n-aria-label="@@topToolbar.themeSystemAria"
+          aria-label="System"
+        >
           <mat-icon>contrast</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="dark" i18n-aria-label aria-label="Dark">
+        <mat-button-toggle
+          value="dark"
+          i18n-aria-label="@@topToolbar.themeDarkAria"
+          aria-label="Dark"
+        >
           <mat-icon>dark_mode</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="light" i18n-aria-label aria-label="Light">
+        <mat-button-toggle
+          value="light"
+          i18n-aria-label="@@topToolbar.themeLightAria"
+          aria-label="Light"
+        >
           <mat-icon>light_mode</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
@@ -171,7 +195,7 @@
         <button
           matIconButton
           [matMenuTriggerFor]="langMenuMobile"
-          i18n-aria-label
+          i18n-aria-label="@@topToolbar.languageAria"
           aria-label="Sprache"
           class="top-toolbar__icon-btn"
         >

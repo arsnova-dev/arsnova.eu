@@ -170,7 +170,7 @@
               <span class="session-host__live-join-label" i18n>Beitritt</span>
             </button>
             <div class="session-host__live-code-block">
-              <p class="session-host__live-code" [attr.aria-label]="'Session-Code ' + s.code">
+              <p class="session-host__live-code" [attr.aria-label]="sessionCodeDisplayAria(s.code)">
                 {{ s.code }}
               </p>
               <p class="session-host__live-participants">
@@ -264,7 +264,7 @@
             }
             <p
               class="session-host__join-menu-origin session-host__join-menu-origin--code"
-              [attr.aria-label]="'Session-Code ' + s.code"
+              [attr.aria-label]="sessionCodeDisplayAria(s.code)"
             >
               {{ s.code }}
             </p>
@@ -530,9 +530,7 @@
                       <span class="session-host__feedback-hero-label" i18n>Gesamtbewertung</span>
                       <p
                         class="session-host__feedback-avg"
-                        aria-label="Durchschnitt {{
-                          fb.overallAverage | number: '1.1-1'
-                        }} von 5 Sternen"
+                        [attr.aria-label]="feedbackAverageStarsAria(fb.overallAverage)"
                       >
                         <span class="session-host__feedback-avg-number">{{
                           fb.overallAverage | number: '1.1-1'
@@ -710,15 +708,17 @@
                             ) {
                               <div class="session-host__rating-result">
                                 <span class="session-host__rating-avg">∅ {{ q.ratingAvg }}</span>
-                                <span class="session-host__rating-count"
-                                  >{{ q.ratingCount }} von
-                                  {{ participantsPayload()?.participantCount ?? '?' }}
-                                  {{ q.ratingCount === 1 ? 'hat' : 'haben' }} bewertet</span
-                                >
+                                <span class="session-host__rating-count">{{
+                                  ratingSubmittedLabel(
+                                    q.ratingCount ?? 0,
+                                    participantsPayload()?.participantCount ?? null
+                                  )
+                                }}</span>
                               </div>
                               <div
                                 class="session-host__rating-bars"
                                 role="img"
+                                i18n-aria-label="@@sessionHost.ratingDistributionAria"
                                 aria-label="Bewertungsverteilung"
                               >
                                 @for (val of ratingBarRange(q); track val) {
@@ -892,23 +892,27 @@
                             @if (q.roundComparison!.opinionShift; as shift) {
                               <div class="session-host__opinion-shift" role="status">
                                 <mat-icon>swap_horiz</mat-icon>
-                                <span>
-                                  {{ shift.changedCount }} von {{ shift.bothRoundsCount }} ({{
+                                <span>{{
+                                  opinionShiftChangedMindLabel(
+                                    shift.changedCount,
+                                    shift.bothRoundsCount,
                                     shift.changedPercentage
-                                  }}&nbsp;%) änderten ihre Meinung
-                                </span>
+                                  )
+                                }}</span>
                                 @if (
                                   shift.wrongToCorrectCount !== null &&
                                   shift.wrongToCorrectCount !== undefined &&
                                   q.type !== 'SURVEY'
                                 ) {
                                   <span class="session-host__opinion-shift-detail">
-                                    <span class="session-host__opinion-shift-gain"
-                                      >↑ {{ shift.wrongToCorrectCount }} falsch → richtig</span
-                                    >
-                                    <span class="session-host__opinion-shift-loss"
-                                      >↓ {{ shift.correctToWrongCount ?? 0 }} richtig → falsch</span
-                                    >
+                                    <span class="session-host__opinion-shift-gain">{{
+                                      opinionShiftWrongToCorrectLabel(shift.wrongToCorrectCount)
+                                    }}</span>
+                                    <span class="session-host__opinion-shift-loss">{{
+                                      opinionShiftCorrectToWrongLabel(
+                                        shift.correctToWrongCount ?? 0
+                                      )
+                                    }}</span>
                                   </span>
                                 }
                                 @if (shift.migrations && shift.migrations.length > 0) {
@@ -953,12 +957,7 @@
                             ) {
                               <p class="session-host__vote-dist-correct">
                                 <mat-icon>check_circle</mat-icon>
-                                {{ q.correctVoterCount }} von {{ q.totalVotes }} komplett richtig
-                                ({{
-                                  q.totalVotes
-                                    ? Math.round((q.correctVoterCount / q.totalVotes) * 100)
-                                    : 0
-                                }}&nbsp;%)
+                                {{ correctAllVotersLabel(q.correctVoterCount, q.totalVotes ?? 0) }}
                               </p>
                             }
                             <ul class="session-host__vote-dist-list" role="list">

@@ -21,6 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { trpc } from '../../core/trpc.client';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { localizeCommands, localizePath } from '../../core/locale-router';
+import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../core/session-code-aria';
 import {
   feedbackDisplayIcon,
   feedbackDisplayLabel,
@@ -81,6 +82,10 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
     () => this.embeddedInSession() && this.result() === null,
   );
   readonly presetChips = QUICK_FEEDBACK_PRESET_CHIPS;
+
+  sessionCodeDisplayAria(code: string): string {
+    return i18nSessionCodeAria(code);
+  }
 
   constructor() {
     effect(() => {

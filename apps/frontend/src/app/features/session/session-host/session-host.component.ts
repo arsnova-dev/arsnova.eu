@@ -1,4 +1,4 @@
-import { DecimalPipe, DOCUMENT } from '@angular/common';
+import { DecimalPipe, DOCUMENT, formatNumber } from '@angular/common';
 import {
   getDocumentFullscreenElement,
   isDocumentFullscreenEnterAvailable,
@@ -10,6 +10,7 @@ import {
   ElementRef,
   HostListener,
   Injector,
+  LOCALE_ID,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -45,6 +46,7 @@ import { ThemePresetService } from '../../../core/theme-preset.service';
 import { SoundService } from '../../../core/sound.service';
 import { HostDisplayModeService } from '../../../core/host-display-mode.service';
 import { localizePath } from '../../../core/locale-router';
+import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../../core/session-code-aria';
 import {
   ConfirmLeaveDialogComponent,
   type ConfirmLeaveDialogData,
@@ -221,6 +223,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private qaSub: Unsubscribable | null = null;
   private presetSub: Subscription | null = null;
   private readonly document = inject(DOCUMENT);
+  private readonly localeId = inject(LOCALE_ID);
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly themePreset = inject(ThemePresetService);
@@ -263,6 +266,10 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   /** true ab 7 Sek. vor Countdown-Ende → Musik aus, nur SFX. */
   readonly countdownSfxPhase = signal(false);
   readonly Math = Math;
+  /** ARIA für sichtbaren Session-Code (Lokalisation wie Blitzlicht-Teilnehmeransicht). */
+  sessionCodeDisplayAria(code: string): string {
+    return i18nSessionCodeAria(code);
+  }
   readonly teamLeaderboardMaxScore = computed(() =>
     Math.max(1, ...this.teamLeaderboard().map((entry) => entry.totalScore)),
   );
@@ -1145,6 +1152,40 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       return $localize`:@@sessionHost.votesCastOne:${votes}:voteCount: von ${totalStr}:participantTotal: hat abgestimmt`;
     }
     return $localize`:@@sessionHost.votesCastMany:${votes}:voteCount: von ${totalStr}:participantTotal: haben abgestimmt`;
+  }
+
+  /** Bewertungsfrage Ergebnis: „X von Y hat/haben bewertet“. */
+  ratingSubmittedLabel(count: number, participantTotal: number | null | undefined): string {
+    const totalStr =
+      participantTotal !== undefined && participantTotal !== null ? String(participantTotal) : '?';
+    if (count === 1) {
+      return $localize`:@@sessionHost.ratingSubmittedOne:${count}:voteCount: von ${totalStr}:participantTotal: hat bewertet`;
+    }
+    return $localize`:@@sessionHost.ratingSubmittedMany:${count}:voteCount: von ${totalStr}:participantTotal: haben bewertet`;
+  }
+
+  /** Multiple-Choice-Ergebnis: korrekt gewählte Antworten inkl. Prozent. */
+  correctAllVotersLabel(correct: number, total: number): string {
+    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    return $localize`:@@sessionHost.correctAllVoters:${correct}:correctCount: von ${total}:voteTotal: komplett richtig (${pct}:percentage:\u00a0%)`;
+  }
+
+  opinionShiftChangedMindLabel(changed: number, both: number, pct: number): string {
+    return $localize`:@@sessionHost.opinionShiftChangedMind:${changed}:changed: von ${both}:both: (${pct}:pct:\u00a0%) änderten ihre Meinung`;
+  }
+
+  opinionShiftWrongToCorrectLabel(count: number): string {
+    return $localize`:@@sessionHost.opinionShiftWrongToCorrect:↑ ${count}:count: falsch → richtig`;
+  }
+
+  opinionShiftCorrectToWrongLabel(count: number): string {
+    return $localize`:@@sessionHost.opinionShiftCorrectToWrong:↓ ${count}:count: richtig → falsch`;
+  }
+
+  /** aria-label für Gesamtbewertung (Sterne) auf der Abschlusskarte. */
+  feedbackAverageStarsAria(avg: number): string {
+    const formatted = formatNumber(avg, this.localeId, '1.1-1');
+    return $localize`:@@sessionHost.feedbackAvgStarsAria:Durchschnitt ${formatted}:avg: von 5 Sternen`;
   }
 
   emojiReactionsTotalLabel(total: number): string {

@@ -7,12 +7,15 @@
       </p>
       <p class="home-hero-usp" i18n>Für Schulen, Unis, Events &amp; Business</p>
 
-      <div class="home-hero-preset-mobile" i18n-aria-label aria-label="Stil wählen">
+      <div
+        class="home-hero-preset-mobile"
+        i18n-aria-label="@@home.presetBandAria"
+        aria-label="Stil wählen"
+      >
         <mat-button-toggle-group
           [value]="themePreset.preset()"
           appearance="standard"
-          i18n-aria-label
-          i18n-aria-label
+          i18n-aria-label="@@home.presetToggleAria"
           aria-label="Stil auswählen"
           class="home-hero-preset-toggle"
         >
