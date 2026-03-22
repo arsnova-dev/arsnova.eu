@@ -3,11 +3,7 @@
   [class.feedback-vote--embedded]="embeddedInSession()"
 >
   @if (showSessionCode()) {
-    <p
-      class="feedback-vote__session-code"
-      i18n-aria-label="@@feedback.voteSessionCodeAria"
-      aria-label="Session-Code {{ code() }}"
-    >
+    <p class="feedback-vote__session-code" [attr.aria-label]="sessionCodeDisplayAria(code())">
       {{ code() }}
     </p>
   }

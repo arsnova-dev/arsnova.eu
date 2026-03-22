@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import type { Unsubscribable } from '@trpc/server/observable';
 import { trpc } from '../../core/trpc.client';
+import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../core/session-code-aria';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { feedbackOptions, feedbackTitle } from './feedback.config';
 import type { QuickFeedbackResult, QuickFeedbackType } from '@arsnova/shared-types';
@@ -43,7 +44,7 @@ function hasAlreadyVoted(code: string): boolean {
   templateUrl: './feedback-vote.component.html',
   styleUrl: './feedback-vote.component.scss',
   host: {
-    'class': 'feedback-vote-shell',
+    class: 'feedback-vote-shell',
     '[class.feedback-vote-shell--embedded]': 'embeddedInSession()',
   },
 })
@@ -83,6 +84,10 @@ export class FeedbackVoteComponent implements OnInit, OnDestroy {
     const type = this.feedbackType();
     return type === 'ABC' || type === 'ABCD';
   });
+
+  sessionCodeDisplayAria(code: string): string {
+    return i18nSessionCodeAria(code);
+  }
 
   ngOnInit(): void {
     void this.init();
@@ -169,13 +174,21 @@ export class FeedbackVoteComponent implements OnInit, OnDestroy {
     const newRound = result.currentRound ?? 1;
     if (newRound === 2 && this.currentRound() === 1) {
       this.voted.set(false);
-      try { localStorage.removeItem(votedStorageKey(code)); } catch { /* private browsing */ }
+      try {
+        localStorage.removeItem(votedStorageKey(code));
+      } catch {
+        /* private browsing */
+      }
     }
     this.currentRound.set(newRound);
 
     if (result.totalVotes === 0 && this.voted()) {
       this.voted.set(false);
-      try { localStorage.removeItem(votedStorageKey(code)); } catch { /* private browsing */ }
+      try {
+        localStorage.removeItem(votedStorageKey(code));
+      } catch {
+        /* private browsing */
+      }
     }
   }
 
@@ -201,12 +214,20 @@ export class FeedbackVoteComponent implements OnInit, OnDestroy {
         value,
       });
       this.voted.set(true);
-      try { localStorage.setItem(votedStorageKey(code), '1'); } catch { /* private browsing */ }
+      try {
+        localStorage.setItem(votedStorageKey(code), '1');
+      } catch {
+        /* private browsing */
+      }
     } catch (err) {
       const message = (err as { message?: string })?.message ?? '';
       if (message.includes('bereits abgestimmt')) {
         this.voted.set(true);
-        try { localStorage.setItem(votedStorageKey(code), '1'); } catch { /* private browsing */ }
+        try {
+          localStorage.setItem(votedStorageKey(code), '1');
+        } catch {
+          /* private browsing */
+        }
       } else {
         this.error.set('Abstimmung fehlgeschlagen.');
       }
