@@ -2,8 +2,33 @@ import { getLocaleFromPath, SUPPORTED_LOCALES, type SupportedLocale } from './lo
 
 type RouterCommand = string | number | boolean | Record<string, unknown>;
 
+/**
+ * Localized Production-Build: &lt;base href="/de/"&gt; (pro Sprache).
+ * Dann steckt die Locale schon in der Basis-URL; Router-Links dürfen kein zweites /de/ bekommen.
+ */
+function getLocaleFromBaseHref(): SupportedLocale | null {
+  if (typeof document === 'undefined') return null;
+  const raw = (document.querySelector('base')?.getAttribute('href') ?? '/').trim();
+  const normalized = raw.endsWith('/') ? raw.slice(0, -1) : raw;
+  if (normalized === '' || normalized === '/') return null;
+  const m = normalized.match(/^\/(de|en|fr|it|es)$/);
+  return m ? (m[1] as SupportedLocale) : null;
+}
+
+function stripLeadingLocaleFromPath(path: string): string {
+  const without = path.replace(new RegExp(`^/(?:${SUPPORTED_LOCALES.join('|')})(?=/|$)`), '');
+  if (without === '') return '/';
+  return without.startsWith('/') ? without : `/${without}`;
+}
+
 export function localizePath(path: string): string {
   const normalizedPath = normalizePath(path);
+  const baseLocale = getLocaleFromBaseHref();
+
+  if (baseLocale) {
+    return stripLeadingLocaleFromPath(normalizedPath);
+  }
+
   const locale = getLocaleFromPath();
 
   if (!locale || hasLocalePrefix(normalizedPath)) {
@@ -15,6 +40,15 @@ export function localizePath(path: string): string {
 
 export function localizeCommands(commands: readonly RouterCommand[]): RouterCommand[] {
   const normalizedCommands = normalizeCommands(commands);
+  const baseLocale = getLocaleFromBaseHref();
+
+  if (baseLocale) {
+    if (isSupportedLocale(normalizedCommands[0])) {
+      return normalizedCommands.slice(1);
+    }
+    return normalizedCommands;
+  }
+
   const locale = getLocaleFromPath();
 
   if (!locale || isSupportedLocale(normalizedCommands[0])) {
