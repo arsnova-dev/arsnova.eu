@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:meta';
 @import 'katex/dist/katex.min.css';
 
 // ---------------------------------------------------------------------------
@@ -200,7 +201,7 @@ html.preset-playful {
   }
 }
 
-@import './styles/playful-inner-chrome';
+@include meta.load-css('styles/playful-inner-chrome');
 
 // ---------------------------------------------------------------------------
 // 3) Global Reset & Base Styles

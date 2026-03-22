@@ -2,10 +2,15 @@
  * WebSocket-URLs für tRPC-Subscriptions und Yjs (Story 0.2, 0.3).
  * Lokale Dev: Port-basiert (3001, 3002). Produktion hinter Nginx: Pfad-basiert (/trpc-ws, /yjs-ws).
  */
+function isLocalDevHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
+}
+
 function isProductionLike(): boolean {
   if (typeof window === 'undefined') return false;
   const { protocol, hostname } = window.location;
-  return protocol === 'https:' || hostname !== 'localhost';
+  if (protocol === 'https:') return true;
+  return !isLocalDevHostname(hostname);
 }
 
 /**

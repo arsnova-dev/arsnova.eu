@@ -29,7 +29,9 @@ type StateListener = (state: WsConnectionState) => void;
 const stateListeners = new Set<StateListener>();
 let currentWsState: WsConnectionState = isBrowser ? 'disconnected' : 'connected';
 
-export function getWsConnectionState(): WsConnectionState { return currentWsState; }
+export function getWsConnectionState(): WsConnectionState {
+  return currentWsState;
+}
 export function onWsStateChange(fn: StateListener): () => void {
   stateListeners.add(fn);
   return () => stateListeners.delete(fn);
@@ -59,14 +61,16 @@ const wsClient = isBrowser
   ? createWSClient({
       url: getTrpcWsUrl(),
       retryDelayMs,
-      onOpen() { setWsState('connected'); },
-      onClose() { setWsState('reconnecting'); },
+      /** Erst bei erster Subscription verbinden – vermeidet Konsolen-Fehler ohne Backend (z. B. Lighthouse). */
+      lazy: { enabled: true, closeMs: 60_000 },
+      onOpen() {
+        setWsState('connected');
+      },
+      onClose() {
+        setWsState('reconnecting');
+      },
     })
   : null;
-
-if (isBrowser && wsClient) {
-  setWsState('connected');
-}
 
 /**
  * tRPC-Client für das Angular-Frontend.

@@ -1,3 +1,16 @@
+/* Etwas mehr Luft Toolbar → Hero: +0.25rem zum globalen .l-page:first-child margin-top (styles.scss). */
+:host .l-page:first-child {
+  margin-top: 0.25rem;
+
+  @media (min-width: 600px) {
+    margin-top: 1.25rem;
+  }
+
+  @media (min-width: 840px) {
+    margin-top: 1.5rem;
+  }
+}
+
 .home-header {
   position: sticky;
   top: 0;

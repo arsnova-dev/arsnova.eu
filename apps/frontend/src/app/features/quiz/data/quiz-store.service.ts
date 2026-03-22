@@ -907,6 +907,9 @@ export class QuizStoreService {
       this.setLibrarySharingMode('shared');
     }
     if (this.syncRoomId() === normalizedRoomId) {
+      if (options?.markShared) {
+        this.attachYjsWebSocketProviderIfNeeded();
+      }
       if (shouldRegisterOrigin) {
         this.recordSyncOriginIfMissing();
       }
@@ -990,40 +993,57 @@ export class QuizStoreService {
         });
       }
 
-      if (hasWebsocketSupport()) {
-        this.syncConnectionState.set('connecting');
-        this.yProvider = new WebsocketProvider(
-          getYjsWsUrl(),
-          `${QUIZ_SYNC_ROOM_PREFIX}${roomId}`,
-          this.yDoc,
-        );
-        this.yProvider.awareness.setLocalStateField(
-          'syncClient',
-          readCurrentSyncClientPresence(this.currentSyncDeviceId),
-        );
-        this.yProvider.awareness.on('change', this.onAwarenessChanged);
-        this.yProvider.on('sync', (isSynced: boolean) => {
-          if (isSynced) this.syncFromYjsOrSeed();
-        });
-        this.yProvider.on('status', ({ status }: { status: SyncConnectionState }) => {
-          const nextState =
-            status === 'connected'
-              ? 'connected'
-              : status === 'connecting'
-                ? 'connecting'
-                : 'disconnected';
-          this.syncConnectionState.set(nextState);
-          if (nextState === 'connected') {
-            this.recordConnectedAt();
-          }
-        });
-      } else {
-        this.syncConnectionState.set('disconnected');
-      }
+      this.attachYjsWebSocketProviderIfNeeded();
     } catch {
       this.teardownYjs();
       this.syncConnectionState.set('disconnected');
     }
+  }
+
+  /** Yjs-WebSocket nur bei geteilter Bibliothek – lokal reicht IndexedDB (keine WS-Konsolenfehler ohne Server). */
+  private attachYjsWebSocketProviderIfNeeded(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.yDoc || this.yProvider) return;
+    if (this.librarySharingMode() !== 'shared') {
+      this.syncConnectionState.set('disconnected');
+      return;
+    }
+    if (!hasWebsocketSupport()) {
+      this.syncConnectionState.set('disconnected');
+      return;
+    }
+
+    const roomId = this.syncRoomId();
+    if (!roomId) {
+      this.syncConnectionState.set('disconnected');
+      return;
+    }
+
+    this.syncConnectionState.set('connecting');
+    this.yProvider = new WebsocketProvider(
+      getYjsWsUrl(),
+      `${QUIZ_SYNC_ROOM_PREFIX}${roomId}`,
+      this.yDoc,
+    );
+    this.yProvider.awareness.setLocalStateField(
+      'syncClient',
+      readCurrentSyncClientPresence(this.currentSyncDeviceId),
+    );
+    this.yProvider.awareness.on('change', this.onAwarenessChanged);
+    this.yProvider.on('sync', (isSynced: boolean) => {
+      if (isSynced) this.syncFromYjsOrSeed();
+    });
+    this.yProvider.on('status', ({ status }: { status: SyncConnectionState }) => {
+      const nextState =
+        status === 'connected'
+          ? 'connected'
+          : status === 'connecting'
+            ? 'connecting'
+            : 'disconnected';
+      this.syncConnectionState.set(nextState);
+      if (nextState === 'connected') {
+        this.recordConnectedAt();
+      }
+    });
   }
 
   private teardownYjs(): void {

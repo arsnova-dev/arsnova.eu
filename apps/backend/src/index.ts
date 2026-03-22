@@ -61,6 +61,33 @@ if (fs.existsSync(frontendDist)) {
   });
 
   if (hasLocalizedBuild) {
+    // i18n-Build legt robots.txt nur unter /<locale>/ ab; ohne eigene Route liefert SPA-Fallback HTML → SEO-Tools „invalid“.
+    const robotsLocaleOrder = [
+      ...(fallbackLocale ? [fallbackLocale] : []),
+      ...availableLocales.filter((l) => l !== fallbackLocale),
+    ];
+    let robotsFile: string | null = null;
+    for (const locale of robotsLocaleOrder) {
+      const candidate = path.join(frontendDist, locale, 'robots.txt');
+      if (fs.existsSync(candidate)) {
+        robotsFile = path.resolve(candidate);
+        break;
+      }
+    }
+    if (!robotsFile) {
+      const rootRobots = path.join(frontendDist, 'robots.txt');
+      if (fs.existsSync(rootRobots)) {
+        robotsFile = path.resolve(rootRobots);
+      }
+    }
+    if (robotsFile) {
+      const robotsPath = robotsFile;
+      app.get('/robots.txt', (_req, res) => {
+        res.type('text/plain; charset=utf-8');
+        res.sendFile(robotsPath);
+      });
+    }
+
     // /assets/* aus de/ (lokalisiert: Manifest-Icons werden unter /assets referenziert)
     app.use('/assets', express.static(path.join(frontendDist, fallbackLocale ?? 'de', 'assets')));
     // Locale-prefixed assets: fallthrough false → fehlende Dateien liefern 404 statt SPA-index
@@ -135,8 +162,10 @@ try {
     'src',
     'server.js',
   );
+  /** Bind-Adresse: In Docker muss 0.0.0.0 sein, sonst erreicht Nginx (Port-Mapping) den Prozess nicht. */
+  const yjsHost = process.env['YJS_WS_HOST'] ?? process.env['HOST'] ?? '127.0.0.1';
   yjsChild = spawn(process.execPath, [serverPath], {
-    env: { ...process.env, PORT: String(YJS_WS_PORT), HOST: '127.0.0.1' },
+    env: { ...process.env, PORT: String(YJS_WS_PORT), HOST: yjsHost },
     stdio: 'ignore',
   });
   yjsChild.on('error', (err) => {
@@ -147,7 +176,7 @@ try {
       logger.warn(`Yjs WebSocket-Server beendet mit Exit-Code ${String(code)}`);
     }
   });
-  logger.info(`   Yjs WebSocket: ws://localhost:${YJS_WS_PORT}`);
+  logger.info(`   Yjs WebSocket: ws://${yjsHost}:${YJS_WS_PORT}`);
 } catch (e) {
   logger.warn('Yjs WebSocket nicht gestartet:', (e as Error).message);
 }
