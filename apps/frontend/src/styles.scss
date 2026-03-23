@@ -1,8 +1,7 @@
 @use '@angular/material' as mat;
 @use 'sass:meta';
-@import 'katex/dist/katex.min.css';
-
 @use 'styles/music-equalizer-global';
+@import 'katex/dist/katex.min.css';
 
 // ---------------------------------------------------------------------------
 // 0) Material Icons selbst gehostet (kein Google-Request, kein Tracking)

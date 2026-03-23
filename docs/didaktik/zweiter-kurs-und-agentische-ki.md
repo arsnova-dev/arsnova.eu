@@ -76,3 +76,5 @@ Konkrete Ansatzpunkte:
 | **Agentische KI** | Gemeinsamer Kontext für beide; Entwicklung nutzt KI für Implementierung, SQM für Review, DoD-Check, Tests und Checklisten (inkl. mehrstufige Agent-Nutzung).                                                                                      |
 
 Nächste Schritte (optional): Cursor-Rule für SQM (Review/DoD-Fokus), Review- und Test-Prompt-Vorlagen in `docs/vibe-coding/`, klare Zuordnung von Qualitäts-Stories im Backlog oder in `Backlog-SQM.md` mit Verlinkung zum Haupt-Backlog. **Ausführlicher Praktikumsleitfaden für Studierende:** [`docs/praktikum/PRAKTIKUM-SQM.md`](../praktikum/PRAKTIKUM-SQM.md).
+
+**Ergänzung Kurs 3:** Ein **Data-Analytics-/NLP-Praktikum** (intelligente Wortwolke, **Modellwahl und Prompting** auf selbst gehosteten LLMs) ist **nicht** an die Parallelität von Kurs 1 und 2 gebunden — siehe [`dritter-kurs-data-analytics-nlp.md`](./dritter-kurs-data-analytics-nlp.md) und [`docs/praktikum/PRAKTIKUM-DATA-ANALYTICS.md`](../praktikum/PRAKTIKUM-DATA-ANALYTICS.md).

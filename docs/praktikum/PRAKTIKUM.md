@@ -8,6 +8,8 @@ Willkommen. Dieses Dokument erklärt **Ziele**, **Ablauf**, **bewertete Leistung
 
 **Parallel am selben Produkt:** Der **SQM-Praktikumsauftrag** (Qualität, Tests, Reviews, UX, Guidde) steht in **[`PRAKTIKUM-SQM.md`](./PRAKTIKUM-SQM.md)**; das didaktische **Zwei-Kurse-Modell** in [`docs/didaktik/zweiter-kurs-und-agentische-ki.md`](../didaktik/zweiter-kurs-und-agentische-ki.md).
 
+**Kurs 3 (Data Analytics, nicht zwingend parallel):** NLP und **Modellwahl/Prompting** für die **intelligente Wortwolke** auf **selbst gehosteten** Modellen — **[`PRAKTIKUM-DATA-ANALYTICS.md`](./PRAKTIKUM-DATA-ANALYTICS.md)** · Einordnung [`docs/didaktik/dritter-kurs-data-analytics-nlp.md`](../didaktik/dritter-kurs-data-analytics-nlp.md).
+
 ### Ausführliche Begriffe (Konzept & „intelligente“ Wortwolke)
 
 Für die **schriftliche Konzeption** und die Einordnung von **Syntax, Semantik, Lexik, Morphologie, Stemming, Lemmatisierung, Orthographie, Mehrsprachigkeit** und **semantischer Nähe** gibt es einen **eigenen, ausführlichen Leitfaden** (studierendenfreundlich, mit Beispielen, Tabellen und weiterführenden Links):

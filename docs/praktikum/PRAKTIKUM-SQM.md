@@ -32,6 +32,10 @@ Der **Entwicklungs-Praktikumsauftrag** (Feature-Fokus, z. B. intelligente Wortwo
 
 **→ [`PRAKTIKUM.md`](./PRAKTIKUM.md)**
 
+**Kurs 3 (Data Analytics, NLP/Prompting, nicht zwingend parallel):**
+
+**→ [`PRAKTIKUM-DATA-ANALYTICS.md`](./PRAKTIKUM-DATA-ANALYTICS.md)** · [`docs/didaktik/dritter-kurs-data-analytics-nlp.md`](../didaktik/dritter-kurs-data-analytics-nlp.md)
+
 ---
 
 ## 1. Was ist arsnova.eu? (Kurzüberblick)
