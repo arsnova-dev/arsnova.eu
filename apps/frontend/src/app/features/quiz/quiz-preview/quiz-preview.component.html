@@ -60,7 +60,10 @@
               [innerHTML]="renderMarkdown(slide.question.text)"
             ></div>
             @if (slide.question.type === 'FREETEXT') {
-              <p class="quiz-preview-question__text quiz-preview-question__text--hint" i18n>
+              <p
+                class="quiz-preview-question__text quiz-preview-question__text--hint"
+                i18n="@@quizPreview.freeTextAnswer"
+              >
                 Freitext-Antwort
               </p>
             } @else if (slide.question.type === 'RATING') {

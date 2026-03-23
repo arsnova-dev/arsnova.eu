@@ -339,9 +339,11 @@
                   >Noch keine Fragen</span
                 >
               } @else {
-                <span class="quiz-list-item__meta-text" i18n>{{
-                  quiz.questionCount === 1 ? 'Frage' : 'Fragen'
-                }}</span>
+                <span
+                  class="quiz-list-item__meta-text"
+                  i18n="@@quizList.questionCountLabel"
+                  >{quiz.questionCount, plural, =1 {Frage} other {Fragen}}</span
+                >
               }
               <span class="quiz-list-item__meta-sep" aria-hidden="true">·</span>
               <span class="quiz-list-item__meta-text">

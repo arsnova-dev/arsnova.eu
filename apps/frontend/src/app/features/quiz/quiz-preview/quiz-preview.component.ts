@@ -419,11 +419,12 @@ export class QuizPreviewComponent implements OnDestroy {
   }
 
   questionTypeLabel(type: SupportedQuestionType): string {
-    if (type === 'SINGLE_CHOICE') return 'Single Choice';
-    if (type === 'MULTIPLE_CHOICE') return 'Multiple Choice';
-    if (type === 'FREETEXT') return 'Freitext';
-    if (type === 'SURVEY') return 'Umfrage';
-    if (type === 'RATING') return 'Bewertung';
+    if (type === 'SINGLE_CHOICE') return $localize`:@@quizPreview.typeSingleChoice:Single Choice`;
+    if (type === 'MULTIPLE_CHOICE')
+      return $localize`:@@quizPreview.typeMultipleChoice:Multiple Choice`;
+    if (type === 'FREETEXT') return $localize`:@@quizPreview.typeFreeText:Freitext`;
+    if (type === 'SURVEY') return $localize`:@@quizPreview.typeSurvey:Umfrage`;
+    if (type === 'RATING') return $localize`:@@quizPreview.typeRating:Bewertung`;
     return type;
   }
 

@@ -83,7 +83,7 @@
       </div>
       <button mat-menu-item type="button" (click)="toggleMuteMusic()">
         <mat-icon aria-hidden="true">{{ musicMuted() ? 'volume_up' : 'volume_off' }}</mat-icon>
-        <span>{{ musicMuted() ? 'Ton an' : 'Ton aus' }}</span>
+        <span>{{ musicToggleLabel() }}</span>
       </button>
       <div class="session-host__music-phase-picker" (click)="$event.stopPropagation()">
         <p class="session-host__music-phase-picker-label" i18n="@@sessionHost.musicMenuPhaseLabel">

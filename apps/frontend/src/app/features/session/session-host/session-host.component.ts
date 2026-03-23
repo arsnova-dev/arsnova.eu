@@ -1017,6 +1017,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     this.syncMusic();
   }
 
+  musicToggleLabel(): string {
+    return this.musicMuted()
+      ? $localize`:@@sessionHost.musicToggleOn:Ton an`
+      : $localize`:@@sessionHost.musicToggleOff:Ton aus`;
+  }
+
   setPhaseTrack(phase: MusicPhase, track: HostMusicTrack): void {
     this.sound.unlock();
     this.sound.stopPreview();
