@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD013 MD022 MD032 -->
 
-# Praktikum Data Analytics und NLP (Kurs 3) — intelligente Wortwolke
+# Praktikum Data Analytics und NLP (Kurs 3) — Intelligente Moderationshilfe
 
 **Für Studierende** · **Kurs 3 (Data Analytics)** · **Umfang:** in der Regel **10 Termine à 4 Stunden** (ca. **40 Stunden** Planungsgröße — exakte Vorgabe gibt die **Betreuung** in der Veranstaltung)
 
@@ -8,25 +8,34 @@
 
 ## Inhaltsverzeichnis
 
-1. [Was ist das Ziel?](#1-was-ist-das-ziel)
-2. [Deine Rolle](#2-deine-rolle)
-3. [Lernziele](#3-lernziele)
-4. [Zeitmodell](#4-zeitmodell)
-5. [Bewertete Leistung](#5-bewertete-leistung)
-6. [Technische Landkarte: spaCy, mBERT, lokale LLMs](#6-technische-landkarte-spacy-mbert-lokale-llms)
-7. [Schwerpunkt: Modellwahl und Prompting (selbst gehostet)](#7-schwerpunkt-modellwahl-und-prompting-selbst-gehostet)
-8. [Bezug zur Codebasis](#8-bezug-zur-codebasis)
-9. [10-Block-Plan](#9-vorschlag-10-blöcke--4-stunden)
-10. [Bewertung](#10-bewertung)
-11. [FAQ](#11-faq)
-12. [Abgabe-Checkliste](#12-abgabe-checkliste)
-13. [Literatur](#13-literatur--links-im-repo)
+- [Praktikum Data Analytics und NLP (Kurs 3) — Intelligente Moderationshilfe](#praktikum-data-analytics-und-nlp-kurs-3--intelligente-moderationshilfe)
+  - [Inhaltsverzeichnis](#inhaltsverzeichnis)
+  - [1. Was ist das Ziel?](#1-was-ist-das-ziel)
+  - [2. Deine Rolle](#2-deine-rolle)
+  - [3. Lernziele](#3-lernziele)
+  - [4. Zeitmodell](#4-zeitmodell)
+  - [5. Bewertete Leistung](#5-bewertete-leistung)
+    - [5.1 Konzeption (schriftlich)](#51-konzeption-schriftlich)
+    - [5.2 Praktische Artefakte (Portfolio)](#52-praktische-artefakte-portfolio)
+  - [6. Technische Landkarte: spaCy, mBERT, lokale LLMs](#6-technische-landkarte-spacy-mbert-lokale-llms)
+  - [7. Schwerpunkt: Modellwahl und Prompting (selbst gehostet)](#7-schwerpunkt-modellwahl-und-prompting-selbst-gehostet)
+    - [7.1 Modellwahl (Checkliste)](#71-modellwahl-checkliste)
+    - [7.2 Prompting (Mindestanforderungen)](#72-prompting-mindestanforderungen)
+    - [7.3 Validierung](#73-validierung)
+  - [8. Bezug zur Codebasis](#8-bezug-zur-codebasis)
+  - [9. Vorschlag: 10 Blöcke à 4 Stunden](#9-vorschlag-10-blöcke-à-4-stunden)
+  - [10. Bewertung](#10-bewertung)
+  - [11. FAQ](#11-faq)
+  - [12. Abgabe-Checkliste](#12-abgabe-checkliste)
+  - [13. Literatur / Links im Repo](#13-literatur--links-im-repo)
 
 ---
 
 ## 1. Was ist das Ziel?
 
-In arsnova.eu werden Freitextantworten u. a. in einer **Wortwolke** genutzt (aktuell überwiegend **lexikalisch**: Token zählen, Stopwörter, siehe `word-cloud.util.ts`). **Geplant** ist eine **intelligentere** Auswertung: ähnliche **Bedeutungen** und **Formulierungen** sollen **sinnvoll gebündelt** werden (Kanontoken, Themenlabels, nachvollziehbare Gewichte).
+In arsnova.eu sollen Lehrende bei der Auswertung von vielen Freitext- und Q&A-Eingaben durch eine **„Intelligente Moderationshilfe“** unterstützt werden. Ein zentraler Teil davon ist die **Wortwolke** (aktuell überwiegend **lexikalisch**: Token zählen, Stopwörter, siehe `word-cloud.util.ts`). **Geplant** ist eine **intelligentere** Auswertung: ähnliche **Bedeutungen** und **Formulierungen** sollen **sinnvoll gebündelt** werden (Kanontoken, Themenlabels, nachvollziehbare Gewichte).
+
+> **Hinweis zur Synergie:** Während du hier (Kurs 3) das **Modell, die Prompts und die Daten-Pipeline** entwirfst, baut das Entwicklungspraktikum (Kurs 1) die zugehörigen Benutzeroberflächen und Backend-Routen (tRPC) in die Plattform ein. Die genauen Entwicklungs-Gegenstücke der _Moderationshilfe_ findest du drüben in **`PRAKTIKUM.md`** unter Punkt 4.2.
 
 **Dein Praktikum (Kurs 3)** fokussiert **Data Analytics und NLP**:
 
@@ -43,7 +52,7 @@ So lernst du, **wann** welche Schicht sinnvoll ist — statt „alles mit einem 
 
 ## 2. Deine Rolle
 
-Du bist **NLP-/Analytics-Verantwortliche:r** für das **Szenario intelligente Wortwolke** (und eng verwandte Host-Auswertungen). Du lieferst **nachvollziehbare** Entscheidungen und **messbare** oder **argumentierte** Qualität — nicht nur „einmal prompten und hoffen“.
+Du bist **NLP-/Analytics-Verantwortliche:r** für das **Feature-Set „Intelligente Moderationshilfe“** (insbesondere intelligente Wortwolke und Q&A-Zusammenfassung). Du lieferst **nachvollziehbare** Entscheidungen und **messbare** oder **argumentierte** Qualität — nicht nur „einmal prompten und hoffen“.
 
 **Typische Outputs:**
 
@@ -179,7 +188,7 @@ Beschreibe, wie ihr **kaputte** oder **halluzinierte** JSON-Antworten erkennt �
 | **Modellwahl**      | Begründet, vergleichend, ressourcenbewusst                                    |
 | **Prompting**       | Reproduzierbar, strukturierte Ausgabe, Fehlerfälle                            |
 | **Evaluierung**     | Nachvollziehbare Tests oder Fehleranalyse                                     |
-| **Produktbezug**    | Klare Anbindung an intelligente Wortwolke + Datenschutz                       |
+| **Produktbezug**    | Klare Anbindung an die Intelligente Moderationshilfe + Datenschutz            |
 | **Darstellung**     | Klare Dokumentation, Teamfähigkeit (falls Gruppenpraktikum)                   |
 
 ---

@@ -8,9 +8,9 @@ Willkommen. Dieses Dokument erklärt **Ziele**, **Ablauf**, **bewertete Leistung
 
 **Parallel am selben Produkt:** Der **SQM-Praktikumsauftrag** (Qualität, Tests, Reviews, UX, Guidde) steht in **[`PRAKTIKUM-SQM.md`](./PRAKTIKUM-SQM.md)**; das didaktische **Zwei-Kurse-Modell** in [`docs/didaktik/zweiter-kurs-und-agentische-ki.md`](../didaktik/zweiter-kurs-und-agentische-ki.md).
 
-**Kurs 3 (Data Analytics, nicht zwingend parallel):** NLP und **Modellwahl/Prompting** für die **intelligente Wortwolke** auf **selbst gehosteten** Modellen — **[`PRAKTIKUM-DATA-ANALYTICS.md`](./PRAKTIKUM-DATA-ANALYTICS.md)** · Einordnung [`docs/didaktik/dritter-kurs-data-analytics-nlp.md`](../didaktik/dritter-kurs-data-analytics-nlp.md).
+**Kurs 3 (Data Analytics, nicht zwingend parallel):** NLP und **Modellwahl/Prompting** für die **Intelligente Moderationshilfe** (Wortwolke & Q&A) auf **selbst gehosteten** Modellen — **`PRAKTIKUM-DATA-ANALYTICS.md`** · Einordnung `docs/didaktik/dritter-kurs-data-analytics-nlp.md`.
 
-### Ausführliche Begriffe (Konzept & „intelligente“ Wortwolke)
+### Ausführliche Begriffe (Konzept & Intelligente Moderationshilfe)
 
 Für die **schriftliche Konzeption** und die Einordnung von **Syntax, Semantik, Lexik, Morphologie, Stemming, Lemmatisierung, Orthographie, Mehrsprachigkeit** und **semantischer Nähe** gibt es einen **eigenen, ausführlichen Leitfaden** (studierendenfreundlich, mit Beispielen, Tabellen und weiterführenden Links):
 
@@ -73,7 +73,9 @@ Eine **studentenfreundliche**, aber **fachlich klare** Ausarbeitung (ca. **3–6
 
 ### 4.2 Umsetzung (Code)
 
-**Mindestumfang:**
+**Mindestumfang: Feature-Set „Intelligente Moderationshilfe“**
+
+> **Hinweis zur Synergie:** Während du in diesem Entwicklungs-Praktikum die **technische Produktintegration** (tRPC, Zod, Angular-UI) der Moderationshilfe baust, fokussiert sich das Data-Analytics-Praktikum (Kurs 3) auf das **NLP-Konzept, Prompt-Design und die Modellwahl** für genau diese Features. Siehe dazu **`PRAKTIKUM-DATA-ANALYTICS.md`**.
 
 | Teil                                                   | Inhalt                                                                                                                                                                                                                                                                                                                                                  |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
