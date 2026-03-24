@@ -13,7 +13,8 @@
           formControlName="name"
           maxlength="200"
           autocomplete="off"
-          i18n-aria-label aria-label="Quiz-Name"
+          i18n-aria-label
+          aria-label="Quiz-Name"
         />
         <mat-hint align="end">{{ nameControl.value.length }}/200</mat-hint>
         @if (nameControl.hasError('required') && (nameControl.touched || submitted())) {
@@ -31,10 +32,13 @@
           formControlName="description"
           rows="3"
           maxlength="1000"
-          i18n-aria-label aria-label="Quiz-Beschreibung"
+          i18n-aria-label
+          aria-label="Quiz-Beschreibung"
         ></textarea>
         <mat-hint align="end">{{ descriptionControl.value.length }}/1000</mat-hint>
-        @if (descriptionControl.hasError('maxlength') && (descriptionControl.touched || submitted())) {
+        @if (
+          descriptionControl.hasError('maxlength') && (descriptionControl.touched || submitted())
+        ) {
           <mat-error i18n>Die Beschreibung darf maximal 1000 Zeichen lang sein.</mat-error>
         }
       </mat-form-field>
@@ -63,17 +67,23 @@
             </div>
 
             <fieldset class="quiz-form__fieldset">
-            <legend class="quiz-form__legend" i18n>Spiel &amp; Auswertung</legend>
-            <mat-checkbox formControlName="showLeaderboard" i18n>Rangliste anzeigen</mat-checkbox>
-              <mat-checkbox formControlName="enableRewardEffects">
-                Belohnungen zeigen
-              </mat-checkbox>
-              <mat-checkbox formControlName="enableMotivationMessages">
-                Anfeuerung einblenden
-              </mat-checkbox>
-              <mat-checkbox formControlName="enableEmojiReactions">
-                Emojis erlauben
-              </mat-checkbox>
+              <legend class="quiz-form__legend" i18n>Spiel &amp; Auswertung</legend>
+              <mat-checkbox formControlName="showLeaderboard" i18n>Rangliste anzeigen</mat-checkbox>
+              <mat-checkbox
+                formControlName="enableRewardEffects"
+                i18n="@@quizSettings.showRewardEffects"
+                >Belohnungen zeigen</mat-checkbox
+              >
+              <mat-checkbox
+                formControlName="enableMotivationMessages"
+                i18n="@@quizSettings.showEncouragement"
+                >Anfeuerung einblenden</mat-checkbox
+              >
+              <mat-checkbox
+                formControlName="enableEmojiReactions"
+                i18n="@@quizSettings.allowEmojiReactions"
+                >Emojis erlauben</mat-checkbox
+              >
             </fieldset>
 
             <fieldset class="quiz-form__fieldset">
@@ -89,12 +99,16 @@
               <mat-checkbox formControlName="readingPhaseEnabled" i18n>
                 Lesephase vor dem Antworten
               </mat-checkbox>
-              <mat-checkbox formControlName="teamMode" (change)="syncTeamNamesValidation()" i18n>Im Team spielen</mat-checkbox>
+              <mat-checkbox formControlName="teamMode" (change)="syncTeamNamesValidation()" i18n
+                >Im Team spielen</mat-checkbox
+              >
             </fieldset>
 
             <fieldset class="quiz-form__fieldset">
               <legend class="quiz-form__legend" i18n>Ton &amp; Musik</legend>
-              <mat-checkbox formControlName="enableSoundEffects" i18n>Sounds abspielen</mat-checkbox>
+              <mat-checkbox formControlName="enableSoundEffects" i18n
+                >Sounds abspielen</mat-checkbox
+              >
             </fieldset>
 
             <mat-form-field appearance="outline">
@@ -105,18 +119,17 @@
                 formControlName="defaultTimer"
                 min="5"
                 max="300"
-                i18n-aria-label aria-label="Zeitlimit pro Frage"
+                i18n-aria-label
+                aria-label="Zeitlimit pro Frage"
               />
               <mat-hint i18n>Ohne Wert gibt es kein Zeitlimit.</mat-hint>
               @if (
-                defaultTimerControl.hasError('min') &&
-                (defaultTimerControl.touched || submitted())
+                defaultTimerControl.hasError('min') && (defaultTimerControl.touched || submitted())
               ) {
                 <mat-error i18n>Mindestens 5 Sekunden.</mat-error>
               }
               @if (
-                defaultTimerControl.hasError('max') &&
-                (defaultTimerControl.touched || submitted())
+                defaultTimerControl.hasError('max') && (defaultTimerControl.touched || submitted())
               ) {
                 <mat-error i18n>Höchstens 300 Sekunden.</mat-error>
               }
@@ -133,7 +146,8 @@
                     min="2"
                     max="8"
                     (input)="syncTeamNamesValidation()"
-                    i18n-aria-label aria-label="Anzahl Teams"
+                    i18n-aria-label
+                    aria-label="Anzahl Teams"
                   />
                   @if (teamCountControl.hasError('min')) {
                     <mat-error i18n>Mindestens 2 Teams.</mat-error>
@@ -145,7 +159,11 @@
 
                 <mat-form-field appearance="outline">
                   <mat-label i18n>Teams zuweisen</mat-label>
-                  <mat-select formControlName="teamAssignment" i18n-aria-label aria-label="Teams zuweisen">
+                  <mat-select
+                    formControlName="teamAssignment"
+                    i18n-aria-label
+                    aria-label="Teams zuweisen"
+                  >
                     <mat-option value="AUTO" i18n>Automatisch</mat-option>
                     <mat-option value="MANUAL" i18n>Manuell</mat-option>
                   </mat-select>
@@ -193,7 +211,11 @@
 
             <mat-form-field appearance="outline">
               <mat-label i18n>Altersgruppe für Namen</mat-label>
-              <mat-select formControlName="nicknameTheme" i18n-aria-label aria-label="Altersgruppe wählen">
+              <mat-select
+                formControlName="nicknameTheme"
+                i18n-aria-label
+                aria-label="Altersgruppe wählen"
+              >
                 @for (theme of nicknameThemeOptions; track theme.value) {
                   <mat-option [value]="theme.value">{{ theme.label }}</mat-option>
                 }
@@ -207,8 +229,8 @@
               </mat-checkbox>
               @if (isBonusEnabled()) {
                 <p class="quiz-edit-form__fieldset-hint" i18n>
-                  Die besten Teilnehmenden erhalten nach dem Quiz einen persoenlichen Code,
-                  den sie freiwillig bei dir einreichen koennen.
+                  Die besten Teilnehmenden erhalten nach dem Quiz einen persoenlichen Code, den sie
+                  freiwillig bei dir einreichen koennen.
                 </p>
                 <mat-form-field appearance="outline">
                   <mat-label i18n>Anzahl Top-Plaetze</mat-label>
@@ -219,9 +241,12 @@
                     min="1"
                     max="50"
                     placeholder="3"
-                    i18n-aria-label aria-label="Anzahl Bonus-Codes"
+                    i18n-aria-label
+                    aria-label="Anzahl Bonus-Codes"
                   />
-                  <mat-hint i18n>Wie viele der Bestplatzierten einen Code erhalten (1–50).</mat-hint>
+                  <mat-hint i18n
+                    >Wie viele der Bestplatzierten einen Code erhalten (1–50).</mat-hint
+                  >
                   @if (bonusTokenCountControl.hasError('min')) {
                     <mat-error i18n>Mindestens 1.</mat-error>
                   }

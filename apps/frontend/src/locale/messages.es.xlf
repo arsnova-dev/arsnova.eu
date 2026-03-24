@@ -100,7 +100,7 @@
       </trans-unit>
       <trans-unit id="1547876271716599756" datatype="html">
         <source>Impressum</source>
-        <target>imprimir</target>
+        <target>Aviso legal</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">82,83</context>
@@ -108,7 +108,7 @@
       </trans-unit>
       <trans-unit id="4082114936887396529" datatype="html">
         <source>Datenschutz</source>
-        <target>Protección de datos</target>
+        <target>Privacidad</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">86,87</context>
@@ -132,7 +132,7 @@
       </trans-unit>
       <trans-unit id="1136696335453039978" datatype="html">
         <source>Preset: Seriös</source>
-        <target>Preestablecido: Serio</target>
+        <target>Ajuste: Profesional</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">128</context>
@@ -140,7 +140,7 @@
       </trans-unit>
       <trans-unit id="6151253518820826531" datatype="html">
         <source>Preset: Spielerisch</source>
-        <target>Preestablecido: Juguetón</target>
+        <target>Ajuste: Lúdico</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">129</context>
@@ -348,7 +348,7 @@
       </trans-unit>
       <trans-unit id="seo.titleFeedbackHost" datatype="html">
         <source>Blitzlicht moderieren – arsnova.eu</source>
-        <target>Moderar Blitzlicht – arsnova.eu</target>
+        <target>Moderar Sondeo rápido – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">150</context>
@@ -364,7 +364,7 @@
       </trans-unit>
       <trans-unit id="seo.titleFeedbackVote" datatype="html">
         <source>Blitzlicht mitmachen – arsnova.eu</source>
-        <target>Participar en Blitzlicht – arsnova.eu</target>
+        <target>Participar en Sondeo rápido – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">158</context>
@@ -772,7 +772,7 @@
       </trans-unit>
       <trans-unit id="sessionTabs.quickFeedback" datatype="html">
         <source>Blitzlicht</source>
-        <target>Blitzlicht</target>
+        <target>Sondeo rápido</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">9,11</context>
@@ -932,7 +932,7 @@
       </trans-unit>
       <trans-unit id="306838304286854307" datatype="html">
         <source>Beitritt</source>
-        <target>adhesión</target>
+        <target>Acceso</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">204,205</context>
@@ -1942,7 +1942,7 @@
       </trans-unit>
       <trans-unit id="8330667382540185922" datatype="html">
         <source>Seriös</source>
-        <target>Grave</target>
+        <target>Profesional</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">25,26</context>
@@ -1982,7 +1982,7 @@
       </trans-unit>
       <trans-unit id="6088916262905537020" datatype="html">
         <source>Spielerisch</source>
-        <target>Juguetón</target>
+        <target>Lúdico</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">31,32</context>
@@ -2062,7 +2062,7 @@
       </trans-unit>
       <trans-unit id="8867796569409673283" datatype="html">
         <source>Dabei sein</source>
-        <target>estar allí</target>
+        <target>Participar</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">61</context>
@@ -2166,7 +2166,7 @@
       </trans-unit>
       <trans-unit id="homeHostCard.libraryCta" datatype="html">
         <source>Deine Quiz-Sammlung</source>
-        <target>Tu colección de quizzes</target>
+        <target>Tu biblioteca de quizzes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">275,278</context>
@@ -2186,7 +2186,7 @@
       </trans-unit>
       <trans-unit id="homeHostCard.syncLinkHint" datatype="html">
         <source> Wenn du hier mit der Quiz-Sammlung von einem anderen Gerät weitermachen willst.</source>
-        <target>Si quieres continuar aqui con tu colección de quizzes desde otro dispositivo.</target>
+        <target>Si quieres continuar aquí con tu biblioteca de quizzes desde otro dispositivo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">295,297</context>
@@ -3862,7 +3862,7 @@
       </trans-unit>
       <trans-unit id="6672916435220201136" datatype="html">
         <source>Zur Liste</source>
-        <target>a la lista</target>
+        <target>Volver a la lista</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.html</context>
           <context context-type="linenumber">751,752</context>
@@ -3894,7 +3894,7 @@
       </trans-unit>
       <trans-unit id="8680267345873464947" datatype="html">
         <source>Umfrage</source>
-        <target>Encuesta de opinión</target>
+        <target>Encuesta</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">179</context>
@@ -3962,7 +3962,7 @@
       </trans-unit>
       <trans-unit id="7626477121022284790" datatype="html">
         <source>Kita</source>
-        <target>guardería</target>
+        <target>Infantil</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">203</context>
@@ -3994,7 +3994,7 @@
       </trans-unit>
       <trans-unit id="7176543650453804262" datatype="html">
         <source>Mittelstufe</source>
-        <target>Intermedio</target>
+        <target>Secundaria</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">205</context>
@@ -4142,7 +4142,7 @@
       </trans-unit>
       <trans-unit id="1327302134726196371" datatype="html">
         <source>Punkte</source>
-        <target>Agujas</target>
+        <target>Puntos</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/bonus-codes-dialog.component.html</context>
           <context context-type="linenumber">54,55</context>
@@ -4322,7 +4322,7 @@
       </trans-unit>
       <trans-unit id="quizList.aiImport.trigger" datatype="html">
         <source>Mit unserem Prompt zum fertigen Quiz</source>
-        <target>Con nuestro prompt hasta un quiz listo</target>
+        <target>Genera un quiz con nuestro prompt de IA</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">28,30</context>
@@ -6225,7 +6225,7 @@
       </trans-unit>
       <trans-unit id="sessionHost.musicToggleOff" datatype="html">
         <source>Ton aus</source>
-        <target>Quejarse</target>
+        <target>Sonido apagado</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">1023</context>
@@ -8797,7 +8797,7 @@
       </trans-unit>
       <trans-unit id="5248396144494663799" datatype="html">
         <source>Zu Spielerisch wechseln</source>
-        <target>Cambiar a Juguetón</target>
+        <target>Cambiar a Lúdico</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">187</context>
@@ -8805,7 +8805,7 @@
       </trans-unit>
       <trans-unit id="8198317009587662224" datatype="html">
         <source>Zu Seriös wechseln</source>
-        <target>Cambie a una empresa de buena reputación</target>
+        <target>Cambiar a Profesional</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">188</context>

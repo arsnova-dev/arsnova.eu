@@ -100,7 +100,7 @@
       </trans-unit>
       <trans-unit id="1547876271716599756" datatype="html">
         <source>Impressum</source>
-        <target>impronta</target>
+        <target>Note legali</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">82,83</context>
@@ -108,7 +108,7 @@
       </trans-unit>
       <trans-unit id="4082114936887396529" datatype="html">
         <source>Datenschutz</source>
-        <target>Protezione dei dati</target>
+        <target>Privacy</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">86,87</context>
@@ -132,7 +132,7 @@
       </trans-unit>
       <trans-unit id="1136696335453039978" datatype="html">
         <source>Preset: Seriös</source>
-        <target>Preimpostazione: serio</target>
+        <target>Preset: Professionale</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">128</context>
@@ -140,7 +140,7 @@
       </trans-unit>
       <trans-unit id="6151253518820826531" datatype="html">
         <source>Preset: Spielerisch</source>
-        <target>Preimpostazione: giocoso</target>
+        <target>Preset: Ludico</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">129</context>
@@ -348,7 +348,7 @@
       </trans-unit>
       <trans-unit id="seo.titleFeedbackHost" datatype="html">
         <source>Blitzlicht moderieren – arsnova.eu</source>
-        <target>Moderare Blitzlicht – arsnova.eu</target>
+        <target>Moderare Sondaggio rapido – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">150</context>
@@ -364,7 +364,7 @@
       </trans-unit>
       <trans-unit id="seo.titleFeedbackVote" datatype="html">
         <source>Blitzlicht mitmachen – arsnova.eu</source>
-        <target>Partecipa al Blitzlicht – arsnova.eu</target>
+        <target>Partecipa al Sondaggio rapido – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">158</context>
@@ -772,7 +772,7 @@
       </trans-unit>
       <trans-unit id="sessionTabs.quickFeedback" datatype="html">
         <source>Blitzlicht</source>
-        <target>Blitzlicht</target>
+        <target>Sondaggio rapido</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">9,11</context>
@@ -932,7 +932,7 @@
       </trans-unit>
       <trans-unit id="306838304286854307" datatype="html">
         <source>Beitritt</source>
-        <target>adesione</target>
+        <target>Accesso</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">204,205</context>
@@ -1942,7 +1942,7 @@
       </trans-unit>
       <trans-unit id="8330667382540185922" datatype="html">
         <source>Seriös</source>
-        <target>Serio</target>
+        <target>Professionale</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">25,26</context>
@@ -1982,7 +1982,7 @@
       </trans-unit>
       <trans-unit id="6088916262905537020" datatype="html">
         <source>Spielerisch</source>
-        <target>Giocoso</target>
+        <target>Ludico</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">31,32</context>
@@ -2062,7 +2062,7 @@
       </trans-unit>
       <trans-unit id="8867796569409673283" datatype="html">
         <source>Dabei sein</source>
-        <target>Essere lì</target>
+        <target>Partecipa</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">61</context>
@@ -2166,7 +2166,7 @@
       </trans-unit>
       <trans-unit id="homeHostCard.libraryCta" datatype="html">
         <source>Deine Quiz-Sammlung</source>
-        <target>La tua raccolta quiz</target>
+        <target>La tua libreria quiz</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">275,278</context>
@@ -2186,7 +2186,7 @@
       </trans-unit>
       <trans-unit id="homeHostCard.syncLinkHint" datatype="html">
         <source> Wenn du hier mit der Quiz-Sammlung von einem anderen Gerät weitermachen willst.</source>
-        <target>Se vuoi continuare qui con la tua raccolta quiz da un altro dispositivo.</target>
+        <target>Se vuoi continuare qui con la tua libreria quiz da un altro dispositivo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">295,297</context>
@@ -2960,28 +2960,40 @@
           <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6991540885968863848" datatype="html">
-        <source> Belohnungen zeigen</source>
+      <trans-unit id="quizSettings.showRewardEffects" datatype="html">
+        <source>Belohnungen zeigen</source>
         <target>Mostra premi</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.html</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2355797381776819101" datatype="html">
-        <source> Anfeuerung einblenden</source>
+      <trans-unit id="quizSettings.showEncouragement" datatype="html">
+        <source>Anfeuerung einblenden</source>
         <target>Mostra incoraggiamenti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.html</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="88521927529972246" datatype="html">
-        <source> Emojis erlauben</source>
+      <trans-unit id="quizSettings.allowEmojiReactions" datatype="html">
+        <source>Emojis erlauben</source>
         <target>Consenti emoji</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.html</context>
-          <context context-type="linenumber">128</context>
+          <context context-type="linenumber">127</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2198730230681840467" datatype="html">
@@ -3862,7 +3874,7 @@
       </trans-unit>
       <trans-unit id="6672916435220201136" datatype="html">
         <source>Zur Liste</source>
-        <target>Alla lista</target>
+        <target>Torna alla lista</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.html</context>
           <context context-type="linenumber">751,752</context>
@@ -3894,7 +3906,7 @@
       </trans-unit>
       <trans-unit id="8680267345873464947" datatype="html">
         <source>Umfrage</source>
-        <target>Sondaggio d&apos;opinione</target>
+        <target>Sondaggio</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">179</context>
@@ -3962,7 +3974,7 @@
       </trans-unit>
       <trans-unit id="7626477121022284790" datatype="html">
         <source>Kita</source>
-        <target>Asilo nido</target>
+        <target>Scuola dell&apos;infanzia</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">203</context>
@@ -3994,7 +4006,7 @@
       </trans-unit>
       <trans-unit id="7176543650453804262" datatype="html">
         <source>Mittelstufe</source>
-        <target>Intermedio</target>
+        <target>Scuole medie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">205</context>
@@ -4026,7 +4038,7 @@
       </trans-unit>
       <trans-unit id="4668229613641280742" datatype="html">
         <source>Benutzerdefiniert</source>
-        <target>Costume</target>
+        <target>Personalizzato</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.ts</context>
           <context context-type="linenumber">363</context>
@@ -4322,7 +4334,7 @@
       </trans-unit>
       <trans-unit id="quizList.aiImport.trigger" datatype="html">
         <source>Mit unserem Prompt zum fertigen Quiz</source>
-        <target>Dal nostro prompt al quiz pronto</target>
+        <target>Genera un quiz con il nostro prompt IA</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">28,30</context>
@@ -6185,7 +6197,7 @@
       </trans-unit>
       <trans-unit id="388074101804534257" datatype="html">
         <source>Trotzdem verlassen</source>
-        <target>Ancora rimasto</target>
+        <target>Esci comunque</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">893</context>
@@ -6217,7 +6229,7 @@
       </trans-unit>
       <trans-unit id="sessionHost.musicToggleOn" datatype="html">
         <source>Ton an</source>
-        <target>Suono attivo</target>
+        <target>Audio on</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">1022</context>
@@ -6225,7 +6237,7 @@
       </trans-unit>
       <trans-unit id="sessionHost.musicToggleOff" datatype="html">
         <source>Ton aus</source>
-        <target>Suono disattivato</target>
+        <target>Audio off</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">1023</context>
@@ -7841,7 +7853,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.emojiLabelPlayful" datatype="html">
         <source>Reaktion abfeuern</source>
-        <target>Reazione al fuoco</target>
+        <target>Invia reazione</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote-participant-copy.ts</context>
           <context context-type="linenumber">392</context>
@@ -7873,7 +7885,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.emojiSentPlayful" datatype="html">
         <source>Emoji ist raus!</source>
-        <target>L&apos;Emoji è uscito!</target>
+        <target>Reazione inviata!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote-participant-copy.ts</context>
           <context context-type="linenumber">406</context>
@@ -7889,7 +7901,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.lobbyLoadingPlayful" datatype="html">
         <source>Nur noch einen Moment…</source>
-        <target>Solo un momento...</target>
+        <target>Ancora un momento...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote-participant-copy.ts</context>
           <context context-type="linenumber">413</context>
@@ -7937,7 +7949,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.qaSubmitPlayful" datatype="html">
         <source>Frage raushauen</source>
-        <target>Tira fuori la domanda</target>
+        <target>Invia domanda</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote-participant-copy.ts</context>
           <context context-type="linenumber">434</context>
@@ -8113,7 +8125,7 @@
       </trans-unit>
       <trans-unit id="7790447949587239556" datatype="html">
         <source>Läuft bei dir! 🎸</source>
-        <target>Corre con te! 🎸</target>
+        <target>Alla grande! 🎸</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">76</context>
@@ -8153,7 +8165,7 @@
       </trans-unit>
       <trans-unit id="3211338642099056060" datatype="html">
         <source>Knapp daneben! 🤏</source>
-        <target>Proprio accanto! 🤏</target>
+        <target>Mancata di poco! 🤏</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">85</context>
@@ -8161,7 +8173,7 @@
       </trans-unit>
       <trans-unit id="1731892131220774983" datatype="html">
         <source>Nächstes Mal! 💡</source>
-        <target>La prossima volta! 💡</target>
+        <target>Andrà meglio! 💡</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">86</context>
@@ -8177,7 +8189,7 @@
       </trans-unit>
       <trans-unit id="3551623243824977572" datatype="html">
         <source>Das wird schon! 📈</source>
-        <target>Andrà tutto bene! 📈</target>
+        <target>Migliorerai! 📈</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">88</context>
@@ -8321,7 +8333,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivStreakPlayful" datatype="html">
         <source>On fire! 🔥 <x id="c" equiv-text="sc.streakCount"/>er-Serie!</source>
-        <target>A fuoco! 🔥 Serie <x id="c" equiv-text="sc.streakCount"/>!</target>
+        <target>On fire! 🔥 Serie di <x id="c" equiv-text="sc.streakCount"/>!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">133</context>
@@ -8337,7 +8349,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivRank1Playful" datatype="html">
         <source>Ein Platz nach oben! 🚀</source>
-        <target>Un posto in più! 🚀</target>
+        <target>Una posizione in su! 🚀</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">139</context>
@@ -8345,7 +8357,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivRank1Serious" datatype="html">
         <source>Ein Rang nach oben.</source>
-        <target>Un grado in più.</target>
+        <target>Una posizione in su.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">140</context>
@@ -8353,7 +8365,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivRankNPlayful" datatype="html">
         <source><x id="n" equiv-text="sc.rankChange"/> Plätze nach oben! 🚀</source>
-        <target><x id="n" equiv-text="sc.rankChange"/> Muoviti! 🚀</target>
+        <target><x id="n" equiv-text="sc.rankChange"/> posizioni in su! 🚀</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">143</context>
@@ -8361,7 +8373,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivRankNSerious" datatype="html">
         <source><x id="n" equiv-text="sc.rankChange"/> Plätze nach oben.</source>
-        <target><x id="n" equiv-text="sc.rankChange"/> posiziona in alto.</target>
+        <target><x id="n" equiv-text="sc.rankChange"/> posizioni in su.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">144</context>
@@ -8369,7 +8381,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivStreakBreakPlayful" datatype="html">
         <source>Streak gerissen! Nächste Runde! 💪</source>
-        <target>Striscia interrotta! Prossimo giro! 💪</target>
+        <target>Serie interrotta! Al prossimo turno! 💪</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">151</context>
@@ -8385,7 +8397,7 @@
       </trans-unit>
       <trans-unit id="sessionVote.motivTopPlayful" datatype="html">
         <source>Kopf hoch – du liegst noch gut! 🏅</source>
-        <target>Coraggio: stai ancora mentendo bene! 🏅</target>
+        <target>Coraggio — sei ancora in ottima posizione! 🏅</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
           <context context-type="linenumber">157</context>
@@ -8797,7 +8809,7 @@
       </trans-unit>
       <trans-unit id="5248396144494663799" datatype="html">
         <source>Zu Spielerisch wechseln</source>
-        <target>Passa a Giocoso</target>
+        <target>Passa a Ludico</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">187</context>
@@ -8805,7 +8817,7 @@
       </trans-unit>
       <trans-unit id="8198317009587662224" datatype="html">
         <source>Zu Seriös wechseln</source>
-        <target>Passa a Rispettabile</target>
+        <target>Passa a Professionale</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">188</context>
@@ -8813,7 +8825,7 @@
       </trans-unit>
       <trans-unit id="7889883122899357105" datatype="html">
         <source>an</source>
-        <target>A</target>
+        <target>on</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">193</context>
@@ -8821,7 +8833,7 @@
       </trans-unit>
       <trans-unit id="5055717612846127441" datatype="html">
         <source>aus</source>
-        <target>fuori</target>
+        <target>off</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">196</context>
@@ -8829,7 +8841,7 @@
       </trans-unit>
       <trans-unit id="7941992196606586313" datatype="html">
         <source> an</source>
-        <target>A</target>
+        <target> on</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">201</context>
@@ -8837,7 +8849,7 @@
       </trans-unit>
       <trans-unit id="2990917106587572197" datatype="html">
         <source> aus</source>
-        <target>fuori</target>
+        <target> off</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">201</context>

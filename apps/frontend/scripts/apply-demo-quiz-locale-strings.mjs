@@ -325,32 +325,32 @@ const LOCALES = {
     ],
   },
   es: {
-    name: 'Todos los formatos de pregunta – cuestionario demo (bachillerato)',
+    name: 'Todos los formatos de pregunta – Quiz de demostración (bachillerato)',
     description:
-      '**Intención:** Este cuestionario muestra que arsnova.eu admite **dos rondas de votación**: primero votar, luego discutir y volver a votar. Es central en métodos como la *Peer Instruction*.\n\n**¿Qué es Peer Instruction?** Un método basado en evidencia (Eric Mazur, Harvard): el profesor plantea una pregunta conceptual con distractores plausibles. Primero cada persona responde sola; luego los vecinos comparan argumentos y votan de nuevo; así salen a la luz los malentendidos.\n\n**¿Qué es Markdown?** Formato con el teclado, sin clics. Por ejemplo `**negrita**` → **negrita**, `*cursiva*` → *cursiva*, `` `código` `` → `código`. Títulos con `#`, listas con `-` o `*`. En este cuestionario verás Markdown en preguntas y respuestas.\n\n**¿Qué es KaTeX?** Fórmulas como en los libros de texto. Rodea la fórmula con signos de dólar: x^2 → $x^2$, una fracción → $\\frac{1}{2}$, f\'(x) → $f\'(x)$. Ideal para mates, física y química; sin instalación, directamente en arsnova.eu.\n\nEste cuestionario usa todos los formatos de arsnova.eu. Las preguntas van agrupadas por materia.\n\n| # | Materia | Formato | Tema | Ideas erróneas / nota |\n|---|---------|---------|------|------------------------|\n| 1 | Mates | Opción única | Cambio de signo de $f\'$ y extremos | Mínimo en vez de máximo; punto de inflexión ($f\'\'$ confundido); raíz ($f=0$ vs $f\'=0$) |\n| 2 | Mates | Opción única | Independencia estocástica | Falacia del jugador; «mano caliente» |\n| 3 | Mates | Opción única | Integral definida ≠ área geométrica | Área positiva; suma vs balance; valor medio |\n| 4 | Mates | Valoración | Geometría vectorial (posiciones) | Autoevaluación |\n| 5 | Física | Opción única | Newton 3 – acción = reacción | Al más ligero «le afecta más»; el más pesado «empuja más»; las fuerzas se anulan |\n| 6 | Física | Texto libre | Satélite en órbita | Razonamiento |\n| 7 | Biología | Opción única | Selección vs lamarckismo | Mutación dirigida; adaptación gradual; habituación |\n| 8 | Biología | Opción múltiple | Cruce dihíbrido (Mendel) | Toda la F2 heterocigota; genes ligados |\n| 9 | Química | Opción múltiple | Le Chatelier (equilibrio) | El catalizador desplaza el equilibrio |\n| 10 | — | Encuesta | Preparación de selectividad / exámenes finales | Estrategias de estudio |\n| 11 | — | Texto libre | Pregunta con más dudas | Reflexión |\n| 12 | — | Valoración | Valorar este demo | Valoración global |',
+      '**Objetivo:** Este quiz muestra que arsnova.eu admite **dos rondas de votación**: primero se vota, luego se discute y se vuelve a votar. Es clave en métodos como la *instrucción por pares* (Peer Instruction).\n\n**¿Qué es la instrucción por pares?** Un método basado en evidencias (Eric Mazur, Harvard): el o la docente plantea una pregunta conceptual con distractores plausibles. Cada persona responde individualmente, luego compara su razonamiento con la persona de al lado y vuelve a votar; así las ideas erróneas salen a la luz y se aclaran en grupo.\n\n**¿Qué es Markdown?** Formato directamente desde el teclado, sin usar el ratón. Por ejemplo `**negrita**` → **negrita**, `*cursiva*` → *cursiva*, `` `código` `` → `código`. Títulos con `#`, listas con `-` o `*`. En este quiz verás Markdown tanto en preguntas como en respuestas.\n\n**¿Qué es KaTeX?** Fórmulas matemáticas como en los libros de texto. Rodea la fórmula con signos de dólar: x^2 → $x^2$, una fracción → $\\frac{1}{2}$, f\'(x) → $f\'(x)$. Ideal para mates, física y química; sin instalación, funciona directamente en arsnova.eu.\n\nEste quiz utiliza todos los formatos de pregunta de arsnova.eu. Los ítems están agrupados por materia.\n\n| # | Materia | Formato | Tema | Ideas erróneas / nota |\n|---|---------|---------|------|------------------------|\n| 1 | Mates | Opción única | Cambio de signo de $f\'$ y extremos | Mínimo en vez de máximo; punto de inflexión ($f\'\'$ confundido); cero ($f=0$ vs $f\'=0$) |\n| 2 | Mates | Opción única | Sucesos independientes | Falacia del jugador; «mano caliente» |\n| 3 | Mates | Opción única | Integral definida ≠ área geométrica | Área positiva; suma vs. balance; valor medio |\n| 4 | Mates | Valoración | Geometría vectorial (intersecciones) | Autoevaluación |\n| 5 | Física | Opción única | Newton 3 – acción = reacción | Al más ligero «le afecta más»; el más pesado «empuja más»; las fuerzas se anulan |\n| 6 | Física | Texto libre | Satélite en órbita | Razonamiento |\n| 7 | Biología | Opción única | Selección vs. lamarckismo | Mutación dirigida; adaptación gradual; habituación |\n| 8 | Biología | Opción múltiple | Cruce dihíbrido (Mendel) | Toda la F2 es heterocigota; genes ligados |\n| 9 | Química | Opción múltiple | Le Chatelier (equilibrio) | Un catalizador desplaza el equilibrio |\n| 10 | — | Encuesta | Preparación de exámenes finales | Estrategias de estudio |\n| 11 | — | Texto libre | Pregunta con más dudas | Reflexión |\n| 12 | — | Valoración | Evaluar este quiz demo | Valoración global |',
     questions: [
       {
-        text: '### Mates: Análisis – Función y derivada\n\nLa derivada $f\'(x)$ **cambia de signo de positivo a negativo** en $x_0$.\n\n¿Qué ocurre con $f$ en ese punto?',
+        text: '### Mates: Análisis – Función y derivada\n\nLa derivada $f\'(x)$ **cambia de signo de positivo a negativo** en $x_0$.\n\n¿Qué se puede afirmar sobre $f$ en ese punto?',
         answers: [
-          { text: 'La función $f$ tiene allí un máximo local.', isCorrect: true },
-          { text: 'La función $f$ tiene allí un mínimo local.', isCorrect: false },
-          { text: 'La función $f$ tiene allí un punto de inflexión.', isCorrect: false },
-          { text: 'La función $f$ tiene allí una raíz.', isCorrect: false },
+          { text: 'La función $f$ tiene un máximo local en ese punto.', isCorrect: true },
+          { text: 'La función $f$ tiene un mínimo local en ese punto.', isCorrect: false },
+          { text: 'La función $f$ tiene un punto de inflexión en ese punto.', isCorrect: false },
+          { text: 'La función $f$ se anula en ese punto.', isCorrect: false },
         ],
       },
       {
-        text: '### Mates: Probabilidad – Sucesos independientes\n\nUna moneda justa ha salido **cara** cinco veces seguidas.\n\n¿Cuál es la probabilidad de que en el sexto lanzamiento salga **cruz**?',
+        text: '### Mates: Probabilidad – Sucesos independientes\n\nUna moneda no trucada ha salido **cara** cinco veces seguidas.\n\n¿Cuál es la probabilidad de que en el sexto lanzamiento salga **cruz**?',
         answers: [
           {
             text: 'Exactamente 50 %, porque cada lanzamiento es independiente de los anteriores.',
             isCorrect: true,
           },
           {
-            text: 'Más del 50 %, porque tras cinco caras la cruz está «atrasada».',
+            text: 'Más del 50 %, porque tras cinco caras ya toca que salga cruz.',
             isCorrect: false,
           },
           {
-            text: 'Menos del 50 %, porque lo más probable es que siga la racha de caras.',
+            text: 'Menos del 50 %, porque lo más probable es que continúe la racha de caras.',
             isCorrect: false,
           },
           {
@@ -360,14 +360,14 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Mates: Análisis – Integral definida\n\nLa función $f(x) = x^2 - 4$ tiene ceros en $x = -2$ y $x = 2$\u2060. Entre los ceros, la gráfica queda **por completo debajo** del eje $x$.\n\n¿Qué representa $\\int_{-2}^{2} f(x)\\,\\mathrm{d}x$?',
+        text: '### Mates: Análisis – Integral definida\n\nLa función $f(x) = x^2 - 4$ se anula en $x = -2$ y $x = 2$\u2060. Entre esos ceros, la gráfica queda **por completo por debajo** del eje $x$.\n\n¿Qué calcula $\\int_{-2}^{2} f(x)\\,\\mathrm{d}x$?',
         answers: [
           {
-            text: 'El área con signo entre la gráfica y el eje $x$.',
+            text: 'El área algebraica (con signo) entre la gráfica y el eje $x$.',
             isCorrect: true,
           },
           {
-            text: 'El área geométrica entre la gráfica y el eje $x$ como valor positivo.',
+            text: 'El área geométrica absoluta entre la gráfica y el eje $x$.',
             isCorrect: false,
           },
           {
@@ -381,23 +381,23 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Mates: Autoevaluación – Geometría vectorial\n\nEn geometría analítica se describen rectas y planos con ecuaciones vectoriales, p. ej.:\n\n$$\\vec{r} = \\vec{a} + t \\cdot \\vec{u} + s \\cdot \\vec{v}$$\n\n¿Qué tan seguro te sientes con las **posiciones relativas** de rectas y planos?',
+        text: '### Mates: Autoevaluación – Geometría vectorial\n\nEn geometría analítica se describen rectas y planos mediante ecuaciones vectoriales, p. ej.:\n\n$$\\vec{r} = \\vec{a} + t \\cdot \\vec{u} + s \\cdot \\vec{v}$$\n\n¿Qué tan seguro te sientes calculando **intersecciones** de rectas y planos?',
         ratingLabelMin: 'Muy inseguro',
-        ratingLabelMax: 'Puedo explicarlo',
+        ratingLabelMax: 'Sabría explicarlo',
       },
       {
         text: '### Física: Fuerzas en un choque\n\nUn camión pesado choca de frente con un coche ligero.\n\n¿Cómo se comparan las fuerzas **durante el impacto** sobre los dos vehículos?',
         answers: [
           {
-            text: 'La fuerza sobre el coche es igual en magnitud a la fuerza sobre el camión.',
+            text: 'La fuerza que se ejerce sobre el coche es igual a la ejercida sobre el camión.',
             isCorrect: true,
           },
           {
-            text: 'La fuerza sobre el coche es mayor que la del camión.',
+            text: 'La fuerza ejercida sobre el coche es mayor que la del camión.',
             isCorrect: false,
           },
           {
-            text: 'La fuerza sobre el camión es mayor que la del coche.',
+            text: 'La fuerza ejercida sobre el camión es mayor que la del coche.',
             isCorrect: false,
           },
           {
@@ -407,17 +407,17 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Física: Satélite en órbita\n\nUn satélite orbita la Tierra en una trayectoria circular estable sin perder altitud.\n\nExplica con tus palabras por qué el satélite no cae a la Tierra a pesar de la gravedad.\n\n> Pista: piensa en la relación entre velocidad y gravedad.',
+        text: '### Física: Satélite en órbita\n\nUn satélite orbita la Tierra en una trayectoria circular estable sin perder altitud.\n\nExplica con tus propias palabras por qué el satélite no se estrella contra la Tierra a pesar de la gravedad.\n\n> Pista: piensa en la relación entre velocidad y gravedad.',
       },
       {
-        text: '### Biología: Resistencia a antibióticos\n\nEn los hospitales aparecen cada vez más cepas bacterianas resistentes.\n\n¿Qué explicación describe correctamente el origen de la resistencia?',
+        text: '### Biología: Resistencia a los antibióticos\n\nEn los hospitales se observan cada vez más cepas bacterianas resistentes.\n\n¿Qué explicación describe correctamente el origen de la resistencia?',
         answers: [
           {
-            text: 'Las bacterias resistentes se multiplican más porque el antibiótico mata al resto.',
+            text: 'Las bacterias resistentes se multiplican más rápido porque el antibiótico elimina a las cepas competidoras.',
             isCorrect: true,
           },
           {
-            text: 'El antibiótico provoca mutaciones dirigidas que llevan a la resistencia.',
+            text: 'El antibiótico provoca mutaciones específicas que conducen a la resistencia.',
             isCorrect: false,
           },
           {
@@ -425,28 +425,28 @@ const LOCALES = {
             isCorrect: false,
           },
           {
-            text: 'Las bacterias más fuertes desarrollan tolerancia por costumbre.',
+            text: 'Las bacterias más fuertes desarrollan tolerancia por habituación.',
             isCorrect: false,
           },
         ],
       },
       {
-        text: '### Biología: Genética mendeliana\n\nEn un cruce dihíbrido se cruzan dos individuos heterocigotos para ambos genes ($\\text{AaBb} \\times \\text{AaBb}$)\u2060.\n\n¿Qué afirmaciones sobre la **generación F2** son correctas?\n\n*Varias respuestas correctas.*',
+        text: '### Biología: Genética mendeliana\n\nEn un cruce dihíbrido se cruzan dos individuos heterocigotos para ambos genes ($\\text{AaBb} \\times \\text{AaBb}$)\u2060.\n\n¿Qué afirmaciones sobre la **generación F2** son correctas?\n\n*Selecciona todas las correctas.*',
         answers: [
           {
             text: 'La proporción fenotípica en F2 es 9 : 3 : 3 : 1.',
             isCorrect: true,
           },
           {
-            text: 'En F2 aparecen combinaciones de rasgos que faltan en los padres.',
+            text: 'En la F2 aparecen combinaciones de rasgos ausentes en los progenitores.',
             isCorrect: true,
           },
           {
-            text: 'Todos los descendientes F2 son heterocigotos para ambos genes.',
+            text: 'Todos los descendientes de la F2 son heterocigotos para ambos genes.',
             isCorrect: false,
           },
           {
-            text: 'Los alelos de ambos genes siempre se heredan como una unidad ligada.',
+            text: 'Los alelos de ambos genes siempre se heredan como una unidad enlazada.',
             isCorrect: false,
           },
         ],
@@ -454,59 +454,59 @@ const LOCALES = {
       {
         text: '### Química: Equilibrio químico\n\nLa síntesis de amoníaco es exotérmica:\n\n$$\\mathrm{N_2 + 3\\,H_2 \\rightleftharpoons 2\\,NH_3} \\quad \\Delta H < 0$$\n\n¿Qué medidas desplazan el equilibrio **hacia los productos**?\n\n*Varias respuestas correctas.*',
         answers: [
-          { text: 'Aumentar la presión total en el reactor', isCorrect: true },
-          { text: 'Bajar la temperatura de reacción', isCorrect: true },
-          { text: 'Añadir un catalizador adecuado', isCorrect: false },
-          { text: 'Retirar continuamente el amoníaco del sistema', isCorrect: true },
+          { text: 'Aumentar la presión total del reactor', isCorrect: true },
+          { text: 'Disminuir la temperatura de la reacción', isCorrect: true },
+          { text: 'Añadir un catalizador apropiado', isCorrect: false },
+          { text: 'Retirar amoníaco del sistema de forma continua', isCorrect: true },
         ],
       },
       {
-        text: '### Encuesta: Preparación de exámenes finales\n\n¿Qué **estrategia de estudio** usas con más frecuencia para preparar los exámenes finales?',
+        text: '### Encuesta: Preparación de exámenes\n\n¿Qué **estrategia de repaso** utilizas con más frecuencia para preparar los exámenes finales?',
         answers: [
-          { text: 'Hacer exámenes de convocatorias anteriores', isCorrect: false },
-          { text: 'Hacer resúmenes y fichas', isCorrect: false },
-          { text: 'Practicar en grupo de estudio', isCorrect: false },
-          { text: 'Ver vídeos explicativos y tutoriales', isCorrect: false },
-          { text: 'Usar tarjetas y repetición espaciada', isCorrect: false },
+          { text: 'Hacer exámenes de años anteriores', isCorrect: false },
+          { text: 'Hacer esquemas y fichas de repaso', isCorrect: false },
+          { text: 'Repasar en grupo', isCorrect: false },
+          { text: 'Ver videotutoriales explicativos', isCorrect: false },
+          { text: 'Utilizar flashcards', isCorrect: false },
         ],
       },
       {
-        text: '### Reflexión\n\n¿En qué pregunta de este cuestionario te sentiste **más inseguro** — y por qué?\n\nUsa tu respuesta como punto de partida para tu próxima sesión de estudio.',
+        text: '### Reflexión\n\n¿Qué pregunta de este quiz te generó más **dudas** — y por qué?\n\nUsa tu respuesta como punto de partida para tu próxima sesión de estudio.',
       },
       {
-        text: '### Valoración global\n\n¿Cómo valoras este **cuestionario demo** en conjunto?\n\nTen en cuenta:\n1. Claridad de las preguntas\n2. Variedad de formatos\n3. Dificultad adecuada',
+        text: '### Valoración global\n\n¿Cómo evalúas este **quiz de demostración** en general?\n\nTen en cuenta:\n1. Claridad de las preguntas\n2. Variedad de los formatos\n3. Nivel de dificultad adecuado',
         ratingLabelMin: 'Mejorable',
         ratingLabelMax: 'Excelente',
       },
     ],
   },
   it: {
-    name: 'Tutti i formati di domanda – quiz dimostrativo (liceo / secondaria)',
+    name: 'Tutti i formati di domanda – Quiz dimostrativo (scuole superiori)',
     description:
-      '**Scopo:** Questo quiz mostra che arsnova.eu supporta **due turni di voto**: prima si vota, poi si discute, poi si vota di nuovo. È centrale in metodologie come la *Peer Instruction*.\n\n**Che cos’è la Peer Instruction?** Un metodo basato su evidenze (Eric Mazur, Harvard): l’insegnante pone una domanda concettuale con distrattori plausibili. Prima ognuno risponde da solo; poi i vicini confrontano le motivazioni e rivotano — così emergono e si chiariscono i malintesi.\n\n**Che cos’è Markdown?** Formattazione da tastiera, senza clic. Es. `**grassetto**` → **grassetto**, `*corsivo*` → *corsivo*, `` `codice` `` → `codice`. Titoli con `#`, elenchi con `-` o `*`. In questo quiz trovi Markdown in domande e risposte.\n\n**Che cos’è KaTeX?** Formule come sui libri di testo. Racchiudi la formula tra dollari: x^2 → $x^2$, una frazione → $\\frac{1}{2}$, f\'(x) → $f\'(x)$. Ideale per matematica, fisica, chimica — senza installazione, direttamente in arsnova.eu.\n\nQuesto quiz usa tutti i formati di domanda di arsnova.eu. Le domande sono raggruppate per materia.\n\n| # | Materia | Formato | Tema | Idee sbagliate / nota |\n|---|---------|---------|------|------------------------|\n| 1 | Matematica | Scelta singola | Cambio di segno di $f\'$ ed estremi | Minimo invece del massimo; flesso ($f\'\'$ confuso); radice ($f=0$ vs $f\'=0$) |\n| 2 | Matematica | Scelta singola | Indipendenza stocastica | Fallacia del giocatore; «mano calda» |\n| 3 | Matematica | Scelta singola | Integrale definito ≠ area geometrica | Area positiva; somma vs bilancio; valor medio |\n| 4 | Matematica | Valutazione | Geometria vettoriale (mutue posizioni) | Autovalutazione |\n| 5 | Fisica | Scelta singola | Newton 3 – azione = reazione | Sul più leggero «agisce di più»; il più pesante «spinge di più»; le forze si annullano |\n| 6 | Fisica | Testo libero | Satellite in orbita | Argomentazione |\n| 7 | Biologia | Scelta singola | Selezione vs lamarckismo | Mutazione diretta; adattamento graduale; assuefazione |\n| 8 | Biologia | Scelta multipla | Incrocio diibrido (Mendel) | Tutta la F2 eterozigote; geni accoppiati |\n| 9 | Chimica | Scelta multipla | Le Chatelier (equilibrio) | Il catalizzatore sposta l’equilibrio |\n| 10 | — | Sondaggio | Preparazione alla maturità / esami finali | Strategie di studio |\n| 11 | — | Testo libero | Domanda con più incertezza | Riflessione |\n| 12 | — | Valutazione | Valuta questo quiz dimostrativo | Giudizio complessivo |',
+      '**Obiettivo:** Questo quiz mostra che arsnova.eu supporta **due turni di votazione**: prima si vota, poi si discute e si vota di nuovo. È una funzionalità chiave per metodi didattici come la *Peer Instruction*.\n\n**Cos\'è la Peer Instruction?** Un metodo basato su evidenze scientifiche (Eric Mazur, Harvard): l\'insegnante pone una domanda concettuale con distrattori plausibili. Ognuno risponde prima individualmente; poi confronta il proprio ragionamento con chi gli sta vicino e vota di nuovo: così le idee sbagliate emergono e si chiariscono insieme.\n\n**Cos\'è Markdown?** Formattazione direttamente dalla tastiera, senza bisogno del mouse. Ad esempio `**grassetto**` → **grassetto**, `*corsivo*` → *corsivo*, `` `codice` `` → `codice`. Titoli con `#`, elenchi con `-` o `*`. In questo quiz vedrai Markdown sia nelle domande che nelle risposte.\n\n**Cos\'è KaTeX?** Formule matematiche come nei libri di testo. Racchiudi la formula tra i simboli del dollaro: x^2 → $x^2$, una frazione → $\\frac{1}{2}$, f\'(x) → $f\'(x)$. Perfetto per matematica, fisica e chimica: nessuna installazione richiesta, funziona tutto direttamente su arsnova.eu.\n\nQuesto quiz utilizza tutti i formati di domanda di arsnova.eu. Le domande sono raggruppate per materia.\n\n| # | Materia | Formato | Tema | Idee sbagliate / Note |\n|---|---------|---------|------|------------------------|\n| 1 | Matematica | Scelta singola | Cambio di segno di $f\'$ ed estremi | Minimo invece del massimo; flesso ($f\'\'$ confuso); zero ($f=0$ vs $f\'=0$) |\n| 2 | Matematica | Scelta singola | Eventi indipendenti | Fallacia dello scommettitore; «mano calda» |\n| 3 | Matematica | Scelta singola | Integrale definito ≠ area geometrica | Area positiva; somma vs. saldo netto; valore medio |\n| 4 | Matematica | Valutazione | Geometria vettoriale (intersezioni) | Autovalutazione |\n| 5 | Fisica | Scelta singola | Newton 3 – azione = reazione | Sul veicolo più leggero «agisce una forza maggiore»; il più pesante «spinge di più»; le forze si annullano |\n| 6 | Fisica | Testo libero | Satellite in orbita | Ragionamento |\n| 7 | Biologia | Scelta singola | Selezione vs. lamarckismo | Mutazione mirata; adattamento progressivo; assuefazione |\n| 8 | Biologia | Scelta multipla | Incrocio diibrido (Mendel) | Tutta la F2 è eterozigote; i geni sono concatenati |\n| 9 | Chimica | Scelta multipla | Le Chatelier (equilibrio) | Il catalizzatore sposta l\'equilibrio |\n| 10 | — | Sondaggio | Preparazione agli esami | Strategie di studio |\n| 11 | — | Testo libero | Domanda con più dubbi | Riflessione |\n| 12 | — | Valutazione | Valuta questo quiz demo | Valutazione complessiva |',
     questions: [
       {
-        text: '### Matematica: Analisi – Funzione e derivata\n\nLa derivata $f\'(x)$ **cambia segno da positivo a negativo** in $x_0$.\n\nCosa vale per $f$ in quel punto?',
+        text: '### Matematica: Analisi – Funzione e derivata\n\nLa derivata $f\'(x)$ **cambia segno da positivo a negativo** in $x_0$.\n\nCosa si può affermare su $f$ in quel punto?',
         answers: [
-          { text: 'La funzione $f$ ha lì un massimo locale.', isCorrect: true },
-          { text: 'La funzione $f$ ha lì un minimo locale.', isCorrect: false },
-          { text: 'La funzione $f$ ha lì un punto di flesso.', isCorrect: false },
-          { text: 'La funzione $f$ ha lì uno zero.', isCorrect: false },
+          { text: 'La funzione $f$ ha un massimo locale in quel punto.', isCorrect: true },
+          { text: 'La funzione $f$ ha un minimo locale in quel punto.', isCorrect: false },
+          { text: 'La funzione $f$ ha un punto di flesso in quel punto.', isCorrect: false },
+          { text: 'La funzione $f$ si annulla in quel punto.', isCorrect: false },
         ],
       },
       {
-        text: '### Matematica: Probabilità – Eventi indipendenti\n\nCon una moneta equa è uscito **testa** cinque volte di seguito.\n\nQual è la probabilità che al sesto lancio esca **croce**?',
+        text: '### Matematica: Probabilità – Eventi indipendenti\n\nLanciando una moneta non truccata è uscito **testa** cinque volte di fila.\n\nQual è la probabilità che al sesto lancio esca **croce**?',
         answers: [
           {
             text: 'Esattamente il 50%, perché ogni lancio è indipendente dai precedenti.',
             isCorrect: true,
           },
           {
-            text: 'Più del 50%, perché dopo cinque teste la croce è «in ritardo».',
+            text: 'Più del 50%, perché dopo cinque teste è «il momento» che esca croce.',
             isCorrect: false,
           },
           {
-            text: 'Meno del 50%, perché è probabile che continui la serie di teste.',
+            text: 'Meno del 50%, perché la serie di teste probabilmente continuerà.',
             isCorrect: false,
           },
           {
@@ -516,18 +516,18 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Matematica: Analisi – Integrale definito\n\nLa funzione $f(x) = x^2 - 4$ ha zeri in $x = -2$ e $x = 2$\u2060. Tra gli zeri il grafico sta **completamente sotto** l’asse $x$.\n\nCosa rappresenta $\\int_{-2}^{2} f(x)\\,\\mathrm{d}x$?',
+        text: '### Matematica: Analisi – Integrale definito\n\nLa funzione $f(x) = x^2 - 4$ si annulla in $x = -2$ e $x = 2$\u2060. Tra questi zeri, il grafico si trova **completamente al di sotto** dell’asse $x$.\n\nCosa calcola $\\int_{-2}^{2} f(x)\\,\\mathrm{d}x$?',
         answers: [
           {
-            text: 'L’area con segno tra il grafico e l’asse $x$.',
+            text: 'L\'area algebrica (con segno) compresa tra il grafico e l\'asse $x$.',
             isCorrect: true,
           },
           {
-            text: 'L’area geometrica tra il grafico e l’asse $x$ come valore positivo.',
+            text: 'L\'area geometrica assoluta tra il grafico e l\'asse $x$.',
             isCorrect: false,
           },
           {
-            text: 'La somma di tutte le aree parziali sopra e sotto l’asse.',
+            text: 'La somma di tutte le aree parziali sopra e sotto l\'asse.',
             isCorrect: false,
           },
           {
@@ -537,23 +537,23 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Matematica: Autovalutazione – Geometria vettoriale\n\nNella geometria analitica descrivi rette e piani con equazioni vettoriali, ad es.:\n\n$$\\vec{r} = \\vec{a} + t \\cdot \\vec{u} + s \\cdot \\vec{v}$$\n\nQuanto ti senti sicuro sui compiti sulle **mutue posizioni** di rette e piani?',
+        text: '### Matematica: Autovalutazione – Geometria vettoriale\n\nNella geometria analitica rette e piani si descrivono con equazioni vettoriali, ad es.:\n\n$$\\vec{r} = \\vec{a} + t \\cdot \\vec{u} + s \\cdot \\vec{v}$$\n\nQuanto ti senti sicuro nel trovare le **intersezioni** tra rette e piani?',
         ratingLabelMin: 'Molto insicuro',
-        ratingLabelMax: 'So spiegarlo',
+        ratingLabelMax: 'Sarei in grado di spiegarlo',
       },
       {
-        text: '### Fisica: Forze nell’urto\n\nUn camion pesante urta frontalmente una piccola auto.\n\nCome si comportano le forze **durante l’urto** sui due veicoli?',
+        text: '### Fisica: Forze in una collisione\n\nUn camion pesante si scontra frontalmente con un\'auto leggera.\n\nCome si comportano le forze **durante l’impatto** sui due veicoli?',
         answers: [
           {
-            text: 'La forza sull’auto ha la stessa intensità della forza sul camion.',
+            text: 'La forza esercitata sull’auto è uguale a quella esercitata sul camion.',
             isCorrect: true,
           },
           {
-            text: 'La forza sull’auto è maggiore di quella sul camion.',
+            text: 'La forza esercitata sull’auto è maggiore di quella sul camion.',
             isCorrect: false,
           },
           {
-            text: 'La forza sul camion è maggiore di quella sull’auto.',
+            text: 'La forza esercitata sul camion è maggiore di quella sull’auto.',
             isCorrect: false,
           },
           {
@@ -563,17 +563,17 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Fisica: Satellite in orbita\n\nUn satellite orbita intorno alla Terra su un’orbita circolare stabile senza perdere quota.\n\nSpiega con parole tue perché il satellite non precipita sulla Terra nonostante la gravità.\n\n> Suggerimento: pensa all’interazione tra velocità e gravità.',
+        text: '### Fisica: Satellite in orbita\n\nUn satellite orbita intorno alla Terra su una traiettoria circolare stabile senza perdere quota.\n\nSpiega con parole tue perché il satellite non si schianta sulla Terra nonostante la forza di gravità.\n\n> Suggerimento: pensa alla relazione tra velocità e gravità.',
       },
       {
-        text: '### Biologia: Resistenza agli antibiotici\n\nNegli ospedali compaiono sempre più ceppi batterici resistenti.\n\nQuale spiegazione descrive correttamente l’origine della resistenza?',
+        text: '### Biologia: Resistenza agli antibiotici\n\nNegli ospedali si riscontrano sempre più ceppi di batteri resistenti agli antibiotici.\n\nQuale spiegazione descrive correttamente l’origine della resistenza?',
         answers: [
           {
-            text: 'I batteri resistenti si moltiplicano di più perché l’antibiotico uccide gli altri.',
+            text: 'I batteri resistenti si moltiplicano più rapidamente perché l’antibiotico elimina i ceppi in competizione.',
             isCorrect: true,
           },
           {
-            text: 'L’antibiotico provoca mutazioni mirate che portano alla resistenza.',
+            text: 'L’antibiotico provoca mutazioni specifiche che conducono alla resistenza.',
             isCorrect: false,
           },
           {
@@ -581,28 +581,28 @@ const LOCALES = {
             isCorrect: false,
           },
           {
-            text: 'I batteri più forti sviluppano tolleranza per abitudine.',
+            text: 'I batteri più forti sviluppano tolleranza per assuefazione.',
             isCorrect: false,
           },
         ],
       },
       {
-        text: '### Biologia: Genetica mendeliana\n\nIn un incrocio diibrido si incrociano due individui eterozigoti per entrambi i geni ($\\text{AaBb} \\times \\text{AaBb}$)\u2060.\n\nQuali affermazioni sulla **generazione F2** sono corrette?\n\n*Più risposte corrette.*',
+        text: '### Biologia: Genetica mendeliana\n\nIn un incrocio diibrido si incrociano due individui eterozigoti per entrambi i geni ($\\text{AaBb} \\times \\text{AaBb}$)\u2060.\n\nQuali affermazioni sulla **generazione F2** sono corrette?\n\n*Seleziona tutte quelle corrette.*',
         answers: [
           {
-            text: 'Il rapporto fenotipico in F2 è 9 : 3 : 3 : 1.',
+            text: 'Il rapporto fenotipico nella F2 è 9 : 3 : 3 : 1.',
             isCorrect: true,
           },
           {
-            text: 'In F2 compaiono combinazioni di caratteri assenti nei genitori.',
+            text: 'Nella F2 compaiono combinazioni di caratteri assenti nei genitori.',
             isCorrect: true,
           },
           {
-            text: 'Tutti i discendenti F2 sono eterozigoti per entrambi i geni.',
+            text: 'Tutti i discendenti della F2 sono eterozigoti per entrambi i geni.',
             isCorrect: false,
           },
           {
-            text: 'Gli alleli di entrambi i geni sono sempre ereditati come unità accoppiata.',
+            text: 'Gli alleli di entrambi i geni vengono sempre ereditati come un’unità concatenata.',
             isCorrect: false,
           },
         ],
@@ -612,25 +612,25 @@ const LOCALES = {
         answers: [
           { text: 'Aumentare la pressione totale nel reattore', isCorrect: true },
           { text: 'Abbassare la temperatura di reazione', isCorrect: true },
-          { text: 'Aggiungere un catalizzatore adatto', isCorrect: false },
-          { text: 'Rimuovere continuamente l’ammoniaca dal sistema', isCorrect: true },
+          { text: 'Aggiungere un catalizzatore adeguato', isCorrect: false },
+          { text: 'Rimuovere continuamente l\'ammoniaca dal sistema', isCorrect: true },
         ],
       },
       {
-        text: '### Sondaggio: Preparazione agli esami finali\n\nQuale **strategia di studio** usi più spesso per preparare gli esami finali?',
+        text: '### Sondaggio: Preparazione agli esami\n\nQuale **strategia di studio** utilizzi più spesso per preparare gli esami finali?',
         answers: [
-          { text: 'Svolgere tracce d’esame degli anni precedenti', isCorrect: false },
-          { text: 'Scrivere riassunti e schede', isCorrect: false },
-          { text: 'Esercitarsi in gruppo di studio', isCorrect: false },
-          { text: 'Guardare video lezioni e tutorial', isCorrect: false },
-          { text: 'Usare flashcard e ripetizione spaziata', isCorrect: false },
+          { text: 'Svolgere prove d\'esame passate', isCorrect: false },
+          { text: 'Creare schemi e riassunti', isCorrect: false },
+          { text: 'Studiare in gruppo', isCorrect: false },
+          { text: 'Guardare video tutorial e spiegazioni', isCorrect: false },
+          { text: 'Usare le flashcard', isCorrect: false },
         ],
       },
       {
-        text: '### Riflessione\n\nPer quale domanda di questo quiz ti sei sentito **più incerto** — e perché?\n\nUsa la tua risposta come punto di partenza per la prossima sessione di studio.',
+        text: '### Riflessione\n\nQuale domanda di questo quiz ti ha creato più **dubbi** — e perché?\n\nUsa la tua risposta come punto di partenza per la tua prossima sessione di studio.',
       },
       {
-        text: '### Valutazione complessiva\n\nCome valuti questo **quiz dimostrativo** nel complesso?\n\nConsidera:\n1. Chiarezza delle domande\n2. Varietà dei formati\n3. Difficoltà adeguata',
+        text: '### Valutazione complessiva\n\nCome valuti questo **quiz dimostrativo** nel complesso?\n\nTieni conto di:\n1. Chiarezza delle domande\n2. Varietà dei formati\n3. Livello di difficoltà adeguato',
         ratingLabelMin: 'Da migliorare',
         ratingLabelMax: 'Eccellente',
       },

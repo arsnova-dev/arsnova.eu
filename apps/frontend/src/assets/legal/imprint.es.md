@@ -1,40 +1,36 @@
 # Aviso legal
 
-Informacion conforme al § 5 de la ley alemana Telemediengesetz (TMG) / § 5 de la ley alemana Digitale-Dienste-Gesetz (DDG)
+Información conforme al § 5 de la ley alemana sobre los cibermedios (TMG)
 
-## Proveedor / Prestador del servicio
+## Proveedor
 
 Prof. Dr. Klaus Quibeldey-Cirkel  
-IU Internationale Hochschule · Estudios duales  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Alemania
 
-El sitio **arsnova.eu** se ofrece en el marco de la actividad profesional de Prof. Dr. Klaus Quibeldey-Cirkel.
-
 ## Contacto
 
-Correo electronico: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)  
-Web: [https://arsnova.eu](https://arsnova.eu)  
-Mas informacion sobre la IU: [https://www.iu-dualesstudium.de](https://www.iu-dualesstudium.de)
+Correo electrónico: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
-## Responsable del contenido (§ 18 apdo. 2 MStV)
+## Responsable del contenido
+
+Conforme al § 18 del Tratado Estatal sobre los Medios de Comunicación (MStV):
 
 Prof. Dr. Klaus Quibeldey-Cirkel  
-Juri-Gagarin-Ring 152, 99084 Erfurt
+(Dirección arriba indicada)
 
-## Responsabilidad por los contenidos
+## Alojamiento
 
-Como prestador de servicios, somos responsables de nuestros **propios** contenidos en **arsnova.eu** conforme a las leyes generales, de acuerdo con el § 7 apdo. 1 TMG. Segun los §§ 8 a 10 TMG, no estamos obligados a supervisar informacion ajena transmitida o almacenada ni a investigar circunstancias que indiquen una actividad ilegal. Las obligaciones de eliminar o bloquear el uso de informacion conforme a la legislacion general no se ven afectadas. La responsabilidad en este sentido solo es posible desde el momento en que tengamos conocimiento de una infraccion concreta. En cuanto tengamos conocimiento de infracciones, eliminaremos de inmediato los contenidos afectados.
+**arsnova.eu** está alojado en la Unión Europea por:
+Hetzner Online GmbH, Industriestr. 25, 91710 Gunzenhausen, Alemania.
 
-## Responsabilidad por enlaces
+## Responsabilidad por contenidos y enlaces
 
-**arsnova.eu** contiene enlaces a sitios web externos de terceros sobre cuyos contenidos no tenemos influencia. El proveedor u operador de las paginas enlazadas es siempre responsable de sus contenidos. Las paginas enlazadas fueron revisadas en el momento del enlace; en ese momento no eran reconocibles contenidos ilegales. Un control permanente del contenido de las paginas enlazadas sin indicios concretos de una infraccion legal no es razonable. Si tenemos conocimiento de infracciones, eliminaremos de inmediato dichos enlaces.
+Como prestador de servicios, somos responsables de nuestros propios contenidos en estas páginas según las leyes generales. Sin embargo, no estamos obligados a supervisar la información de terceros transmitida o almacenada.
+
+Nuestra oferta contiene enlaces a sitios web externos de terceros sobre cuyos contenidos no tenemos influencia. El proveedor u operador respectivo de las páginas enlazadas es siempre responsable de su contenido. Eliminaremos dichos enlaces de inmediato en cuanto tengamos conocimiento de cualquier infracción legal.
 
 ## Derechos de autor
 
-Los contenidos y obras publicados en **arsnova.eu** por los operadores estan sujetos al derecho de autor aleman. La reproduccion, edicion, distribucion y cualquier tipo de utilizacion mas alla de los limites legales del derecho de autor requieren el consentimiento por escrito del titular de derechos correspondiente. Las descargas y copias solo estan permitidas para uso privado y no comercial. En la medida en que los contenidos no hayan sido creados por el operador, se respetan los derechos de autor de terceros. Los contenidos de terceros se identifican como tales.
-
-## Alojamiento (operacion tecnica)
-
-**arsnova.eu** se aloja en la Union Europea por Hetzner Online GmbH, Alemania. Los detalles figuran en la politica de privacidad.
+Los contenidos y obras creados por los operadores de este sitio están sujetos a la ley de derechos de autor. La reproducción, edición, distribución y cualquier tipo de uso fuera de los límites de los derechos de autor requieren el consentimiento por escrito del respectivo autor o creador. Los contenidos de terceros se identifican como tales.

@@ -1,6 +1,6 @@
-# Politica de privacidad
+# Política de privacidad
 
-Informacion conforme a los arts. 13 y 14 del RGPD
+Información proporcionada conforme a los artículos 13 y 14 del Reglamento General de Protección de Datos (RGPD)
 
 ## 1. Responsable del tratamiento
 
@@ -9,60 +9,60 @@ Juri-Gagarin-Ring 152
 99084 Erfurt  
 Alemania
 
-Correo electronico: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
+Correo electrónico: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
-## 2. Ambito de aplicacion
+## 2. Ámbito de aplicación
 
-La siguiente informacion sobre privacidad se aplica a **https://arsnova.eu** (sitio informativo y de marketing) y, cuando la oferta remite a ello, al uso de la aplicacion arsnova.eu (quiz en directo y votacion). Si la aplicacion se aloja por cuenta propia, el responsable del tratamiento puede ser otro (su institucion); en ese caso se aplican los avisos de privacidad proporcionados alli.
+Esta política de privacidad se aplica a **https://arsnova.eu** (sitio informativo y de presentación) y, cuando corresponda, al uso de la aplicación arsnova.eu (quizzes y sondeos en directo). Si la aplicación es autoalojada por su organización o institución, estos actúan como responsables del tratamiento y se aplicará su propia política de privacidad.
 
-## 3. Datos al visitar arsnova.eu
+## 3. Datos recopilados al visitar arsnova.eu
 
-Al abrir arsnova.eu, el servidor que lo opera o el proveedor de alojamiento suele procesar automaticamente datos de acceso (por ejemplo, direccion IP, fecha/hora, pagina consultada, volumen de datos transferidos, tipo de navegador) en registros del servidor. La base juridica es el art. 6, apdo. 1, letra f RGPD (interes legitimo en el funcionamiento y la seguridad). El periodo de conservacion depende de la politica del proveedor de alojamiento; por lo general, los registros se eliminan o anonimizan tras un breve periodo.
+Al visitar arsnova.eu, el servidor y el proveedor de alojamiento procesan automáticamente datos de acceso estándar (p. ej., su dirección IP, fecha y hora de la solicitud, páginas visitadas, volumen de datos transferidos y tipo de navegador) en los registros del servidor. La base legal es el art. 6, apdo. 1, letra f del RGPD (nuestro interés legítimo en garantizar un funcionamiento seguro y estable de la plataforma). El período de conservación lo determina nuestro proveedor de alojamiento; por lo general, los registros se eliminan o anonimizan poco después de su visita.
 
-**No utilizamos cookies** (incluidas cookies de terceros) ni ejecutamos herramientas de analitica (por ejemplo, Google Analytics). El texto utiliza **fuentes del sistema**; los **Material Icons** se sirven desde nuestra infraestructura (**sin** Google Fonts ni conexion a Google con ese fin). Salvo indicacion expresa en contrario, no incorporamos contenidos de terceros (por ejemplo, mapas o videos). Los enlaces a terceros se describen en la seccion 4.
+**No utilizamos cookies** (incluidas las de terceros) ni herramientas de análisis como Google Analytics. El texto utiliza las **fuentes del sistema** de su dispositivo, y los **Material Icons** están alojados directamente en nuestra infraestructura (**no** se establecen conexiones con los servidores de Google). A menos que se indique explícitamente lo contrario, no integramos contenido de terceros (como mapas o vídeos). Los enlaces a proveedores externos se describen en la sección 4.
 
-**Aplicacion web progresiva (PWA):** si instala arsnova.eu o utiliza funciones sin conexion, su navegador puede almacenar en cache contenidos seleccionados de forma local. Eso acelera la carga y puede mostrar contenidos sin conexion de red. **No se establecen cookies** con fines publicitarios o de seguimiento.
+**Aplicación Web Progresiva (PWA):** Si instala arsnova.eu en su dispositivo o utiliza sus funciones sin conexión, su navegador puede almacenar en caché ciertos contenidos localmente. Esto mejora los tiempos de carga y permite el acceso sin conexión. **No se establecen cookies** con fines publicitarios o de seguimiento.
 
 ## 4. Enlaces a terceros
 
-En arsnova.eu encontrara enlaces a servicios externos (por ejemplo, GitHub). Al seguir un enlace, accede al sitio del proveedor correspondiente. Alli se aplican sus politicas de privacidad y condiciones de uso. No tenemos influencia sobre su tratamiento de datos.
+En arsnova.eu encontrará enlaces a servicios externos (p. ej., GitHub). Al hacer clic en estos enlaces, accederá al sitio web del proveedor correspondiente, donde se aplicarán sus propias políticas de privacidad y condiciones de uso. No tenemos influencia sobre sus actividades de procesamiento de datos.
 
 ## 5. Alojamiento
 
-arsnova.eu esta alojado en Alemania por Hetzner Online GmbH. Hetzner se somete anualmente a auditorias de TÜV Rheinland para garantizar el cumplimiento de los estandares de seguridad segun el art. 32 del RGPD.
+arsnova.eu está alojado en Alemania por Hetzner Online GmbH. Hetzner es auditada anualmente por TÜV Rheinland para garantizar el cumplimiento de los estrictos estándares de seguridad según el art. 32 del RGPD.
 
-El sitio web y la aplicacion en **https://arsnova.eu** se operan en Hetzner. Si el software se **autoaloja o lo opera un tercero** (por ejemplo, su institucion), pueden tratarse datos de acceso (por ejemplo, direccion IP, hora de acceso) en los servidores del proveedor correspondiente. Si el alojamiento se realiza en terceros paises (por ejemplo, EE. UU.), puede producirse una transferencia de datos; en tal caso, se acuerdan garantias adecuadas (por ejemplo, clausulas contractuales tipo conforme al art. 46 RGPD). Puede facilitarse una **pagina de aterrizaje** de proyecto **separada** (demo/marketing) a traves de **GitHub Pages** bajo otra URL distinta; no el sitio principal arsnova.eu; informacion: [GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement). El proveedor concreto y la ubicacion de almacenamiento dependen de cada oferta.
+El sitio web y la aplicación en **https://arsnova.eu** funcionan en los servidores de Hetzner. Si el software es alojado **por usted o un tercero** (p. ej., su institución), los datos de acceso (como la dirección IP) pueden registrarse en los servidores del proveedor correspondiente. Si la aplicación se aloja en un país fuera de la UE (p. ej., en EE. UU.), pueden producirse transferencias de datos, sujetas a garantías adecuadas (como las cláusulas contractuales tipo según el art. 46 del RGPD). Ocasionalmente, se puede alojar una página de presentación separada (para demos y marketing) a través de **GitHub Pages** bajo un dominio diferente, sin vinculación con el sitio principal arsnova.eu; para más detalles, consulte la [Declaración de Privacidad de GitHub](https://docs.github.com/es/site-policy/privacy-policies/github-privacy-statement). El proveedor específico y la ubicación de almacenamiento dependen de la configuración respectiva.
 
 ## 6. Sus derechos
 
-Frente al responsable del tratamiento, usted tiene, entre otros, los siguientes derechos:
+Con respecto a sus datos personales, usted tiene los siguientes derechos frente al responsable del tratamiento:
 
-- **Acceso** (art. 15 RGPD) a sus datos personales tratados
-- **Rectificacion** (art. 16 RGPD) de datos inexactos
-- **Supresion** (art. 17 RGPD) o **limitacion del tratamiento** (art. 18 RGPD)
-- **Oposicion** (art. 21 RGPD) al tratamiento, cuando se base en el art. 6, apdo. 1, letra f RGPD
-- **Portabilidad de los datos** (art. 20 RGPD), cuando proceda
-- **Retirada del consentimiento** otorgado (art. 7, apdo. 3 RGPD), con efectos futuros
-- **Reclamacion** ante una autoridad de control (art. 77 RGPD)
+- **Acceso** (art. 15 RGPD) a sus datos personales procesados.
+- **Rectificación** (art. 16 RGPD) de datos inexactos.
+- **Supresión** (art. 17 RGPD) o **limitación del procesamiento** (art. 18 RGPD).
+- **Oposición** (art. 21 RGPD) al procesamiento basado en nuestro interés legítimo (art. 6, apdo. 1, letra f del RGPD).
+- **Portabilidad de los datos** (art. 20 RGPD), cuando proceda.
+- **Retirada del consentimiento** otorgado (art. 7, apdo. 3 RGPD), con efecto para el futuro.
+- **Reclamación** ante una autoridad de control de protección de datos (art. 77 RGPD).
 
-Para consultas y para ejercer sus derechos, pongase en contacto con: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org).
+Para consultas o para ejercer sus derechos, póngase en contacto con: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org).
 
-## 7. Obligacion de facilitar datos
+## 7. Obligación de facilitar datos
 
-Para una visita meramente informativa sin registro, no esta obligado por ley ni por contrato a facilitar datos personales. Puede usar arsnova.eu sin esos datos; podemos mostrar y entregar tecnicamente los contenidos. Para contactarnos por correo electronico necesitamos una direccion de correo suya.
+Para una visita puramente informativa sin crear una cuenta, no está legal ni contractualmente obligado a proporcionar ningún dato personal. Puede utilizar arsnova.eu libremente sin enviar información personal y aun así podremos ofrecerle el contenido técnicamente. Si se comunica con nosotros por correo electrónico, lógicamente necesitamos su dirección de correo electrónico para responderle.
 
-## 8. Nota sobre la aplicacion arsnova.eu
+## 8. Uso de la aplicación arsnova.eu
 
-Si usa arsnova.eu para quiz en directo, Q&A o votaciones, la experiencia esta pensada con enfoque de privacidad:
+Cuando utiliza arsnova.eu para quizzes en directo, Q&A o Sondeos Rápidos (Pulse Checks), la plataforma está diseñada para ser altamente respetuosa con la privacidad:
 
-- **Local-first:** como creador, guarda el contenido del quiz (preguntas, respuestas) localmente en su navegador (IndexedDB/Yjs). No hay almacenamiento permanente en servidor del contenido del quiz; al iniciar una sesion en directo, los datos se transfieren al servidor solo de forma temporal durante la sesion.
-- **Almacenamiento en el navegador:** Local Storage e IndexedDB pueden contener, entre otros, datos del quiz, ajustes, ultimos codigos de sesion utilizados y, para votaciones de feedback, un identificador local para un voto unico (sin cuenta de usuario). **No se establecen cookies** para seguimiento ni analitica.
-- **Operacion de sesiones en directo (cuando la operacion la realiza el responsable indicado en la seccion 1):** durante una sesion se tratan, entre otros, codigo de sesion, apodos seudonimos (o en modo anonimo solo identificadores automaticos), votaciones y puntos. La base juridica es el art. 6, apdo. 1, letra f RGPD (interes legitimo en operar la aplicacion en tiempo real). No se almacenan datos personales sin finalidad.
-- **Depuracion:** los datos de sesion (votaciones, listas de participantes) se eliminan automaticamente al finalizar la sesion o, como maximo, tras 24 horas, salvo obligacion legal de conservacion o retencion administrativa (legal hold). Las estadisticas agregadas (por ejemplo, numero de participantes) no permiten identificar a personas concretas.
-- **Modo anonimo:** puede usar un modo opcional en el que no se recogen apodos (solo identificadores automaticos), para una participacion especialmente minimizada en datos.
+- **Arquitectura Local-First:** Como anfitrión, el contenido de su quiz (preguntas y respuestas) se almacena localmente en su navegador (a través de IndexedDB y Yjs). No almacenamos permanentemente el contenido del quiz en nuestros servidores. Cuando inicia una sesión en vivo, los datos se transmiten al servidor solo temporalmente durante la sesión.
+- **Almacenamiento en el navegador:** Se utilizan Local Storage e IndexedDB para conservar los datos de su quiz, configuración, códigos de sesión utilizados recientemente y, en el caso de encuestas de comentarios, un identificador local para evitar votos duplicados. **No se utilizan cookies** con fines de seguimiento o análisis.
+- **Sesiones en vivo alojadas por nosotros:** Durante una sesión alojada por el responsable indicado en la sección 1, procesamos el código de sesión, los seudónimos (o únicamente identificadores generados automáticamente en modo anónimo), los votos y las puntuaciones. La base legal para esto es el art. 6, apdo. 1, letra f del RGPD (interés legítimo en operar una aplicación en tiempo real). No se almacena ningún dato personal más allá de su propósito estrictamente operativo.
+- **Limpieza de datos:** Los datos de la sesión (como votos y listas de participantes) se purgan automáticamente después de que finaliza la sesión o, a más tardar, dentro de las 24 horas, excepto donde se apliquen períodos de retención legales o se haya iniciado una **Retención Legal** administrativa. Las estadísticas agregadas (p. ej., recuentos totales de participantes) no contienen información de identificación personal.
+- **Modo anónimo:** Tiene la opción de habilitar un modo en el que no se recopilan apodos en absoluto (solo identificadores automáticos de los participantes), manteniendo la huella de datos estrictamente al mínimo.
 
-Si la aplicacion se aloja por cuenta propia, el responsable del tratamiento puede ser otro (su institucion). En ese caso se aplican los avisos de privacidad proporcionados alli.
+Si la aplicación es autoalojada, el responsable del tratamiento puede ser diferente (p. ej., su institución). En ese caso, se aplicará su propia política de privacidad.
 
 ## 9. Cambios
 
-Actualizamos la informacion sobre privacidad cuando cambia el marco legal o nuestro tratamiento de datos. La version vigente esta siempre disponible aqui en arsnova.eu.
+Actualizaremos esta política de privacidad siempre que cambie el marco legal o nuestras prácticas de procesamiento de datos. Siempre puede encontrar la versión más reciente aquí en arsnova.eu.

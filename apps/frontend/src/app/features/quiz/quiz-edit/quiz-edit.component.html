@@ -118,15 +118,21 @@
             <fieldset class="quiz-edit-form__fieldset">
               <legend class="quiz-edit-form__legend" i18n>Spiel &amp; Auswertung</legend>
               <mat-checkbox formControlName="showLeaderboard" i18n>Rangliste anzeigen</mat-checkbox>
-              <mat-checkbox formControlName="enableRewardEffects" i18n>
-                Belohnungen zeigen
-              </mat-checkbox>
-              <mat-checkbox formControlName="enableMotivationMessages" i18n>
-                Anfeuerung einblenden
-              </mat-checkbox>
-              <mat-checkbox formControlName="enableEmojiReactions" i18n>
-                Emojis erlauben
-              </mat-checkbox>
+              <mat-checkbox
+                formControlName="enableRewardEffects"
+                i18n="@@quizSettings.showRewardEffects"
+                >Belohnungen zeigen</mat-checkbox
+              >
+              <mat-checkbox
+                formControlName="enableMotivationMessages"
+                i18n="@@quizSettings.showEncouragement"
+                >Anfeuerung einblenden</mat-checkbox
+              >
+              <mat-checkbox
+                formControlName="enableEmojiReactions"
+                i18n="@@quizSettings.allowEmojiReactions"
+                >Emojis erlauben</mat-checkbox
+              >
             </fieldset>
 
             <fieldset class="quiz-edit-form__fieldset">
