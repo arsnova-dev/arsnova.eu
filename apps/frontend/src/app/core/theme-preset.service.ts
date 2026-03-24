@@ -63,7 +63,8 @@ export class ThemePresetService {
     }
     if (isPlatformBrowser(this.platformId))
       globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
-    if (!options?.silent) {
+    // Kein presetChanged$ bei gleichem Wert — sonst Snackbar/Blur beim Start (z. B. saveAndClose, doppelte Aufrufe).
+    if (!options?.silent && !unchanged) {
       this.presetChangedSource.next();
     }
   }

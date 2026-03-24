@@ -77,17 +77,23 @@
       html.light body {
         background: #faf8ff;
       }
-      /* LCP-Shell: bei Preset spielerisch näher am Verlauf, sonst wirkt die Toolbar-Kachel seriös. */
-      html.preset-playful .app-shell {
-        background: linear-gradient(
-          145deg,
-          light-dark(#faf8ff, #1c1b1f) 0%,
-          light-dark(#ece6f0, #2b2640) 45%,
-          light-dark(#e8def8, #362b4a) 100%
-        );
+      /* LCP-Shell: nur hier stylen (kein inline-background), sonst Konflikt/Flackern; gleiche Fläche wie Toolbar-Surface. */
+      .app-shell {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        margin-bottom: 1.25rem;
+        border-radius: 28px;
+        padding: 1rem;
+        background: light-dark(#efedf0, #2b2930);
         box-shadow:
-          0 4px 24px -6px light-dark(rgba(103, 80, 164, 0.28), rgba(103, 80, 164, 0.35)),
-          0 2px 1px -1px rgba(0, 0, 0, 0.14);
+          0 2px 1px -1px rgba(0, 0, 0, 0.2),
+          0 1px 1px 0 rgba(0, 0, 0, 0.14);
+      }
+      .app-shell__title {
+        margin: 0;
+        font: 400 1.75rem/2.25rem system-ui;
+        color: light-dark(#1a1b1f, #e5e1e6);
       }
     </style>
   </head>
@@ -95,37 +101,16 @@
     <!-- Noscript-Texte: scripts/patch-prerender-noscript.mjs (nach Build, je Locale) -->
     <noscript><p>Bitte aktiviere JavaScript, um arsnova.eu zu nutzen.</p></noscript>
     <app-root>
-      <!-- LCP-Shell: sofort sichtbar, reduziert Render-Delay bis Angular bootstrapped (Trace: LCP breakdown). -->
-      <div
-        class="app-shell"
-        aria-hidden="true"
-        style="
-          position: sticky;
-          top: 0;
-          z-index: 10;
-          margin-bottom: 1.25rem;
-          border-radius: 28px;
-          background: light-dark(#efedf0, #2b2930);
-          padding: 1rem;
-          box-shadow:
-            0 2px 1px -1px rgba(0, 0, 0, 0.2),
-            0 1px 1px 0 rgba(0, 0, 0, 0.14);
-        "
-      >
-        <h1
-          style="
-            margin: 0;
-            font: 400 1.75rem/2.25rem system-ui;
-            color: light-dark(#1a1b1f, #e5e1e6);
-          "
-        >
-          arsnova.eu
-        </h1>
+      <!-- LCP-Shell: Styles nur in <style>, kein inline-background (vermeidet Repaint-Flackern). -->
+      <div class="app-shell" aria-hidden="true">
+        <h1 class="app-shell__title">arsnova.eu</h1>
       </div>
     </app-root>
     <script>
-      if (location.pathname.startsWith('/feedback/'))
-        document.querySelector('.app-shell').style.display = 'none';
+      if (location.pathname.startsWith('/feedback/')) {
+        var sh = document.querySelector('.app-shell');
+        if (sh) sh.style.display = 'none';
+      }
     </script>
   </body>
 </html>
