@@ -1,7 +1,7 @@
 {
   "name": "arsnova.eu – Live-Quiz & Abstimmung",
   "short_name": "arsnova.eu",
-  "description": "Kostenlose, DSGVO-konforme Live-Quiz- und Abstimmungsplattform für Hochschulen.",
+  "description": "Kostenlose, DSGVO-konforme Live-Quiz- und Abstimmungsplattform für Hochschulen, Schulen, Events und Business.",
   "id": "/",
   "start_url": "/?homescreen=1",
   "scope": "/",
