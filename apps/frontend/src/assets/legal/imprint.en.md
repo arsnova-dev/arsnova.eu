@@ -13,7 +13,7 @@ Germany
 
 Email: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
-## Responsible for Content
+## Responsible for content
 
 Pursuant to § 18 of the German Interstate Media Treaty (MStV):
 

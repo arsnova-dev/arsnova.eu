@@ -2,7 +2,7 @@
 
 Information pursuant to Articles 13 and 14 of the General Data Protection Regulation (GDPR)
 
-## 1. Data Controller
+## 1. Data controller
 
 Prof. Dr. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
@@ -13,17 +13,17 @@ Email: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
 ## 2. Scope
 
-This privacy policy applies to **https://arsnova.eu** (our informational and marketing website) and—where indicated—your use of the arsnova.eu application for live quizzes and voting. If the application is self-hosted by your organization or institution, they act as the data controller, and their respective privacy policy applies.
+This privacy policy applies to **https://arsnova.eu** (our informational and marketing website) and—where indicated—your use of the arsnova.eu application for live quizzes and voting. If the application is self-hosted by your organization or institution, they act as the data controller, and their own privacy policy applies.
 
-## 3. Data Collected When Visiting arsnova.eu
+## 3. Data collected when visiting arsnova.eu
 
 When you visit arsnova.eu, the server and hosting provider automatically process standard access data (e.g., your IP address, date and time of the request, pages visited, amount of data transferred, and your browser type) in server logs. The legal basis for this is Art. 6(1)(f) GDPR (our legitimate interest in operating a secure and stable platform). The retention period is determined by our hosting provider; typically, logs are deleted or anonymized shortly after your visit.
 
-We do **not use any cookies** (including third-party cookies) and do not utilize analytics tools such as Google Analytics. We rely on your device's **system fonts** for text rendering, and **Material Icons** are hosted directly on our servers (**no** connections are made to Google servers). Unless explicitly labeled otherwise, we do not embed third-party content (such as maps or videos). Links to third-party providers are outlined in Section 4.
+We do **not use cookies** (including third-party cookies) or analytics tools like Google Analytics. We rely on your device's **system fonts** for text rendering, and **Material Icons** are hosted directly on our servers (**no** connections are made to Google servers). Unless explicitly labeled otherwise, we do not embed third-party content (such as maps or videos). Links to third-party providers are outlined in Section 4.
 
 **Progressive Web App (PWA):** If you install arsnova.eu on your device or use its offline features, your browser may cache specific content locally. This improves loading times and enables offline access. **No cookies** are set for advertising or tracking purposes.
 
-## 4. Links to Third-Party Providers
+## 4. Links to third-party providers
 
 You will find links to external services on arsnova.eu (e.g., GitHub). Clicking these links takes you to the respective provider's website, where their own privacy policies and terms of service apply. We have no control over their data processing activities.
 
@@ -33,9 +33,9 @@ arsnova.eu is hosted by Hetzner Online GmbH in Germany. Hetzner is audited annua
 
 The website and application at **https://arsnova.eu** run on Hetzner servers. If the software is hosted **by you or a third party** (e.g., your institution), access data (like IP addresses) may be logged on their respective servers. If the application is hosted in a non-EU country (e.g., the US), data transfers may occur, subject to appropriate safeguards (such as Standard Contractual Clauses per Art. 46 GDPR). A **separate** project landing page (for demos and marketing) may occasionally be hosted via **GitHub Pages** under a different domain—not the main arsnova.eu site; for details, please see the [GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement). The specific provider and storage location depend on the respective setup.
 
-## 6. Your Rights
+## 6. Your rights
 
-You have the following rights regarding the data controller:
+You have the following rights regarding your personal data:
 
 - **Access** (Art. 15 GDPR) to your processed personal data.
 - **Rectification** (Art. 16 GDPR) of inaccurate data.
@@ -47,11 +47,11 @@ You have the following rights regarding the data controller:
 
 For inquiries or to exercise your rights, please contact: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org).
 
-## 7. Obligation to Provide Data
+## 7. Obligation to provide data
 
 For purely informational visits without creating an account, you are not legally or contractually required to provide any personal data. You can freely use arsnova.eu without submitting personal information, and we will still be able to deliver the content technically. If you reach out to us via email, we obviously require your email address to respond.
 
-## 8. Using the arsnova.eu Application
+## 8. Using the arsnova.eu application
 
 When you use arsnova.eu for live quizzes, Q&As, or Pulse Checks, the platform is designed to be highly privacy-friendly:
 

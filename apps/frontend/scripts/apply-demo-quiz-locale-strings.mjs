@@ -13,12 +13,12 @@ const base = JSON.parse(fs.readFileSync(basePath, 'utf8'));
 
 const LOCALES = {
   en: {
-    name: 'All question formats – upper-secondary demo quiz',
+    name: 'All question formats – high school demo quiz',
     description:
-      '**Purpose:** This quiz shows that arsnova.eu supports **two voting rounds**—first vote, then discuss, then vote again. That is central to modern teaching approaches like Peer Instruction.\n\n**What is Peer Instruction?** An evidence-based teaching method (Eric Mazur, Harvard): the host poses a conceptual question with plausible distractors. Everyone answers alone first; neighbors then compare reasoning and vote again—misconceptions surface and get clarified together.\n\n**What is Markdown?** Formatting with your keyboard, no mouse needed. You type e.g. `**bold**` → **bold**, `*italic*` → *italic*, `` `code` `` → `code`. Headings with `#`, lists with `-` or `*`. In this quiz you will see Markdown in questions and answers.\n\n**What is KaTeX?** Mathematical notation like in textbooks. Wrap formulas in dollar signs: x^2 → $x^2$, one half in braces → $\\frac{1}{2}$, f\'(x) → $f\'(x)$. Perfect for math, physics, and chemistry—no installation required, it just works in arsnova.eu.\n\nThis quiz uses every arsnova.eu question format. Items are grouped by subject.\n\n| # | Subject | Format | Topic | Misconceptions / note |\n|---|---------|--------|-------|------------------------|\n| 1 | Math | Single choice | Sign change of $f\'$ and extrema | Minimum vs maximum; inflection ($f\'\'$ confused); root ($f=0$ vs $f\'=0$) |\n| 2 | Math | Single choice | Stochastic independence | Gambler\'s fallacy; hot-hand |\n| 3 | Math | Single choice | Definite integral ≠ geometric area | Positive area; sum vs. net balance; mean value |\n| 4 | Math | Rating | Vector geometry (incidence) | Self-assessment |\n| 5 | Physics | Single choice | Newton 3 – action = reaction | Lighter vehicle feels more force; heavier exerts more; forces "cancel out" |\n| 6 | Physics | Free text | Satellite in orbit | Reasoning |\n| 7 | Biology | Single choice | Selection vs Lamarckism | Directed mutation; gradual adaptation; habituation |\n| 8 | Biology | Multiple choice | Dihybrid cross (Mendel) | All F2 are heterozygous; genes are linked |\n| 9 | Chemistry | Multiple choice | Le Chatelier (equilibrium) | A catalyst shifts the equilibrium |\n| 10 | — | Survey | Final-exam prep | Study strategies |\n| 11 | — | Free text | Least certain question | Reflection |\n| 12 | — | Rating | Rate this demo quiz | Overall rating |',
+      '**Purpose:** This quiz shows that arsnova.eu supports **two voting rounds**—first vote, then discuss, then vote again. That is central to modern teaching approaches like Peer Instruction.\n\n**What is Peer Instruction?** An evidence-based teaching method (Eric Mazur, Harvard): the host poses a conceptual question with plausible distractors. Everyone answers alone first; neighbors then compare reasoning and vote again—misconceptions surface and get clarified together.\n\n**What is Markdown?** Formatting with your keyboard, no mouse needed. You type e.g. `**bold**` → **bold**, `*italic*` → *italic*, `` `code` `` → `code`. Headings with `#`, lists with `-` or `*`. In this quiz you will see Markdown in questions and answers.\n\n**What is KaTeX?** Mathematical notation like in textbooks. Wrap formulas in dollar signs: x^2 → $x^2$, one half in braces → $\\frac{1}{2}$, f\'(x) → $f\'(x)$. Perfect for math, physics, and chemistry—no installation required, it just works in arsnova.eu.\n\nThis quiz uses every arsnova.eu question format. Items are grouped by subject.\n\n| # | Subject | Format | Topic | Misconceptions / note |\n|---|---------|--------|-------|------------------------|\n| 1 | Math | Single choice | Sign change of $f\'$ and extrema | Minimum vs maximum; inflection ($f\'\'$ confused); zero ($f=0$ vs $f\'=0$) |\n| 2 | Math | Single choice | Stochastic independence | Gambler\'s fallacy; hot-hand |\n| 3 | Math | Single choice | Definite integral ≠ geometric area | Positive area; sum vs. net balance; mean value |\n| 4 | Math | Rating | Vector geometry (intersections) | Self-assessment |\n| 5 | Physics | Single choice | Newton 3 – action = reaction | Lighter vehicle feels more force; heavier exerts more; forces "cancel out" |\n| 6 | Physics | Free text | Satellite in orbit | Reasoning |\n| 7 | Biology | Single choice | Selection vs Lamarckism | Directed mutation; gradual adaptation; habituation |\n| 8 | Biology | Multiple choice | Dihybrid cross (Mendel) | All F2 are heterozygous; genes are linked |\n| 9 | Chemistry | Multiple choice | Le Chatelier (equilibrium) | A catalyst shifts the equilibrium |\n| 10 | — | Survey | Final exam prep | Study strategies |\n| 11 | — | Free text | Least certain question | Reflection |\n| 12 | — | Rating | Rate this demo quiz | Overall rating |',
     questions: [
       {
-        text: '### Math: Analysis – Function and derivative\n\nThe derivative $f\'(x)$ **changes sign from positive to negative** at $x_0$.\n\nWhat holds for $f$ at that point?',
+        text: '### Math: Analysis – Function and derivative\n\nThe derivative $f\'(x)$ **changes sign from positive to negative** at $x_0$.\n\nWhat is true for $f$ at that point?',
         answers: [
           { text: 'The function $f$ has a local maximum there.', isCorrect: true },
           { text: 'The function $f$ has a local minimum there.', isCorrect: false },
@@ -48,7 +48,7 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Math: Analysis – Definite integral\n\nThe function $f(x) = x^2 - 4$ has roots at $x = -2$ and $x = 2$\u2060. Between the roots the graph lies **entirely below** the $x$-axis.\n\nWhat does $\\int_{-2}^{2} f(x)\\,\\mathrm{d}x$ compute?',
+        text: '### Math: Analysis – Definite integral\n\nThe function $f(x) = x^2 - 4$ has zeros at $x = -2$ and $x = 2$\u2060. Between the zeros the graph lies **entirely below** the $x$-axis.\n\nWhat does $\\int_{-2}^{2} f(x)\\,\\mathrm{d}x$ compute?',
         answers: [
           {
             text: 'The signed area between the graph and the $x$-axis.',
@@ -69,7 +69,7 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Math: Self-assessment – Vector geometry\n\nIn analytic geometry you describe lines and planes with vector equations, e.g.:\n\n$$\\vec{r} = \\vec{a} + t \\cdot \\vec{u} + s \\cdot \\vec{v}$$\n\nHow confident do you feel on tasks about **incidence** of lines and planes?',
+        text: '### Math: Self-assessment – Vector geometry\n\nIn analytic geometry you describe lines and planes with vector equations, e.g.:\n\n$$\\vec{r} = \\vec{a} + t \\cdot \\vec{u} + s \\cdot \\vec{v}$$\n\nHow confident do you feel about solving for **intersections** of lines and planes?',
         ratingLabelMin: 'Very unsure',
         ratingLabelMax: 'I can explain it',
       },
@@ -95,7 +95,7 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Physics: Satellite in orbit\n\nA satellite orbits Earth on a stable circular path without losing altitude.\n\nExplain in your own words why the satellite does not crash into Earth despite gravity.\n\n> Hint: Think about how speed and gravity interact.',
+        text: '### Physics: Satellite in orbit\n\nA satellite orbits Earth on a stable circular path without losing altitude.\n\nExplain in your own words why the satellite doesn\'t crash into Earth despite gravity.\n\n> Hint: Think about how speed and gravity interact.',
       },
       {
         text: '### Biology: Antibiotic resistance\n\nHospitals increasingly see antibiotic-resistant bacterial strains.\n\nWhich explanation correctly describes how resistance arises?',
@@ -149,7 +149,7 @@ const LOCALES = {
         ],
       },
       {
-        text: '### Survey: Final-exam preparation\n\nWhich **study strategy** do you use most often when preparing for final exams?',
+        text: '### Survey: Final exam preparation\n\nWhich **study strategy** do you use most often when preparing for final exams?',
         answers: [
           { text: 'Doing practice exams', isCorrect: false },
           { text: 'Making study guides', isCorrect: false },

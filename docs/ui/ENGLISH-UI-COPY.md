@@ -88,7 +88,7 @@ This document generalises the copy-editing rules applied to the English XLF targ
 - [ ] Button quotes match **actual** EN labels
 - [ ] Presets use **Professional** and **Gamified**; Blitzlicht is **Pulse Check**
 - [ ] Oxford comma in triple lists; **Q&A** spelling consistent
-- [ ] No `-` as em dash; **`&apos;`** where we standardise apostrophes
+- [ ] No `-` as em dash; **`&apos;`** where we standardize apostrophes
 - [ ] Errors short, with contractions where appropriate
 - [ ] XML/ICU valid; frontend build passes
 
