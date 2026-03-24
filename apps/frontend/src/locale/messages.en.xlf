@@ -196,7 +196,7 @@
       </trans-unit>
       <trans-unit id="seo.descQuizList" datatype="html">
         <source>Quiz-Sammlung anlegen, bearbeiten und für Live-Sessions nutzen – lokal oder synchronisiert zwischen Geräten.</source>
-        <target>Create, edit and use quiz collections for live sessions – locally or synchronized between devices.</target>
+        <target>Create, edit, and use quiz libraries for live sessions—locally or synchronized between devices.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">74</context>
@@ -1529,7 +1529,7 @@
       </trans-unit>
       <trans-unit id="help.quickstart1" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Quiz anlegen:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> „Deine Quiz-Sammlung&quot; öffnen, neues Quiz erstellen, Fragen und Einstellungen festlegen.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Create quiz:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Open "Your quiz collection", create a new quiz, define questions and settings.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Create quiz:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Open &quot;Your quiz library&quot;, create a new quiz, define questions and settings.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">62,64</context>
@@ -1537,7 +1537,7 @@
       </trans-unit>
       <trans-unit id="help.quickstart2" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Veranstaltung starten:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> In der Quiz-Sammlung „Veranstaltung starten&quot; wählen – ein 6-stelliger Code entsteht. Code oder QR-Code mit deiner Gruppe teilen.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Start a session:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> In your quiz collection, choose “Start session”—a 6-character code is created. Share the code or QR with your group.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Start a session:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> In your quiz library, choose “Start session”—a 6-character code is created. Share the code or QR with your group.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">66,68</context>
@@ -1761,7 +1761,7 @@
       </trans-unit>
       <trans-unit id="help.collectionTitle" datatype="html">
         <source>Deine Quiz-Sammlung</source>
-        <target>Your quiz collection</target>
+        <target>Your quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">188,189</context>
@@ -1801,7 +1801,7 @@
       </trans-unit>
       <trans-unit id="help.collectionSync" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sync:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Mit Sync-ID oder Sync-Link deine Quiz-Sammlung mit Kolleg:innen teilen oder auf anderen Geräten weiterarbeiten.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sync:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Share your quiz collection with colleagues or continue working on other devices using Sync ID or Sync Link.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sync:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Share your quiz library with colleagues or continue working on other devices using Sync ID or Sync Link.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">205,207</context>
@@ -1809,7 +1809,7 @@
       </trans-unit>
       <trans-unit id="help.demoQuizHint" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Demo-Quiz:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Ein vorinstalliertes Quiz zeigt alle Frageformate mit Beispielen inkl. KaTeX-Formeln und Markdown. In der Quiz-Sammlung in der Vorschau öffnen.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Demo quiz:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> A preinstalled quiz shows all question types with examples, including KaTeX formulas and Markdown. Open it from your quiz collection in preview.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Demo quiz:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> A preinstalled quiz shows all question types with examples, including KaTeX formulas and Markdown. Open it from your quiz library in preview.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">209,211</context>
@@ -2025,7 +2025,7 @@
       </trans-unit>
       <trans-unit id="homeStage.rotate1" datatype="html">
         <source> Code eingeben – mit dabei sein.</source>
-        <target>Enter the code – be there.</target>
+        <target>Enter the code—you&apos;re in.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">41,43</context>
@@ -2033,7 +2033,7 @@
       </trans-unit>
       <trans-unit id="homeStage.rotate2" datatype="html">
         <source>Blitzlicht in Sekunden.</source>
-        <target>Pulse Check in seconds.</target>
+        <target>Pulse Checks in seconds.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">43,44</context>
@@ -2041,7 +2041,7 @@
       </trans-unit>
       <trans-unit id="homeStage.rotate3" datatype="html">
         <source> Deine Sammlung, dein Tempo.</source>
-        <target>Your collection, your pace.</target>
+        <target>Your library, your pace.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">45,47</context>
@@ -2049,7 +2049,7 @@
       </trans-unit>
       <trans-unit id="homeStage.rotate4" datatype="html">
         <source> Mitmachen, messen, veranstalten – du entscheidest.</source>
-        <target>Join in, pulse, host – you decide.</target>
+        <target>Join, assess, host—you decide.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">48,50</context>
@@ -2169,7 +2169,7 @@
       </trans-unit>
       <trans-unit id="homeHostCard.libraryCta" datatype="html">
         <source>Deine Quiz-Sammlung</source>
-        <target>Your quiz collection</target>
+        <target>Your quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">275,278</context>
@@ -2189,7 +2189,7 @@
       </trans-unit>
       <trans-unit id="homeHostCard.syncLinkHint" datatype="html">
         <source> Wenn du hier mit der Quiz-Sammlung von einem anderen Gerät weitermachen willst.</source>
-        <target>If you want to continue here with your quiz collection from another device.</target>
+        <target>If you want to continue here with your quiz library from another device.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">295,297</context>
@@ -4540,7 +4540,7 @@
       </trans-unit>
       <trans-unit id="quizList.sharedLibraryTitle" datatype="html">
         <source> Geteilte Quiz-Sammlung</source>
-        <target>Shared quiz collection</target>
+        <target>Shared quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">205,207</context>
@@ -4556,7 +4556,7 @@
       </trans-unit>
       <trans-unit id="quizList.sharedLibraryHint" datatype="html">
         <source> Hier siehst du, ob deine Quiz-Sammlung auf dem neuesten Stand ist und von welchem Gerät Änderungen kamen.</source>
-        <target>Here you can see whether your quiz collection is up to date and which device changes came from.</target>
+        <target>Here you can see whether your quiz library is up to date and which device changes came from.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">233,235</context>
@@ -5018,7 +5018,7 @@
       </trans-unit>
       <trans-unit id="quizList.syncImportedSuccess" datatype="html">
         <source>Quiz-Sammlung erfolgreich synchronisiert.</source>
-        <target>Quiz collection synced successfully.</target>
+        <target>Quiz library synced successfully.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.ts</context>
           <context context-type="linenumber">635</context>
@@ -5026,7 +5026,7 @@
       </trans-unit>
       <trans-unit id="quizList.syncImportedSuccessWithTimestamp" datatype="html">
         <source>Quiz-Sammlung erfolgreich synchronisiert. Neuester Stand vom <x id="timestamp" equiv-text="formattedTimestamp"/>.</source>
-        <target>Quiz collection synced successfully. Latest version from <x id="timestamp" equiv-text="formattedTimestamp"/>.</target>
+        <target>Quiz library synced successfully. Latest version from <x id="timestamp" equiv-text="formattedTimestamp"/>.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.ts</context>
           <context context-type="linenumber">638</context>
@@ -5391,7 +5391,7 @@
       </trans-unit>
       <trans-unit id="quizSync.title" datatype="html">
         <source>Quiz-Sammlung weitergeben</source>
-        <target>Share quiz collection</target>
+        <target>Share quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
           <context context-type="linenumber">3,4</context>
@@ -5399,7 +5399,7 @@
       </trans-unit>
       <trans-unit id="quizSync.intro" datatype="html">
         <source> Öffne deine Quiz-Sammlung auf einem anderen Gerät oder teile sie mit Kolleginnen und Kollegen.</source>
-        <target>Open your quiz collection on another device or share it with colleagues.</target>
+        <target>Open your quiz library on another device or share it with colleagues.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
           <context context-type="linenumber">5,7</context>
@@ -5485,7 +5485,7 @@
       </trans-unit>
       <trans-unit id="quizSync.backAria" datatype="html">
         <source>Zurück zur Quiz-Sammlung</source>
-        <target>Back to quiz collection</target>
+        <target>Back to quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
           <context context-type="linenumber">54,56</context>
@@ -5493,7 +5493,7 @@
       </trans-unit>
       <trans-unit id="quizSync.back" datatype="html">
         <source>Zurück zur Quiz-Sammlung</source>
-        <target>Back to quiz collection</target>
+        <target>Back to quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
           <context context-type="linenumber">57,59</context>
@@ -5526,7 +5526,7 @@
       </trans-unit>
       <trans-unit id="quizPage.title" datatype="html">
         <source>Deine Quiz-Sammlung</source>
-        <target>Your quiz collection</target>
+        <target>Your quiz library</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz.component.html</context>
           <context context-type="linenumber">15,17</context>
