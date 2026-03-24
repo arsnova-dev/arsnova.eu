@@ -180,7 +180,7 @@
       </trans-unit>
       <trans-unit id="seo.descHome" datatype="html">
         <source>Kostenlose, DSGVO-konforme Live-Quiz- und Abstimmungsplattform für Hochschulen, Schulen, Events und Business.</source>
-        <target>Free, GDPR-compliant live quiz and voting platform for universities, schools, events and business.</target>
+        <target>Free, GDPR-compliant live quiz and voting platform for universities, schools, events, and business.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">66</context>

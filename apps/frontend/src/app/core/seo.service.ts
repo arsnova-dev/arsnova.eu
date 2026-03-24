@@ -4,9 +4,10 @@ import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import type { SupportedLocale } from './locale-from-path';
 import { SUPPORTED_LOCALES } from './locale-from-path';
-import { resolveSeoForPath } from './seo-route-meta';
+import { resolveSeoForPath, type SeoRoutePayload } from './seo-route-meta';
 
 const SITE_ORIGIN_FALLBACK = 'https://arsnova.eu';
+const JSON_LD_SCRIPT_ID = 'arsnova-schema-org';
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -47,11 +48,58 @@ export class SeoService {
 
     this.setCanonicalHref(absoluteUrl);
 
+    this.setJsonLdFromRoute(pathRest, payload, absoluteUrl, origin, locale);
+
     if (payload.noindex) {
       this.meta.updateTag({ name: 'robots', content: 'noindex, nofollow' });
     } else {
       this.meta.removeTag('name="robots"');
     }
+  }
+
+  /** Startseite: WebSite + Organization (schema.org); andere Routen: Script entfernen. */
+  private setJsonLdFromRoute(
+    pathRest: string,
+    payload: SeoRoutePayload,
+    absoluteUrl: string,
+    origin: string,
+    locale: SupportedLocale,
+  ): void {
+    const head = this.doc.head;
+    if (!head) return;
+    head.querySelector(`#${JSON_LD_SCRIPT_ID}`)?.remove();
+    if (payload.noindex || pathRest !== '/') {
+      return;
+    }
+    const orgId = `${origin}/#organization`;
+    const logoUrl = `${origin}/${locale}/assets/icons/icon-512x512.png`;
+    const siteId = `${origin}/${locale}/#website`;
+    const graph = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': orgId,
+          name: 'arsnova.eu',
+          url: `${origin}/${locale}/`,
+          logo: logoUrl,
+        },
+        {
+          '@type': 'WebSite',
+          '@id': siteId,
+          name: 'arsnova.eu',
+          url: absoluteUrl,
+          description: payload.description,
+          inLanguage: bcp47ForLocale(locale),
+          publisher: { '@id': orgId },
+        },
+      ],
+    };
+    const script = this.doc.createElement('script');
+    script.id = JSON_LD_SCRIPT_ID;
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(graph).replace(/</g, '\\u003c');
+    head.appendChild(script);
   }
 
   private setCanonicalHref(href: string): void {
@@ -139,6 +187,18 @@ function ogLocaleFor(locale: SupportedLocale): string {
     fr: 'fr_FR',
     it: 'it_IT',
     es: 'es_ES',
+  };
+  return map[locale];
+}
+
+/** BCP 47 für schema.org `inLanguage`. */
+function bcp47ForLocale(locale: SupportedLocale): string {
+  const map: Record<SupportedLocale, string> = {
+    de: 'de-DE',
+    en: 'en-US',
+    fr: 'fr-FR',
+    it: 'it-IT',
+    es: 'es-ES',
   };
   return map[locale];
 }
