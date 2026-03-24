@@ -109,8 +109,19 @@
           >
             <div class="quiz-edit-form__preset-actions">
               @for (preset of presetOptions; track preset.value) {
-                <button mat-button type="button" (click)="applySettingsPreset(preset.value)" i18n>
-                  {{ preset.label }} anwenden
+                <button
+                  mat-button
+                  type="button"
+                  class="quiz-edit-form__preset-apply"
+                  (click)="applySettingsPreset(preset.value)"
+                >
+                  <mat-icon
+                    class="quiz-edit-form__preset-icon"
+                    [class.quiz-edit-form__preset-icon--playful]="preset.value === 'PLAYFUL'"
+                    aria-hidden="true"
+                    >{{ preset.icon }}</mat-icon
+                  >
+                  <span i18n="@@quiz.presetApply">{{ preset.label }} anwenden</span>
                 </button>
               }
             </div>

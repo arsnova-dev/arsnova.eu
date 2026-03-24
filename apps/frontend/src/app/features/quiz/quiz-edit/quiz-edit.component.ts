@@ -180,9 +180,9 @@ export class QuizEditComponent implements OnDestroy {
     { value: 'RATING', label: $localize`Bewertung (1–5 / 1–10)` },
   ];
 
-  readonly presetOptions: Array<{ value: QuizPreset; label: string }> = [
-    { value: 'PLAYFUL', label: $localize`Spielerisch` },
-    { value: 'SERIOUS', label: $localize`Seriös` },
+  readonly presetOptions: Array<{ value: QuizPreset; label: string; icon: string }> = [
+    { value: 'PLAYFUL', label: $localize`Spielerisch`, icon: 'celebration' },
+    { value: 'SERIOUS', label: $localize`Seriös`, icon: 'work' },
   ];
 
   readonly scFormatOptions: Array<{ value: ScFormat; label: string }> = Object.entries(

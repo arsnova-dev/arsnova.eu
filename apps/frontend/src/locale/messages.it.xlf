@@ -2924,12 +2924,16 @@
           <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5339011327463703957" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ preset.label }}"/> anwenden</source>
+      <trans-unit id="quiz.presetApply" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ preset.label }}"/> anwenden</source>
         <target>Applica <x id="INTERPOLATION" equiv-text="{{ preset.label }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-edit/quiz-edit.component.html</context>
-          <context context-type="linenumber">113,114</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3570378747476250939" datatype="html">
@@ -5014,14 +5018,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
           <context context-type="linenumber">34,35</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6163248709380828164" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ preset.label }}"/> anwenden</source>
-        <target>Applica <x id="INTERPOLATION" equiv-text="{{ preset.label }}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
-          <context context-type="linenumber">60,61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7479683756900419424" datatype="html">

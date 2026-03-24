@@ -57,9 +57,9 @@ export class QuizNewComponent implements OnInit, OnDestroy {
   private readonly themePreset = inject(ThemePresetService);
   private readonly localeGuard = inject(LocaleSwitchGuardService);
 
-  readonly presetOptions: Array<{ value: QuizPreset; label: string }> = [
-    { value: 'PLAYFUL', label: $localize`Spielerisch` },
-    { value: 'SERIOUS', label: $localize`Seriös` },
+  readonly presetOptions: Array<{ value: QuizPreset; label: string; icon: string }> = [
+    { value: 'PLAYFUL', label: $localize`Spielerisch`, icon: 'celebration' },
+    { value: 'SERIOUS', label: $localize`Seriös`, icon: 'work' },
   ];
 
   readonly nicknameThemeOptions: Array<{ value: NicknameTheme; label: string }> = [

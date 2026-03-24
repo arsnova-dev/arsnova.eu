@@ -135,6 +135,22 @@
   gap: 0.7rem;
 }
 
+.quiz-edit-form__preset-apply {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.quiz-edit-form__preset-icon {
+  font-size: 1.125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.quiz-edit-form__preset-icon--playful {
+  color: var(--mat-sys-primary);
+}
+
 .quiz-edit-form__preset-badge {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);

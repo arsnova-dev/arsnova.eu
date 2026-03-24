@@ -12,6 +12,7 @@ const xlfPath = path.join(localeDir, 'messages.xlf');
 const enPath = path.join(localeDir, 'messages.en.xlf');
 
 const TARGET_MAP = {
+  'quiz.presetApply': 'Apply <x id="INTERPOLATION" equiv-text="{{ preset.label }}"/>',
   '1013568912261252993': 'Paste AI JSON',
   '1110390562708491750': 'Number of teams',
   '1129308278678680080': 'Assign teams',
@@ -64,14 +65,12 @@ const TARGET_MAP = {
   '4861370785316880928': 'Participate anonymously',
   '4928437576183373640': 'Title &amp; description',
   '5088922883755257679': 'Copy prompt',
-  '5339011327463703957': ' <x id="INTERPOLATION" equiv-text="{{ preset.label }}"/> apply ',
   '5590446157839389105': 'Go live',
   '5642511860113360206': 'Show leaderboard',
   '5647672382112608804': 'Age group for names',
   '5893501665486949127': 'New quiz',
   '5939653501562597742': 'Name may be at most 200 characters.',
   '5988877745866171840': ' Import ',
-  '6163248709380828164': '<x id="INTERPOLATION" equiv-text="{{ preset.label }}"/> apply',
   '6218443954027762472': 'Manual',
   '623302995999546215': 'Add',
   '6278157135662238363': 'Enter answer text.',
