@@ -3,6 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <base href="/" />
+    <!-- Vor erstem Paint: Klassen wie ThemePresetService (localStorage), sonst kurzer Light-Flash bei OS hell + Theme dunkel. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('home-theme');
+          if (t === 'dark') document.documentElement.classList.add('dark');
+          else if (t === 'light') document.documentElement.classList.add('light');
+          var p = localStorage.getItem('home-preset');
+          if (p === 'serioes') p = 'serious';
+          if (p !== 'serious') document.documentElement.classList.add('preset-playful');
+        } catch (_e) {
+          document.documentElement.classList.add('preset-playful');
+        }
+      })();
+    </script>
     <title i18n="@@seo.titleHome">arsnova.eu – Live-Quiz &amp; Abstimmung</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta

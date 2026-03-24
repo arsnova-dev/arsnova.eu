@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
 
+/** Muss mit dem Inline-Skript in `index.html` übereinstimmen (FOUC vermeiden). */
 const STORAGE_THEME = 'home-theme';
 const STORAGE_PRESET = 'home-preset';
 const PRESET_UPDATED_EVENT = 'arsnova:preset-updated';
@@ -47,7 +48,8 @@ export class ThemePresetService {
     this.theme.set(value);
     if (isPlatformBrowser(this.platformId)) localStorage.setItem(STORAGE_THEME, value);
     this.applyTheme();
-    if (isPlatformBrowser(this.platformId)) globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
+    if (isPlatformBrowser(this.platformId))
+      globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
   }
 
   setPreset(value: PresetValue, options?: { silent?: boolean }): void {
@@ -57,7 +59,8 @@ export class ThemePresetService {
       if (isPlatformBrowser(this.platformId)) localStorage.setItem(STORAGE_PRESET, value);
       this.applyPreset();
     }
-    if (isPlatformBrowser(this.platformId)) globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
+    if (isPlatformBrowser(this.platformId))
+      globalThis.dispatchEvent(new Event(PRESET_UPDATED_EVENT));
     if (!options?.silent) {
       this.presetChangedSource.next();
     }
