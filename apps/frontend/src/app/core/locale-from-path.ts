@@ -1,6 +1,6 @@
 /**
  * Liest die aktuelle Locale aus dem ersten URL-Segment (z. B. /en/... → "en").
- * Wird für Legal-Seiten und Toolbar verwendet.
+ * Wird für Toolbar und Dev mit &lt;base href="/"&gt; verwendet.
  */
 export const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it', 'es'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -11,4 +11,48 @@ export function getLocaleFromPath(): SupportedLocale | null {
   if (typeof window === 'undefined') return null;
   const match = window.location.pathname.match(LOCALE_REGEX);
   return match ? (match[1] as SupportedLocale) : null;
+}
+
+/**
+ * Lokalisierte Builds und `ng serve` mit `localize: ["en"]`: &lt;base href="/en/"&gt;.
+ * Dann steht die Locale nicht im pathname (z. B. /legal/imprint), sondern nur in der Basis-URL.
+ */
+export function getLocaleFromBaseHref(): SupportedLocale | null {
+  if (typeof document === 'undefined') return null;
+  const raw = (document.querySelector('base')?.getAttribute('href') ?? '/').trim();
+  try {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'http://local';
+    const pathname = new URL(raw, origin).pathname.replace(/\/+$/, '') || '/';
+    const m = pathname.match(/^\/(de|en|fr|it|es)$/);
+    return m ? (m[1] as SupportedLocale) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Normalisiert Angular-`LOCALE_ID` (z. B. `en-US`) auf unsere URL-Sprachen. */
+export function localeIdToSupported(localeId: string): SupportedLocale {
+  const base = (localeId ?? 'de').split('-')[0]!.toLowerCase();
+  return (SUPPORTED_LOCALES as readonly string[]).includes(base) ? (base as SupportedLocale) : 'de';
+}
+
+/**
+ * Effektive UI-/Asset-Locale: &lt;base href&gt;, dann Pfad-Segment, dann optional Build-Locale (`LOCALE_ID`), sonst `de`.
+ */
+export function getEffectiveLocale(fallbackFromBuild?: SupportedLocale): SupportedLocale {
+  return getLocaleFromBaseHref() ?? getLocaleFromPath() ?? fallbackFromBuild ?? 'de';
+}
+
+/**
+ * Absolute URL für Pfade unter `assets/` — auflösen wie der Browser relativ zu &lt;base href&gt;,
+ * damit z. B. `ng serve` mit `localize` und `/en/` dieselbe Basis trifft wie `HttpClient`/Router.
+ */
+export function resolveAssetUrlFromBase(assetPathFromAppRoot: string): string {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return `/${assetPathFromAppRoot.replace(/^\/+/, '')}`;
+  }
+  const rawBase = (document.querySelector('base')?.getAttribute('href') ?? '/').trim();
+  const baseHrefUrl = new URL(rawBase || '/', window.location.origin).href;
+  const rel = assetPathFromAppRoot.replace(/^\/+/, '');
+  return new URL(rel, baseHrefUrl).href;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, LOCALE_ID, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
@@ -10,7 +10,7 @@ import { MatOption } from '@angular/material/core';
 import { trpc } from '../../core/trpc.client';
 import type { SessionInfoDTO, TeamDTO } from '@arsnova/shared-types';
 import type { NicknameTheme } from '@arsnova/shared-types';
-import { getLocaleFromPath } from '../../core/locale-from-path';
+import { getEffectiveLocale, localeIdToSupported } from '../../core/locale-from-path';
 import { localizeCommands } from '../../core/locale-router';
 import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../core/session-code-aria';
 import { getNicknameList } from './nickname-themes';
@@ -44,8 +44,9 @@ export class JoinComponent implements OnInit, OnDestroy {
   readonly localizedCommands = localizeCommands;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly localeId = inject(LOCALE_ID);
   readonly code = (this.route.snapshot.paramMap.get('code') ?? '').trim().toUpperCase();
-  private readonly locale = getLocaleFromPath() ?? 'de';
+  private readonly locale = getEffectiveLocale(localeIdToSupported(this.localeId));
 
   readonly session = signal<SessionInfoDTO | null>(null);
   readonly error = signal<string | null>(null);

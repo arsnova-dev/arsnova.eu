@@ -2,7 +2,7 @@
 
 This document generalises the copy-editing rules applied to the English XLF targets for **arsnova.eu**. It complements **ADR-0008** (informal address, idiomatic targets, mobile-first length) and **`docs/I18N-ANGULAR.md`** (workflow, ICU, XLF mechanics).
 
-**Scope:** User-facing strings in **`apps/frontend/src/locale/messages.en.xlf`** (and the same voice for **legal markdown** in English where we control the wording). **Quiz content** (questions/answers) stays untranslated per project rules.
+**Scope:** User-facing strings in **`apps/frontend/src/locale/messages.en.xlf`** (and the same voice for **legal markdown** in English where we control the wording). **Quiz content** in the app is not extracted to XLF; the **English showcase demo quiz** (`apps/frontend/src/assets/demo/quiz-demo-showcase.en.json`) is authored in English and should follow this guide (terminology, US spelling, tone). Regenerate from **`apps/frontend/scripts/apply-demo-quiz-locale-strings.mjs`** keeps the `en` patch in sync with the JSON.
 
 **Default variety:** **US English** for spelling (_color_, _center_ when used, _neighbor_ if ever needed) and typical product UI tone. Prefer **clear, conversational** phrasing over formal or “translatorese”.
 

@@ -234,6 +234,9 @@ Die Top-Toolbar liest die aktuelle Locale aus dem **ersten URL-Segment** (`/de/`
 
 - **Deutsch (Quellsprache, kein `localize`):** **`npm run dev:de`** (Root) bzw. **`npm run dev:frontend:de`** / in `apps/frontend`: **`npm run start`** oder **`npm run start:de`**. Dann **`http://localhost:4200`** (Root) — i18n-Strings kommen direkt aus dem deutschen Quelltext; URL-Segmente `/de/` usw. ändern daran nichts.
 - **Alle Locales / Produktionsnähe:** lokalisierten Build und Proxy wie unten (**„Lokalisierter Build lokal“**), z. B. `http://localhost:4200/en/`.
+- **Legal-Markdown (`imprint.*.md` / `privacy.*.md`):** Locale und Asset-URL kommen aus **`locale-from-path.ts`**:
+  - **`getEffectiveLocale(fallback)`** — Reihenfolge: Locale aus **`base href`** (z. B. `/en/` bei `ng serve` mit `localize`), sonst erstes URL-Segment (`/de/…`), sonst **`fallback`** aus dem Build (**`inject(LOCALE_ID)`**, vorher mit **`localeIdToSupported()`** normalisieren, z. B. `en-US` → `en`), sonst **`de`**. So bleiben Impressum/Datenschutz auch auf **localhost** konsistent mit der gebauten Sprache, wenn der **pathname** nur `/legal/…` ist und weder Base noch Pfad ein Locale tragen.
+  - **`resolveAssetUrlFromBase('assets/legal/…')`** — baut die **absolute** GET-URL wie der Browser relativ zu **`base href`** (statt `origin + baseHref + "/assets/…"` per Stringkonkatenation). Vermeidet 404 auf den `*.en.md`-Dateien und damit den früheren **Deutsch-Fallback** durch fehlgeschlagene Requests.
 
 #### Lokalisierter Build lokal (Schritt für Schritt)
 

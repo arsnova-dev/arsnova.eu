@@ -28,7 +28,8 @@ import {
 } from '@arsnova/shared-types';
 import { getYjsWsUrl } from '../../../core/ws-urls';
 import {
-  getLocaleFromPath,
+  getEffectiveLocale,
+  localeIdToSupported,
   SUPPORTED_LOCALES,
   type SupportedLocale,
 } from '../../../core/locale-from-path';
@@ -937,8 +938,7 @@ export class QuizStoreService {
 
   private resolveActiveDemoLocale(): SupportedLocale {
     if (isPlatformBrowser(this.platformId)) {
-      const fromPath = getLocaleFromPath();
-      if (fromPath) return fromPath;
+      return getEffectiveLocale(localeIdToSupported(String(this.localeId)));
     }
     return normalizeDemoQuizLocale(String(this.localeId));
   }
