@@ -194,8 +194,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async isSessionVisitable(code: string): Promise<boolean> {
-    const fb = await trpc.quickFeedback.results.query({ sessionCode: code }).catch(() => null);
-    if (fb) return true;
+    const { active: fbActive } = await trpc.quickFeedback.isActive
+      .query({ sessionCode: code })
+      .catch(() => ({ active: false }));
+    if (fbActive) return true;
     const session = await trpc.session.getInfo.query({ code }).catch(() => null);
     if (!session) return false;
     return session.status !== 'FINISHED';
@@ -398,10 +400,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.joinError.set(null);
     this.isJoining.set(true);
     try {
-      const fbResult = await trpc.quickFeedback.results
+      const { active: fbActive } = await trpc.quickFeedback.isActive
         .query({ sessionCode: code })
-        .catch(() => null);
-      if (fbResult) {
+        .catch(() => ({ active: false }));
+      if (fbActive) {
         this.addToRecentSessionCodes(code);
         await this.router.navigate(localizeCommands(['feedback', code, 'vote']));
         return;

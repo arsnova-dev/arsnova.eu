@@ -9,6 +9,7 @@ import {
   UpdateQuickFeedbackStyleInputSchema,
   UpdateQuickFeedbackTypeInputSchema,
   QuickFeedbackVoteInputSchema,
+  QuickFeedbackIsActiveOutputSchema,
   QuickFeedbackResultSchema,
   MoodValueEnum,
   AbcdValueEnum,
@@ -56,12 +57,18 @@ function generateCode(): string {
 
 function validValues(type: QuickFeedbackType): readonly string[] {
   switch (type) {
-    case 'MOOD': return MoodValueEnum.options;
-    case 'YESNO': return YesNoValueEnum.options;
-    case 'YESNO_BINARY': return YesNoBinaryValueEnum.options;
-    case 'TRUEFALSE_UNKNOWN': return TrueFalseUnknownValueEnum.options;
-    case 'ABC': return AbcValueEnum.options;
-    case 'ABCD': return AbcdValueEnum.options;
+    case 'MOOD':
+      return MoodValueEnum.options;
+    case 'YESNO':
+      return YesNoValueEnum.options;
+    case 'YESNO_BINARY':
+      return YesNoBinaryValueEnum.options;
+    case 'TRUEFALSE_UNKNOWN':
+      return TrueFalseUnknownValueEnum.options;
+    case 'ABC':
+      return AbcValueEnum.options;
+    case 'ABCD':
+      return AbcdValueEnum.options;
   }
 }
 
@@ -125,7 +132,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -145,7 +155,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -180,7 +193,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -227,7 +243,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -247,7 +266,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -286,7 +308,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -310,49 +335,63 @@ export const quickFeedbackRouter = router({
       return { ok: true };
     }),
 
-  vote: publicProcedure
-    .input(QuickFeedbackVoteInputSchema)
-    .mutation(async ({ input }) => {
+  /**
+   * Leichtgewichtige Prüfung, ob für den Code eine Blitzlicht-Runde in Redis liegt.
+   * Im Gegensatz zu `results` kein NOT_FOUND/HTTP-404 bei fehlendem Key (Lighthouse / Netzwerk-Tab).
+   */
+  isActive: publicProcedure
+    .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
+    .output(QuickFeedbackIsActiveOutputSchema)
+    .query(async ({ input }) => {
       const redis = getRedis();
-      const code = input.sessionCode.toUpperCase();
-      const key = feedbackKey(code);
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
-      if (result.locked) {
-        throw new TRPCError({ code: 'FORBIDDEN', message: 'Abstimmung ist geschlossen.' });
-      }
-
-      const vKey = votersKey(code);
-      const alreadyVoted = await redis.sismember(vKey, input.voterId);
-      if (alreadyVoted) {
-        throw new TRPCError({ code: 'FORBIDDEN', message: 'Du hast bereits abgestimmt.' });
-      }
-
-      const allowed = validValues(result.type);
-
-      if (!allowed.includes(input.value)) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Ungültige Auswahl.' });
-      }
-
-      result.distribution[input.value] = (result.distribution[input.value] ?? 0) + 1;
-      result.totalVotes += 1;
-
-      const cKey = choicesKey(code);
-      const multi = redis.multi();
-      multi.set(key, JSON.stringify(result), 'EX', FEEDBACK_TTL_SECONDS);
-      multi.sadd(vKey, input.voterId);
-      multi.expire(vKey, FEEDBACK_TTL_SECONDS);
-      multi.hset(cKey, input.voterId, input.value);
-      multi.expire(cKey, FEEDBACK_TTL_SECONDS);
-      await multi.exec();
-
-      return { ok: true };
+      const n = await redis.exists(feedbackKey(input.sessionCode.toUpperCase()));
+      return { active: n === 1 };
     }),
+
+  vote: publicProcedure.input(QuickFeedbackVoteInputSchema).mutation(async ({ input }) => {
+    const redis = getRedis();
+    const code = input.sessionCode.toUpperCase();
+    const key = feedbackKey(code);
+    const raw = await redis.get(key);
+
+    if (!raw) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+      });
+    }
+
+    const result = JSON.parse(raw) as QuickFeedbackResult;
+    if (result.locked) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Abstimmung ist geschlossen.' });
+    }
+
+    const vKey = votersKey(code);
+    const alreadyVoted = await redis.sismember(vKey, input.voterId);
+    if (alreadyVoted) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Du hast bereits abgestimmt.' });
+    }
+
+    const allowed = validValues(result.type);
+
+    if (!allowed.includes(input.value)) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Ungültige Auswahl.' });
+    }
+
+    result.distribution[input.value] = (result.distribution[input.value] ?? 0) + 1;
+    result.totalVotes += 1;
+
+    const cKey = choicesKey(code);
+    const multi = redis.multi();
+    multi.set(key, JSON.stringify(result), 'EX', FEEDBACK_TTL_SECONDS);
+    multi.sadd(vKey, input.voterId);
+    multi.expire(vKey, FEEDBACK_TTL_SECONDS);
+    multi.hset(cKey, input.voterId, input.value);
+    multi.expire(cKey, FEEDBACK_TTL_SECONDS);
+    await multi.exec();
+
+    return { ok: true };
+  }),
 
   results: publicProcedure
     .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
@@ -364,7 +403,10 @@ export const quickFeedbackRouter = router({
       const raw = await redis.get(key);
 
       if (!raw) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Feedback-Runde nicht gefunden oder abgelaufen.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+        });
       }
 
       const result = JSON.parse(raw) as QuickFeedbackResult;
@@ -392,9 +434,10 @@ export const quickFeedbackRouter = router({
           lastJson = json;
           yield payload;
         }
-        const pollMs = payload.locked || payload.discussion
-          ? QUICK_FEEDBACK_POLL_IDLE_MS
-          : QUICK_FEEDBACK_POLL_ACTIVE_MS;
+        const pollMs =
+          payload.locked || payload.discussion
+            ? QUICK_FEEDBACK_POLL_IDLE_MS
+            : QUICK_FEEDBACK_POLL_ACTIVE_MS;
         await new Promise((r) => setTimeout(r, pollMs));
       }
     }),

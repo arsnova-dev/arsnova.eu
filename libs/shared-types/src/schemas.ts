@@ -1302,6 +1302,10 @@ export const QuickFeedbackVoteInputSchema = z.object({
 });
 export type QuickFeedbackVoteInput = z.infer<typeof QuickFeedbackVoteInputSchema>;
 
+/** Nur Redis-EXISTS – kein 404, damit Probes (z. B. Home „Letzte Sessions“) keine Konsolen-Fehler erzeugen. */
+export const QuickFeedbackIsActiveOutputSchema = z.object({ active: z.boolean() });
+export type QuickFeedbackIsActiveOutput = z.infer<typeof QuickFeedbackIsActiveOutputSchema>;
+
 export const QuickFeedbackResultSchema = z.object({
   type: QuickFeedbackTypeEnum,
   theme: QuickFeedbackThemeEnum,

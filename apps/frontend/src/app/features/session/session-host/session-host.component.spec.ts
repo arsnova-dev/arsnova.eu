@@ -325,7 +325,10 @@ describe('SessionHostComponent', () => {
     const fixture = setup();
     fixture.detectChanges();
     await fixture.whenStable();
-    await new Promise((r) => setTimeout(r, 50));
+    await vi.waitUntil(() => (fixture.nativeElement.textContent ?? '').includes('Was ist 2+2?'), {
+      timeout: 5000,
+      interval: 25,
+    });
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent ?? '';

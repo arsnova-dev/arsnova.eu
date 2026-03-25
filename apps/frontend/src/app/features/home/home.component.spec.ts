@@ -21,6 +21,7 @@ vi.mock('../../core/trpc.client', () => ({
       },
     },
     quickFeedback: {
+      isActive: { query: vi.fn().mockResolvedValue({ active: false }) },
       results: { query: vi.fn().mockRejectedValue(new Error('not found')) },
       create: { mutate: vi.fn().mockRejectedValue(new Error('not available')) },
     },
@@ -156,6 +157,20 @@ describe('HomeComponent', () => {
       await comp.joinSession();
 
       expect(navSpy).toHaveBeenCalledWith(['join', 'TEST01']);
+    });
+
+    it('navigiert zur Blitzlicht-Abstimmung wenn eine aktive Runde existiert', async () => {
+      const { trpc } = await import('../../core/trpc.client');
+      vi.mocked(trpc.quickFeedback.isActive.query).mockResolvedValueOnce({ active: true });
+
+      const comp = createComponent();
+      const router = TestBed.inject(Router);
+      const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      comp.sessionCode.set('QF1234');
+      await comp.joinSession();
+
+      expect(navSpy).toHaveBeenCalledWith(['feedback', 'QF1234', 'vote']);
     });
 
     it('speichert Code in recentSessionCodes', async () => {
