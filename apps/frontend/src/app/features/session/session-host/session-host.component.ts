@@ -270,6 +270,14 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   sessionCodeDisplayAria(code: string): string {
     return i18nSessionCodeAria(code);
   }
+
+  /** Defektes externes Motivbild ausblenden (ohne Fehlerbehandlung im UI). */
+  onHostQuizMotifError(event: Event): void {
+    const el = event.target;
+    if (el instanceof HTMLElement) {
+      el.remove();
+    }
+  }
   readonly teamLeaderboardMaxScore = computed(() =>
     Math.max(1, ...this.teamLeaderboard().map((entry) => entry.totalScore)),
   );

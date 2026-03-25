@@ -51,6 +51,7 @@ describe('QuizStoreService', () => {
         id: '6b442f6f-2f8a-4bad-95da-69f5e9cd2649',
         name: 'Vorlesung 1',
         description: null,
+        motifImageUrl: null,
         createdAt: '2026-03-08T12:00:00.000Z',
         updatedAt: '2026-03-08T12:00:00.000Z',
         settings: defaultSettings,

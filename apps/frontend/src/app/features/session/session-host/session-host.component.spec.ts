@@ -67,6 +67,7 @@ const defaultSession = {
   type: 'QUIZ' as const,
   status: 'LOBBY' as const,
   quizName: 'Demo Quiz',
+  quizMotifImageUrl: null as string | null,
   title: null,
   participantCount: 0,
 };

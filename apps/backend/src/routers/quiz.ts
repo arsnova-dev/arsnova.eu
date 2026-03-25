@@ -2,10 +2,7 @@
  * Quiz-Router (Story 2.1a).
  * quiz.upload: Quiz-Daten beim Live-Schalten an den Server übertragen und in PostgreSQL speichern.
  */
-import {
-  QuizUploadInputSchema,
-  QuizUploadOutputSchema,
-} from '@arsnova/shared-types';
+import { QuizUploadInputSchema, QuizUploadOutputSchema } from '@arsnova/shared-types';
 import { publicProcedure, router } from '../trpc';
 import { prisma } from '../db';
 
@@ -22,6 +19,7 @@ export const quizRouter = router({
         data: {
           name: input.name,
           description: input.description ?? null,
+          motifImageUrl: input.motifImageUrl ?? null,
           showLeaderboard: input.showLeaderboard,
           allowCustomNicknames: input.allowCustomNicknames,
           defaultTimer: input.defaultTimer ?? null,

@@ -1,5 +1,12 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -12,6 +19,7 @@ import { MatSelect } from '@angular/material/select';
 import {
   DEFAULT_BONUS_TOKEN_COUNT,
   DEFAULT_TEAM_COUNT,
+  MOTIF_IMAGE_URL_MAX_LENGTH,
   QUIZ_PRESETS,
   type NicknameTheme,
   type QuizPreset,
@@ -70,6 +78,9 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     { value: 'HIGH_SCHOOL', label: $localize`Oberstufe` },
   ];
 
+  /** Synchron zu MotifImageUrlSchema / maxlength im Template. */
+  readonly motifImageUrlMaxLength = MOTIF_IMAGE_URL_MAX_LENGTH;
+
   readonly isSaving = signal(false);
   readonly submitError = signal<string | null>(null);
   readonly submitted = signal(false);
@@ -79,6 +90,10 @@ export class QuizNewComponent implements OnInit, OnDestroy {
   readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
     description: ['', [Validators.maxLength(5000)]],
+    motifImageUrl: [
+      '',
+      [Validators.maxLength(MOTIF_IMAGE_URL_MAX_LENGTH), motifImageUrlOptionalHttpsValidator],
+    ],
     showLeaderboard: [true],
     allowCustomNicknames: [true],
     defaultTimer: this.formBuilder.control<number | null>(null, {
@@ -105,6 +120,7 @@ export class QuizNewComponent implements OnInit, OnDestroy {
 
   readonly nameControl = this.form.controls.name;
   readonly descriptionControl = this.form.controls.description;
+  readonly motifImageUrlControl = this.form.controls.motifImageUrl;
   readonly defaultTimerControl = this.form.controls.defaultTimer;
   readonly teamCountControl = this.form.controls.teamCount;
   readonly teamNamesTextControl = this.form.controls.teamNamesText;
@@ -220,6 +236,9 @@ export class QuizNewComponent implements OnInit, OnDestroy {
       const created = this.quizStore.createQuiz({
         name: this.nameControl.value,
         description: this.descriptionControl.value,
+        motifImageUrl: this.motifImageUrlControl.value.trim()
+          ? this.motifImageUrlControl.value.trim()
+          : null,
         settings: this.readSettingsFromForm(),
       });
       await this.router.navigate(localizeCommands(['quiz', created.id]));
@@ -229,6 +248,18 @@ export class QuizNewComponent implements OnInit, OnDestroy {
     } finally {
       this.isSaving.set(false);
     }
+  }
+}
+
+function motifImageUrlOptionalHttpsValidator(control: AbstractControl): ValidationErrors | null {
+  const v = String(control.value ?? '').trim();
+  if (!v) return null;
+  try {
+    const u = new URL(v);
+    if (u.protocol !== 'https:') return { motifHttps: true };
+    return null;
+  } catch {
+    return { motifUrl: true };
   }
 }
 

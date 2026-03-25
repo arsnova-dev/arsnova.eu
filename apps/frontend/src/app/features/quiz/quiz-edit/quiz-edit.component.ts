@@ -10,11 +10,13 @@ import {
 } from '@angular/core';
 import { LocaleSwitchGuardService } from '../../../core/locale-switch-guard.service';
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
   NonNullableFormBuilder,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
@@ -45,6 +47,7 @@ import { MatSelect } from '@angular/material/select';
 import {
   DEFAULT_BONUS_TOKEN_COUNT,
   DEFAULT_TEAM_COUNT,
+  MOTIF_IMAGE_URL_MAX_LENGTH,
   QUIZ_PRESETS,
   SC_FORMAT_PRESETS,
   type Difficulty,
@@ -105,6 +108,7 @@ type QuizSettingsFormGroup = FormGroup<{
 type QuizMetadataFormGroup = FormGroup<{
   name: FormControl<string>;
   description: FormControl<string>;
+  motifImageUrl: FormControl<string>;
 }>;
 
 /**
@@ -153,6 +157,8 @@ export class QuizEditComponent implements OnDestroy {
   private readonly localeGuard = inject(LocaleSwitchGuardService);
 
   readonly id = this.route.snapshot.paramMap.get('id') ?? '';
+  /** Synchron zu MotifImageUrlSchema / maxlength im Metadaten-Formular. */
+  readonly motifImageUrlMaxLength = MOTIF_IMAGE_URL_MAX_LENGTH;
   readonly submitError = signal<string | null>(null);
   readonly submitted = signal(false);
   readonly editingQuestionId = signal<string | null>(null);
@@ -260,6 +266,12 @@ export class QuizEditComponent implements OnDestroy {
     description: this.formBuilder.control('', {
       validators: [Validators.maxLength(5000)],
     }),
+    motifImageUrl: this.formBuilder.control('', {
+      validators: [
+        Validators.maxLength(MOTIF_IMAGE_URL_MAX_LENGTH),
+        motifImageUrlOptionalHttpsValidator,
+      ],
+    }),
   });
 
   constructor() {
@@ -268,7 +280,7 @@ export class QuizEditComponent implements OnDestroy {
     }
     const quiz = this.quiz();
     if (quiz) {
-      this.patchMetadataForm(quiz.name, quiz.description);
+      this.patchMetadataForm(quiz.name, quiz.description, quiz.motifImageUrl);
       this.patchSettingsForm(quiz.settings);
     }
     this.scheduleLivePreview();
@@ -598,8 +610,11 @@ export class QuizEditComponent implements OnDestroy {
       const updated = this.quizStore.updateQuizMetadata(this.id, {
         name: this.metadataForm.controls.name.value,
         description: this.metadataForm.controls.description.value,
+        motifImageUrl: this.metadataForm.controls.motifImageUrl.value.trim()
+          ? this.metadataForm.controls.motifImageUrl.value.trim()
+          : null,
       });
-      this.patchMetadataForm(updated.name, updated.description);
+      this.patchMetadataForm(updated.name, updated.description, updated.motifImageUrl);
       this.metadataSaved.set(true);
     } catch (error) {
       const message =
@@ -785,10 +800,15 @@ export class QuizEditComponent implements OnDestroy {
     );
   }
 
-  private patchMetadataForm(name: string, description: string | null): void {
+  private patchMetadataForm(
+    name: string,
+    description: string | null,
+    motifImageUrl: string | null,
+  ): void {
     this.metadataForm.setValue({
       name,
       description: description ?? '',
+      motifImageUrl: motifImageUrl ?? '',
     });
     this.metadataForm.markAsPristine();
     this.metadataForm.markAsUntouched();
@@ -907,6 +927,18 @@ export class QuizEditComponent implements OnDestroy {
       this.previewKatexError.set(firstError);
       this.previewTimer = null;
     }, 200);
+  }
+}
+
+function motifImageUrlOptionalHttpsValidator(control: AbstractControl): ValidationErrors | null {
+  const v = String(control.value ?? '').trim();
+  if (!v) return null;
+  try {
+    const u = new URL(v);
+    if (u.protocol !== 'https:') return { motifHttps: true };
+    return null;
+  } catch {
+    return { motifUrl: true };
   }
 }
 

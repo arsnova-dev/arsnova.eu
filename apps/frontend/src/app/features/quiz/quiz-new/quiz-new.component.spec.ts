@@ -13,10 +13,7 @@ describe('QuizNewComponent', () => {
     vi.clearAllMocks();
     TestBed.configureTestingModule({
       imports: [QuizNewComponent],
-      providers: [
-        provideRouter([]),
-        { provide: QuizStoreService, useValue: mockStore },
-      ],
+      providers: [provideRouter([]), { provide: QuizStoreService, useValue: mockStore }],
     });
   });
 
@@ -60,6 +57,7 @@ describe('QuizNewComponent', () => {
     expect(mockStore.createQuiz).toHaveBeenCalledWith({
       name: 'Test-Quiz',
       description: '',
+      motifImageUrl: null,
       settings: expect.objectContaining({
         showLeaderboard: true,
         allowCustomNicknames: true,

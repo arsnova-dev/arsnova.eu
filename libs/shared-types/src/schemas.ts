@@ -100,6 +100,33 @@ export const DEFAULT_TEAM_COUNT = 2;
 export const DEFAULT_BONUS_TOKEN_COUNT = 3;
 export const DEFAULT_TIMER_SECONDS = 60;
 
+/** Obergrenze Motivbild-URL (typische Bild-URLs; lange signierte CDN-Links bleiben i. d. R. darunter). */
+export const MOTIF_IMAGE_URL_MAX_LENGTH = 1024;
+
+/** HTTPS-Bild-URL für optionales Quiz-Motivbild (Host, Quiz-Kanal). */
+export const MotifImageUrlSchema = z
+  .string()
+  .max(MOTIF_IMAGE_URL_MAX_LENGTH)
+  .superRefine((val, ctx) => {
+    try {
+      const u = new URL(val);
+      if (u.protocol !== 'https:') {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Nur HTTPS-URLs sind erlaubt.',
+        });
+      }
+    } catch {
+      ctx.addIssue({ code: 'custom', message: 'Ungültige Bild-URL.' });
+    }
+  });
+
+/** Leerstring / null / undefined → null; sonst gültige HTTPS-URL. */
+export const QuizMotifImageUrlInputSchema = z
+  .union([z.literal(''), MotifImageUrlSchema, z.null()])
+  .optional()
+  .transform((v) => (v === '' || v === undefined ? null : v));
+
 // ---------------------------------------------------------------------------
 // Quiz-Schemas (Zod) – werden in Backend (Validierung) & Frontend (Forms) genutzt
 // ---------------------------------------------------------------------------
@@ -108,6 +135,7 @@ export const DEFAULT_TIMER_SECONDS = 60;
 export const CreateQuizInputSchema = z.object({
   name: z.string().min(1, { error: 'Quiz-Name darf nicht leer sein' }).max(200),
   description: z.string().max(5000).optional(),
+  motifImageUrl: QuizMotifImageUrlInputSchema,
   showLeaderboard: z.boolean().optional().default(true),
   allowCustomNicknames: z.boolean().optional().default(true),
   defaultTimer: z.number().int().min(5).max(300).nullable().optional(),
@@ -154,6 +182,8 @@ export type AddQuestionInput = z.infer<typeof AddQuestionInputSchema>;
 export const QuizUploadInputSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(5000).optional(),
+  /** Wie CreateQuiz: Leerstring/undefined → null (vermeidet Upload-Fehler bei leerem Feld). */
+  motifImageUrl: QuizMotifImageUrlInputSchema,
   showLeaderboard: z.boolean(),
   allowCustomNicknames: z.boolean(),
   defaultTimer: z.number().int().min(5).max(300).nullable().optional(),
@@ -495,6 +525,8 @@ export const SessionInfoDTOSchema = z.object({
   type: SessionTypeEnum,
   status: SessionStatusEnum,
   quizName: z.string().nullable(),
+  /** Optionales Motivbild (HTTPS-URL), nur Host Quiz-Kanal. */
+  quizMotifImageUrl: z.union([MotifImageUrlSchema, z.null()]).optional(),
   title: z.string().nullable().optional(),
   channels: SessionChannelsDTOSchema.optional(), // ADR-0009: Übergangsweise optional für schrittweise Migration
   participantCount: z.number(),
@@ -694,6 +726,7 @@ export const QuizExportSchema = z.object({
   quiz: z.object({
     name: z.string().min(1).max(200),
     description: z.string().max(5000).optional(),
+    motifImageUrl: z.union([MotifImageUrlSchema, z.null()]).optional(),
     showLeaderboard: z.boolean(),
     allowCustomNicknames: z.boolean(),
     defaultTimer: z.number().int().min(5).max(300).nullable().optional(),

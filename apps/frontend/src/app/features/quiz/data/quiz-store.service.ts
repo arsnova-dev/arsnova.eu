@@ -15,6 +15,7 @@ import {
   AddQuestionInputSchema,
   CreateQuizInputSchema,
   DifficultyEnum,
+  MotifImageUrlSchema,
   QuizImportSchema,
   QuizExportSchema,
   QuizUploadInputSchema,
@@ -85,6 +86,8 @@ export interface QuizDocument {
   id: string;
   name: string;
   description: string | null;
+  /** HTTPS-URL, optionales Motivbild (Host, Quiz-Kanal). */
+  motifImageUrl: string | null;
   createdAt: string;
   updatedAt: string;
   updatedByDeviceId?: string | null;
@@ -123,6 +126,7 @@ export interface AddQuizQuestionInput {
 export interface CreateQuizDocumentInput {
   name: string;
   description?: string;
+  motifImageUrl?: string | null;
   settings?: Partial<QuizSettings>;
 }
 
@@ -190,6 +194,7 @@ const PRESET_UPDATED_EVENT = 'arsnova:preset-updated';
 const QuizMetadataSchema = CreateQuizInputSchema.pick({
   name: true,
   description: true,
+  motifImageUrl: true,
 });
 
 const QuizSettingsSchema = CreateQuizInputSchema.pick({
@@ -431,6 +436,7 @@ export class QuizStoreService {
     const parsed = QuizMetadataSchema.safeParse({
       name: input.name.trim(),
       description: normalizeDescription(input.description),
+      motifImageUrl: normalizeMotifImageUrlInput(input.motifImageUrl),
     });
 
     if (!parsed.success) {
@@ -444,6 +450,7 @@ export class QuizStoreService {
       id: generateUuid(),
       name: parsed.data.name,
       description: parsed.data.description ?? null,
+      motifImageUrl: parsed.data.motifImageUrl ?? null,
       createdAt: now,
       updatedAt: now,
       ...this.currentQuizUpdateSource(),
@@ -459,11 +466,12 @@ export class QuizStoreService {
 
   updateQuizMetadata(
     quizId: string,
-    input: { name: string; description?: string | null },
+    input: { name: string; description?: string | null; motifImageUrl?: string | null },
   ): QuizDocument {
     const parsed = QuizMetadataSchema.safeParse({
       name: input.name.trim(),
       description: normalizeDescription(input.description),
+      motifImageUrl: normalizeMotifImageUrlInput(input.motifImageUrl),
     });
     if (!parsed.success) {
       const message = parsed.error.issues[0]?.message ?? $localize`Ungültige Quiz-Metadaten.`;
@@ -480,6 +488,7 @@ export class QuizStoreService {
       ...document,
       name: parsed.data.name,
       description: parsed.data.description ?? null,
+      motifImageUrl: parsed.data.motifImageUrl ?? null,
       updatedAt,
       ...this.currentQuizUpdateSource(),
     };
@@ -591,6 +600,7 @@ export class QuizStoreService {
       quiz: {
         name: document.name,
         ...(document.description ? { description: document.description } : {}),
+        ...(document.motifImageUrl ? { motifImageUrl: document.motifImageUrl } : {}),
         showLeaderboard: document.settings.showLeaderboard,
         allowCustomNicknames: document.settings.allowCustomNicknames,
         defaultTimer: document.settings.defaultTimer,
@@ -654,6 +664,7 @@ export class QuizStoreService {
     const payload: QuizUploadInput = {
       name: document.name,
       ...(description ? { description } : {}),
+      motifImageUrl: normalizeMotifImageUrlInput(document.motifImageUrl) ?? null,
       showLeaderboard: document.settings.showLeaderboard,
       allowCustomNicknames: document.settings.allowCustomNicknames,
       defaultTimer: document.settings.defaultTimer,
@@ -708,6 +719,7 @@ export class QuizStoreService {
       id: overrideId ?? generateUuid(),
       name: parsed.data.quiz.name,
       description: normalizeDescription(parsed.data.quiz.description) ?? null,
+      motifImageUrl: parsed.data.quiz.motifImageUrl ?? null,
       createdAt: now,
       updatedAt: now,
       ...this.currentQuizUpdateSource(),
@@ -1445,6 +1457,23 @@ export class QuizStoreService {
   }
 }
 
+/** Rohwert aus Formular/Input für Zod-Metadaten (leer → null). */
+function normalizeMotifImageUrlInput(value: string | null | undefined): string | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  const t = String(value).trim();
+  return t.length === 0 ? null : t;
+}
+
+function readStoredMotifImageUrl(raw: unknown): string | null | undefined {
+  if (raw === undefined) return undefined;
+  if (raw === null) return null;
+  if (typeof raw !== 'string') return null;
+  const t = raw.trim();
+  if (!t) return null;
+  return MotifImageUrlSchema.safeParse(t).success ? t : null;
+}
+
 function normalizeStoredQuiz(value: unknown): QuizDocument | null {
   if (!value || typeof value !== 'object') return null;
 
@@ -1468,6 +1497,7 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
   const metadata = QuizMetadataSchema.safeParse({
     name: candidate['name'],
     description,
+    motifImageUrl: readStoredMotifImageUrl(candidate['motifImageUrl']),
   });
   if (!metadata.success) return null;
 
@@ -1489,6 +1519,7 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
     id,
     name: metadata.data.name,
     description: metadata.data.description ?? null,
+    motifImageUrl: metadata.data.motifImageUrl ?? null,
     createdAt,
     updatedAt,
     updatedByDeviceId: readStringOrNull(candidate['updatedByDeviceId']) ?? null,

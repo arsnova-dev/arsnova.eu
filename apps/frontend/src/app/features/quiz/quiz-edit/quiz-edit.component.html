@@ -53,6 +53,41 @@
               >
             }
           </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@quizForm.motifImageUrlLabel">Motivbild (optional)</mat-label>
+            <input
+              matInput
+              formControlName="motifImageUrl"
+              type="url"
+              [maxlength]="motifImageUrlMaxLength"
+              autocomplete="off"
+              i18n-placeholder="@@quizForm.motifImageUrlPlaceholder"
+              placeholder="https://…"
+              i18n-aria-label="@@quizForm.motifImageUrlAria"
+              aria-label="HTTPS-URL zu einem Motivbild"
+            />
+            <mat-hint i18n="@@quizForm.motifImageUrlHint" align="start"
+              >Nur HTTPS-URLs, z. B. ein Bild auf deiner Website.</mat-hint
+            >
+            <mat-hint align="end"
+              >{{ metadataForm.controls.motifImageUrl.value.length }}/{{
+                motifImageUrlMaxLength
+              }}</mat-hint
+            >
+            @if (metadataForm.controls.motifImageUrl.hasError('maxlength')) {
+              <mat-error i18n="@@quizForm.motifImageUrlErrorMax"
+                >Die URL darf maximal 1024 Zeichen lang sein.</mat-error
+              >
+            }
+            @if (metadataForm.controls.motifImageUrl.hasError('motifHttps')) {
+              <mat-error i18n="@@quizForm.motifImageUrlErrorHttps"
+                >Nur HTTPS-Links sind erlaubt.</mat-error
+              >
+            }
+            @if (metadataForm.controls.motifImageUrl.hasError('motifUrl')) {
+              <mat-error i18n="@@quizForm.motifImageUrlErrorInvalid">Ungültige URL.</mat-error>
+            }
+          </mat-form-field>
           @if (metadataSubmitError()) {
             <p class="quiz-edit-form__error" role="alert">{{ metadataSubmitError() }}</p>
           }

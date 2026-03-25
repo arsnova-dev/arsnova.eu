@@ -63,6 +63,69 @@ describe('quiz.upload (Story 2.1a)', () => {
       text: '4',
       isCorrect: true,
     });
+    expect(createCall.data.motifImageUrl).toBeNull();
+  });
+
+  it('speichert motifImageUrl (HTTPS)', async () => {
+    const input = {
+      name: 'Mit Motiv',
+      motifImageUrl: 'https://example.com/bild.png' as const,
+      showLeaderboard: true,
+      allowCustomNicknames: true,
+      enableSoundEffects: true,
+      enableRewardEffects: true,
+      enableMotivationMessages: true,
+      enableEmojiReactions: true,
+      anonymousMode: false,
+      teamMode: false,
+      teamNames: [],
+      nicknameTheme: 'NOBEL_LAUREATES' as const,
+      questions: [
+        {
+          text: 'Frage',
+          type: 'SINGLE_CHOICE' as const,
+          difficulty: 'MEDIUM' as const,
+          order: 0,
+          answers: [{ text: 'A', isCorrect: true }],
+        },
+      ],
+    };
+
+    await caller.upload(input);
+
+    expect(prismaMock.quiz.create.mock.calls[0]![0].data.motifImageUrl).toBe(
+      'https://example.com/bild.png',
+    );
+  });
+
+  it('akzeptiert leeres motifImageUrl (wird zu null)', async () => {
+    const input = {
+      name: 'Ohne Motiv',
+      motifImageUrl: '' as const,
+      showLeaderboard: true,
+      allowCustomNicknames: true,
+      enableSoundEffects: true,
+      enableRewardEffects: true,
+      enableMotivationMessages: true,
+      enableEmojiReactions: true,
+      anonymousMode: false,
+      teamMode: false,
+      teamNames: [],
+      nicknameTheme: 'NOBEL_LAUREATES' as const,
+      questions: [
+        {
+          text: 'Frage',
+          type: 'SINGLE_CHOICE' as const,
+          difficulty: 'MEDIUM' as const,
+          order: 0,
+          answers: [{ text: 'A', isCorrect: true }],
+        },
+      ],
+    };
+
+    await caller.upload(input);
+
+    expect(prismaMock.quiz.create.mock.calls[0]![0].data.motifImageUrl).toBeNull();
   });
 
   it('übernimmt readingPhaseEnabled (default true)', async () => {

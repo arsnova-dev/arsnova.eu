@@ -12,6 +12,7 @@ describe('QuizEditComponent', () => {
     id: QUIZ_ID,
     name: 'Test-Quiz',
     description: 'Beschreibung',
+    motifImageUrl: null,
     createdAt: '2026-03-08T12:00:00.000Z',
     updatedAt: '2026-03-08T12:00:00.000Z',
     settings: {
@@ -355,6 +356,7 @@ describe('QuizEditComponent', () => {
     component.metadataForm.patchValue({
       name: 'Aktualisierter Name',
       description: 'Neue Beschreibung',
+      motifImageUrl: '',
     });
 
     component.saveMetadata();
@@ -362,6 +364,7 @@ describe('QuizEditComponent', () => {
     expect(mockStore.updateQuizMetadata).toHaveBeenCalledWith(QUIZ_ID, {
       name: 'Aktualisierter Name',
       description: 'Neue Beschreibung',
+      motifImageUrl: null,
     });
     expect(component.metadataSaved()).toBe(true);
   });

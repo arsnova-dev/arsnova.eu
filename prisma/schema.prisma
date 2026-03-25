@@ -14,6 +14,7 @@ model Quiz {
   id                   String     @id @default(uuid())
   name                 String
   description          String?
+  motifImageUrl        String?    // HTTPS-URL, optionales Motivbild (Host, Quiz-Kanal)
   showLeaderboard      Boolean    @default(true)   // Story 1.4: Leaderboard an/aus
   allowCustomNicknames Boolean    @default(true)   // Story 1.4: Eigene Pseudonyme erlauben
   defaultTimer         Int?                         // Story 1.4: Standard-Countdown in Sekunden

@@ -2820,6 +2820,34 @@
           <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlLabel" datatype="html">
+        <source>Motivbild (optional)</source>
+        <target>Motif image (optional)</target>
+      </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlPlaceholder" datatype="html">
+        <source>https://…</source>
+        <target>https://…</target>
+      </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlAria" datatype="html">
+        <source>HTTPS-URL zu einem Motivbild</source>
+        <target>HTTPS URL of a motif image</target>
+      </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlHint" datatype="html">
+        <source>Nur HTTPS-URLs, z. B. ein Bild auf deiner Website.</source>
+        <target>HTTPS URLs only—for example an image on your website.</target>
+      </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlErrorMax" datatype="html">
+        <source>Die URL darf maximal 1024 Zeichen lang sein.</source>
+        <target>The URL may be at most 1024 characters.</target>
+      </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlErrorHttps" datatype="html">
+        <source>Nur HTTPS-Links sind erlaubt.</source>
+        <target>Only HTTPS links are allowed.</target>
+      </trans-unit>
+      <trans-unit id="quizForm.motifImageUrlErrorInvalid" datatype="html">
+        <source>Ungültige URL.</source>
+        <target>Invalid URL.</target>
+      </trans-unit>
       <trans-unit id="3241474076591504793" datatype="html">
         <source>Gespeichert.</source>
         <target>Saved.
@@ -5609,6 +5637,10 @@
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
           <context context-type="linenumber">194,196</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.quizMotifImageAlt" datatype="html">
+        <source>Motivbild zum Quiz</source>
+        <target>Motif image for the quiz</target>
       </trans-unit>
       <trans-unit id="sessionHost.startQa" datatype="html">
         <source>Fragerunde starten</source>

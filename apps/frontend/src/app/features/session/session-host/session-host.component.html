@@ -281,6 +281,20 @@
             @if (sessionHeading(); as heading) {
               <section class="session-lobby__hero-card">
                 <p class="session-lobby__hero-title">{{ heading }}</p>
+                @if (activeChannel() === 'quiz' && session()?.quizMotifImageUrl; as motifUrl) {
+                  <div class="session-lobby__quiz-motif-wrap">
+                    <img
+                      class="session-lobby__quiz-motif"
+                      [src]="motifUrl"
+                      i18n-alt="@@sessionHost.quizMotifImageAlt"
+                      alt="Motivbild zum Quiz"
+                      loading="lazy"
+                      decoding="async"
+                      referrerpolicy="no-referrer"
+                      (error)="onHostQuizMotifError($event)"
+                    />
+                  </div>
+                }
                 <div class="session-lobby__actions session-lobby__actions--hero">
                   <button
                     mat-flat-button
@@ -1081,6 +1095,20 @@
                 }
               } @else {
                 @if (isQuizAwaitingFirstQuestion()) {
+                  @if (session()?.quizMotifImageUrl; as runMotifUrl) {
+                    <div class="session-host__run-quiz-motif-wrap">
+                      <img
+                        class="session-host__run-quiz-motif"
+                        [src]="runMotifUrl"
+                        i18n-alt="@@sessionHost.quizMotifImageAlt"
+                        alt="Motivbild zum Quiz"
+                        loading="lazy"
+                        decoding="async"
+                        referrerpolicy="no-referrer"
+                        (error)="onHostQuizMotifError($event)"
+                      />
+                    </div>
+                  }
                   <p class="session-host__no-question" i18n="@@sessionHost.quizAwaitingFirstHint">
                     Noch keine Quiz-Frage. Starte die erste Frage, wenn du mit dem Quiz beginnen
                     möchtest.

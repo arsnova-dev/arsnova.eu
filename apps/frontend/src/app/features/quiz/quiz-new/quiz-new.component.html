@@ -45,6 +45,48 @@
         }
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@quizForm.motifImageUrlLabel">Motivbild (optional)</mat-label>
+        <input
+          matInput
+          formControlName="motifImageUrl"
+          type="url"
+          [maxlength]="motifImageUrlMaxLength"
+          autocomplete="off"
+          i18n-placeholder="@@quizForm.motifImageUrlPlaceholder"
+          placeholder="https://…"
+          i18n-aria-label="@@quizForm.motifImageUrlAria"
+          aria-label="HTTPS-URL zu einem Motivbild"
+        />
+        <mat-hint i18n="@@quizForm.motifImageUrlHint" align="start"
+          >Nur HTTPS-URLs, z. B. ein Bild auf deiner Website.</mat-hint
+        >
+        <mat-hint align="end"
+          >{{ motifImageUrlControl.value.length }}/{{ motifImageUrlMaxLength }}</mat-hint
+        >
+        @if (
+          motifImageUrlControl.hasError('maxlength') &&
+          (motifImageUrlControl.touched || submitted())
+        ) {
+          <mat-error i18n="@@quizForm.motifImageUrlErrorMax"
+            >Die URL darf maximal 1024 Zeichen lang sein.</mat-error
+          >
+        }
+        @if (
+          motifImageUrlControl.hasError('motifHttps') &&
+          (motifImageUrlControl.touched || submitted())
+        ) {
+          <mat-error i18n="@@quizForm.motifImageUrlErrorHttps"
+            >Nur HTTPS-Links sind erlaubt.</mat-error
+          >
+        }
+        @if (
+          motifImageUrlControl.hasError('motifUrl') && (motifImageUrlControl.touched || submitted())
+        ) {
+          <mat-error i18n="@@quizForm.motifImageUrlErrorInvalid">Ungültige URL.</mat-error>
+        }
+      </mat-form-field>
+
       <div class="quiz-form__settings-toggle">
         <button mat-button type="button" (click)="showSettings.set(!showSettings())">
           <mat-icon>{{ showSettings() ? 'expand_less' : 'tune' }}</mat-icon>
