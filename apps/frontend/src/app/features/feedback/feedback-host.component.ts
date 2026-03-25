@@ -1,10 +1,10 @@
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
+  HostListener,
   Injector,
   OnDestroy,
   OnInit,
-  ViewChild,
   afterNextRender,
   computed,
   effect,
@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { OverlayModule, type ConnectedPosition } from '@angular/cdk/overlay';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { trpc } from '../../core/trpc.client';
 import { ThemePresetService } from '../../core/theme-preset.service';
@@ -42,8 +42,7 @@ import type { Unsubscribable } from '@trpc/server/observable';
     MatButton,
     MatIconButton,
     MatIcon,
-    MatMenu,
-    MatMenuTrigger,
+    OverlayModule,
   ],
   templateUrl: './feedback-host.component.html',
   styleUrl: './feedback-host.component.scss',
@@ -59,8 +58,6 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   private readonly themePreset = inject(ThemePresetService);
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
-  @ViewChild('feedbackJoinMenuTrigger', { read: MatMenuTrigger })
-  feedbackJoinMenuTrigger?: MatMenuTrigger;
   private subscription: Unsubscribable | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   readonly sessionCode = input('');
@@ -78,6 +75,15 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   private priorFeedbackHadResultForMenu = false;
   private priorFeedbackQrReadyForMenu = false;
   private suppressFeedbackJoinMenuAutopen = false;
+  readonly feedbackJoinPopoverOpen = signal(false);
+  readonly feedbackJoinPopoverPositions: ConnectedPosition[] = [
+    {
+      originX: 'center',
+      originY: 'bottom',
+      overlayX: 'center',
+      overlayY: 'top',
+    },
+  ];
   readonly showEmbeddedEmptyState = computed(
     () => this.embeddedInSession() && this.result() === null,
   );
@@ -128,7 +134,7 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
                 return;
               }
               try {
-                this.feedbackJoinMenuTrigger?.openMenu();
+                this.feedbackJoinPopoverOpen.set(true);
               } catch {
                 /* Menü/Trigger ggf. noch nicht im DOM (Tests, schnelle Navigation) */
               }
@@ -150,6 +156,22 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   }
 
   /** Hostname für Join-Menü („Gehe auf …“), analog Session-Host. */
+  toggleFeedbackJoinPopover(): void {
+    this.feedbackJoinPopoverOpen.update((v) => !v);
+  }
+
+  closeFeedbackJoinPopover(): void {
+    this.feedbackJoinPopoverOpen.set(false);
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onDocumentKeydownCloseFeedbackJoinPopover(ev: KeyboardEvent): void {
+    if (ev.key !== 'Escape' || !this.feedbackJoinPopoverOpen()) {
+      return;
+    }
+    this.closeFeedbackJoinPopover();
+  }
+
   joinOriginForMenu(): string {
     const url = this.joinUrl;
     try {

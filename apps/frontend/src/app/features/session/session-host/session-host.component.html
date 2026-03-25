@@ -158,11 +158,15 @@
         <div class="session-host__live-banner-main">
           <div class="session-host__live-access">
             <button
-              #hostJoinMenuTrigger="matMenuTrigger"
+              #hostJoinPopoverOrigin="cdkOverlayOrigin"
+              cdkOverlayOrigin
               mat-icon-button
               type="button"
               class="session-host__live-join-control"
-              [matMenuTriggerFor]="hostJoinMenu"
+              (click)="toggleJoinInfoPopover()"
+              [attr.aria-expanded]="joinInfoPopoverOpen()"
+              aria-haspopup="true"
+              aria-controls="session-host-join-info"
               i18n-aria-label="@@sessionHost.joinControlAria"
               aria-label="Beitrittsinformationen öffnen"
             >
@@ -238,15 +242,25 @@
             </div>
           </div>
         </div>
-        <!-- LTR: xPosition after = Panel rechts vom Beitritt-Button; below = unterhalb der Oberkante. -->
-        <mat-menu
-          #hostJoinMenu="matMenu"
-          xPosition="after"
-          yPosition="below"
-          [overlapTrigger]="false"
-          class="session-host__join-menu-overlay-panel"
+        <!-- CDK-Overlay statt mat-menu: kein role=menu ohne menuitem (Lighthouse / ARIA). -->
+        <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="hostJoinPopoverOrigin"
+          [cdkConnectedOverlayOpen]="joinInfoPopoverOpen()"
+          [cdkConnectedOverlayPositions]="joinInfoPopoverPositions"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+          [cdkConnectedOverlayPanelClass]="'session-host__join-popover-pane'"
+          (backdropClick)="closeJoinInfoPopover()"
+          (detach)="closeJoinInfoPopover()"
         >
-          <div class="session-host__join-menu-panel" (click)="$event.stopPropagation()">
+          <div
+            class="session-host__join-menu-panel"
+            role="region"
+            id="session-host-join-info"
+            tabindex="-1"
+            (click)="$event.stopPropagation()"
+          >
             <div class="session-host__join-menu-head">
               <p class="session-host__join-menu-lead" i18n="@@sessionHost.joinMenuLead">Gehe auf</p>
               <p class="session-host__join-menu-origin">{{ joinOriginForMenu() }}</p>
@@ -269,7 +283,7 @@
               {{ s.code }}
             </p>
           </div>
-        </mat-menu>
+        </ng-template>
       </section>
     }
 

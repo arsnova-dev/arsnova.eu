@@ -35,6 +35,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { OverlayModule, type ConnectedPosition } from '@angular/cdk/overlay';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { firstValueFrom } from 'rxjs';
@@ -189,6 +190,7 @@ function musicTracksForPhase(
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    OverlayModule,
     MatSlideToggle,
     WordCloudComponent,
     CountdownFingersComponent,
@@ -215,8 +217,6 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly qaScrolledDown = signal(false);
   @ViewChild('qaListContainer') qaListContainerRef?: ElementRef<HTMLElement>;
   @ViewChild('qaTitleInput') qaTitleInputRef?: ElementRef<HTMLInputElement>;
-  @ViewChild('hostJoinMenuTrigger', { read: MatMenuTrigger })
-  hostJoinMenuTrigger?: MatMenuTrigger;
   readonly qaHighlightedQuestionIds = signal<Set<string>>(new Set());
   readonly quickFeedbackResult = signal<QuickFeedbackResult | null>(null);
   readonly quickFeedbackSeenVoteCount = signal(0);
@@ -491,6 +491,22 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private priorQrReadyForJoinMenu = false;
   /** Verhindert geplantes Öffnen des Join-Menüs nach ngOnDestroy (z. B. Vitest). */
   private suppressJoinMenuAutopen = false;
+  /** Beitritts-Popover (QR): CDK-Overlay mit role=region statt mat-menu (role=menu ohne menuitem). */
+  readonly joinInfoPopoverOpen = signal(false);
+  readonly joinInfoPopoverPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'top',
+    },
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+    },
+  ];
 
   private readonly injector = inject(Injector);
 
@@ -603,9 +619,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
             queueMicrotask(() => {
               if (this.suppressJoinMenuAutopen) return;
               try {
-                this.hostJoinMenuTrigger?.openMenu();
+                this.joinInfoPopoverOpen.set(true);
               } catch {
-                /* Menü/View ggf. schon zerstört (Tests, schnelle Navigation) */
+                /* Overlay/View ggf. schon zerstört (Tests, schnelle Navigation) */
               }
             });
           },
@@ -663,6 +679,22 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         ? this.document.defaultView.location.origin
         : '';
     return origin ? `${origin}/join/${this.code}` : `/join/${this.code}`;
+  }
+
+  toggleJoinInfoPopover(): void {
+    this.joinInfoPopoverOpen.update((v) => !v);
+  }
+
+  closeJoinInfoPopover(): void {
+    this.joinInfoPopoverOpen.set(false);
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onDocumentKeydownCloseJoinPopover(ev: KeyboardEvent): void {
+    if (ev.key !== 'Escape' || !this.joinInfoPopoverOpen()) {
+      return;
+    }
+    this.closeJoinInfoPopover();
   }
 
   /** Host der Beitritts-URL ohne Schema und ohne Pfad (Hostname, ggf. Port), für das Join-Menü. */

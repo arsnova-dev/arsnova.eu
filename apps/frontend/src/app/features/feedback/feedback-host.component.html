@@ -192,11 +192,15 @@
               <div class="feedback-host__standalone-live-main">
                 <div class="feedback-host__standalone-live-access">
                   <button
-                    #feedbackJoinMenuTrigger="matMenuTrigger"
+                    #feedbackJoinPopoverOrigin="cdkOverlayOrigin"
+                    cdkOverlayOrigin
                     mat-icon-button
                     type="button"
                     class="feedback-host__standalone-join-control"
-                    [matMenuTriggerFor]="feedbackJoinMenu"
+                    (click)="toggleFeedbackJoinPopover()"
+                    [attr.aria-expanded]="feedbackJoinPopoverOpen()"
+                    aria-haspopup="true"
+                    aria-controls="feedback-host-join-info"
                     i18n-aria-label="@@sessionHost.joinControlAria"
                     aria-label="Beitrittsinformationen öffnen"
                   >
@@ -213,14 +217,24 @@
                   </div>
                 </div>
               </div>
-              <mat-menu
-                #feedbackJoinMenu="matMenu"
-                xPosition="after"
-                yPosition="below"
-                [overlapTrigger]="false"
-                class="feedback-host__join-menu-overlay-panel"
+              <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayOrigin]="feedbackJoinPopoverOrigin"
+                [cdkConnectedOverlayOpen]="feedbackJoinPopoverOpen()"
+                [cdkConnectedOverlayPositions]="feedbackJoinPopoverPositions"
+                [cdkConnectedOverlayHasBackdrop]="true"
+                [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+                [cdkConnectedOverlayPanelClass]="'feedback-host__join-popover-pane'"
+                (backdropClick)="closeFeedbackJoinPopover()"
+                (detach)="closeFeedbackJoinPopover()"
               >
-                <div class="feedback-host__join-menu-panel" (click)="$event.stopPropagation()">
+                <div
+                  class="feedback-host__join-menu-panel"
+                  role="region"
+                  id="feedback-host-join-info"
+                  tabindex="-1"
+                  (click)="$event.stopPropagation()"
+                >
                   <div class="feedback-host__join-menu-head">
                     <!-- prettier-ignore -->
                     <p class="feedback-host__join-menu-lead" i18n="@@sessionHost.joinMenuLead">Gehe auf</p>
@@ -244,7 +258,7 @@
                     {{ code() }}
                   </p>
                 </div>
-              </mat-menu>
+              </ng-template>
             </section>
             <ng-container *ngTemplateOutlet="feedbackHostJoinActions" />
           </div>
