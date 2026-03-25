@@ -70,6 +70,10 @@ import {
   shouldBypassSessionCreateRate,
 } from '../lib/rateLimit';
 import { randomBytes } from 'crypto';
+import {
+  buildAnswerDisplayOrderForQuiz,
+  orderAnswersByDisplayMap,
+} from '../lib/answerDisplayOrder';
 
 const QUESTION_TEXT_SHORT_MAX = 100;
 const PARTICIPANT_SUBSCRIPTION_POLL_MS = 2000;
@@ -837,7 +841,10 @@ export const sessionRouter = router({
               name: true,
               readingPhaseEnabled: true,
               bonusTokenCount: true,
-              questions: { orderBy: { order: 'asc' }, select: { id: true, type: true } },
+              questions: {
+                orderBy: { order: 'asc' },
+                select: { id: true, type: true, answers: { select: { id: true } } },
+              },
             },
           },
           participants: { select: { id: true, nickname: true } },
@@ -885,6 +892,15 @@ export const sessionRouter = router({
         nextQuestion?.type === 'SURVEY' || nextQuestion?.type === 'RATING';
       const readingPhase = session.quiz.readingPhaseEnabled && !skipReadingPhaseForType;
       const newStatus = readingPhase ? ('QUESTION_OPEN' as const) : ('ACTIVE' as const);
+
+      let answerDisplayOrderPayload: ReturnType<typeof buildAnswerDisplayOrderForQuiz> | undefined;
+      if (nextIdx === 0 && (session.answerDisplayOrder ?? null) === null) {
+        const built = buildAnswerDisplayOrderForQuiz(session.quiz.questions);
+        if (Object.keys(built).length > 0) {
+          answerDisplayOrderPayload = built;
+        }
+      }
+
       await prisma.session.update({
         where: { id: session.id },
         data: {
@@ -892,6 +908,7 @@ export const sessionRouter = router({
           currentQuestion: nextIdx,
           currentRound: 1,
           statusChangedAt: new Date(),
+          ...(answerDisplayOrderPayload && { answerDisplayOrder: answerDisplayOrderPayload }),
         },
       });
       return {
@@ -1063,6 +1080,12 @@ export const sessionRouter = router({
       const question = questions[idx] ?? null;
       if (!question) return null;
 
+      const answersOrdered = orderAnswersByDisplayMap(
+        question.answers,
+        question.id,
+        session.answerDisplayOrder,
+      );
+
       const base = {
         questionId: question.id,
         order: question.order,
@@ -1079,7 +1102,7 @@ export const sessionRouter = router({
           session.quiz.defaultTimer,
           session.quiz.preset as 'PLAYFUL' | 'SERIOUS' | undefined,
         ),
-        answers: question.answers.map((a) => ({ id: a.id, text: a.text, isCorrect: a.isCorrect })),
+        answers: answersOrdered.map((a) => ({ id: a.id, text: a.text, isCorrect: a.isCorrect })),
         ratingMin: question.ratingMin ?? null,
         ratingMax: question.ratingMax ?? null,
         ratingLabelMin: question.ratingLabelMin ?? null,
@@ -1147,7 +1170,7 @@ export const sessionRouter = router({
           }
         }
 
-        const correctIds = new Set(question.answers.filter((a) => a.isCorrect).map((a) => a.id));
+        const correctIds = new Set(answersOrdered.filter((a) => a.isCorrect).map((a) => a.id));
         const correctVoterCount =
           correctIds.size > 0
             ? choiceVotes.filter((v) => {
@@ -1160,7 +1183,7 @@ export const sessionRouter = router({
               }).length
             : undefined;
 
-        const voteDistribution = question.answers.map((a) => ({
+        const voteDistribution = answersOrdered.map((a) => ({
           id: a.id,
           text: a.text,
           isCorrect: a.isCorrect,
@@ -1171,7 +1194,7 @@ export const sessionRouter = router({
 
         let roundComparison: RoundComparisonDTO | undefined;
         if (session.status === 'RESULTS' && currentRound === 2) {
-          roundComparison = await buildRoundComparison(session.id, question.id, question.answers);
+          roundComparison = await buildRoundComparison(session.id, question.id, answersOrdered);
         }
 
         return {
@@ -1215,6 +1238,12 @@ export const sessionRouter = router({
       if (idx === null || idx === undefined) return null;
       const question = session.quiz.questions[idx];
       if (!question) return null;
+
+      const answersOrdered = orderAnswersByDisplayMap(
+        question.answers,
+        question.id,
+        session.answerDisplayOrder,
+      );
 
       const totalQuestions = session.quiz.questions.length;
 
@@ -1265,7 +1294,7 @@ export const sessionRouter = router({
           difficulty: question.difficulty,
           order: question.order,
           totalQuestions,
-          answers: question.answers.map((a) => ({ id: a.id, text: a.text })),
+          answers: answersOrdered.map((a) => ({ id: a.id, text: a.text })),
           activeAt: session.statusChangedAt.toISOString(),
           ratingMin: question.ratingMin ?? null,
           ratingMax: question.ratingMax ?? null,
@@ -1312,7 +1341,7 @@ export const sessionRouter = router({
           difficulty: question.difficulty,
           order: question.order,
           totalQuestions,
-          answers: question.answers.map((a) => ({
+          answers: answersOrdered.map((a) => ({
             id: a.id,
             text: a.text,
             isCorrect: a.isCorrect,
@@ -2210,12 +2239,18 @@ export const sessionRouter = router({
           switch (q.type) {
             case 'MULTIPLE_CHOICE':
             case 'SINGLE_CHOICE': {
-              const optionCounts = new Map<string, { count: number; isCorrect?: boolean }>();
-              for (const opt of q.answers as Array<{
+              const rawAnswers = q.answers as Array<{
                 id: string;
                 text: string;
                 isCorrect: boolean;
-              }>) {
+              }>;
+              const orderedOpts = orderAnswersByDisplayMap(
+                rawAnswers,
+                q.id,
+                session.answerDisplayOrder,
+              );
+              const optionCounts = new Map<string, { count: number; isCorrect?: boolean }>();
+              for (const opt of orderedOpts) {
                 optionCounts.set(opt.id, { count: 0, isCorrect: opt.isCorrect });
               }
               for (const v of votes) {
@@ -2228,9 +2263,7 @@ export const sessionRouter = router({
                 }
               }
               const total = votes.length || 1;
-              optionDistribution = (
-                q.answers as Array<{ id: string; text: string; isCorrect: boolean }>
-              ).map((opt) => {
+              optionDistribution = orderedOpts.map((opt) => {
                 const { count, isCorrect } = optionCounts.get(opt.id) ?? { count: 0 };
                 return {
                   text: opt.text,
