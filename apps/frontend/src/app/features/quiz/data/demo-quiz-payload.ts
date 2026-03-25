@@ -24,3 +24,20 @@ export function normalizeDemoQuizLocale(locale: string): SupportedLocale {
 export function getDemoQuizPayload(locale: SupportedLocale): unknown {
   return PAYLOADS[locale] ?? PAYLOADS.de;
 }
+
+type DemoExportShape = {
+  exportVersion?: number;
+  quiz?: { name?: string };
+};
+
+/**
+ * Stabiler Vergleichswert für localStorage: wechselt mit Locale und Inhalt der Showcase-JSON.
+ * Wenn er nicht zum erwarteten Wert passt, wird das Demo-Quiz neu importiert (ohne komplettes Storage leeren).
+ */
+export function getDemoQuizSeedFingerprint(locale: SupportedLocale): string {
+  const payload = PAYLOADS[locale] ?? PAYLOADS.de;
+  const p = payload as DemoExportShape;
+  const v = typeof p.exportVersion === 'number' ? p.exportVersion : 0;
+  const n = typeof p.quiz?.name === 'string' ? p.quiz.name : '';
+  return `${locale}|${v}|${n}`;
+}

@@ -2,6 +2,7 @@ import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { getDemoQuizSeedFingerprint } from './demo-quiz-payload';
 import {
   DEMO_QUIZ_ID,
   QUIZ_STORAGE_KEY,
@@ -534,7 +535,7 @@ describe('QuizStoreService', () => {
     expect(() => service.activateSyncRoom('abc')).toThrowError('Ungültige Sync-ID.');
   });
 
-  it('Demo-Quiz: ohne Locale-Storage wird Inhalt an aktuelle Locale angepasst (kein festsitzendes EN)', () => {
+  it('Demo-Quiz: fehlender Seed-Fingerprint oder alter Locale-Only-Key → Neu-Import passend zur Locale', () => {
     const roomId = '00000000-0000-4000-8000-000000000099';
     localStorage.setItem('quiz-sync-room-id', roomId);
     localStorage.setItem(
@@ -552,7 +553,42 @@ describe('QuizStoreService', () => {
         },
       ]),
     );
-    localStorage.setItem('arsnova-demo-quiz-locale-v1', 'de');
+    localStorage.setItem('arsnova-demo-quiz-locale-v2', 'de');
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), { provide: LOCALE_ID, useValue: 'de' }],
+    });
+
+    const service = TestBed.inject(QuizStoreService);
+    expect(service.getQuizById(DEMO_QUIZ_ID)?.name).toBe(
+      'Alle Frageformate – Quiz aus der Oberstufe',
+    );
+    expect(localStorage.getItem('arsnova-demo-quiz-seed-fp-v1')).toBe(
+      getDemoQuizSeedFingerprint('de'),
+    );
+    expect(localStorage.getItem('arsnova-demo-quiz-locale-v2')).toBeNull();
+  });
+
+  it('Demo-Quiz: gespeicherter Fingerprint für andere Locale → Neu-Import', () => {
+    const roomId = '00000000-0000-4000-8000-000000000088';
+    localStorage.setItem('quiz-sync-room-id', roomId);
+    localStorage.setItem(
+      `${QUIZ_STORAGE_KEY}:${roomId}`,
+      JSON.stringify([
+        {
+          id: DEMO_QUIZ_ID,
+          name: 'All question formats – high school demo quiz',
+          description: null,
+          motifImageUrl: null,
+          createdAt: '2026-03-08T12:00:00.000Z',
+          updatedAt: '2026-03-08T12:00:00.000Z',
+          settings: defaultSettings,
+          questions: [],
+        },
+      ]),
+    );
+    localStorage.setItem('arsnova-demo-quiz-seed-fp-v1', getDemoQuizSeedFingerprint('en'));
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({

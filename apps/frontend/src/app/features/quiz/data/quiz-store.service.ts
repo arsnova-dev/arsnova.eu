@@ -33,10 +33,13 @@ import { getYjsWsUrl } from '../../../core/ws-urls';
 import {
   getEffectiveLocale,
   localeIdToSupported,
-  SUPPORTED_LOCALES,
   type SupportedLocale,
 } from '../../../core/locale-from-path';
-import { getDemoQuizPayload, normalizeDemoQuizLocale } from './demo-quiz-payload';
+import {
+  getDemoQuizPayload,
+  getDemoQuizSeedFingerprint,
+  normalizeDemoQuizLocale,
+} from './demo-quiz-payload';
 
 export type SupportedQuestionType =
   | 'MULTIPLE_CHOICE'
@@ -346,9 +349,11 @@ export type LibrarySharingMode = 'local' | 'shared';
 
 export const DEMO_QUIZ_ID = 'de500000-0000-4000-a000-000000000001';
 
-/** Merkt sich, in welcher Sprache das Demo-Quiz zuletzt gesät wurde (für Sprachwechsel / Migration). */
-/** v2: v1 konnte fälschlich „de“ speichern, obwohl der Demo-Inhalt noch EN war → Demo blieb bei Sprachwechsel falsch. */
-const DEMO_QUIZ_LOCALE_STORAGE_KEY = 'arsnova-demo-quiz-locale-v2';
+/**
+ * Erwarteter Demo-Seed aus Showcase-JSON (Locale + Version + Titel). Alte Keys `arsnova-demo-quiz-locale-v1/v2`
+ * allein reichen nicht, wenn der gespeicherte Quiz-Datensatz von der URL-Sprache abweicht.
+ */
+const DEMO_QUIZ_SEED_FINGERPRINT_KEY = 'arsnova-demo-quiz-seed-fp-v1';
 
 @Injectable({ providedIn: 'root' })
 export class QuizStoreService {
@@ -929,24 +934,25 @@ export class QuizStoreService {
 
     const locale = this.resolveActiveDemoLocale();
     const payload = getDemoQuizPayload(locale);
+    const expectedFp = getDemoQuizSeedFingerprint(locale);
     const existing = this.getQuizById(DEMO_QUIZ_ID);
-    const lastSeeded = this.readDemoQuizSeededLocale();
+    const storedFp = this.readDemoQuizSeedFingerprint();
 
     if (!existing) {
       try {
         this.importQuiz(payload, DEMO_QUIZ_ID);
-        this.writeDemoQuizSeededLocale(locale);
+        this.writeDemoQuizSeedFingerprint(expectedFp);
       } catch (e) {
         console.error('[DemoQuiz] Seeding failed:', e);
       }
       return;
     }
 
-    if (lastSeeded === null || lastSeeded !== locale) {
+    if (storedFp !== expectedFp) {
       try {
         this.quizDocuments.update((current) => current.filter((q) => q.id !== DEMO_QUIZ_ID));
         this.importQuiz(payload, DEMO_QUIZ_ID);
-        this.writeDemoQuizSeededLocale(locale);
+        this.writeDemoQuizSeedFingerprint(expectedFp);
       } catch (e) {
         console.error('[DemoQuiz] Locale refresh failed:', e);
       }
@@ -960,23 +966,23 @@ export class QuizStoreService {
     return normalizeDemoQuizLocale(String(this.localeId));
   }
 
-  private readDemoQuizSeededLocale(): SupportedLocale | null {
+  private readDemoQuizSeedFingerprint(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
     try {
-      const raw = localStorage.getItem(DEMO_QUIZ_LOCALE_STORAGE_KEY);
-      if (raw && (SUPPORTED_LOCALES as readonly string[]).includes(raw)) {
-        return raw as SupportedLocale;
-      }
+      const raw = localStorage.getItem(DEMO_QUIZ_SEED_FINGERPRINT_KEY);
+      return raw && raw.length > 0 ? raw : null;
     } catch {
       /* ignore */
     }
     return null;
   }
 
-  private writeDemoQuizSeededLocale(locale: SupportedLocale): void {
+  private writeDemoQuizSeedFingerprint(fingerprint: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
     try {
-      localStorage.setItem(DEMO_QUIZ_LOCALE_STORAGE_KEY, locale);
+      localStorage.setItem(DEMO_QUIZ_SEED_FINGERPRINT_KEY, fingerprint);
+      localStorage.removeItem('arsnova-demo-quiz-locale-v1');
+      localStorage.removeItem('arsnova-demo-quiz-locale-v2');
     } catch {
       /* ignore */
     }
