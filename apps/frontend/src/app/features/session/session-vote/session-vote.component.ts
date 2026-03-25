@@ -37,6 +37,7 @@ import type {
   TeamLeaderboardEntryDTO,
 } from '@arsnova/shared-types';
 import { CountdownFingersComponent } from '../../../shared/countdown-fingers/countdown-fingers.component';
+import { remainingCountdownSeconds } from '../session-countdown.util';
 import type { Unsubscribable } from '@trpc/server/observable';
 import { FeedbackVoteComponent } from '../../feedback/feedback-vote.component';
 
@@ -824,7 +825,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     this.stopCountdown();
     this.timeoutMessage.set(null);
     const tick = (): void => {
-      const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+      const remaining = remainingCountdownSeconds(deadline);
       this.countdownSeconds.set(remaining);
       if (remaining <= 0) {
         this.stopCountdown();

@@ -65,6 +65,7 @@ import type {
 } from '@arsnova/shared-types';
 import { WordCloudComponent } from '../session-present/word-cloud.component';
 import { CountdownFingersComponent } from '../../../shared/countdown-fingers/countdown-fingers.component';
+import { remainingCountdownSeconds } from '../session-countdown.util';
 import { MusicEqualizerIconComponent } from '../../../shared/music-equalizer-icon/music-equalizer-icon.component';
 import { FeedbackHostComponent } from '../../feedback/feedback-host.component';
 
@@ -924,7 +925,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     const deadline = start + timerSeconds * 1000;
 
     const tick = (): void => {
-      const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+      const remaining = remainingCountdownSeconds(deadline);
       this.countdownSeconds.set(remaining);
       if (remaining <= 9 && !this.countdownSfxPhase()) {
         this.countdownSfxPhase.set(true);

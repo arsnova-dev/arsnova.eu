@@ -515,17 +515,17 @@ export const sessionRouter = router({
         };
       }
 
-      const activeAt = new Date().toISOString();
+      const now = new Date();
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: 'ACTIVE', statusChangedAt: new Date() },
+        data: { status: 'ACTIVE', statusChangedAt: now },
       });
 
       return {
         status: 'ACTIVE' as const,
         currentQuestion: null,
         currentRound: 1,
-        activeAt,
+        activeAt: now.toISOString(),
       };
     }),
 
@@ -918,15 +918,16 @@ export const sessionRouter = router({
           message: 'Antworten freigeben nur im Status QUESTION_OPEN (Lesephase).',
         });
       }
+      const now = new Date();
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: 'ACTIVE', statusChangedAt: new Date() },
+        data: { status: 'ACTIVE', statusChangedAt: now },
       });
       return {
         status: 'ACTIVE' as const,
         currentQuestion: session.currentQuestion,
         currentRound: session.currentRound,
-        activeAt: new Date().toISOString(),
+        activeAt: now.toISOString(),
       };
     }),
 
@@ -1009,15 +1010,16 @@ export const sessionRouter = router({
           message: 'Zweite Runde nur aus Status DISCUSSION.',
         });
       }
+      const now = new Date();
       await prisma.session.update({
         where: { id: session.id },
-        data: { status: 'ACTIVE', currentRound: 2, statusChangedAt: new Date() },
+        data: { status: 'ACTIVE', currentRound: 2, statusChangedAt: now },
       });
       return {
         status: 'ACTIVE' as const,
         currentQuestion: session.currentQuestion,
         currentRound: 2,
-        activeAt: new Date().toISOString(),
+        activeAt: now.toISOString(),
       };
     }),
 
