@@ -27,19 +27,31 @@ export function getDemoQuizPayload(locale: SupportedLocale): unknown {
 
 type DemoExportShape = {
   exportVersion?: number;
-  quiz?: { name?: string };
+  quiz?: { name?: string; description?: string | null; motifImageUrl?: string | null };
 };
+
+/** FNV-1a 32-bit (sync) — für Demo-Seed-Fingerprint ohne async crypto. */
+function fnv1a32Hex(input: string): string {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16);
+}
 
 /**
  * Stabiler Vergleichswert für localStorage: wechselt mit Locale und Inhalt der Showcase-JSON.
- * Wenn er nicht zum erwarteten Wert passt, wird das Demo-Quiz neu importiert (ohne komplettes Storage leeren).
+ * U. a. Beschreibung/Motiv — sonst bleibt nach JSON-Updates ein altes Demo in IndexedDB (ohne Bild).
  */
 export function getDemoQuizSeedFingerprint(locale: SupportedLocale): string {
   const payload = PAYLOADS[locale] ?? PAYLOADS.de;
   const p = payload as DemoExportShape;
   const v = typeof p.exportVersion === 'number' ? p.exportVersion : 0;
   const n = typeof p.quiz?.name === 'string' ? p.quiz.name : '';
-  return `${locale}|${v}|${n}`;
+  const desc = typeof p.quiz?.description === 'string' ? p.quiz.description : '';
+  const motif = typeof p.quiz?.motifImageUrl === 'string' ? p.quiz.motifImageUrl : '';
+  return `${locale}|${v}|${n}|${motif}|${fnv1a32Hex(desc)}`;
 }
 
 export function getDemoQuizExpectedTitle(locale: SupportedLocale): string {
