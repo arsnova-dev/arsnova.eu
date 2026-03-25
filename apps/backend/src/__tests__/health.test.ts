@@ -50,6 +50,25 @@ describe('health.check', () => {
   });
 });
 
+describe('health.footerBundle', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('liefert check und stats in einem Aufruf', async () => {
+    vi.mocked(pingRedis).mockResolvedValue(true);
+    vi.mocked(prisma.session.count).mockResolvedValue(0);
+    vi.mocked(prisma.participant.count).mockResolvedValue(0);
+
+    const result = await caller.footerBundle(undefined);
+
+    expect(result.check.status).toBe('ok');
+    expect(result.check.redis).toBe('ok');
+    expect(result.stats.activeSessions).toBe(0);
+    expect(result.stats.serverStatus).toBe('healthy');
+  });
+});
+
 describe('health.stats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -69,8 +88,8 @@ describe('health.stats', () => {
 
   it('berechnet serverStatus "healthy" bei < 50 aktiven Sessions', async () => {
     vi.mocked(prisma.session.count)
-      .mockResolvedValueOnce(10)   // activeSessions (not FINISHED)
-      .mockResolvedValueOnce(5);   // completedSessions (FINISHED)
+      .mockResolvedValueOnce(10) // activeSessions (not FINISHED)
+      .mockResolvedValueOnce(5); // completedSessions (FINISHED)
     vi.mocked(prisma.participant.count).mockResolvedValue(42);
 
     const result = await caller.stats(undefined);
@@ -82,9 +101,7 @@ describe('health.stats', () => {
   });
 
   it('berechnet serverStatus "busy" bei 50–199 aktiven Sessions', async () => {
-    vi.mocked(prisma.session.count)
-      .mockResolvedValueOnce(100)
-      .mockResolvedValueOnce(50);
+    vi.mocked(prisma.session.count).mockResolvedValueOnce(100).mockResolvedValueOnce(50);
     vi.mocked(prisma.participant.count).mockResolvedValue(500);
 
     const result = await caller.stats(undefined);
@@ -94,9 +111,7 @@ describe('health.stats', () => {
   });
 
   it('berechnet serverStatus "overloaded" bei >= 200 aktiven Sessions', async () => {
-    vi.mocked(prisma.session.count)
-      .mockResolvedValueOnce(250)
-      .mockResolvedValueOnce(1000);
+    vi.mocked(prisma.session.count).mockResolvedValueOnce(250).mockResolvedValueOnce(1000);
     vi.mocked(prisma.participant.count).mockResolvedValue(3000);
 
     const result = await caller.stats(undefined);
@@ -113,7 +128,13 @@ describe('health.stats', () => {
 
     const keys = Object.keys(result);
     expect(keys).toEqual(
-      expect.arrayContaining(['activeSessions', 'totalParticipants', 'completedSessions', 'activeBlitzRounds', 'serverStatus']),
+      expect.arrayContaining([
+        'activeSessions',
+        'totalParticipants',
+        'completedSessions',
+        'activeBlitzRounds',
+        'serverStatus',
+      ]),
     );
     expect(keys).not.toContain('participants');
     expect(keys).not.toContain('nicknames');

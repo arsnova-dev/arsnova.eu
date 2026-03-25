@@ -24,6 +24,8 @@ import type { ServerStatsDTO } from '@arsnova/shared-types';
 export class ServerStatusWidgetComponent implements OnInit, OnChanges, OnDestroy {
   /** Wenn false, wird „Keine Verbindung“ angezeigt statt „Gerade aktiv“ / „Wird geladen…“. */
   @Input() connectionOk = true;
+  /** Erste Kennzahlen vom Parent (health.footerBundle); vermeidet zweiten parallelen Request beim ersten Render. */
+  @Input() initialStats: ServerStatsDTO | null = null;
   /** Kompakter Modus für enge Layouts wie den globalen Footer. */
   @Input() compact = false;
 
@@ -63,6 +65,9 @@ export class ServerStatusWidgetComponent implements OnInit, OnChanges, OnDestroy
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialStats'] && this.initialStats !== null) {
+      this.stats.set(this.initialStats);
+    }
     if (changes['connectionOk']) {
       if (this.connectionOk) {
         this.startPolling();
@@ -87,7 +92,7 @@ export class ServerStatusWidgetComponent implements OnInit, OnChanges, OnDestroy
         this.stats.set(null);
       }
     };
-    void fetchStats();
+    // Erste Anzeige kommt aus initialStats (footerBundle); nur periodisch aktualisieren.
     this.intervalId = setInterval(fetchStats, 30_000);
   }
 

@@ -25,6 +25,7 @@ import { PresetSnackbarFocusService } from './core/preset-snackbar-focus.service
 import { Subscription } from 'rxjs';
 import { TopToolbarComponent } from './shared/top-toolbar/top-toolbar.component';
 import { trpc } from './core/trpc.client';
+import type { ServerStatsDTO } from '@arsnova/shared-types';
 import { ServerStatusWidgetComponent } from './shared/server-status-widget/server-status-widget.component';
 import { ServerStatusHelpDialogComponent } from './shared/server-status-help-dialog/server-status-help-dialog.component';
 import { localizePath } from './core/locale-router';
@@ -71,6 +72,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isOnline = signal(true);
   updateAvailable = signal(false);
   apiStatus = signal<string | null>(null);
+  /** Erste Server-Stats aus health.footerBundle (kein zweiter sofortiger stats-Request im Widget). */
+  footerStats = signal<ServerStatsDTO | null>(null);
   apiRetrying = signal(false);
   presetSnackbarVisible = signal(false);
   presetToastVisible = signal(false);
@@ -307,10 +310,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async checkApiConnection(): Promise<void> {
     try {
-      const health = await trpc.health.check.query();
-      this.apiStatus.set(health.status);
+      const bundle = await trpc.health.footerBundle.query();
+      this.apiStatus.set(bundle.check.status);
+      this.footerStats.set(bundle.stats);
     } catch {
       this.apiStatus.set(null);
+      this.footerStats.set(null);
     }
   }
 

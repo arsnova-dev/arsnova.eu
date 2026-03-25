@@ -1,10 +1,11 @@
 /**
  * Health & Server-Status (Story 0.1, 0.2, 0.4).
- * check: API + optional Redis | stats: aggregierte Kennzahlen | ping: Subscription Heartbeat
+ * check | stats | footerBundle (Check+Stats parallel, ein Client-Request) | ping: Subscription Heartbeat
  */
 import { publicProcedure, router } from '../trpc';
 import {
   HealthCheckResponseSchema,
+  HealthFooterBundleSchema,
   HealthPingEventSchema,
   ServerStatsDTOSchema,
 } from '@arsnova/shared-types';
@@ -64,44 +65,57 @@ export async function* heartbeatGenerator(
   }
 }
 
-export const healthRouter = router({
-  check: publicProcedure.output(HealthCheckResponseSchema).query(async () => {
-    const redisOk = await pingRedis();
-    return {
-      status: 'ok' as const,
-      timestamp: new Date().toISOString(),
-      version: '0.1.0',
-      redis: redisOk ? 'ok' : 'unavailable',
-    };
-  }),
+async function fetchHealthCheck() {
+  const redisOk = await pingRedis();
+  return {
+    status: 'ok' as const,
+    timestamp: new Date().toISOString(),
+    version: '0.1.0',
+    redis: redisOk ? ('ok' as const) : ('unavailable' as const),
+  };
+}
 
-  /** Server-Statistik für Startseite (Story 0.4). Bei nicht erreichbarer DB: Fallback (0 Werte), keine Prisma-Fehler. */
-  stats: publicProcedure.output(ServerStatsDTOSchema).query(async () => {
-    try {
-      const [activeSessions, completedSessions, totalParticipants, blitzKeys] = await Promise.all([
-        prisma.session.count({ where: { status: { in: [...ACTIVE_SESSION_STATUSES] } } }),
-        prisma.session.count({ where: { status: 'FINISHED' } }),
-        prisma.participant.count({
-          where: { session: { status: { in: [...ACTIVE_SESSION_STATUSES] } } },
-        }),
-        countActiveBlitzRounds(),
-      ]);
-      return {
-        activeSessions,
-        totalParticipants,
-        completedSessions,
-        activeBlitzRounds: blitzKeys,
-        serverStatus: getServerStatus(activeSessions),
-      };
-    } catch {
-      return {
-        activeSessions: 0,
-        totalParticipants: 0,
-        completedSessions: 0,
-        activeBlitzRounds: 0,
-        serverStatus: 'healthy' as const,
-      };
-    }
+/** Server-Statistik für Startseite (Story 0.4). Bei nicht erreichbarer DB: Fallback (0 Werte), keine Prisma-Fehler. */
+async function fetchServerStats() {
+  try {
+    const [activeSessions, completedSessions, totalParticipants, blitzKeys] = await Promise.all([
+      prisma.session.count({ where: { status: { in: [...ACTIVE_SESSION_STATUSES] } } }),
+      prisma.session.count({ where: { status: 'FINISHED' } }),
+      prisma.participant.count({
+        where: { session: { status: { in: [...ACTIVE_SESSION_STATUSES] } } },
+      }),
+      countActiveBlitzRounds(),
+    ]);
+    return {
+      activeSessions,
+      totalParticipants,
+      completedSessions,
+      activeBlitzRounds: blitzKeys,
+      serverStatus: getServerStatus(activeSessions),
+    };
+  } catch {
+    return {
+      activeSessions: 0,
+      totalParticipants: 0,
+      completedSessions: 0,
+      activeBlitzRounds: 0,
+      serverStatus: 'healthy' as const,
+    };
+  }
+}
+
+export const healthRouter = router({
+  check: publicProcedure.output(HealthCheckResponseSchema).query(() => fetchHealthCheck()),
+
+  stats: publicProcedure.output(ServerStatsDTOSchema).query(() => fetchServerStats()),
+
+  /**
+   * App-Footer: ein Client-Request statt check→stats nacheinander (kürzere kritische Netzwerk-Kette / LCP).
+   * Server führt Check und Stats parallel aus.
+   */
+  footerBundle: publicProcedure.output(HealthFooterBundleSchema).query(async () => {
+    const [check, stats] = await Promise.all([fetchHealthCheck(), fetchServerStats()]);
+    return { check, stats };
   }),
 
   /** Subscription: Heartbeat alle 5s (Story 0.2 – Test für WebSocket). */

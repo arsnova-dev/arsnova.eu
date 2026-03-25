@@ -699,13 +699,20 @@ export const ServerStatsDTOSchema = z.object({
   serverStatus: z.enum(['healthy', 'busy', 'overloaded']),
 });
 
+export type ServerStatsDTO = z.infer<typeof ServerStatsDTOSchema>;
+
+/** Ein HTTP-Roundtrip für App-Footer: Check + Stats parallel auf dem Server (kürzere kritische Netzwerk-Kette). */
+export const HealthFooterBundleSchema = z.object({
+  check: HealthCheckResponseSchema,
+  stats: ServerStatsDTOSchema,
+});
+export type HealthFooterBundle = z.infer<typeof HealthFooterBundleSchema>;
+
 /** Event der health.ping-Subscription (Story 0.2) */
 export const HealthPingEventSchema = z.object({
   heartbeat: z.string(), // ISO-8601
 });
 export type HealthPingEvent = z.infer<typeof HealthPingEventSchema>;
-
-export type ServerStatsDTO = z.infer<typeof ServerStatsDTOSchema>;
 
 // ---------------------------------------------------------------------------
 // Quiz-Export / Import (Story 1.8, 1.9)
