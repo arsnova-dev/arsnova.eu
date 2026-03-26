@@ -437,9 +437,9 @@ html.dark .cdk-overlay-pane.live-session-dialog-panel .mat-mdc-dialog-surface {
   }
 }
 
-/* Session-Host / Standalone-Blitzlicht-Host: Beitritts-Popover (QR) – CDK-Overlay, Panel role=region */
-.cdk-overlay-pane.session-host__join-popover-pane,
-.cdk-overlay-pane.feedback-host__join-popover-pane {
+/* Session-Host: QR-Dialog mittig (Viewport-Overlay); Feedback-Host: CDK-Overlay */
+.cdk-overlay-pane.feedback-host__join-popover-pane,
+.session-host__join-viewport-overlay__surface {
   max-width: min(26rem, calc(100vw - 1.25rem));
   max-height: min(calc(100dvh - 1rem), 40rem) !important;
   min-width: 0;
@@ -459,8 +459,8 @@ html.dark .cdk-overlay-pane.live-session-dialog-panel .mat-mdc-dialog-surface {
     var(--mat-sys-surface-container-high);
 }
 
-.cdk-overlay-pane.session-host__join-popover-pane .session-host__join-menu-panel,
-.cdk-overlay-pane.feedback-host__join-popover-pane .feedback-host__join-menu-panel {
+.cdk-overlay-pane.feedback-host__join-popover-pane .feedback-host__join-menu-panel,
+.session-host__join-viewport-overlay__surface.session-host__join-menu-panel {
   max-height: inherit;
   box-sizing: border-box;
   overflow-x: hidden;

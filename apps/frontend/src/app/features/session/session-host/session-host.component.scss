@@ -575,6 +575,48 @@
   box-shadow: none;
 }
 
+/* Volles Viewport-Overlay: QR groß genug für Smartphone-Kamera */
+.session-host__join-viewport-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(0.75rem, env(safe-area-inset-top, 0px)) max(0.75rem, env(safe-area-inset-right, 0px))
+    max(0.75rem, env(safe-area-inset-bottom, 0px)) max(0.75rem, env(safe-area-inset-left, 0px));
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--mat-sys-shadow) 42%, transparent);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-host__join-viewport-overlay {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+.session-host__join-viewport-overlay__surface {
+  position: relative;
+  width: 100%;
+}
+
+.session-host__join-viewport-overlay__close {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  z-index: 1;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.session-host__join-menu-qr--viewport-overlay {
+  width: min(20rem, calc(100vw - 3.5rem)) !important;
+  max-width: min(72vmin, 22rem) !important;
+  padding: 0.25rem;
+}
+
 @media (min-width: 840px) {
   .session-host__live-join-control,
   .session-host__live-sound-control {

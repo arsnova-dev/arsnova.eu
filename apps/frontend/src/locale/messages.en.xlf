@@ -132,7 +132,7 @@
       </trans-unit>
       <trans-unit id="1136696335453039978" datatype="html">
         <source>Preset: Seriös</source>
-        <target>Preset: Professional</target>
+        <target>Preset: Business</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">128</context>
@@ -140,7 +140,7 @@
       </trans-unit>
       <trans-unit id="6151253518820826531" datatype="html">
         <source>Preset: Spielerisch</source>
-        <target>Preset: Gamified</target>
+        <target>Preset: Gamification</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">129</context>
@@ -276,7 +276,7 @@
       </trans-unit>
       <trans-unit id="seo.descHelp" datatype="html">
         <source>Kurze Anleitungen zu Sessions, Quiz, Blitzlicht und den wichtigsten Abläufen auf arsnova.eu.</source>
-        <target>Short instructions for sessions, quizzes, Blitzlicht, and the main workflows on arsnova.eu.</target>
+        <target>Short instructions for sessions, quizzes, Pulse Checks, and the main workflows on arsnova.eu.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">114</context>
@@ -954,6 +954,14 @@
           <context context-type="linenumber">251,252</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="sessionHost.joinOverlayCloseAria" datatype="html">
+        <source>Beitrittsinformationen schließen</source>
+        <target>Close joining information</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
+          <context context-type="linenumber">263,265</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="feedback.compareRoundHeadline" datatype="html">
         <source> Jetzt zum Vergleich ein zweites Blitzlicht...</source>
         <target>Let's run a second Pulse Check to compare...</target>
@@ -1601,7 +1609,7 @@
       </trans-unit>
       <trans-unit id="help.hostPeer" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Peer Instruction (Doppelrunden):<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Bei Quiz- und Blitzlicht-Fragen: Erst abstimmen lassen → „Diskussionsphase&quot; starten („Diskutiert mit eurem Nachbarn&quot;) → „Zweite Abstimmung&quot; – Vorher/Nachher-Vergleich zeigt, wie sich das Stimmungsbild durch den Austausch verändert hat.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Peer Instruction (double rounds):<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> For quiz and Blitzlicht items: vote first → start the “discussion phase” (“talk to someone next to you”) → “second vote”—before/after shows how the mood snapshot shifts after discussion.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Peer Instruction (double rounds):<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> For quiz and Pulse Check items: vote first → start the “discussion phase” (“talk to someone next to you”) → “second vote”—before/after shows how the mood snapshot shifts after discussion.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">100,103</context>
@@ -1609,7 +1617,7 @@
       </trans-unit>
       <trans-unit id="help.hostSettings" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Einstellungen:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Beim Start legst du den Stil („Seriös&quot; oder „Spielerisch&quot;) und die Optionen fest (Rangliste, Sound, Lesephase, Team-Modus, Nicknamen, Timer). Deine Teilnehmenden übernehmen automatisch dein Theme.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Settings:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> When you start, you set the style ("Serious" or "Playful") and options (leaderboard, sound, reading phase, team mode, nicknames, timer). Participants automatically use your theme.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Settings:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> When you start, you set the style (&quot;Business&quot; or &quot;Gamification&quot;) and options (leaderboard, sound, reading phase, team mode, nicknames, timer). Participants automatically use your theme.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">106,109</context>
@@ -1817,7 +1825,7 @@
       </trans-unit>
       <trans-unit id="help.stylesTitle" datatype="html">
         <source>Seriös und Spielerisch</source>
-        <target>Professional and gamified</target>
+        <target>Business and gamification</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">216,217</context>
@@ -1833,7 +1841,7 @@
       </trans-unit>
       <trans-unit id="help.styleSerious" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Seriös:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Anonym, ohne Rangliste – ideal für formative Assessments, Prüfungsvorbereitung und sensible Themen.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Professional:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Anonymous, no leaderboard – ideal for formative assessments, exam prep and sensitive topics.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Business:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Anonymous, no leaderboard—ideal for formative assessments, exam prep, and sensitive topics.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">223,225</context>
@@ -1841,7 +1849,7 @@
       </trans-unit>
       <trans-unit id="help.stylePlayful" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Spielerisch:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Mit Rangliste, Sounds und Anfeuerung – ideal für Auflockerung, Wettbewerbe und motivierende Quizze.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Gamified:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Leaderboard, sound effects, and energy—great for icebreakers, team competitions, and high-energy quizzes.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Gamification:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Leaderboard, sound effects, and energy—great for icebreakers, team competitions, and high-energy quizzes.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">227,229</context>
@@ -1881,7 +1889,7 @@
       </trans-unit>
       <trans-unit id="help.moreGamification" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Gamification:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Sound-Effekte, Belohnungseffekte für Top-Plätze, Motivationsmeldungen – im Spielerisch-Modus.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Gamification:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Sound effects, rewards for top finishers, and on-screen encouragement—in Playful mode.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Gamification:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Sound effects, rewards for top finishers, and on-screen encouragement—when you use the gamification style.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">249,251</context>
@@ -1905,7 +1913,7 @@
       </trans-unit>
       <trans-unit id="homeHero.line1" datatype="html">
         <source>Quiz, Q&amp;A und Blitzlicht –</source>
-        <target>Quiz, Q&amp;A, and Pulse Check—</target>
+        <target>Quiz, Q&amp;A, and live polls—</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">5,6</context>
@@ -1945,7 +1953,7 @@
       </trans-unit>
       <trans-unit id="8330667382540185922" datatype="html">
         <source>Seriös</source>
-        <target>Professional</target>
+        <target>Business</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">25,26</context>
@@ -1985,7 +1993,7 @@
       </trans-unit>
       <trans-unit id="6088916262905537020" datatype="html">
         <source>Spielerisch</source>
-        <target>Gamified</target>
+        <target>Gamification</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">31,32</context>
@@ -2033,7 +2041,7 @@
       </trans-unit>
       <trans-unit id="homeStage.rotate2" datatype="html">
         <source>Blitzlicht in Sekunden.</source>
-        <target>Pulse Checks in seconds.</target>
+        <target>Instant feedback in seconds.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">43,44</context>
@@ -2049,7 +2057,7 @@
       </trans-unit>
       <trans-unit id="homeStage.rotate4" datatype="html">
         <source> Mitmachen, messen, veranstalten – du entscheidest.</source>
-        <target>Join, assess, host—you decide.</target>
+        <target>Join, poll, host—you decide.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">48,50</context>
@@ -2137,7 +2145,7 @@
       </trans-unit>
       <trans-unit id="homeFeedbackCard.title" datatype="html">
         <source>Live mit einem Klick</source>
-        <target>Live in one click</target>
+        <target>Instant feedback in one click</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">190,192</context>
@@ -2341,7 +2349,7 @@
       </trans-unit>
       <trans-unit id="homeFeedbackCard.startError" datatype="html">
         <source>Blitzlicht konnte nicht gestartet werden. Bitte erneut versuchen.</source>
-        <target>Couldn&apos;t start Blitzlicht. Try again.</target>
+        <target>Couldn&apos;t start Pulse Check. Try again.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
           <context context-type="linenumber">365</context>
@@ -8946,7 +8954,7 @@
       </trans-unit>
       <trans-unit id="5248396144494663799" datatype="html">
         <source>Zu Spielerisch wechseln</source>
-        <target>Switch to Gamified</target>
+        <target>Switch to Gamification</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">187</context>
@@ -8954,7 +8962,7 @@
       </trans-unit>
       <trans-unit id="8198317009587662224" datatype="html">
         <source>Zu Seriös wechseln</source>
-        <target>Switch to Professional</target>
+        <target>Switch to Business</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">188</context>
@@ -9058,7 +9066,7 @@
       </trans-unit>
       <trans-unit id="9197926712719486690" datatype="html">
         <source>Mit Rangliste, Sounds, Anfeuerung und Countdown auf allen Handys – für mehr Motivation.</source>
-        <target>Leaderboard, sounds, encouragement, and a countdown to boost motivation.</target>
+        <target>Leaderboard, sounds, on-screen encouragement, and countdowns on every phone—for more energy.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/preset-toast/preset-toast.component.ts</context>
           <context context-type="linenumber">404</context>

@@ -515,6 +515,11 @@
 
 .home-card .mat-mdc-card-header {
   padding-bottom: 0.75rem;
+  min-width: 0;
+}
+
+.home-card .mat-mdc-card-title {
+  max-width: 100%;
 }
 
 .home-card .mat-mdc-card-subtitle {
@@ -559,7 +564,10 @@
 @media (min-width: 960px) {
   .home-card__title {
     font: var(--mat-sys-headline-medium);
-    white-space: nowrap;
+    /* Drei Karten nebeneinander: längere Übersetzungen (z. B. EN) müssen umbrechen dürfen. */
+    white-space: normal;
+    text-wrap: balance;
+    overflow-wrap: break-word;
   }
 }
 

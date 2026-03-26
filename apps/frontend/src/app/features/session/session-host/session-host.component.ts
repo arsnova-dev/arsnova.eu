@@ -35,7 +35,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { OverlayModule, type ConnectedPosition } from '@angular/cdk/overlay';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { firstValueFrom } from 'rxjs';
@@ -190,7 +189,6 @@ function musicTracksForPhase(
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    OverlayModule,
     MatSlideToggle,
     WordCloudComponent,
     CountdownFingersComponent,
@@ -491,22 +489,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   private priorQrReadyForJoinMenu = false;
   /** Verhindert geplantes Öffnen des Join-Menüs nach ngOnDestroy (z. B. Vitest). */
   private suppressJoinMenuAutopen = false;
-  /** Beitritts-Popover (QR): CDK-Overlay mit role=region statt mat-menu (role=menu ohne menuitem). */
+  /** Beitritts-Dialog (QR): volles Viewport-Overlay, mittig (Smartphone-Scanner). */
   readonly joinInfoPopoverOpen = signal(false);
-  readonly joinInfoPopoverPositions: ConnectedPosition[] = [
-    {
-      originX: 'end',
-      originY: 'top',
-      overlayX: 'start',
-      overlayY: 'top',
-    },
-    {
-      originX: 'start',
-      originY: 'bottom',
-      overlayX: 'start',
-      overlayY: 'top',
-    },
-  ];
 
   private readonly injector = inject(Injector);
 
@@ -631,6 +615,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
       this.priorLobbyForAutoJoinMenu = inLobby;
       this.priorQrReadyForJoinMenu = hasQr;
+    });
+    effect(() => {
+      if (this.effectiveStatus() === 'FINISHED') {
+        this.joinInfoPopoverOpen.set(false);
+      }
     });
     /** Nach Session-Ende automatisch Vollbild beenden (z. B. nach „Veranstaltung starten“). */
     effect(() => {
@@ -979,7 +968,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       if (remaining <= 9 && !this.countdownSfxPhase()) {
         this.countdownSfxPhase.set(true);
       }
-      if (remaining <= 6 && this.session()?.enableSoundEffects) {
+      const sfxCountdown = !!this.session()?.enableSoundEffects && this.isPlayfulPreset();
+      if (remaining <= 6 && sfxCountdown) {
         if (remaining === 6 && !this.countdownIntroSoundPlayed) {
           void this.sound.play('countdownEnd');
           this.countdownIntroSoundPlayed = true;
@@ -989,7 +979,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
         }
       }
       if (remaining <= 0) {
-        if (this.session()?.enableSoundEffects && !this.countdownFinalSoundPlayed) {
+        if (sfxCountdown && !this.countdownFinalSoundPlayed) {
           void this.sound.play('sessionEnd');
           this.countdownFinalSoundPlayed = true;
         }

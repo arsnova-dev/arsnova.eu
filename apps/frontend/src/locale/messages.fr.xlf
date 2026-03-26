@@ -276,7 +276,7 @@
       </trans-unit>
       <trans-unit id="seo.descHelp" datatype="html">
         <source>Kurze Anleitungen zu Sessions, Quiz, Blitzlicht und den wichtigsten Abläufen auf arsnova.eu.</source>
-        <target>Courtes instructions pour les sessions, les quiz, le Blitzlicht et les principaux déroulés sur arsnova.eu.</target>
+        <target>Courtes instructions pour les sessions, les quiz, le sondage éclair et les principaux déroulés sur arsnova.eu.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">114</context>
@@ -772,7 +772,7 @@
       </trans-unit>
       <trans-unit id="sessionTabs.quickFeedback" datatype="html">
         <source>Blitzlicht</source>
-        <target>Blitzlicht</target>
+        <target>Sondage éclair</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">9,11</context>
@@ -800,7 +800,7 @@
       </trans-unit>
       <trans-unit id="sessionTabs.quickFeedbackHostTitle" datatype="html">
         <source> Blitzlicht direkt starten</source>
-        <target>Démarrer un Blitzlicht tout de suite</target>
+        <target>Démarrer un sondage éclair tout de suite</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
           <context context-type="linenumber">12,15</context>
@@ -954,6 +954,14 @@
           <context context-type="linenumber">251,252</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="sessionHost.joinOverlayCloseAria" datatype="html">
+        <source>Beitrittsinformationen schließen</source>
+        <target>Fermer les informations de participation</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
+          <context context-type="linenumber">263,265</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="feedback.compareRoundHeadline" datatype="html">
         <source> Jetzt zum Vergleich ein zweites Blitzlicht...</source>
         <target>Maintenant, un deuxième Sondage Éclair pour comparer...</target>
@@ -1098,7 +1106,7 @@
       </trans-unit>
       <trans-unit id="feedback.endStandaloneWarning" datatype="html">
         <source>Das Blitzlicht wird beendet. Es werden alle Ergebnisse gelöscht.</source>
-        <target>Le Blitzlicht va être terminé. Tous les résultats seront supprimés.</target>
+        <target>Le sondage éclair va être terminé. Tous les résultats seront supprimés.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.ts</context>
           <context context-type="linenumber">383</context>
@@ -1130,7 +1138,7 @@
       </trans-unit>
       <trans-unit id="sessionTabs.quickFeedbackVoteTitle" datatype="html">
         <source> Beim Blitzlicht mitmachen</source>
-        <target>Participer au Blitzlicht</target>
+        <target>Participer au sondage éclair</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-vote.component.html</context>
           <context context-type="linenumber">29,31</context>
@@ -1462,7 +1470,7 @@
       </trans-unit>
       <trans-unit id="help.intro" datatype="html">
         <source> Die Hilfe richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Trainings, Workshops, Lehrveranstaltungen oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, alle Teilnehmenden sind direkt mit dabei. </source>
-        <target>Cette aide s’adresse aux <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>enseignant·es, formateur·trices et responsables de séminaire<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> : vous préparez formations, ateliers, cours ou événements et voulez une interaction sans friction — quiz, Q&amp;A et Blitzlicht dans une même session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sans inscription obligatoire<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> pour vous ni votre groupe : vous lancez, et tout le monde est directement avec vous.</target>
+        <target>Cette aide s’adresse aux <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>enseignant·es, formateur·trices et responsables de séminaire<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> : vous préparez formations, ateliers, cours ou événements et voulez une interaction sans friction — quiz, Q&amp;A et le sondage éclair dans une même session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sans inscription obligatoire<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> pour vous ni votre groupe : vous lancez, et tout le monde est directement avec vous.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">17,23</context>
@@ -1486,7 +1494,7 @@
       </trans-unit>
       <trans-unit id="help.usp2" datatype="html">
         <source> In einer Veranstaltung verbindest du <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Quiz, Q&amp;A und Blitzlicht<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> – statt mehrere Tools nebeneinander zu bedienen. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Peer Instruction<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> (zwei Abstimmungsrunden mit Diskussionsphase dazwischen) sowie <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>KaTeX<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> und Markdown unterstützen typische Szenarien in Hochschule, Weiterbildung und Business – vom spontanen Check bis zur gemeinsamen Erfolgskontrolle.</source>
-        <target>Dans un même événement, vous combinez <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>quiz, Q&amp;A et Blitzlicht<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> — au lieu de jongler plusieurs outils. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Instruction par les pairs<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> (deux tours de vote avec une phase de discussion entre les deux) ainsi que <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>KaTeX<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> et Markdown couvrent des scénarios typiques à l’université, en formation continue et en entreprise — d’un check rapide à un bilan commun des résultats.</target>
+        <target>Dans un même événement, vous combinez <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>quiz, Q&amp;A et le sondage éclair<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> — au lieu de jongler plusieurs outils. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Instruction par les pairs<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> (deux tours de vote avec une phase de discussion entre les deux) ainsi que <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>KaTeX<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> et Markdown couvrent des scénarios typiques à l’université, en formation continue et en entreprise — d’un check rapide à un bilan commun des résultats.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">36,41</context>
@@ -1598,7 +1606,7 @@
       </trans-unit>
       <trans-unit id="help.hostPeer" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Peer Instruction (Doppelrunden):<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Bei Quiz- und Blitzlicht-Fragen: Erst abstimmen lassen → „Diskussionsphase&quot; starten („Diskutiert mit eurem Nachbarn&quot;) → „Zweite Abstimmung&quot; – Vorher/Nachher-Vergleich zeigt, wie sich das Stimmungsbild durch den Austausch verändert hat.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Instruction par les pairs (doubles tours) :<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pour le quiz et le Blitzlicht : vote d’abord → lancez la « phase de discussion » (« discutez avec votre voisin ») → « deuxième vote » — le avant/après montre comment la photo d’ambiance évolue après l’échange.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Instruction par les pairs (doubles tours) :<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pour le quiz et le sondage éclair : vote d’abord → lancez la « phase de discussion » (« discutez avec votre voisin ») → « deuxième vote » — le avant/après montre comment la photo d’ambiance évolue après l’échange.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">100,103</context>
@@ -1670,7 +1678,7 @@
       </trans-unit>
       <trans-unit id="help.quickFeedbackStartFlow" datatype="html">
         <source> Du startest die Runde im Host-Bereich deiner Live-Session oder über die Blitzlicht-Karte „Live mit einem Klick&quot; auf der Startseite. Teilnehmende tippen eine Antwort; du siehst die Ergebnisse live als Balkendiagramm.</source>
-        <target>Tu démarres la manche dans la vue hôte de ta session live ou directement via la carte Blitzlicht « En direct en un clic » sur la page d’accueil. Les participant·es votent d’un geste, et tu vois les résultats en direct sous forme de graphique en barres.</target>
+        <target>Tu démarres la manche dans la vue hôte de ta session live ou directement via la fiche « Sondage éclair » (« En direct en un clic ») sur la page d’accueil. Les participant·es votent d’un geste, et tu vois les résultats en direct sous forme de graphique en barres.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">139,143</context>
@@ -1734,7 +1742,7 @@
       </trans-unit>
       <trans-unit id="help.participantsJoin" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Beitreten:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> 6-stelligen Code auf arsnova.eu eingeben und „Los geht&apos;s&quot; – funktioniert für Quiz, Q&amp;A und Blitzlicht. Keine Anmeldung nötig.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Rejoindre :<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Saisissez le code à 6 chiffres sur arsnova.eu et « C’est parti » — valable pour quiz, Q&amp;A et Blitzlicht. Aucune inscription.</target>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Rejoindre :<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Saisissez le code à 6 chiffres sur arsnova.eu et « C’est parti » — valable pour quiz, Q&amp;A et le sondage éclair. Aucune inscription.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">173,175</context>
@@ -1902,7 +1910,7 @@
       </trans-unit>
       <trans-unit id="homeHero.line1" datatype="html">
         <source>Quiz, Q&amp;A und Blitzlicht –</source>
-        <target>Quiz, Q&amp;R et Blitzlicht - </target>
+        <target>Quiz, Q&amp;A et sondage éclair - </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">5,6</context>
@@ -2338,7 +2346,7 @@
       </trans-unit>
       <trans-unit id="homeFeedbackCard.startError" datatype="html">
         <source>Blitzlicht konnte nicht gestartet werden. Bitte erneut versuchen.</source>
-        <target>Impossible de démarrer le Blitzlicht. Réessaie.</target>
+        <target>Impossible de démarrer le sondage éclair. Réessaie.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.ts</context>
           <context context-type="linenumber">365</context>
@@ -4222,7 +4230,7 @@
       </trans-unit>
       <trans-unit id="quizList.liveDialog.subtitle" datatype="html">
         <source> Auftakt und Formate festlegen (Quiz, Q&amp;A, Blitzlicht)</source>
-        <target>Définir l’ouverture et les formats (Quiz, Q&amp;A, Blitzlicht)</target>
+        <target>Définir l’ouverture et les formats (Quiz, Q&amp;A, sondage éclair)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/live-session-dialog.component.ts</context>
           <context context-type="linenumber">41,43</context>
@@ -4262,7 +4270,7 @@
       </trans-unit>
       <trans-unit id="quizList.liveDialog.channelQuickFeedback" datatype="html">
         <source>Blitzlicht</source>
-        <target>Blitzlicht</target>
+        <target>Sondage éclair</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/live-session-dialog.component.ts</context>
           <context context-type="linenumber">133,136</context>
@@ -9045,7 +9053,7 @@
       </trans-unit>
       <trans-unit id="app.footer.statusHelpBlitz" datatype="html">
         <source>Blitz-Runden (laufende Quick-Feedback-Runden)</source>
-        <target>Rounds Blitz (rounds de feedback rapide en cours)</target>
+        <target>Tours de sondage éclair (sondages instantanés en cours)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/server-status-help-dialog/server-status-help-dialog.component.ts</context>
           <context context-type="linenumber">42,45</context>
@@ -9137,7 +9145,7 @@
       </trans-unit>
       <trans-unit id="2715446489589386153" datatype="html">
         <source>Server-Status: <x id="PH" equiv-text="statusText"/>. <x id="PH_1" equiv-text="s.activeSessions"/> Quiz live, <x id="PH_2" equiv-text="s.activeBlitzRounds"/> Blitz-Runden, <x id="PH_3" equiv-text="s.totalParticipants"/> Teilnehmende, <x id="PH_4" equiv-text="s.completedSessions"/> Quizzes durchgeführt.</source>
-        <target>État du serveur : <x id="PH" equiv-text="statusText"/>. <x id="PH_1" equiv-text="s.activeSessions"/> quiz en direct, <x id="PH_2" equiv-text="s.activeBlitzRounds"/> tours blitz, <x id="PH_3" equiv-text="s.totalParticipants"/> participants, <x id="PH_4" equiv-text="s.completedSessions"/> quiz organisés.</target>
+        <target>État du serveur : <x id="PH" equiv-text="statusText"/>. <x id="PH_1" equiv-text="s.activeSessions"/> quiz en direct, <x id="PH_2" equiv-text="s.activeBlitzRounds"/> sondages éclair, <x id="PH_3" equiv-text="s.totalParticipants"/> participants, <x id="PH_4" equiv-text="s.completedSessions"/> quiz organisés.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/server-status-widget/server-status-widget.component.ts</context>
           <context context-type="linenumber">43</context>

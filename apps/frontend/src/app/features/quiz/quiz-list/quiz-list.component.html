@@ -359,7 +359,7 @@
               }
               @if (quiz.hasBonus) {
                 <span class="quiz-list-item__feature-chip quiz-list-item__feature-chip--bonus">
-                  <mat-icon aria-hidden="true">school</mat-icon>
+                  <mat-icon aria-hidden="true">emoji_events</mat-icon>
                   <span i18n="@@quizList.chipBonus">Bonus</span>
                 </span>
               }
@@ -401,7 +401,7 @@
               [matTooltipDisabled]="!!quiz.lastServerQuizId"
               (click)="openBonusCodesDialog(quiz)"
             >
-              <mat-icon>card_giftcard</mat-icon>
+              <mat-icon>emoji_events</mat-icon>
               <span i18n="@@quizList.bonusCodes">Bonus-Codes</span>
             </button>
           }

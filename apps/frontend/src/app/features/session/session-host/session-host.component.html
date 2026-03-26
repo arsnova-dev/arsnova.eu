@@ -158,14 +158,12 @@
         <div class="session-host__live-banner-main">
           <div class="session-host__live-access">
             <button
-              #hostJoinPopoverOrigin="cdkOverlayOrigin"
-              cdkOverlayOrigin
               mat-icon-button
               type="button"
               class="session-host__live-join-control"
               (click)="toggleJoinInfoPopover()"
               [attr.aria-expanded]="joinInfoPopoverOpen()"
-              aria-haspopup="true"
+              aria-haspopup="dialog"
               aria-controls="session-host-join-info"
               i18n-aria-label="@@sessionHost.joinControlAria"
               aria-label="Beitrittsinformationen öffnen"
@@ -242,48 +240,63 @@
             </div>
           </div>
         </div>
-        <!-- CDK-Overlay statt mat-menu: kein role=menu ohne menuitem (Lighthouse / ARIA). -->
-        <ng-template
-          cdkConnectedOverlay
-          [cdkConnectedOverlayOrigin]="hostJoinPopoverOrigin"
-          [cdkConnectedOverlayOpen]="joinInfoPopoverOpen()"
-          [cdkConnectedOverlayPositions]="joinInfoPopoverPositions"
-          [cdkConnectedOverlayHasBackdrop]="true"
-          [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
-          [cdkConnectedOverlayPanelClass]="'session-host__join-popover-pane'"
-          (backdropClick)="closeJoinInfoPopover()"
-          (detach)="closeJoinInfoPopover()"
-        >
+        @if (joinInfoPopoverOpen()) {
           <div
-            class="session-host__join-menu-panel"
-            role="region"
-            id="session-host-join-info"
-            tabindex="-1"
-            (click)="$event.stopPropagation()"
+            class="session-host__join-viewport-overlay"
+            role="presentation"
+            (click)="closeJoinInfoPopover()"
           >
-            <div class="session-host__join-menu-head">
-              <p class="session-host__join-menu-lead" i18n="@@sessionHost.joinMenuLead">Gehe auf</p>
-              <p class="session-host__join-menu-origin">{{ joinOriginForMenu() }}</p>
-            </div>
-            @if (qrDataUrl()) {
-              <div class="session-host__join-menu-qr-wrap">
-                <img
-                  [src]="qrDataUrl()"
-                  alt="QR-Code: Beitritts-Link {{ joinUrl }}"
-                  class="session-host__join-menu-qr app-qr-image"
-                  width="320"
-                  height="320"
-                />
-              </div>
-            }
-            <p
-              class="session-host__join-menu-origin session-host__join-menu-origin--code"
-              [attr.aria-label]="sessionCodeDisplayAria(s.code)"
+            <div
+              class="session-host__join-viewport-overlay__surface session-host__join-menu-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="session-host-join-lead session-host-join-origin"
+              id="session-host-join-info"
+              tabindex="-1"
+              (click)="$event.stopPropagation()"
             >
-              {{ s.code }}
-            </p>
+              <button
+                mat-icon-button
+                type="button"
+                class="session-host__join-viewport-overlay__close"
+                (click)="closeJoinInfoPopover()"
+                i18n-aria-label="@@sessionHost.joinOverlayCloseAria"
+                aria-label="Beitrittsinformationen schließen"
+              >
+                <mat-icon aria-hidden="true">close</mat-icon>
+              </button>
+              <div class="session-host__join-menu-head">
+                <p
+                  class="session-host__join-menu-lead"
+                  id="session-host-join-lead"
+                  i18n="@@sessionHost.joinMenuLead"
+                >
+                  Gehe auf
+                </p>
+                <p class="session-host__join-menu-origin" id="session-host-join-origin">
+                  {{ joinOriginForMenu() }}
+                </p>
+              </div>
+              @if (qrDataUrl()) {
+                <div class="session-host__join-menu-qr-wrap">
+                  <img
+                    [src]="qrDataUrl()"
+                    alt="QR-Code: Beitritts-Link {{ joinUrl }}"
+                    class="session-host__join-menu-qr session-host__join-menu-qr--viewport-overlay app-qr-image"
+                    width="320"
+                    height="320"
+                  />
+                </div>
+              }
+              <p
+                class="session-host__join-menu-origin session-host__join-menu-origin--code"
+                [attr.aria-label]="sessionCodeDisplayAria(s.code)"
+              >
+                {{ s.code }}
+              </p>
+            </div>
           </div>
-        </ng-template>
+        }
       </section>
     }
 
