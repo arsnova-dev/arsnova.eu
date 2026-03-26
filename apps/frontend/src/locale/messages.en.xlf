@@ -123,8 +123,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7981911571029514989" datatype="html">
-        <source>Jetzt mit mehr Schwung!</source>
-        <target>Now faster and smoother!</target>
+        <source>Jetzt noch schneller und flüssiger!</source>
+        <target>Now even faster and smoother!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">125</context>
@@ -443,8 +443,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.areaHelp" datatype="html">
-        <source> Recherchefenster A/B: laufende Sessions und Nachlaufdaten.</source>
-        <target>Lookup window A/B: active sessions and post-session retention data.</target>
+        <source> Suchansicht A/B: Aktive Sessions und Archivdaten. </source>
+        <target>Search views A/B: active sessions and archived data.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
           <context context-type="linenumber">49,51</context>
@@ -491,7 +491,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.listEmpty" datatype="html">
-        <source> Keine Sessions im Recherchefenster gefunden.</source>
+        <source> Keine Sessions in dieser Ansicht gefunden. </source>
         <target>No sessions found in this view.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
@@ -587,7 +587,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.exportPdf" datatype="html">
-        <source> Behördenauszug (PDF) exportieren</source>
+        <source> Compliance-Bericht (PDF) exportieren </source>
         <target>Export compliance report (PDF)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
@@ -1464,8 +1464,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.intro" datatype="html">
-        <source> Die Hilfe richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Unterricht, Training, Workshops oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, Lernende und Teilnehmende sind mit dabei.</source>
-        <target>This guide is for <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>educators, trainers, and facilitators<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>. If you run classes, workshops, or events and want smooth interaction—quizzes, Q&amp;As, and Pulse Checks all in one live session—you&apos;re in the right place. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>No accounts required<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> for you or your audience: you just host, and your participants join in.</target>
+        <source> Diese Anleitung ist für <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> gedacht: Du planst Unterricht, Training, Workshops oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, Lernende und Teilnehmende sind mit dabei. </source>
+        <target>This guide is for <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>educators, trainers, and facilitators<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: You plan teaching, training, workshops, or events and want interaction without friction—quiz, Q&amp;A, and Pulse Check in one session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>No mandatory sign-up<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> for you or your group: you get started, and learners and participants join in.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">17,23</context>
@@ -1592,8 +1592,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.hostSteuerung" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Steuerung:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Mit „Nächste Frage&quot; blendest du die Frage ein. Optional zuerst nur den Text (Lesephase), dann „Antworten freigeben&quot;, danach können alle abstimmen. Anschließend „Ergebnis zeigen&quot;.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Controls:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Use &quot;Next question&quot; to show the prompt. You can optionally run a reading phase (text only), then tap &quot;Reveal answers&quot; so everyone can vote. Finish up with &quot;Show results&quot;.</target>
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Steuerung:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Nutze „Nächste Frage“, um die Frage zu zeigen. Optional kannst du zuerst nur den Text einblenden (Lesephase), bevor du die Antworten freigibst und die Abstimmung startest. Schließe die Runde mit „Ergebnis zeigen“ ab. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Controls:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Use “Next question” to show the question. Optionally show only the text first (reading phase) before you release answers and start voting. End the round with “Show results”.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">95,98</context>
@@ -1728,8 +1728,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.participantsLead" datatype="html">
-        <source> Kurz erklärt, was du im Unterricht oder Seminar weitergeben kannst:</source>
-        <target>Quick instructions you can share with your audience:</target>
+        <source> Kurze Anleitungen, die du direkt mit deiner Gruppe teilen kannst: </source>
+        <target>Short guides you can share directly with your group:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">169,172</context>
@@ -1792,8 +1792,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.collectionImport" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Import / Export:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Quiz als JSON importieren oder exportieren. Über den KI-Prompt kannst du ein Quiz mit deiner bevorzugten KI generieren und direkt importieren – deine Lehrmaterialien werden nicht an arsnova.eu gesendet, du nutzt deine eigene KI.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Import / Export:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Import or export quizzes as JSON. You can also use the AI prompt to generate a quiz with your favorite AI and paste it right in—your teaching materials never leave your device, you just use your own AI.</target>
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Import / Export:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Quiz als JSON importieren oder exportieren. Nutze den KI-Prompt, um Fragen mit deiner bevorzugten KI zu generieren und direkt einzufügen – deine Lehrmaterialien verlassen dabei niemals dein Gerät, da du deine eigene KI nutzt. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Import / Export:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Import or export quizzes as JSON. Use the AI prompt to generate questions with your preferred AI and insert them directly—your teaching materials never leave your device because you use your own AI.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">200,203</context>

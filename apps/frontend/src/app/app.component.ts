@@ -77,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
   apiRetrying = signal(false);
   presetSnackbarVisible = signal(false);
   presetToastVisible = signal(false);
-  /** Einmalig beim ersten Wechsel auf Spielerisch: Snackbar-Text „Jetzt mit mehr Schwung!“ */
+  /** Einmalig beim ersten Wechsel auf Spielerisch: Snackbar-Text „Jetzt noch schneller und flüssiger!“ */
   firstTimePlayfulMessage = signal(false);
   /** PWA installierbar (beforeinstallprompt) – Snackbar-Hinweis v. a. für Mobile sichtbar. */
   installSnackbarVisible = signal(false);
@@ -125,7 +125,7 @@ export class AppComponent implements OnInit, OnDestroy {
   );
   presetSnackbarLabel = computed(() => {
     if (this.firstTimePlayfulMessage() && this.themePreset.preset() === 'spielerisch') {
-      return $localize`Jetzt mit mehr Schwung!`;
+      return $localize`:@@7981911571029514989:Jetzt noch schneller und flüssiger!`;
     }
     return this.themePreset.preset() === 'serious'
       ? $localize`Preset: Seriös`

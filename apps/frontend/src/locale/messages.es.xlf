@@ -123,8 +123,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7981911571029514989" datatype="html">
-        <source>Jetzt mit mehr Schwung!</source>
-        <target>¡Ahora con más impulso!</target>
+        <source>Jetzt noch schneller und flüssiger!</source>
+        <target>¡Ahora aún más rápido y fluido!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">125</context>
@@ -443,8 +443,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.areaHelp" datatype="html">
-        <source> Recherchefenster A/B: laufende Sessions und Nachlaufdaten.</source>
-        <target>Ventana de investigación A/B: sesiones activas y datos posteriores a la sesión.</target>
+        <source> Suchansicht A/B: Aktive Sessions und Archivdaten. </source>
+        <target>Vistas de búsqueda A/B: sesiones activas y datos de archivo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
           <context context-type="linenumber">49,51</context>
@@ -491,8 +491,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.listEmpty" datatype="html">
-        <source> Keine Sessions im Recherchefenster gefunden.</source>
-        <target>No se encontraron sesiones en la ventana de investigación.</target>
+        <source> Keine Sessions in dieser Ansicht gefunden. </source>
+        <target>No se encontraron sesiones en esta vista.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
           <context context-type="linenumber">96,97</context>
@@ -587,8 +587,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.exportPdf" datatype="html">
-        <source> Behördenauszug (PDF) exportieren</source>
-        <target>Exportar extracto para autoridades (PDF)</target>
+        <source> Compliance-Bericht (PDF) exportieren </source>
+        <target>Exportar informe de cumplimiento (PDF)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
           <context context-type="linenumber">190,191</context>
@@ -1461,8 +1461,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.intro" datatype="html">
-        <source> Die Hilfe richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Unterricht, Training, Workshops oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, Lernende und Teilnehmende sind mit dabei.</source>
-        <target>La ayuda va dirigida a <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>docentes, formadores y responsables de seminarios<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: preparas clase, formación, taller o evento y buscas interacción sin fricción — cuestionario, Q&amp;A y Blitzlicht en la misma sesión. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sin registro obligatorio<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> ni para ti ni para tu grupo: tú inicias la sesión; estudiantes y participantes se unen.</target>
+        <source> Diese Anleitung ist für <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> gedacht: Du planst Unterricht, Training, Workshops oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, Lernende und Teilnehmende sind mit dabei. </source>
+        <target>Esta guía está pensada para <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>docentes, formadores y responsables de seminarios<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: preparas clase, formación, talleres o eventos y buscas interacción sin fricción — cuestionario, Q&amp;A y Blitzlicht en una misma sesión. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sin registro obligatorio<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> ni para ti ni para tu grupo: tú pones en marcha la sesión; estudiantes y participantes se suman.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">17,23</context>
@@ -1589,8 +1589,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.hostSteuerung" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Steuerung:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Mit „Nächste Frage&quot; blendest du die Frage ein. Optional zuerst nur den Text (Lesephase), dann „Antworten freigeben&quot;, danach können alle abstimmen. Anschließend „Ergebnis zeigen&quot;.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Control:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Usa &quot;Siguiente pregunta&quot; para mostrar la pregunta. Opcionalmente, primero solo el texto (fase de lectura), luego “publicar respuestas” y después todos pueden votar. Finalmente, “Mostrar resultado”.</target>
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Steuerung:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Nutze „Nächste Frage“, um die Frage zu zeigen. Optional kannst du zuerst nur den Text einblenden (Lesephase), bevor du die Antworten freigibst und die Abstimmung startest. Schließe die Runde mit „Ergebnis zeigen“ ab. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Control:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Usa «Siguiente pregunta» para mostrar la pregunta. Opcionalmente puedes mostrar primero solo el texto (fase de lectura) antes de publicar respuestas y abrir la votación. Cierra la ronda con «Mostrar resultado».</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">95,98</context>
@@ -1725,8 +1725,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.participantsLead" datatype="html">
-        <source> Kurz erklärt, was du im Unterricht oder Seminar weitergeben kannst:</source>
-        <target>Explica brevemente lo que puedes transmitir en clase o seminario:</target>
+        <source> Kurze Anleitungen, die du direkt mit deiner Gruppe teilen kannst: </source>
+        <target>Instrucciones breves que puedes compartir directamente con tu grupo:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">169,172</context>
@@ -1789,8 +1789,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.collectionImport" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Import / Export:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Quiz als JSON importieren oder exportieren. Über den KI-Prompt kannst du ein Quiz mit deiner bevorzugten KI generieren und direkt importieren – deine Lehrmaterialien werden nicht an arsnova.eu gesendet, du nutzt deine eigene KI.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Importar/Exportar:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Importa o exporta cuestionarios como JSON. Usa el prompt de IA para generar un cuestionario con tu IA preferida e importarlo – nada se envía a arsnova.eu, usas tu propia IA.</target>
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Import / Export:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Quiz als JSON importieren oder exportieren. Nutze den KI-Prompt, um Fragen mit deiner bevorzugten KI zu generieren und direkt einzufügen – deine Lehrmaterialien verlassen dabei niemals dein Gerät, da du deine eigene KI nutzt. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Importar / exportar:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Importa o exporta cuestionarios como JSON. Usa el prompt de IA para generar preguntas con tu IA preferida e insertarlas directamente: tus materiales didácticos no salen nunca de tu dispositivo porque usas tu propia IA.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">200,203</context>

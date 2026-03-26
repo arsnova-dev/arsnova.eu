@@ -46,7 +46,7 @@
         </mat-card-header>
         <mat-card-content>
           <p class="admin-help" i18n="@@admin.areaHelp">
-            Recherchefenster A/B: laufende Sessions und Nachlaufdaten.
+            Suchansicht A/B: Aktive Sessions und Archivdaten.
           </p>
           <div class="admin-actions admin-actions--top">
             <button matButton="tonal" type="button" (click)="logout()" i18n="@@admin.logoutButton">
@@ -93,7 +93,7 @@
             <p class="admin-help" i18n="@@admin.listLoading">Sessions werden geladen…</p>
           } @else if (!hasSessions()) {
             <p class="admin-help" i18n="@@admin.listEmpty">
-              Keine Sessions im Recherchefenster gefunden.
+              Keine Sessions in dieser Ansicht gefunden.
             </p>
           } @else {
             <div class="admin-list">
@@ -187,7 +187,7 @@
                 (click)="exportForAuthorities('PDF')"
                 i18n="@@admin.exportPdf"
               >
-                Behördenauszug (PDF) exportieren
+                Compliance-Bericht (PDF) exportieren
               </button>
               <button
                 matButton="tonal"
