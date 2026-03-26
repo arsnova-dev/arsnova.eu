@@ -94,13 +94,14 @@
 | 8    | 8.3   | Upvoting & Sortierung                                  | 🟢   | ✅ Fertig |
 | 8    | 8.4   | Dozenten-Moderation                                    | 🟢   | ✅ Fertig |
 | 8    | 8.5   | Delegierbare Q&A-Moderation für Tutor:innen            | 🟡   | ⬜ Offen  |
+| 8    | 8.6   | Q&A: Kontroversitäts-Score & Sortierung                | 🟡   | ⬜ Offen  |
 | 9    | 9.1   | Admin: Sessions & Quiz-Inhalte inspizieren             | 🟡   | ✅ Fertig |
 | 9    | 9.2   | Admin: Session/Quiz löschen (rechtlich)                | 🟡   | ✅ Fertig |
 | 9    | 9.3   | Admin: Auszug für Behörden/Staatsanwaltschaft          | 🟡   | ✅ Fertig |
 
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 26 · 🟡 Should: 41 · 🟢 Could: 14 = **81 Storys gesamt**
+> **Statistik:** 🔴 Must: 26 · 🟡 Should: 42 · 🟢 Could: 14 = **82 Storys gesamt**
 
 ---
 
@@ -1063,7 +1064,7 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
 
 ## Epic 8: Q&A-Modus (Rolle: Dozent & Student)
 
-> **Verifizierung Epic 8 (2026-03-13):** Der bisherige Kernumfang 8.1–8.4 ist umgesetzt. Offene Nachschärfung: Story 8.5 für delegierbare Moderatorrechte ohne Vollzugriff.  
+> **Verifizierung Epic 8 (2026-03-13):** Der bisherige Kernumfang 8.1–8.4 ist umgesetzt. Offen: Story 8.5 (delegierbare Moderation), Story 8.6 (Kontroversitäts-Score, Spezifikation [`docs/features/controversy-score.md`](docs/features/controversy-score.md)).  
 > Backend-Checks: `npm run test -w @arsnova/backend -- qa session.start-qa` ✅.  
 > Frontend-Checks: Spec-Abdeckung für Host-, Vote-, Present- und eingebettete Blitz-Feedback-Flows vorhanden ✅.  
 > Laufzeit-Review: `BASE_URL=http://localhost:4200 npm run smoke:unified-session -w @arsnova/frontend` ✅, inklusive automatischem Fallback auf bestehende Unified-Session bei Session-Rate-Limit.
@@ -1106,6 +1107,8 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
     - Der Moderatorzugang ist widerrufbar oder neu generierbar, falls ein Link versehentlich weitergegeben wurde.
     - Die UI macht klar unterscheidbar, ob ein Gerät als **Host**, **Presenter** oder **Moderator:in** verbunden ist.
     - Sicherheits- und Integrationstests decken unzulässige Rolleneskalation ausdrücklich ab.
+- **Story 8.6 (Q&A: Kontroversitäts-Score & Sortierung):** 🟡 Als Dozent oder Moderator einer Live-Veranstaltung möchte ich Fragen im Q&A nach Kontroversität (ausgeglichene Up- und Downvotes) sortieren können, damit polarisierende Themen sichtbar werden und nicht nur durch hohe Upvote-Zahlen dominieren.
+  - **Details:** Formel, Sortier-Tie-Breaker, UI-Schwellen, Testfälle und Beispiel-SQL: [`docs/features/controversy-score.md`](docs/features/controversy-score.md).
 
 ---
 
