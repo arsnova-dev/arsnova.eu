@@ -3,6 +3,9 @@
   max-width: 36rem;
   margin: 0 auto;
   scrollbar-gutter: stable;
+  /* Für fixierte Overlays (z. B. Countdown-Finger): gleiche linke Flucht wie Karten/Antworten */
+  --vote-page-max-width: 36rem;
+  --vote-page-inline-padding: 1rem;
 }
 
 .vote-page--with-channel-tabs {
@@ -332,6 +335,11 @@
 
 .vote-live-banner__heading {
   margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-title-medium);
 }

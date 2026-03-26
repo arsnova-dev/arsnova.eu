@@ -34,6 +34,7 @@ import {
 import { LiveSessionDialogComponent } from '../quiz-list/live-session-dialog.component';
 import { localizeCommands } from '../../../core/locale-router';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
+import { questionTypeLabel as questionTypeLabelI18n } from '../../../shared/question-type-label';
 
 const PRESET_OPTIONS_STORAGE_PREFIX = 'home-preset-options-';
 
@@ -419,13 +420,7 @@ export class QuizPreviewComponent implements OnDestroy {
   }
 
   questionTypeLabel(type: SupportedQuestionType): string {
-    if (type === 'SINGLE_CHOICE') return $localize`:@@quizPreview.typeSingleChoice:Single Choice`;
-    if (type === 'MULTIPLE_CHOICE')
-      return $localize`:@@quizPreview.typeMultipleChoice:Multiple Choice`;
-    if (type === 'FREETEXT') return $localize`:@@quizPreview.typeFreeText:Freitext`;
-    if (type === 'SURVEY') return $localize`:@@quizPreview.typeSurvey:Umfrage`;
-    if (type === 'RATING') return $localize`:@@quizPreview.typeRating:Bewertung`;
-    return type;
+    return questionTypeLabelI18n(type);
   }
 
   questionTypeHasCorrectAnswers(type: SupportedQuestionType): boolean {

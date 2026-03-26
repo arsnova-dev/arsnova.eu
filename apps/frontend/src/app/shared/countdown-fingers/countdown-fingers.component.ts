@@ -12,6 +12,9 @@ const FINGER_IMAGES: Record<number, string> = {
 @Component({
   selector: 'app-countdown-fingers',
   standalone: true,
+  host: {
+    '[class.countdown-fingers-host--viewport]': 'size() === "small"',
+  },
   template: `
     @if (imageSrc()) {
       <div
@@ -25,59 +28,87 @@ const FINGER_IMAGES: Record<number, string> = {
       </div>
     }
   `,
-  styles: [`
-    :host { display: contents; }
-
-    .countdown-fingers {
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .countdown-fingers__img {
-      display: block;
-      object-fit: contain;
-    }
-
-    .countdown-fingers--large {
-      .countdown-fingers__img {
-        width: 120px;
-        height: auto;
-        image-rendering: auto;
+  styles: [
+    `
+      :host {
+        display: contents;
       }
-    }
 
-    .countdown-fingers--small {
-      position: fixed;
-      bottom: 1rem;
-      left: 1rem;
-      z-index: 100;
-
-      .countdown-fingers__img {
-        width: 56px;
-        height: auto;
+      :host.countdown-fingers-host--viewport {
+        display: block;
+        position: fixed;
+        /* Fallback ohne Anchor-API (Footer-Höhe variiert) */
+        bottom: max(5.5rem, env(safe-area-inset-bottom, 0px));
+        /* Linke Flucht wie .vote-page-Inhalt (zentrierte Spalte + horizontales Padding), nicht Viewport-Kante */
+        left: calc(
+          (100vw - min(100vw, var(--vote-page-max-width, 36rem))) / 2 +
+            max(var(--vote-page-inline-padding, 1rem), env(safe-area-inset-left, 0px))
+        );
+        z-index: 100;
+        pointer-events: none;
       }
-    }
 
-    @media (prefers-reduced-motion: reduce) {
-      .countdown-fingers {
-        .countdown-fingers__img {
-          animation: none !important;
+      @supports (position-anchor: --_) {
+        :host.countdown-fingers-host--viewport {
+          position-anchor: --app-footer-anchor;
+          bottom: anchor(top);
         }
       }
-    }
 
-    @media (prefers-reduced-motion: no-preference) {
-      .countdown-fingers__img {
-        animation: finger-pop 300ms ease-out;
+      .countdown-fingers {
+        pointer-events: none;
+        user-select: none;
       }
-    }
 
-    @keyframes finger-pop {
-      0% { opacity: 0; transform: scale(0.7); }
-      60% { transform: scale(1.08); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-  `],
+      .countdown-fingers__img {
+        display: block;
+        object-fit: contain;
+      }
+
+      .countdown-fingers--large {
+        .countdown-fingers__img {
+          width: 120px;
+          height: auto;
+          image-rendering: auto;
+        }
+      }
+
+      .countdown-fingers--small {
+        .countdown-fingers__img {
+          width: 56px;
+          height: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .countdown-fingers {
+          .countdown-fingers__img {
+            animation: none !important;
+          }
+        }
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .countdown-fingers__img {
+          animation: finger-pop 300ms ease-out;
+        }
+      }
+
+      @keyframes finger-pop {
+        0% {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+        60% {
+          transform: scale(1.08);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    `,
+  ],
 })
 export class CountdownFingersComponent {
   readonly seconds = input.required<number>();
@@ -85,6 +116,6 @@ export class CountdownFingersComponent {
 
   readonly imageSrc = computed(() => {
     const s = this.seconds();
-    return s >= 0 && s <= 5 ? FINGER_IMAGES[s] ?? null : null;
+    return s >= 0 && s <= 5 ? (FINGER_IMAGES[s] ?? null) : null;
   });
 }

@@ -356,6 +356,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.sessionSettings().title ??
       $localize`:@@sessionTabs.qaTitleDefault:Fragen zur Veranstaltung...`,
   );
+  /** Live-Banner: Quiztitel (Anzeige mit Ellipse im Template). */
   readonly liveHeading = computed(
     () => this.sessionSettings().quizName ?? this.sessionSettings().title ?? null,
   );
