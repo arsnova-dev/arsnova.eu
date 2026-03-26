@@ -7721,6 +7721,34 @@
           <context context-type="linenumber">1112</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="sessionQa.snackModeratorRemovedOwn" datatype="html">
+        <source>Der Dozent hat deine Frage entfernt.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
+          <context context-type="linenumber">1163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionQa.snackModeratorRemovedOwnMany" datatype="html">
+        <source>Der Dozent hat deine Fragen entfernt.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
+          <context context-type="linenumber">1163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionQa.snackModeratorRemovedOther" datatype="html">
+        <source>Eine Frage wurde vom Dozenten entfernt.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
+          <context context-type="linenumber">1163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionQa.snackModeratorRemovedOthersMany" datatype="html">
+        <source>Mehrere Fragen wurden vom Dozenten entfernt.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-vote/session-vote.component.ts</context>
+          <context context-type="linenumber">1163</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="9175670018185396326" datatype="html">
         <source>Fehler</source>
         <context-group purpose="location">

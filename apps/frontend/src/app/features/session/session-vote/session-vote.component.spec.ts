@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import type { QaQuestionDTO } from '@arsnova/shared-types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SessionVoteComponent } from './session-vote.component';
 
@@ -483,6 +484,109 @@ describe('SessionVoteComponent', () => {
       participantId: '11111111-1111-4111-8111-111111111111',
       text: 'Kommt Aufgabe 3 in der Klausur vor?',
     });
+    fixture.destroy();
+  });
+
+  it('informiert per Snackbar, wenn die Moderation eine eigene Frage entfernt', async () => {
+    snackBarOpenMock.mockClear();
+    getInfoQueryMock.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      serverTime: MOCK_SERVER_TIME,
+      code: 'ABC123',
+      type: 'QUIZ',
+      status: 'LOBBY',
+      quizName: 'Team-Quiz',
+      title: null,
+      participantCount: 6,
+      channels: {
+        quiz: { enabled: true },
+        qa: { enabled: true, title: 'Fragen', moderationMode: false },
+        quickFeedback: { enabled: false },
+      },
+    });
+    currentQuestionQueryMock.mockResolvedValue(null);
+    qaListQueryMock.mockResolvedValue([]);
+
+    const fixture = TestBed.createComponent(SessionVoteComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 50));
+
+    const c = fixture.componentInstance;
+    const prev: QaQuestionDTO[] = [
+      {
+        id: 'q-own',
+        text: 'Meine Frage',
+        upvoteCount: 1,
+        status: 'ACTIVE',
+        createdAt: '2026-03-13T12:00:00.000Z',
+        myVote: null,
+        isOwn: true,
+        hasUpvoted: false,
+      },
+    ];
+    c.qaQuestions.set(prev);
+    (
+      c as unknown as {
+        notifyQaModeratorRemovals: (p: QaQuestionDTO[], n: QaQuestionDTO[]) => void;
+      }
+    ).notifyQaModeratorRemovals(prev, []);
+
+    expect(snackBarOpenMock).toHaveBeenCalledTimes(1);
+    const [message, , opts] = snackBarOpenMock.mock.calls[0]!;
+    expect(message).toMatch(/Dozent|host|docente|intervenant/i);
+    expect(opts).toMatchObject({ duration: 8000 });
+    fixture.destroy();
+  });
+
+  it('informiert per Snackbar, wenn die Moderation eine fremde Frage entfernt', async () => {
+    snackBarOpenMock.mockClear();
+    getInfoQueryMock.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      serverTime: MOCK_SERVER_TIME,
+      code: 'ABC123',
+      type: 'QUIZ',
+      status: 'LOBBY',
+      quizName: 'Team-Quiz',
+      title: null,
+      participantCount: 6,
+      channels: {
+        quiz: { enabled: true },
+        qa: { enabled: true, title: 'Fragen', moderationMode: false },
+        quickFeedback: { enabled: false },
+      },
+    });
+    currentQuestionQueryMock.mockResolvedValue(null);
+    qaListQueryMock.mockResolvedValue([]);
+
+    const fixture = TestBed.createComponent(SessionVoteComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 50));
+
+    const c = fixture.componentInstance;
+    const prev: QaQuestionDTO[] = [
+      {
+        id: 'q-other',
+        text: 'Fremde Frage',
+        upvoteCount: 2,
+        status: 'ACTIVE',
+        createdAt: '2026-03-13T12:00:00.000Z',
+        myVote: null,
+        isOwn: false,
+        hasUpvoted: false,
+      },
+    ];
+    c.qaQuestions.set(prev);
+    (
+      c as unknown as {
+        notifyQaModeratorRemovals: (p: QaQuestionDTO[], n: QaQuestionDTO[]) => void;
+      }
+    ).notifyQaModeratorRemovals(prev, []);
+
+    expect(snackBarOpenMock).toHaveBeenCalledTimes(1);
+    const [message] = snackBarOpenMock.mock.calls[0]!;
+    expect(message).toMatch(/Frage|question|pregunta|domanda/i);
     fixture.destroy();
   });
 });

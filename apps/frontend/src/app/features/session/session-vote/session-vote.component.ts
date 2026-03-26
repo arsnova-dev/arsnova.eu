@@ -1159,7 +1159,42 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     );
   }
 
+  /** Wenn Fragen aus der Liste verschwinden (Moderation), Teilnehmende per Snackbar informieren. */
+  private notifyQaModeratorRemovals(prev: QaQuestionDTO[], next: QaQuestionDTO[]): void {
+    if (prev.length === 0) {
+      return;
+    }
+    const nextIds = new Set(next.map((q) => q.id));
+    const removed = prev.filter((q) => !nextIds.has(q.id));
+    if (removed.length === 0) {
+      return;
+    }
+
+    const ownRemoved = removed.filter((q) => q.isOwn);
+    const otherRemoved = removed.filter((q) => !q.isOwn);
+
+    let msg: string | null = null;
+    if (ownRemoved.length > 0) {
+      msg =
+        ownRemoved.length > 1
+          ? $localize`:@@sessionQa.snackModeratorRemovedOwnMany:Der Dozent hat deine Fragen entfernt.`
+          : $localize`:@@sessionQa.snackModeratorRemovedOwn:Der Dozent hat deine Frage entfernt.`;
+    } else if (otherRemoved.length > 0) {
+      msg =
+        otherRemoved.length > 1
+          ? $localize`:@@sessionQa.snackModeratorRemovedOthersMany:Mehrere Fragen wurden vom Dozenten entfernt.`
+          : $localize`:@@sessionQa.snackModeratorRemovedOther:Eine Frage wurde vom Dozenten entfernt.`;
+    }
+
+    if (msg) {
+      this.snackBar.open(msg, '', { duration: 8000 });
+    }
+  }
+
   private setQaQuestionsAnimated(next: QaQuestionDTO[]): void {
+    const prev = this.qaQuestions();
+    this.notifyQaModeratorRemovals(prev, next);
+
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
