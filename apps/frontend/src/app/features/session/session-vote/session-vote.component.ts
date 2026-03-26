@@ -866,6 +866,25 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Teilnehmende sollen Q&A und Blitzlicht parallel zum Quiz nutzen können (ADR-0009).
+   * Sperre nur: Lesephase (QUESTION_OPEN); Abstimmung (ACTIVE) solange die Antwort noch nicht
+   * gesendet wurde (`voteSent`). Danach z. B. Blitzlicht oder Q&A während laufendem Timer.
+   */
+  private quizChannelLocksStudentNavigation(): boolean {
+    if (this.currentQuestion() === null) {
+      return false;
+    }
+    const s = this.status();
+    if (s === 'QUESTION_OPEN') {
+      return true;
+    }
+    if (s === 'ACTIVE') {
+      return !this.voteSent();
+    }
+    return false;
+  }
+
   private ensureActiveChannel(): void {
     const visible = this.visibleChannels();
     if (visible.length === 0) {
@@ -888,15 +907,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (
-      active !== 'quiz' &&
-      visible.includes('quiz') &&
-      this.currentQuestion() !== null &&
-      (this.status() === 'QUESTION_OPEN' ||
-        this.status() === 'ACTIVE' ||
-        this.status() === 'DISCUSSION' ||
-        this.status() === 'RESULTS')
-    ) {
+    if (active !== 'quiz' && visible.includes('quiz') && this.quizChannelLocksStudentNavigation()) {
       this.activeChannel.set('quiz');
     }
   }

@@ -42,7 +42,7 @@
           <context context-type="linenumber">21,23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8096063037550497453" datatype="html">
+      <trans-unit id="app.snackbar.presetCustomize" datatype="html">
         <source>Anpassen</source>
         <target>Ajuster</target>
         <context-group purpose="location">
@@ -74,7 +74,7 @@
           <context context-type="linenumber">42,43</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6258139510641023810" datatype="html">
+      <trans-unit id="app.snackbar.pwaInstall" datatype="html">
         <source>Installieren</source>
         <target>Installer</target>
         <context-group purpose="location">

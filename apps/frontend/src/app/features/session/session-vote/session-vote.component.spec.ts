@@ -304,6 +304,140 @@ describe('SessionVoteComponent', () => {
     fixture.destroy();
   });
 
+  it('erzwingt Quiz-Kanal nur in Lesephase und Abstimmung, nicht in Ergebnisphase', async () => {
+    getInfoQueryMock.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      serverTime: MOCK_SERVER_TIME,
+      code: 'ABC123',
+      type: 'QUIZ',
+      status: 'RESULTS',
+      quizName: 'Team-Quiz',
+      title: null,
+      participantCount: 6,
+      preset: 'PLAYFUL',
+      channels: {
+        quiz: { enabled: true },
+        qa: { enabled: true, title: 'Fragen', moderationMode: false },
+        quickFeedback: { enabled: true },
+      },
+    });
+    currentQuestionQueryMock.mockResolvedValue({
+      id: '7ed3cc25-3179-4a91-9dc3-acc00971fb46',
+      order: 1,
+      text: 'Frage?',
+      type: 'SINGLE_CHOICE',
+      answers: [
+        { id: 'a1', text: 'Ja', isCorrect: true },
+        { id: 'a2', text: 'Nein', isCorrect: false },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(SessionVoteComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    await (c as unknown as { refreshQuestion: () => Promise<void> }).refreshQuestion();
+    await new Promise((r) => setTimeout(r, 0));
+    fixture.detectChanges();
+
+    c.activeChannel.set('qa');
+    fixture.detectChanges();
+    expect(c.activeChannel()).toBe('qa');
+
+    fixture.destroy();
+  });
+
+  it('erzwingt Quiz-Kanal während ACTIVE mit laufender Frage solange nicht abgestimmt', async () => {
+    getInfoQueryMock.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      serverTime: MOCK_SERVER_TIME,
+      code: 'ABC123',
+      type: 'QUIZ',
+      status: 'ACTIVE',
+      quizName: 'Team-Quiz',
+      title: null,
+      participantCount: 6,
+      preset: 'PLAYFUL',
+      channels: {
+        quiz: { enabled: true },
+        qa: { enabled: true, title: 'Fragen', moderationMode: false },
+        quickFeedback: { enabled: true },
+      },
+    });
+    currentQuestionQueryMock.mockResolvedValue({
+      id: '7ed3cc25-3179-4a91-9dc3-acc00971fb46',
+      order: 1,
+      text: 'Frage?',
+      type: 'SINGLE_CHOICE',
+      timer: 60,
+      difficulty: 'MEDIUM',
+      answers: [
+        { id: 'a1', text: 'A' },
+        { id: 'a2', text: 'B' },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(SessionVoteComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    await (c as unknown as { refreshQuestion: () => Promise<void> }).refreshQuestion();
+    await new Promise((r) => setTimeout(r, 0));
+    fixture.detectChanges();
+
+    c.activeChannel.set('quickFeedback');
+    fixture.detectChanges();
+    expect(c.activeChannel()).toBe('quiz');
+
+    fixture.destroy();
+  });
+
+  it('erlaubt nach Abstimmung in ACTIVE den Wechsel zu anderen Kanälen', async () => {
+    getInfoQueryMock.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      serverTime: MOCK_SERVER_TIME,
+      code: 'ABC123',
+      type: 'QUIZ',
+      status: 'ACTIVE',
+      quizName: 'Team-Quiz',
+      title: null,
+      participantCount: 6,
+      preset: 'PLAYFUL',
+      channels: {
+        quiz: { enabled: true },
+        qa: { enabled: true, title: 'Fragen', moderationMode: false },
+        quickFeedback: { enabled: true },
+      },
+    });
+    currentQuestionQueryMock.mockResolvedValue({
+      id: '7ed3cc25-3179-4a91-9dc3-acc00971fb46',
+      order: 1,
+      text: 'Frage?',
+      type: 'SINGLE_CHOICE',
+      timer: 60,
+      difficulty: 'MEDIUM',
+      answers: [
+        { id: 'a1', text: 'A' },
+        { id: 'a2', text: 'B' },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(SessionVoteComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    await (c as unknown as { refreshQuestion: () => Promise<void> }).refreshQuestion();
+    await new Promise((r) => setTimeout(r, 0));
+    fixture.detectChanges();
+
+    c.voteSent.set(true);
+    c.activeChannel.set('qa');
+    fixture.detectChanges();
+    expect(c.activeChannel()).toBe('qa');
+
+    fixture.destroy();
+  });
+
   it('sendet im Fragen-Tab eine neue Frage', async () => {
     getInfoQueryMock.mockResolvedValue({
       id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',

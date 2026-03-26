@@ -44,7 +44,7 @@
         type="button"
         class="app-preset-snackbar__action"
         (click)="openPresetCustomize()"
-        i18n
+        i18n="@@app.snackbar.presetCustomize"
       >
         Anpassen
       </button>
@@ -65,7 +65,12 @@
         <mat-icon class="app-install-snackbar__icon">get_app</mat-icon>
       </span>
       <span class="app-install-snackbar__text" i18n>App installieren und schneller starten</span>
-      <button type="button" class="app-install-snackbar__action" (click)="triggerInstall()" i18n>
+      <button
+        type="button"
+        class="app-install-snackbar__action"
+        (click)="triggerInstall()"
+        i18n="@@app.snackbar.pwaInstall"
+      >
         Installieren
       </button>
       <button
