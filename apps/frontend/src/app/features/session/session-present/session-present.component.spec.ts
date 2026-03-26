@@ -190,7 +190,7 @@ describe('SessionPresentComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Frage aus dem Saal');
+    expect(text).toContain('Frage aus dem Publikum');
     expect(text).toContain('Wird gerade beantwortet');
     expect(text).toContain('Welche Themen sind heute besonders wichtig?');
     fixture.destroy();

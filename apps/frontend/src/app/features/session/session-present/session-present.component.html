@@ -1,4 +1,7 @@
-<section class="session-present l-stack l-stack--sm" [class.session-present--team-finale]="showTeamFinish()">
+<section
+  class="session-present l-stack l-stack--sm"
+  [class.session-present--team-finale]="showTeamFinish()"
+>
   @if (showTeamFinish() && winningTeam(); as winner) {
     <mat-card appearance="outlined" class="session-present__winner-card">
       <mat-card-content>
@@ -25,7 +28,8 @@
           <p class="session-present__winner-text">{{ winnerText }}</p>
         }
         <p class="session-present__winner-meta">
-          {{ teamMemberLabel(winner.memberCount) }} · {{ winner.totalScore | number }} <span i18n>Punkte</span>
+          {{ teamMemberLabel(winner.memberCount) }} · {{ winner.totalScore | number }}
+          <span i18n>Punkte</span>
         </p>
       </mat-card-content>
     </mat-card>
@@ -35,7 +39,10 @@
         <h2 class="session-present__team-board-title" i18n>Team-Finale</h2>
         <ol class="session-present__team-board-list">
           @for (entry of teamLeaderboard(); track entry.rank) {
-            <li class="session-present__team-board-item" [class.session-present__team-board-item--winner]="entry.rank === 1">
+            <li
+              class="session-present__team-board-item"
+              [class.session-present__team-board-item--winner]="entry.rank === 1"
+            >
               <div class="session-present__team-board-head">
                 <span class="session-present__team-board-rank">#{{ entry.rank }}</span>
                 <span class="session-present__team-board-name">
@@ -70,15 +77,22 @@
         <mat-card-content>
           <div class="session-present__qa-head">
             <div>
-              <p class="session-present__qa-label" i18n="@@sessionPresent.qaLabel">Frage aus dem Saal</p>
-              <h2 class="session-present__qa-title" i18n="@@sessionPresent.qaTitle">Wird gerade beantwortet</h2>
+              <p class="session-present__qa-label" i18n="@@sessionPresent.qaLabel">
+                Frage aus dem Publikum
+              </p>
+              <h2 class="session-present__qa-title" i18n="@@sessionPresent.qaTitle">
+                Wird gerade beantwortet
+              </h2>
             </div>
             <div class="session-present__qa-votes">
               <mat-icon aria-hidden="true">thumb_up</mat-icon>
               <span>{{ pinnedQuestion.upvoteCount }}</span>
             </div>
           </div>
-          <div class="session-present__qa-text" [innerHTML]="renderMarkdown(pinnedQuestion.text)"></div>
+          <div
+            class="session-present__qa-text"
+            [innerHTML]="renderMarkdown(pinnedQuestion.text)"
+          ></div>
         </mat-card-content>
       </mat-card>
     }
@@ -88,8 +102,12 @@
         <mat-card-content>
           <div class="session-present__qa-list-head">
             <div>
-              <p class="session-present__qa-label" i18n="@@sessionPresent.qaQueueLabel">Fragen aus dem Saal</p>
-              <h2 class="session-present__qa-list-title" i18n="@@sessionPresent.qaQueueTitle">Als Nächstes im Raum</h2>
+              <p class="session-present__qa-label" i18n="@@sessionPresent.qaQueueLabel">
+                Fragen aus dem Publikum
+              </p>
+              <h2 class="session-present__qa-list-title" i18n="@@sessionPresent.qaQueueTitle">
+                Als Nächstes im Raum
+              </h2>
             </div>
             <span class="session-present__qa-list-count">
               {{ presenterQaQuestions().length }}
@@ -103,7 +121,10 @@
                   <mat-icon aria-hidden="true">thumb_up</mat-icon>
                   <span>{{ question.upvoteCount }}</span>
                 </div>
-                <div class="session-present__qa-list-text" [innerHTML]="renderMarkdown(question.text)"></div>
+                <div
+                  class="session-present__qa-list-text"
+                  [innerHTML]="renderMarkdown(question.text)"
+                ></div>
               </article>
             }
           </div>
@@ -116,15 +137,21 @@
         <mat-card-content>
           <div class="session-present__feedback-head">
             <div>
-              <p class="session-present__feedback-label" i18n="@@sessionTabs.quickFeedback">Blitzlicht</p>
-              <h2 class="session-present__feedback-title">{{ quickFeedbackHeading(quickFeedback.type) }}</h2>
+              <p class="session-present__feedback-label" i18n="@@sessionTabs.quickFeedback">
+                Blitzlicht
+              </p>
+              <h2 class="session-present__feedback-title">
+                {{ quickFeedbackHeading(quickFeedback.type) }}
+              </h2>
             </div>
             <div class="session-present__feedback-meta">
               @if (quickFeedbackStatusLabel(); as statusLabel) {
                 <span class="session-present__feedback-status">{{ statusLabel }}</span>
               }
               <span class="session-present__feedback-votes">
-                {{ quickFeedback.totalVotes }}&nbsp;<span i18n="@@sessionPresent.quickFeedbackVotes">Stimmen</span>
+                {{ quickFeedback.totalVotes }}&nbsp;<span i18n="@@sessionPresent.quickFeedbackVotes"
+                  >Stimmen</span
+                >
               </span>
             </div>
           </div>
@@ -137,9 +164,15 @@
                     @if (icon.kind === 'mat') {
                       <mat-icon
                         class="session-present__feedback-row-icon"
-                        [class.session-present__feedback-row-icon--positive]="icon.tone === 'positive'"
-                        [class.session-present__feedback-row-icon--negative]="icon.tone === 'negative'"
-                        [class.session-present__feedback-row-icon--neutral]="icon.tone === 'neutral'"
+                        [class.session-present__feedback-row-icon--positive]="
+                          icon.tone === 'positive'
+                        "
+                        [class.session-present__feedback-row-icon--negative]="
+                          icon.tone === 'negative'
+                        "
+                        [class.session-present__feedback-row-icon--neutral]="
+                          icon.tone === 'neutral'
+                        "
                         aria-hidden="true"
                       >
                         {{ icon.value }}

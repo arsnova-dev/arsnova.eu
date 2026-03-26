@@ -247,7 +247,7 @@ describe('SessionVoteComponent', () => {
       participantCount: 6,
       channels: {
         quiz: { enabled: true },
-        qa: { enabled: true, title: 'Fragen aus dem Saal', moderationMode: false },
+        qa: { enabled: true, title: 'Fragen aus dem Publikum', moderationMode: false },
         quickFeedback: { enabled: true },
       },
     });
@@ -451,7 +451,7 @@ describe('SessionVoteComponent', () => {
       participantCount: 6,
       channels: {
         quiz: { enabled: true },
-        qa: { enabled: true, title: 'Fragen aus dem Saal', moderationMode: false },
+        qa: { enabled: true, title: 'Fragen aus dem Publikum', moderationMode: false },
         quickFeedback: { enabled: false },
       },
     });

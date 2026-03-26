@@ -130,9 +130,9 @@ export function voteBonusCopyCta(playful: boolean): string {
 
 export function voteBonusHint(playful: boolean): string {
   if (playful) {
-    return $localize`:@@sessionVote.bonusHintPlayful:Schick den Code per Mail an die Moderation, wenn du Bonuspunkte willst. Du bleibst anonym, bis du ihn einreichst.`;
+    return $localize`:@@sessionVote.bonusHintPlayful:Schick den Code an die Moderation, wenn du Bonuspunkte sammeln willst. Du bleibst anonym, bis du ihn einreichst.`;
   }
-  return $localize`:@@sessionVote.bonusHintSerious:Sende diesen Code per E-Mail an die Moderation, um Bonuspunkte zu erhalten. Deine Anonymität bleibt gewahrt, solange du den Code nicht einreichst.`;
+  return $localize`:@@sessionVote.bonusHintSerious:Sende diesen Code an die Veranstaltungsleitung, um deinen Bonus zu erhalten. Deine Anonymität bleibt gewahrt, solange du den Code nicht einreichst.`;
 }
 
 export function voteFeedbackTitle(playful: boolean): string {
@@ -396,7 +396,7 @@ export function voteEmojiBarLabel(playful: boolean): string {
 
 export function voteEmojiBarHint(playful: boolean): string {
   if (playful) {
-    return $localize`:@@sessionVote.emojiHintPlayful:Tippe ein Emoji – es erscheint anonym bei der Moderation (wenn aktiv).`;
+    return $localize`:@@sessionVote.emojiHintPlayful:Tippe ein Emoji – es ploppt anonym bei der Moderation auf (wenn aktiv).`;
   }
   return $localize`:@@sessionVote.emojiHintSerious:Tippe auf ein Symbol – deine Reaktion erscheint anonym bei der Moderation (optional).`;
 }
