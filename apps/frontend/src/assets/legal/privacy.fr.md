@@ -4,7 +4,7 @@ Informations fournies conformément aux articles 13 et 14 du Règlement Généra
 
 ## 1. Responsable du traitement
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Allemagne

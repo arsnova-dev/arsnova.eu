@@ -4,7 +4,7 @@ Required disclosures under Articles 13 and 14 of the General Data Protection Reg
 
 ## 1. Data Controller
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Germany

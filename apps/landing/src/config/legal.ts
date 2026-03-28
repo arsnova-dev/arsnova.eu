@@ -3,7 +3,7 @@
  */
 export const legal = {
   /** Anbieter / verantwortliche Person */
-  providerName: 'Prof. Dr. Klaus Quibeldey-Cirkel',
+  providerName: 'Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel',
   /** Institution / Zugehörigkeit (optional) */
   institution: 'IU Internationale Hochschule · Duales Studium',
   /** Straße und Hausnummer */
@@ -19,7 +19,8 @@ export const legal = {
   /** Telefon (optional, leer lassen wenn nicht gewünscht) */
   phone: '',
   /** Verantwortlich für Inhalte nach § 55 Abs. 2 RStV (bei redaktionellen Inhalten) */
-  responsibleContent: 'Prof. Dr. Klaus Quibeldey-Cirkel, Juri-Gagarin-Ring 152, 99084 Erfurt',
+  responsibleContent:
+    'Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel, Juri-Gagarin-Ring 152, 99084 Erfurt',
   /** Umsatzsteuer-ID (optional, leer wenn nicht vorhanden) */
   vatId: '',
   /** Aufsichtsbehörde (z. B. für Berufsangaben) – optional */

@@ -4,7 +4,7 @@ Informazioni fornite ai sensi del § 5 della legge tedesca sui media telematici 
 
 ## Fornitore
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Germania
@@ -17,7 +17,7 @@ E-mail: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
 Ai sensi del § 18 del Trattato statale tedesco sui media (MStV):
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 (Indirizzo come sopra)
 
 ## Hosting

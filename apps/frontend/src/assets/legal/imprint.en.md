@@ -4,7 +4,7 @@ Required disclosures under Section 5 of the German Telemedia Act (TMG)
 
 ## Site Operator
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Germany
@@ -17,5 +17,5 @@ Email: [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
 Responsible for content under Section 18 of the German Interstate Media Treaty (MStV):
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 (Same address as above)

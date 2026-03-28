@@ -4,7 +4,7 @@ Informationen gemäß Art. 13 und 14 DSGVO
 
 ## 1. Verantwortlicher
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Deutschland

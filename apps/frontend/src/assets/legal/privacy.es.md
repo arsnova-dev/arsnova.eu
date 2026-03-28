@@ -4,7 +4,7 @@ Información proporcionada conforme a los artículos 13 y 14 del Reglamento Gene
 
 ## 1. Responsable del tratamiento
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Alemania

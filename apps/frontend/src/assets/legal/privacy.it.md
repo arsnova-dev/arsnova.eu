@@ -4,7 +4,7 @@ Informazioni fornite ai sensi degli artt. 13 e 14 del Regolamento Generale sulla
 
 ## 1. Titolare del trattamento
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Germania

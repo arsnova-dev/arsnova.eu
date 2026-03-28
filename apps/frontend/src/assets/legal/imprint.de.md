@@ -4,13 +4,13 @@ Angaben gemäß § 5 Telemediengesetz (TMG) bzw. § 5 Digitale-Dienste-Gesetz (D
 
 ## Anbieter / Diensteanbieter
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 IU Internationale Hochschule · Duales Studium  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Deutschland
 
-Das Webangebot **arsnova.eu** wird im Rahmen der beruflichen Tätigkeit von Prof. Dr. Klaus Quibeldey-Cirkel angeboten.
+Das Webangebot **arsnova.eu** wird im Rahmen der beruflichen Tätigkeit von Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel angeboten.
 
 ## Kontakt
 
@@ -20,7 +20,7 @@ Weitere Informationen zur IU: [https://www.iu-dualesstudium.de](https://www.iu-d
 
 ## Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152, 99084 Erfurt
 
 ## Haftung für Inhalte

@@ -4,7 +4,7 @@ Informations fournies conformément à l'art. 5 de la loi allemande sur les tél
 
 ## Éditeur
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 Juri-Gagarin-Ring 152  
 99084 Erfurt  
 Allemagne
@@ -17,7 +17,7 @@ E-mail : [klaus.quibeldey-cirkel@iu.org](mailto:klaus.quibeldey-cirkel@iu.org)
 
 Conformément à l'art. 18 du traité d'État allemand sur les médias (MStV) :
 
-Prof. Dr. Klaus Quibeldey-Cirkel  
+Prof. Dr.-Ing. habil. Klaus Quibeldey-Cirkel  
 (Adresse identique à celle ci-dessus)
 
 ## Hébergement
