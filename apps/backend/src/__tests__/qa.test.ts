@@ -86,6 +86,7 @@ describe('qa router (Epic 8)', () => {
         qaEnabled: true,
         qaModerationMode: false,
         moderationMode: false,
+        status: 'ACTIVE',
       },
     });
     prismaMock.qaQuestion.count.mockResolvedValue(0);
@@ -117,6 +118,31 @@ describe('qa router (Epic 8)', () => {
     expect(result.status).toBe('ACTIVE');
   });
 
+  it('lehnt neue Fragen ab, wenn die Session beendet ist', async () => {
+    prismaMock.participant.findUnique.mockResolvedValue({
+      id: PARTICIPANT_ID,
+      sessionId: SESSION_ID,
+      session: {
+        id: SESSION_ID,
+        type: 'QUIZ',
+        qaEnabled: true,
+        qaModerationMode: false,
+        moderationMode: false,
+        status: 'FINISHED',
+      },
+    });
+
+    await expect(
+      caller.submit({
+        sessionId: SESSION_ID,
+        participantId: PARTICIPANT_ID,
+        text: 'Noch eine Frage?',
+      }),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+
+    expect(prismaMock.qaQuestion.create).not.toHaveBeenCalled();
+  });
+
   it('begrenzt Studierende auf maximal 3 Fragen pro Session', async () => {
     prismaMock.participant.findUnique.mockResolvedValue({
       id: PARTICIPANT_ID,
@@ -127,15 +153,18 @@ describe('qa router (Epic 8)', () => {
         qaEnabled: true,
         qaModerationMode: false,
         moderationMode: false,
+        status: 'ACTIVE',
       },
     });
     prismaMock.qaQuestion.count.mockResolvedValue(3);
 
-    await expect(caller.submit({
-      sessionId: SESSION_ID,
-      participantId: PARTICIPANT_ID,
-      text: 'Noch eine Frage?',
-    })).rejects.toMatchObject({
+    await expect(
+      caller.submit({
+        sessionId: SESSION_ID,
+        participantId: PARTICIPANT_ID,
+        text: 'Noch eine Frage?',
+      }),
+    ).rejects.toMatchObject({
       code: 'FORBIDDEN',
     });
   });
@@ -147,7 +176,7 @@ describe('qa router (Epic 8)', () => {
         sessionId: SESSION_ID,
         status: 'ACTIVE',
         upvoteCount: 1,
-        session: { id: SESSION_ID, type: 'QUIZ', qaEnabled: true },
+        session: { id: SESSION_ID, type: 'QUIZ', qaEnabled: true, status: 'ACTIVE' },
       })
       .mockResolvedValueOnce({ upvoteCount: 2 });
     prismaMock.participant.findUnique.mockResolvedValue({
@@ -175,6 +204,7 @@ describe('qa router (Epic 8)', () => {
       id: SESSION_ID,
       type: 'QUIZ',
       qaEnabled: true,
+      status: 'ACTIVE',
     });
     prismaMock.qaQuestion.findUnique
       .mockResolvedValueOnce({

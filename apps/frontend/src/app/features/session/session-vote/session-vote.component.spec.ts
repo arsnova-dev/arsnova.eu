@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import type { QaQuestionDTO } from '@arsnova/shared-types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,6 +14,8 @@ const {
   getTeamLeaderboardQueryMock,
   getPersonalResultQueryMock,
   getHasSubmittedFeedbackQueryMock,
+  getSessionFeedbackSummaryQueryMock,
+  submitSessionFeedbackMutateMock,
   qaListQueryMock,
   qaSubmitMutateMock,
   qaUpvoteMutateMock,
@@ -28,6 +30,8 @@ const {
   getTeamLeaderboardQueryMock: vi.fn(),
   getPersonalResultQueryMock: vi.fn(),
   getHasSubmittedFeedbackQueryMock: vi.fn(),
+  getSessionFeedbackSummaryQueryMock: vi.fn(),
+  submitSessionFeedbackMutateMock: vi.fn(),
   qaListQueryMock: vi.fn(),
   qaSubmitMutateMock: vi.fn(),
   qaUpvoteMutateMock: vi.fn(),
@@ -45,6 +49,8 @@ vi.mock('../../../core/trpc.client', () => ({
       getTeamLeaderboard: { query: getTeamLeaderboardQueryMock },
       getPersonalResult: { query: getPersonalResultQueryMock },
       getHasSubmittedFeedback: { query: getHasSubmittedFeedbackQueryMock },
+      getSessionFeedbackSummary: { query: getSessionFeedbackSummaryQueryMock },
+      submitSessionFeedback: { mutate: submitSessionFeedbackMutateMock },
     },
     quickFeedback: {
       results: { query: quickFeedbackResultsQueryMock },
@@ -101,6 +107,16 @@ describe('SessionVoteComponent', () => {
       bonusToken: null,
     });
     getHasSubmittedFeedbackQueryMock.mockResolvedValue({ submitted: false });
+    getSessionFeedbackSummaryQueryMock.mockResolvedValue({
+      totalResponses: 0,
+      overallAverage: 0,
+      overallDistribution: {},
+      questionQualityAverage: null,
+      questionQualityDistribution: null,
+      wouldRepeatYes: 0,
+      wouldRepeatNo: 0,
+    });
+    submitSessionFeedbackMutateMock.mockResolvedValue({ success: true });
     quickFeedbackResultsQueryMock.mockRejectedValue(new Error('not found'));
     qaListQueryMock.mockResolvedValue([]);
     qaSubmitMutateMock.mockResolvedValue({});
@@ -242,7 +258,7 @@ describe('SessionVoteComponent', () => {
     fixture.destroy();
   });
 
-  it('zeigt nach Session-Ende den kollektiven Team-Abschluss', async () => {
+  it('leitet nach Session-Ende (FINISHED) zur Startseite um', async () => {
     getInfoQueryMock.mockResolvedValue({
       id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
       serverTime: MOCK_SERVER_TIME,
@@ -257,25 +273,63 @@ describe('SessionVoteComponent', () => {
       preset: 'PLAYFUL',
     });
     currentQuestionQueryMock.mockResolvedValue(null);
+    getHasSubmittedFeedbackQueryMock.mockResolvedValue({ submitted: true });
+    getPersonalResultQueryMock.mockResolvedValue({
+      totalScore: 120,
+      rank: 2,
+      bonusToken: null,
+    });
+
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
 
     const fixture = TestBed.createComponent(SessionVoteComponent);
     fixture.detectChanges();
     await fixture.whenStable();
-    await (
-      fixture.componentInstance as unknown as { loadPersonalResult: () => Promise<void> }
-    ).loadPersonalResult();
-    await (
-      fixture.componentInstance as unknown as { loadTeamRewardState: () => Promise<void> }
-    ).loadTeamRewardState();
     await new Promise((r) => setTimeout(r, 50));
+
+    expect(navSpy).toHaveBeenCalled();
+    const opts = navSpy.mock.calls[0]?.[1] as { replaceUrl?: boolean };
+    expect(opts?.replaceUrl).toBe(true);
+    fixture.destroy();
+  });
+
+  it('zeigt nach FINISHED den Abschluss-Screen mit Feedback, wenn noch keine Bewertung abgegeben wurde', async () => {
+    getInfoQueryMock.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      serverTime: MOCK_SERVER_TIME,
+      code: 'ABC123',
+      type: 'QUIZ',
+      status: 'FINISHED',
+      quizName: 'Team-Quiz',
+      title: null,
+      participantCount: 6,
+      teamMode: false,
+      preset: 'PLAYFUL',
+    });
+    currentQuestionQueryMock.mockResolvedValue(null);
+    getHasSubmittedFeedbackQueryMock.mockResolvedValue({ submitted: false });
+    getPersonalResultQueryMock.mockResolvedValue({
+      totalScore: 10,
+      rank: 3,
+      bonusToken: null,
+    });
+
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    const fixture = TestBed.createComponent(SessionVoteComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 80));
     fixture.detectChanges();
 
+    const inst = fixture.componentInstance;
+    expect(inst.showSessionEndGate()).toBe(true);
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Geschafft – toll mitgemacht!');
-    expect(text).toContain('Zurück zur Startseite');
-    expect(text).toContain('Euer Team');
-    expect(text).toContain('Team-Sieg!');
-    expect(text).toContain('Team-Rang');
+    expect(text).toContain('Kurzes Feedback?');
+    expect(text).toContain('Die Session ist beendet.');
+    expect(navSpy).not.toHaveBeenCalled();
     fixture.destroy();
   });
 

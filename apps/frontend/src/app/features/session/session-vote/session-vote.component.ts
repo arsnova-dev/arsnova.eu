@@ -11,7 +11,7 @@ import {
   effect,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -189,6 +189,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   readonly vpc = vpc;
   readonly localizedPath = localizePath;
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly themePreset = inject(ThemePresetService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -315,6 +316,12 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     overallDistribution: Record<string, number>;
   } | null>(null);
   private feedbackStateLoaded = false;
+
+  /**
+   * Nach Session-Ende: Bonus-Code sichern und/oder Session-Feedback, dann Startseite.
+   */
+  readonly showSessionEndGate = signal(false);
+  private sessionEndRedirectInFlight = false;
 
   constructor() {
     effect(() => {
@@ -770,6 +777,60 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustHtml(renderMarkdownWithKatex(value).html);
   }
 
+  /** Nach Session-Ende: optional Bonus-Code zeigen, sonst direkt zur Startseite. */
+  private redirectToHomeIfSessionFinished(): void {
+    void this.runSessionEndRedirect();
+  }
+
+  private async runSessionEndRedirect(): Promise<void> {
+    if (this.status() !== 'FINISHED') return;
+    if (this.sessionEndRedirectInFlight) return;
+    this.sessionEndRedirectInFlight = true;
+    try {
+      const pid = this.participantId();
+      if (pid) {
+        await this.loadPersonalResult();
+        await this.refreshFeedbackSubmittedForGate();
+      }
+      const bonus = this.bonusToken();
+      const hasBonus = typeof bonus === 'string' && bonus.length > 0;
+      const needsFeedback = Boolean(pid) && !this.feedbackSubmitted();
+      if (hasBonus || needsFeedback) {
+        this.showSessionEndGate.set(true);
+        return;
+      }
+      await this.router.navigateByUrl(this.localizedPath('/'), { replaceUrl: true });
+    } finally {
+      if (!this.showSessionEndGate()) {
+        this.sessionEndRedirectInFlight = false;
+      }
+    }
+  }
+
+  /** Frische Abfrage vor dem Abschluss-Screen (unabhängig vom Effect). */
+  private async refreshFeedbackSubmittedForGate(): Promise<void> {
+    const pid = this.participantId();
+    if (!this.code || !pid) return;
+    try {
+      const { submitted } = await trpc.session.getHasSubmittedFeedback.query({
+        code: this.code,
+        participantId: pid,
+      });
+      this.feedbackSubmitted.set(submitted);
+      if (submitted) {
+        void this.loadFeedbackSummary();
+      }
+    } catch {
+      /* optional: Formular anzeigen */
+    } finally {
+      this.feedbackStateLoaded = true;
+    }
+  }
+
+  continueToHomeAfterSessionEnd(): void {
+    void this.router.navigateByUrl(this.localizedPath('/'), { replaceUrl: true });
+  }
+
   async ngOnInit(): Promise<void> {
     if (!this.code) return;
 
@@ -799,6 +860,10 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
           const prevRound = this.currentRound();
           const newRound = data.currentRound ?? 1;
           this.status.set(data.status as SessionStatus);
+          if (data.status === 'FINISHED') {
+            this.redirectToHomeIfSessionFinished();
+            return;
+          }
           this.currentRound.set(newRound);
           if (data.preset === 'PLAYFUL' || data.preset === 'SERIOUS') {
             this.themePreset.setPreset(data.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', {
@@ -822,7 +887,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
             this.countdownSeconds.set(null);
           }
           if (this.sessionSettings().teamMode) {
-            if (data.status === 'RESULTS' || data.status === 'FINISHED') {
+            if (data.status === 'RESULTS') {
               void this.loadTeamRewardState();
             } else {
               this.teamLeaderboard.set([]);
@@ -849,6 +914,10 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.sessionId.set(session.id);
       this.status.set(session.status as SessionStatus);
       this.sessionSettings.set(session);
+      if (session.status === 'FINISHED') {
+        this.redirectToHomeIfSessionFinished();
+        return;
+      }
       this.ensureQaSubscription();
       await this.refreshQaQuestions();
       await this.refreshQuickFeedbackResult();
@@ -859,7 +928,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       }
       if (session.teamMode) {
         await Promise.all([this.loadParticipantTeam(), this.loadSessionTeams()]);
-        if (session.status === 'RESULTS' || session.status === 'FINISHED') {
+        if (session.status === 'RESULTS') {
           await this.loadTeamLeaderboard();
         }
       }
@@ -900,6 +969,10 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       this.sessionId.set(session.id);
       this.sessionSettings.set(session);
       this.status.set(nextStatus);
+      if (nextStatus === 'FINISHED') {
+        this.redirectToHomeIfSessionFinished();
+        return;
+      }
       this.ensureQaSubscription();
       if (session.preset === 'PLAYFUL' || session.preset === 'SERIOUS') {
         this.themePreset.setPreset(session.preset === 'PLAYFUL' ? 'spielerisch' : 'serious', {
@@ -907,7 +980,7 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         });
       }
       if (prevStatus !== nextStatus && session.teamMode) {
-        if (nextStatus === 'RESULTS' || nextStatus === 'FINISHED') {
+        if (nextStatus === 'RESULTS') {
           void this.loadTeamRewardState();
         } else {
           this.teamLeaderboard.set([]);

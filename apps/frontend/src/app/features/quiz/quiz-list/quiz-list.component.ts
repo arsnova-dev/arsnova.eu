@@ -37,6 +37,7 @@ import {
 } from '../../../shared/markdown-katex.util';
 import { LiveSessionDialogComponent } from './live-session-dialog.component';
 import { BonusCodesDialogComponent } from './bonus-codes-dialog.component';
+import { LastSessionFeedbackDialogComponent } from './last-session-feedback-dialog.component';
 
 /**
  * Quiz-Liste (Epic 1).
@@ -128,6 +129,7 @@ export class QuizListComponent implements OnInit {
   });
   readonly startLiveShortcutMode = signal(false);
   readonly bonusCodesAfterLiveTooltip = $localize`:@@quizList.bonusCodesAfterLive:Erst nach einem Live-Start dieses Quiz hier abrufbar.`;
+  readonly lastFeedbackAfterLiveTooltip = $localize`:@@quizList.lastFeedbackAfterLive:Erst nach einem Live-Start dieses Quiz hier abrufbar.`;
 
   /** Wird true, während quiz.upload + session.create laufen (Story 2.1a). */
   readonly liveStartPending = signal(false);
@@ -549,6 +551,18 @@ export class QuizListComponent implements OnInit {
     const sid = quiz.lastServerQuizId;
     if (!sid) return;
     this.dialog.open(BonusCodesDialogComponent, {
+      width: 'min(35rem, calc(100vw - 1.5rem))',
+      maxWidth: '100vw',
+      maxHeight: 'min(90dvh, calc(100vh - 2rem))',
+      autoFocus: false,
+      data: { serverQuizId: sid, quizName: quiz.name },
+    });
+  }
+
+  openLastSessionFeedbackDialog(quiz: QuizSummary): void {
+    const sid = quiz.lastServerQuizId;
+    if (!sid) return;
+    this.dialog.open(LastSessionFeedbackDialogComponent, {
       width: 'min(35rem, calc(100vw - 1.5rem))',
       maxWidth: '100vw',
       maxHeight: 'min(90dvh, calc(100vh - 2rem))',

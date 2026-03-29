@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { SessionPresentComponent } from './session-present.component';
 
@@ -104,7 +104,7 @@ describe('SessionPresentComponent', () => {
     fixture.destroy();
   });
 
-  it('zeigt im Teammodus eine Siegerkarte auf der Beamer-Ansicht', async () => {
+  it('leitet die Beamer-Ansicht bei FINISHED zur Startseite um', async () => {
     getInfoQueryMock.mockResolvedValue({
       id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
       serverTime: MOCK_SERVER_TIME,
@@ -117,38 +117,18 @@ describe('SessionPresentComponent', () => {
       teamMode: true,
       preset: 'PLAYFUL',
     });
-    getTeamLeaderboardQueryMock.mockResolvedValue([
-      {
-        rank: 1,
-        teamName: 'Rot',
-        teamColor: '#1E88E5',
-        totalScore: 240,
-        memberCount: 3,
-        averageScore: 80,
-      },
-      {
-        rank: 2,
-        teamName: 'Blau',
-        teamColor: '#43A047',
-        totalScore: 190,
-        memberCount: 3,
-        averageScore: 63.3,
-      },
-    ]);
+
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
 
     const fixture = TestBed.createComponent(SessionPresentComponent);
     fixture.detectChanges();
     await fixture.whenStable();
-    await new Promise((r) => setTimeout(r, 50));
-    fixture.detectChanges();
 
-    const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Team-Sieg');
-    expect(text).toContain('Rot');
-    expect(text).toContain('Team-Finale');
-    expect(text).not.toContain('Noch keine aktive Frage.');
-    expect(text).not.toContain('Word-Cloud');
-    expect(getTeamLeaderboardQueryMock).toHaveBeenCalledWith({ code: 'ABC123' });
+    expect(navSpy).toHaveBeenCalled();
+    const opts = navSpy.mock.calls[0]?.[1] as { replaceUrl?: boolean };
+    expect(opts?.replaceUrl).toBe(true);
+    expect(getTeamLeaderboardQueryMock).not.toHaveBeenCalled();
     fixture.destroy();
   });
 

@@ -2250,6 +2250,47 @@
 
 /* --- Bonus-Code-Anzeige (Story 4.6) --- */
 
+.vote-page--session-end-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2rem;
+}
+
+.vote-session-end-gate__title {
+  font: var(--mat-sys-headline-small);
+  margin: 0;
+  text-align: center;
+}
+
+.vote-session-end-gate__lead {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+  text-align: center;
+}
+
+.vote-session-end-gate__hint {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+  text-align: center;
+}
+
+.vote-bonus-card--gate {
+  margin: 0;
+}
+
+.vote-feedback-card--session-end-gate {
+  margin-top: 0;
+}
+
+.vote-session-end-gate__continue {
+  align-self: center;
+}
+
 // ===== Finished Page =====
 
 .vote-finished-page {

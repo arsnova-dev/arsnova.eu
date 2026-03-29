@@ -94,6 +94,32 @@ async function assertSessionQuickFeedbackEnabled(code: string): Promise<void> {
   }
 }
 
+/** Teilnehmer-Abstimmung nur solange die Live-Session nicht beendet ist. */
+async function assertSessionAllowsQuickFeedbackVote(code: string): Promise<void> {
+  const session = await prisma.session.findUnique({
+    where: { code },
+    select: { id: true, quickFeedbackEnabled: true, status: true },
+  });
+
+  if (!session) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+  }
+
+  if (session.quickFeedbackEnabled !== true) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Blitz-Feedback ist für diese Session nicht aktiviert.',
+    });
+  }
+
+  if (session.status === 'FINISHED') {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Die Session ist beendet. Blitzlicht ist nicht mehr möglich.',
+    });
+  }
+}
+
 export const quickFeedbackRouter = router({
   create: publicProcedure
     .input(CreateQuickFeedbackInputSchema)
@@ -349,8 +375,10 @@ export const quickFeedbackRouter = router({
     }),
 
   vote: publicProcedure.input(QuickFeedbackVoteInputSchema).mutation(async ({ input }) => {
-    const redis = getRedis();
     const code = input.sessionCode.toUpperCase();
+    await assertSessionAllowsQuickFeedbackVote(code);
+
+    const redis = getRedis();
     const key = feedbackKey(code);
     const raw = await redis.get(key);
 

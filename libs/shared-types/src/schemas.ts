@@ -1350,6 +1350,26 @@ export const SessionFeedbackSummarySchema = z.object({
 });
 export type SessionFeedbackSummary = z.infer<typeof SessionFeedbackSummarySchema>;
 
+/** Letztes Session-Feedback zu einer Server-Quiz-ID (Quiz-Sammlung; gleicher Scope wie getBonusTokensForQuiz). */
+export const GetLastSessionFeedbackForQuizInputSchema = GetBonusTokensForQuizInputSchema;
+export type GetLastSessionFeedbackForQuizInput = z.infer<
+  typeof GetLastSessionFeedbackForQuizInputSchema
+>;
+
+export const LastSessionFeedbackForQuizDTOSchema = z.object({
+  sessionId: z.string().uuid(),
+  sessionCode: z.string(),
+  endedAt: z.string().nullable(),
+  summary: SessionFeedbackSummarySchema,
+});
+export type LastSessionFeedbackForQuizDTO = z.infer<typeof LastSessionFeedbackForQuizDTOSchema>;
+
+export const LastSessionFeedbackForQuizOutputSchema =
+  LastSessionFeedbackForQuizDTOSchema.nullable();
+export type LastSessionFeedbackForQuizOutput = z.infer<
+  typeof LastSessionFeedbackForQuizOutputSchema
+>;
+
 // ─── MOTD / Plattform-Kommunikation (Epic 10) ───────────────────────────────
 
 /** UI-Locales (ADR-0008) — synchron mit Angular-Builds */

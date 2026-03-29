@@ -946,19 +946,21 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   async canDeactivate(): Promise<boolean> {
     if (!this.isSessionActive()) return true;
 
-    const status = this.effectiveStatus();
     const participants = this.participantsPayload()?.participantCount ?? 0;
 
     const consequences: string[] = [
-      $localize`Die Session läuft im Hintergrund weiter – Teilnehmende bleiben verbunden.`,
-      $localize`Du verlierst die Steuerung (nächste Frage, Timer, Ergebnisse zeigen).`,
+      $localize`:@@sessionHost.leaveConsequenceParticipantsHome:Teilnehmende und die Präsentationsansicht werden zur Startseite weitergeleitet.`,
+      $localize`:@@sessionHost.leaveConsequenceSessionEnds:Die Session endet für alle; ein Fortsetzen mit demselben Code ist nicht möglich.`,
     ];
     if (participants > 0) {
-      consequences.push($localize`${participants} Teilnehmende warten auf deine Steuerung.`);
-    }
-    if (status === 'ACTIVE' || status === 'QUESTION_OPEN') {
       consequences.push(
-        $localize`Die aktuelle Frage bleibt offen – kein automatisches Weiterschalten.`,
+        $localize`:@@sessionHost.leaveConsequenceWaitingCount:${participants}:participantCount: Teilnehmende sind noch in der Session.`,
+      );
+    }
+    const bonusTop = this.session()?.bonusTokenCount;
+    if (typeof bonusTop === 'number' && bonusTop > 0) {
+      consequences.push(
+        $localize`:@@sessionHost.leaveConsequenceBonusCodes:Für Bonus-Codes: Weise die Teilnehmenden darauf hin, ihren persönlichen Code jetzt zu kopieren (Zwischenablage), bevor sie die Seite verlassen – sonst können sie ihn leicht verlieren.`,
       );
     }
 
@@ -977,6 +979,18 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     });
 
     const result = await firstValueFrom(dialogRef.afterClosed());
+    if (result === true && this.code) {
+      try {
+        await trpc.session.end.mutate({ code: this.code.toUpperCase() });
+      } catch {
+        this.snackBar.open(
+          $localize`:@@sessionHost.leaveEndSessionFailed:Session konnte nicht beendet werden. Prüfe die Verbindung und versuche es erneut.`,
+          undefined,
+          { duration: 6000 },
+        );
+        return false;
+      }
+    }
     return result === true;
   }
 

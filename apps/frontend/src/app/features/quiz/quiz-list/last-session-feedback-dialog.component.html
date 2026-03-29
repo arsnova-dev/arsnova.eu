@@ -1,0 +1,137 @@
+<h2 mat-dialog-title class="last-session-feedback-dialog__title">
+  <span class="last-session-feedback-dialog__title-icon" aria-hidden="true">
+    <mat-icon>rate_review</mat-icon>
+  </span>
+  <span class="last-session-feedback-dialog__title-copy">
+    <span
+      class="last-session-feedback-dialog__heading"
+      i18n="@@quizList.lastSessionFeedbackDialogHeading"
+      >Letztes Session-Feedback</span
+    >
+    <span class="last-session-feedback-dialog__quiz-name">{{ data.quizName }}</span>
+  </span>
+</h2>
+
+<mat-dialog-content class="last-session-feedback-dialog__body">
+  <div
+    class="last-session-feedback-dialog__hint-box"
+    role="note"
+    i18n="@@quizList.lastSessionFeedbackDialogHint"
+  >
+    Zusammenfassung aus freiwilligen Angaben der Teilnehmenden – bezogen auf die zuletzt beendete
+    Session mit mindestens einer Bewertung.
+  </div>
+
+  @if (loading()) {
+    <div class="last-session-feedback-dialog__loading">
+      <mat-progress-spinner diameter="40" mode="indeterminate" />
+    </div>
+  } @else if (loadError()) {
+    <p
+      class="last-session-feedback-dialog__error"
+      role="alert"
+      i18n="@@quizList.lastSessionFeedbackDialogLoadError"
+    >
+      Das Feedback konnte nicht geladen werden. Bitte später erneut versuchen.
+    </p>
+  } @else if (payload(); as row) {
+    <p class="last-session-feedback-dialog__session-meta">
+      <span i18n="@@quizList.bonusCodesSessionLabel">Session</span>
+      {{ row.sessionCode }}
+      @if (row.endedAt) {
+        <span class="last-session-feedback-dialog__session-date"
+          >· {{ row.endedAt | date: 'short' }}</span
+        >
+      }
+    </p>
+
+    <section
+      class="last-session-feedback-dialog__card"
+      aria-labelledby="last-feedback-section-heading"
+    >
+      <h3 class="last-session-feedback-dialog__section-title" id="last-feedback-section-heading">
+        <mat-icon aria-hidden="true">groups</mat-icon>
+        <span i18n="@@quizList.lastSessionFeedbackDialogParticipantSection"
+          >Feedback der Teilnehmenden</span
+        >
+      </h3>
+      <div class="last-session-feedback-dialog__hero">
+        <span
+          class="last-session-feedback-dialog__hero-label"
+          i18n="@@quizList.lastSessionFeedbackDialogOverallLabel"
+          >Gesamtbewertung</span
+        >
+        <p
+          class="last-session-feedback-dialog__avg"
+          [attr.aria-label]="feedbackAverageStarsAria(row.summary.overallAverage)"
+        >
+          <span class="last-session-feedback-dialog__avg-number">{{
+            row.summary.overallAverage | number: '1.1-1'
+          }}</span>
+          <span class="last-session-feedback-dialog__avg-of">/ 5</span>
+          <span class="last-session-feedback-dialog__avg-stars" aria-hidden="true">★</span>
+        </p>
+        <p class="last-session-feedback-dialog__count">
+          {{ row.summary.totalResponses }}
+          {{ row.summary.totalResponses === 1 ? feedbackRatingSingular() : feedbackRatingPlural() }}
+        </p>
+        @if (getFeedbackDistributionLine(row.summary.overallDistribution); as distLine) {
+          <p class="last-session-feedback-dialog__distribution">{{ distLine }}</p>
+        }
+      </div>
+      <div class="last-session-feedback-dialog__details">
+        @if (row.summary.questionQualityAverage !== null) {
+          <div class="last-session-feedback-dialog__detail-row">
+            <span class="last-session-feedback-dialog__detail-label">
+              <mat-icon class="last-session-feedback-dialog__detail-icon" aria-hidden="true"
+                >star</mat-icon
+              >
+              <span i18n="@@quizList.lastSessionFeedbackDialogQuestionQuality"
+                >Qualität der Fragen</span
+              >
+            </span>
+            <span class="last-session-feedback-dialog__detail-value"
+              >Ø {{ row.summary.questionQualityAverage | number: '1.1-1' }} ★</span
+            >
+          </div>
+        }
+        @if (row.summary.wouldRepeatYes > 0 || row.summary.wouldRepeatNo > 0) {
+          <div class="last-session-feedback-dialog__detail-row">
+            <span class="last-session-feedback-dialog__detail-label">
+              <mat-icon class="last-session-feedback-dialog__detail-icon" aria-hidden="true"
+                >thumb_up</mat-icon
+              >
+              <span i18n="@@quizList.lastSessionFeedbackDialogWouldRepeat">Nochmal mitmachen?</span>
+            </span>
+            <span class="last-session-feedback-dialog__repeat-badges">
+              <span
+                class="last-session-feedback-dialog__badge last-session-feedback-dialog__badge--yes"
+              >
+                <mat-icon aria-hidden="true">thumb_up</mat-icon>
+                {{ row.summary.wouldRepeatYes }}
+              </span>
+              <span
+                class="last-session-feedback-dialog__badge last-session-feedback-dialog__badge--no"
+              >
+                <mat-icon aria-hidden="true">thumb_down</mat-icon>
+                {{ row.summary.wouldRepeatNo }}
+              </span>
+            </span>
+          </div>
+        }
+      </div>
+    </section>
+  } @else {
+    <div
+      class="last-session-feedback-dialog__empty-box"
+      i18n="@@quizList.lastSessionFeedbackDialogEmpty"
+    >
+      Noch kein Feedback – es erscheint hier, sobald eine beendete Live-Session mindestens eine
+      Bewertung enthält.
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="close()" i18n>Schließen</button>
+</mat-dialog-actions>

@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -22,6 +22,7 @@ import type {
   TeamLeaderboardEntryDTO,
 } from '@arsnova/shared-types';
 import { recordServerTimeIso } from '../session-server-clock';
+import { localizePath } from '../../../core/locale-router';
 
 /**
  * Beamer-Ansicht / Presenter-Mode (Epic 2).
@@ -36,6 +37,7 @@ import { recordServerTimeIso } from '../session-server-clock';
 })
 export class SessionPresentComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private readonly code = this.route.parent?.snapshot.paramMap.get('code') ?? '';
@@ -193,14 +195,11 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
       const session = await trpc.session.getInfo.query({ code: this.code.toUpperCase() });
       recordServerTimeIso(session.serverTime);
       this.session.set(session);
-      if (session.teamMode && session.status === 'FINISHED') {
-        const teamEntries = await trpc.session.getTeamLeaderboard.query({
-          code: this.code.toUpperCase(),
-        });
-        this.teamLeaderboard.set(teamEntries);
-      } else {
-        this.teamLeaderboard.set([]);
+      if (session.status === 'FINISHED') {
+        void this.router.navigateByUrl(localizePath('/'), { replaceUrl: true });
+        return;
       }
+      this.teamLeaderboard.set([]);
     } catch {
       this.session.set(null);
       this.teamLeaderboard.set([]);

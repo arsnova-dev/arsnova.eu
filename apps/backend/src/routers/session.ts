@@ -28,6 +28,8 @@ import {
   BonusTokenListDTOSchema,
   GetBonusTokensForQuizInputSchema,
   BonusTokensForQuizOutputSchema,
+  GetLastSessionFeedbackForQuizInputSchema,
+  LastSessionFeedbackForQuizOutputSchema,
   SubmitSessionFeedbackInputSchema,
   SessionFeedbackSummarySchema,
   PersonalScorecardDTOSchema,
@@ -113,6 +115,62 @@ interface BonusTokenForExport {
   totalScore: number;
   rank: number;
   generatedAt: Date;
+}
+
+/** Aggregiert SessionFeedback-Zeilen (getSessionFeedbackSummary / Quiz-Sammlung). */
+function buildSessionFeedbackSummaryFromRows(
+  feedbacks: Array<{
+    overallRating: number;
+    questionQualityRating: number | null;
+    wouldRepeat: boolean | null;
+  }>,
+): z.infer<typeof SessionFeedbackSummarySchema> {
+  const totalResponses = feedbacks.length;
+  if (totalResponses === 0) {
+    return {
+      totalResponses: 0,
+      overallAverage: 0,
+      overallDistribution: {},
+      questionQualityAverage: null,
+      questionQualityDistribution: null,
+      wouldRepeatYes: 0,
+      wouldRepeatNo: 0,
+    };
+  }
+
+  const overallDist: Record<string, number> = {};
+  let overallSum = 0;
+  const qqDist: Record<string, number> = {};
+  let qqSum = 0;
+  let qqCount = 0;
+  let repeatYes = 0;
+  let repeatNo = 0;
+
+  for (const f of feedbacks) {
+    const key = String(f.overallRating);
+    overallDist[key] = (overallDist[key] ?? 0) + 1;
+    overallSum += f.overallRating;
+
+    if (f.questionQualityRating !== null && f.questionQualityRating !== undefined) {
+      const qqKey = String(f.questionQualityRating);
+      qqDist[qqKey] = (qqDist[qqKey] ?? 0) + 1;
+      qqSum += f.questionQualityRating;
+      qqCount++;
+    }
+
+    if (f.wouldRepeat === true) repeatYes++;
+    else if (f.wouldRepeat === false) repeatNo++;
+  }
+
+  return {
+    totalResponses,
+    overallAverage: Math.round((overallSum / totalResponses) * 100) / 100,
+    overallDistribution: overallDist,
+    questionQualityAverage: qqCount > 0 ? Math.round((qqSum / qqCount) * 100) / 100 : null,
+    questionQualityDistribution: qqCount > 0 ? qqDist : null,
+    wouldRepeatYes: repeatYes,
+    wouldRepeatNo: repeatNo,
+  };
 }
 
 function generateSessionCode(): string {
@@ -1922,6 +1980,43 @@ export const sessionRouter = router({
       };
     }),
 
+  /**
+   * Aggregiertes Session-Feedback der zuletzt beendeten Live-Session mit mindestens einer Bewertung
+   * (Quiz-Sammlung; gleicher quizId-Zugriff wie getBonusTokensForQuiz).
+   */
+  getLastSessionFeedbackForQuiz: publicProcedure
+    .input(GetLastSessionFeedbackForQuizInputSchema)
+    .output(LastSessionFeedbackForQuizOutputSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findFirst({
+        where: {
+          quizId: input.quizId,
+          status: 'FINISHED',
+          sessionFeedbacks: { some: {} },
+        },
+        orderBy: [{ endedAt: 'desc' }, { startedAt: 'desc' }],
+        select: { id: true, code: true, endedAt: true },
+      });
+      if (!session) {
+        return null;
+      }
+
+      const feedbacks = await prisma.sessionFeedback.findMany({
+        where: { sessionId: session.id },
+      });
+      const summary = buildSessionFeedbackSummaryFromRows(feedbacks);
+      if (summary.totalResponses === 0) {
+        return null;
+      }
+
+      return {
+        sessionId: session.id,
+        sessionCode: session.code,
+        endedAt: session.endedAt?.toISOString() ?? null,
+        summary,
+      };
+    }),
+
   /** Persönliche Scorecard nach einer Frage (Story 5.6). Abrufbar bei Status RESULTS oder FINISHED. */
   getPersonalScorecard: publicProcedure
     .input(
@@ -2451,52 +2546,7 @@ export const sessionRouter = router({
         where: { sessionId: session.id },
       });
 
-      const totalResponses = feedbacks.length;
-      if (totalResponses === 0) {
-        return {
-          totalResponses: 0,
-          overallAverage: 0,
-          overallDistribution: {},
-          questionQualityAverage: null,
-          questionQualityDistribution: null,
-          wouldRepeatYes: 0,
-          wouldRepeatNo: 0,
-        };
-      }
-
-      const overallDist: Record<string, number> = {};
-      let overallSum = 0;
-      const qqDist: Record<string, number> = {};
-      let qqSum = 0;
-      let qqCount = 0;
-      let repeatYes = 0;
-      let repeatNo = 0;
-
-      for (const f of feedbacks) {
-        const key = String(f.overallRating);
-        overallDist[key] = (overallDist[key] ?? 0) + 1;
-        overallSum += f.overallRating;
-
-        if (f.questionQualityRating !== null && f.questionQualityRating !== undefined) {
-          const qqKey = String(f.questionQualityRating);
-          qqDist[qqKey] = (qqDist[qqKey] ?? 0) + 1;
-          qqSum += f.questionQualityRating;
-          qqCount++;
-        }
-
-        if (f.wouldRepeat === true) repeatYes++;
-        else if (f.wouldRepeat === false) repeatNo++;
-      }
-
-      return {
-        totalResponses,
-        overallAverage: Math.round((overallSum / totalResponses) * 100) / 100,
-        overallDistribution: overallDist,
-        questionQualityAverage: qqCount > 0 ? Math.round((qqSum / qqCount) * 100) / 100 : null,
-        questionQualityDistribution: qqCount > 0 ? qqDist : null,
-        wouldRepeatYes: repeatYes,
-        wouldRepeatNo: repeatNo,
-      };
+      return buildSessionFeedbackSummaryFromRows(feedbacks);
     }),
 
   /** Emoji-Reaktion senden (Story 5.8). Max 1 pro Teilnehmer pro Frage. */
