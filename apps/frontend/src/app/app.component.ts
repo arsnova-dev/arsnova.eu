@@ -35,6 +35,8 @@ import { SeoService } from './core/seo.service';
 const STORAGE_PLAYFUL_WELCOMED = 'home-playful-welcomed';
 const STORAGE_PWA_INSTALL_DISMISSED = 'pwa-install-dismissed';
 const PWA_INSTALL_DISMISSED_DAYS = 7;
+/** Ohne regelmäßige `checkForUpdate()`-Aufrufe feuert `versionUpdates` nicht — Banner erscheint nie. */
+const PWA_UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
 /** Browser-Event für „App installieren“ (PWA). */
 interface BeforeInstallPromptEvent extends Event {
@@ -103,6 +105,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private versionSub: Subscription | null = null;
   private routerSub: Subscription | null = null;
   private presetSub: Subscription | null = null;
+  /** Browser: `setInterval` liefert `number` (nicht Node-`Timeout`). */
+  private pwaUpdateIntervalId: number | null = null;
 
   /** true wenn gescrollt wurde (für stärkeren Schatten, Elevation). */
   hasScrolled = signal(false);
@@ -170,6 +174,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.connectionBannerRef = null;
     if (this.snackbarTimer) clearTimeout(this.snackbarTimer);
     if (isPlatformBrowser(this.platformId)) {
+      document.removeEventListener('visibilitychange', this.onDocumentVisibilityForPwaUpdate);
+      if (this.pwaUpdateIntervalId !== null) {
+        clearInterval(this.pwaUpdateIntervalId);
+        this.pwaUpdateIntervalId = null;
+      }
       window.removeEventListener('beforeinstallprompt', this.beforeInstallPromptListener);
       window.removeEventListener('appinstalled', this.appInstalledListener);
       if (isDevMode()) {
@@ -198,7 +207,25 @@ export class AppComponent implements OnInit, OnDestroy {
     this.versionSub = this.swUpdate.versionUpdates.subscribe((evt) => {
       if (evt.type === 'VERSION_READY') this.updateAvailable.set(true);
     });
+    this.requestPwaUpdateCheck();
+    this.pwaUpdateIntervalId = window.setInterval(
+      () => this.requestPwaUpdateCheck(),
+      PWA_UPDATE_CHECK_INTERVAL_MS,
+    );
+    document.addEventListener('visibilitychange', this.onDocumentVisibilityForPwaUpdate);
   }
+
+  private requestPwaUpdateCheck(): void {
+    if (!this.swUpdate?.isEnabled) return;
+    void this.swUpdate.checkForUpdate().catch(() => {
+      /* offline, CORS oder kein SW — ignorieren */
+    });
+  }
+
+  private readonly onDocumentVisibilityForPwaUpdate = (): void => {
+    if (document.visibilityState !== 'visible') return;
+    this.requestPwaUpdateCheck();
+  };
 
   private setupPwaInstallPrompt(): void {
     if (this.isStandalone()) return;
@@ -291,6 +318,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('window:online')
   onOnline(): void {
     this.isOnline.set(true);
+    this.requestPwaUpdateCheck();
   }
 
   @HostListener('window:offline')
