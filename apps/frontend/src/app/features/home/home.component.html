@@ -1,5 +1,5 @@
 <div class="l-page">
-  <main class="home-main">
+  <div class="home-main">
     <div class="home-hero-band">
       <p class="home-hero">
         <span i18n="@@homeHero.line1">Quiz, Q&amp;A und Blitzlicht – </span>
@@ -64,25 +64,34 @@
     @if (isPlayfulPreset()) {
       <div class="home-stage-rotator" aria-hidden="true">
         <p class="home-stage-rotator__line" i18n="@@homeStage.rotate1">
-          Code eingeben – mit dabei sein.
+          Live-Quizze ohne Anmeldung.
         </p>
-        <p class="home-stage-rotator__line" i18n="@@homeStage.rotate2">Blitzlicht in Sekunden.</p>
+        <p class="home-stage-rotator__line" i18n="@@homeStage.rotate2">
+          Anonymes Q&amp;A aus dem Publikum.
+        </p>
         <p class="home-stage-rotator__line" i18n="@@homeStage.rotate3">
-          Deine Sammlung, dein Tempo.
+          Spontane Blitzlichter im Workshop.
         </p>
         <p class="home-stage-rotator__line" i18n="@@homeStage.rotate4">
-          Mitmachen, messen, veranstalten – du entscheidest.
+          Peer Instruction leicht gemacht.
+        </p>
+        <p class="home-stage-rotator__line" i18n="@@homeStage.rotate5">
+          Echtzeit-Feedback für deine Sessions.
+        </p>
+        <p class="home-stage-rotator__line" i18n="@@homeStage.rotate6">
+          Alles an einem Ort: Quiz, Q&amp;A und Feedback.
+        </p>
+        <p class="home-stage-rotator__line" i18n="@@homeStage.rotate7">
+          Umfragen mit 100 % Fokus auf Datenschutz.
         </p>
       </div>
       <div
         class="home-step-trail"
         role="group"
         i18n-aria-label="@@home.stepTrailAria"
-        aria-label="So geht's: Code eingeben, mitmachen, live dabei."
+        aria-label="So geht's: Code eingeben, live dabei."
       >
         <span class="home-step-chip" aria-hidden="true" i18n="@@home.step1">Code eingeben</span>
-        <span class="home-step-trail__arrow" aria-hidden="true">→</span>
-        <span class="home-step-chip" aria-hidden="true" i18n="@@home.step2">Mitmachen</span>
         <span class="home-step-trail__arrow" aria-hidden="true">→</span>
         <span class="home-step-chip" aria-hidden="true" i18n="@@home.step3">Live dabei</span>
       </div>
@@ -386,7 +395,7 @@
         }
       </mat-card-actions>
     </mat-card>
-  </main>
+  </div>
 
   @if (motd()) {
     <div class="home-motd-layer">

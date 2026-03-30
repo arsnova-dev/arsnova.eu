@@ -2795,43 +2795,67 @@
         </context-group>
       </trans-unit>
       <trans-unit id="homeStage.rotate1" datatype="html">
-        <source> Code eingeben – mit dabei sein.</source>
-        <target>Saisis le code – tu es des nôtres.</target>
+        <source>Live-Quizze ohne Anmeldung.</source>
+        <target>Quiz en direct, sans inscription.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">67,69</context>
+          <context context-type="linenumber">66,67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="homeStage.rotate2" datatype="html">
-        <source>Blitzlicht in Sekunden.</source>
-        <target>Sondages Éclair en quelques secondes.</target>
+        <source>Anonymes Q&amp;A aus dem Publikum.</source>
+        <target>Q&amp;A anonyme avec le public.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">67,68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="homeStage.rotate3" datatype="html">
+        <source>Spontane Blitzlichter im Workshop.</source>
+        <target>Sondages minute pour vos ateliers.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">68,69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="homeStage.rotate4" datatype="html">
+        <source>Peer Instruction leicht gemacht.</source>
+        <target>La Peer Instruction simplifiée.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">69,70</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="homeStage.rotate3" datatype="html">
-        <source> Deine Sammlung, dein Tempo.</source>
-        <target>Ta bibliothèque, ton rythme.</target>
+      <trans-unit id="homeStage.rotate5" datatype="html">
+        <source>Echtzeit-Feedback für deine Sessions.</source>
+        <target>Feedback en temps réel pour vos sessions.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">71,73</context>
+          <context context-type="linenumber">70,71</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="homeStage.rotate4" datatype="html">
-        <source> Mitmachen, messen, veranstalten – du entscheidest.</source>
-        <target>Participer, sonder, animer – à toi de choisir.</target>
+      <trans-unit id="homeStage.rotate6" datatype="html">
+        <source>Alles an einem Ort: Quiz, Q&amp;A und Feedback.</source>
+        <target>Tout au même endroit : Quiz, Q&amp;A et Feedback.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">74,76</context>
+          <context context-type="linenumber">71,72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="homeStage.rotate7" datatype="html">
+        <source>Umfragen mit 100 % Fokus auf Datenschutz.</source>
+        <target>Sondages 100 % respectueux de la vie privée.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
+          <context context-type="linenumber">72,75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.stepTrailAria" datatype="html">
-        <source>So geht&apos;s: Code eingeben, mitmachen, live dabei.</source>
-        <target>Voici comment cela fonctionne : entrez le code, participez, regardez-le en direct.</target>
+        <source>So geht&apos;s: Code eingeben, live dabei.</source>
+        <target>Voici comment : entrez le code, suivez en direct.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">81,83</context>
+          <context context-type="linenumber">80,82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.step1" datatype="html">
@@ -2842,20 +2866,12 @@
           <context context-type="linenumber">83,84</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="home.step2" datatype="html">
-        <source>Mitmachen</source>
-        <target>Se joindre à</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">85,86</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="home.step3" datatype="html">
         <source>Live dabei</source>
         <target>En direct</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
-          <context context-type="linenumber">87,89</context>
+          <context context-type="linenumber">86,87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="home.seriousTagline" datatype="html">
