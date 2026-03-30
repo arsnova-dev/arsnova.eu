@@ -34,6 +34,24 @@
           </mat-button-toggle>
         </mat-button-toggle-group>
       </div>
+
+      <p class="home-hero-host-row">
+        <a
+          [routerLink]="localizedPath('/quiz/new')"
+          class="home-hero-host-link"
+          (mouseenter)="preloadQuiz()"
+          i18n="@@home.heroHostCreate"
+          >Quiz erstellen</a
+        >
+        <span class="home-hero-host-sep" aria-hidden="true">·</span>
+        <a
+          [routerLink]="localizedPath('/quiz')"
+          class="home-hero-host-link"
+          (mouseenter)="preloadQuiz()"
+          i18n="@@home.heroHostLead"
+          >Session leiten</a
+        >
+      </p>
     </div>
 
     @if (isPlayfulPreset()) {
@@ -49,6 +67,23 @@
           Mitmachen, messen, veranstalten – du entscheidest.
         </p>
       </div>
+      <div
+        class="home-step-trail"
+        role="group"
+        i18n-aria-label="@@home.stepTrailAria"
+        aria-label="So geht's: Code eingeben, mitmachen, live dabei."
+      >
+        <span class="home-step-chip" aria-hidden="true" i18n="@@home.step1">Code eingeben</span>
+        <span class="home-step-trail__arrow" aria-hidden="true">→</span>
+        <span class="home-step-chip" aria-hidden="true" i18n="@@home.step2">Mitmachen</span>
+        <span class="home-step-trail__arrow" aria-hidden="true">→</span>
+        <span class="home-step-chip" aria-hidden="true" i18n="@@home.step3">Live dabei</span>
+      </div>
+    } @else {
+      <p class="home-hero-serious-tagline" i18n="@@home.seriousTagline">
+        Klar strukturiert für Unterricht, Meetings und Events – Teilnehmende brauchen nur den
+        Session-Code aus dem Raum.
+      </p>
     }
 
     <mat-card appearance="raised" id="participant-entry" class="home-card home-card--stage-main">
@@ -100,6 +135,7 @@
             [class.home-code-segments--focused]="codeInputFocused()"
             [class.home-code-segments--valid]="isValidSessionCode()"
             [class.home-code-segments--shake]="codeShaking()"
+            [class.home-code-segments--joining]="isJoining()"
             (click)="focusCodeInput()"
           >
             @for (slot of codeSlots; track slot) {

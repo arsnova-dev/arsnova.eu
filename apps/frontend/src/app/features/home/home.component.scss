@@ -246,6 +246,54 @@
   display: flex;
 }
 
+.home-hero-host-row {
+  margin: 0.35rem 0 0;
+  padding: 0 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.5rem;
+  font: var(--mat-sys-label-large);
+  text-align: center;
+}
+
+.home-hero-host-link {
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--mat-sys-primary) 42%, transparent);
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    text-decoration-color: var(--mat-sys-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+    border-radius: var(--mat-sys-corner-extra-small);
+  }
+}
+
+.home-hero-host-sep {
+  color: var(--mat-sys-on-surface-variant);
+  user-select: none;
+}
+
+.home-hero-serious-tagline {
+  grid-column: 1 / -1;
+  margin: 0.35rem 0 0.5rem;
+  padding: 0 0.75rem;
+  text-align: center;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  text-wrap: balance;
+  max-width: 42rem;
+  margin-inline: auto;
+  line-height: 1.5;
+}
+
 .home-snackbar {
   position: fixed;
   bottom: max(1.5rem, env(safe-area-inset-bottom));
@@ -857,6 +905,35 @@ mat-card-actions.l-stack {
   box-shadow: 0 0 8px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 20%, transparent);
 }
 
+/* Verbindungs-Feedback: Code gültig und Join läuft */
+.home-code-segments--joining.home-code-segments--valid .home-code-segment--filled {
+  border-color: var(--app-color-success-fg, #4caf50);
+  background: color-mix(in srgb, var(--app-color-success-fg, #4caf50) 22%, transparent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 42%, transparent),
+    0 0 14px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 32%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes home-code-joining-pulse {
+    0%,
+    100% {
+      box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 42%, transparent),
+        0 0 12px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 26%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 55%, transparent),
+        0 0 18px color-mix(in srgb, var(--app-color-success-fg, #4caf50) 40%, transparent);
+    }
+  }
+
+  .home-code-segments--joining.home-code-segments--valid .home-code-segment--filled {
+    animation: home-code-joining-pulse 0.85s ease-in-out infinite;
+  }
+}
+
 .home-code-segments--shake {
   animation: home-shake 0.4s ease;
 }
@@ -1187,19 +1264,62 @@ mat-card-actions.l-stack {
     }
   }
 
+  .home-step-trail {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem 0.45rem;
+    margin: 0.35rem 0 0.1rem;
+    padding: 0 0.5rem;
+  }
+
+  .home-step-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--mat-sys-corner-full);
+    font: var(--mat-sys-label-medium);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--mat-sys-on-secondary-container);
+    background: color-mix(in srgb, var(--mat-sys-secondary-container) 92%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 50%, transparent);
+  }
+
+  .home-step-trail__arrow {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface-variant);
+    line-height: 1;
+    opacity: 0.85;
+  }
+
   @media (min-width: 600px) {
     .home-stage-rotator {
       grid-row: 2;
       margin-top: 0.35rem;
     }
 
-    .home-hero-band + .home-stage-rotator + .home-card#participant-entry.home-card--stage-main {
+    .home-step-trail {
+      grid-row: 3;
+      margin-top: 0.25rem;
+    }
+
+    .home-hero-band
+      + .home-stage-rotator
+      + .home-step-trail
+      + .home-card#participant-entry.home-card--stage-main {
       margin-top: -0.5rem;
     }
   }
 
   @media (min-width: 960px) {
-    .home-hero-band + .home-stage-rotator + .home-card#participant-entry.home-card--stage-main {
+    .home-hero-band
+      + .home-stage-rotator
+      + .home-step-trail
+      + .home-card#participant-entry.home-card--stage-main {
       margin-top: -0.85rem;
     }
   }
@@ -1446,18 +1566,19 @@ mat-card-actions.l-stack {
   @media (min-width: 600px) {
     .home-card#participant-entry.home-card--stage-main {
       grid-column: 1 / -1;
-      grid-row: 3;
+      /* Nach Hero: Rotator (2), Step-Trail (3), dann Hauptkarte */
+      grid-row: 4;
     }
 
     .home-card.home-card--feedback.home-card--stage-side {
       grid-column: 1;
-      grid-row: 4;
+      grid-row: 5;
       align-self: start;
     }
 
     .home-card.home-card--create.home-card--stage-side {
       grid-column: 2;
-      grid-row: 4;
+      grid-row: 5;
       align-self: start;
     }
   }
