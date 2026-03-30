@@ -28,6 +28,7 @@ import {
   DEMO_QUIZ_ID,
   QuizStoreService,
   type AddQuizQuestionInput,
+  type QuizDocument,
   type QuizQuestion,
   type SupportedQuestionType,
 } from '../data/quiz-store.service';
@@ -45,7 +46,7 @@ import { questionTypeLabel as questionTypeLabelI18n } from '../../../shared/ques
   standalone: true,
   imports: [RouterLink, MatButton, MatCard, MatCardContent, MatIcon, MatProgressBar],
   templateUrl: './quiz-preview.component.html',
-  styleUrl: './quiz-preview.component.scss',
+  styleUrls: ['../../../shared/styles/dialog-title-header.scss', './quiz-preview.component.scss'],
 })
 export class QuizPreviewComponent implements OnDestroy {
   private readonly location = inject(Location);
@@ -443,6 +444,11 @@ export class QuizPreviewComponent implements OnDestroy {
     }
   }
 
+  previewTitleName(quiz: QuizDocument): string {
+    const n = quiz.name?.trim();
+    return n && n.length > 0 ? n : $localize`:@@quizPreview.unnamedQuiz:Unbenanntes Quiz`;
+  }
+
   answerOptionLabel(index: number): string {
     return String.fromCharCode(65 + index);
   }
@@ -594,7 +600,6 @@ export class QuizPreviewComponent implements OnDestroy {
               defaultTimer: optionEnabled('defaultTimer', typeof payload.defaultTimer === 'number')
                 ? (payload.defaultTimer ?? DEFAULT_TIMER_SECONDS)
                 : null,
-              backgroundMusic: null,
             };
           }
         } catch {

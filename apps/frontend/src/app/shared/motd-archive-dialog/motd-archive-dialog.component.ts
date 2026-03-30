@@ -47,7 +47,7 @@ const ARCHIVE_DATE_LOCALE: Record<AppLocale, string> = {
     MatTooltip,
   ],
   templateUrl: './motd-archive-dialog.component.html',
-  styleUrl: './motd-archive-dialog.component.scss',
+  styleUrls: ['../styles/dialog-title-header.scss', './motd-archive-dialog.component.scss'],
 })
 export class MotdArchiveDialogComponent implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);

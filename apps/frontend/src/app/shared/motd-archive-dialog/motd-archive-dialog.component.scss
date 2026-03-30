@@ -16,15 +16,14 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding-block: 0.125rem 0.25rem;
+  padding-block: 0;
   padding-inline-end: 0;
 }
 
-.motd-archive__head h2 {
-  margin: 0;
-  padding: 0.25rem 0 0;
-  font: var(--mat-sys-headline-small);
-  color: var(--mat-sys-on-surface);
+.motd-archive__dialog-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-inline-end: 0.25rem;
 }
 
 .motd-archive__actions {

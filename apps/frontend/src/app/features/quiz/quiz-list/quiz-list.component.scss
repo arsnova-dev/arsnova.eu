@@ -336,10 +336,8 @@
   color: var(--mat-sys-error);
 }
 
-.quiz-list__ai-title {
-  margin: 0;
-  font: var(--mat-sys-title-medium);
-  line-height: 1.4;
+.quiz-list__ai-head {
+  align-items: flex-start;
 }
 
 .quiz-list__ai-hint {
@@ -366,7 +364,7 @@
 .quiz-list__ai-intro {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.35rem;
 }
 
 .quiz-list__ai-steps {

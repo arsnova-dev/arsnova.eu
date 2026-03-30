@@ -1550,11 +1550,14 @@ mat-card-actions.l-stack {
   gap: 0.5rem;
 }
 
-.home-motd-sheet__title {
-  margin: 0;
-  padding: 0.125rem 0 0;
-  font: var(--mat-sys-headline-small);
-  color: var(--mat-sys-on-surface);
+.home-motd-sheet__title-header.dialog-title-header {
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+}
+
+.home-motd-sheet__title-header .dialog-title-header__copy {
+  gap: 0;
 }
 
 .home-motd-sheet__body {

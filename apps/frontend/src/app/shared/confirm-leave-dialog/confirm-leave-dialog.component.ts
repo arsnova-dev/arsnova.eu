@@ -27,10 +27,15 @@ export interface ConfirmLeaveDialogData {
   selector: 'app-confirm-leave-dialog',
   standalone: true,
   imports: [MatButton, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle, MatIcon],
+  styleUrls: ['../styles/dialog-title-header.scss', './confirm-leave-dialog.component.scss'],
   template: `
-    <h2 mat-dialog-title class="confirm-leave__title">
-      <mat-icon aria-hidden="true">warning</mat-icon>
-      {{ data.title }}
+    <h2 mat-dialog-title class="dialog-title-header">
+      <span class="dialog-title-header__icon dialog-title-header__icon--warn" aria-hidden="true">
+        <mat-icon>warning</mat-icon>
+      </span>
+      <span class="dialog-title-header__copy">
+        <span class="dialog-title-header__heading">{{ data.title }}</span>
+      </span>
     </h2>
     <mat-dialog-content>
       <p class="confirm-leave__message">{{ data.message }}</p>
@@ -49,47 +54,6 @@ export interface ConfirmLeaveDialogData {
       </button>
     </mat-dialog-actions>
   `,
-  styles: [
-    `
-      .confirm-leave__title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-
-        mat-icon {
-          color: var(--mat-sys-error, #b3261e);
-        }
-      }
-
-      .confirm-leave__message {
-        font: var(--mat-sys-body-large);
-        color: var(--mat-sys-on-surface);
-        margin: 0 0 0.75rem;
-      }
-
-      .confirm-leave__list {
-        margin: 0;
-        padding-left: 1.25rem;
-        font: var(--mat-sys-body-medium);
-        color: var(--mat-sys-on-surface-variant);
-        line-height: 1.7;
-      }
-
-      @media (max-width: 28rem) {
-        mat-dialog-actions {
-          flex-direction: column-reverse;
-          align-items: stretch;
-          gap: 0.5rem;
-          padding-inline: 1rem;
-          padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-        }
-
-        mat-dialog-actions .mat-mdc-button-base {
-          width: 100%;
-        }
-      }
-    `,
-  ],
 })
 export class ConfirmLeaveDialogComponent {
   readonly data = inject<ConfirmLeaveDialogData>(MAT_DIALOG_DATA);

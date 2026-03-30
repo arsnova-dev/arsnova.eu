@@ -18,7 +18,7 @@ import {
   selector: 'app-legal-page',
   imports: [MatButton, MatIcon],
   templateUrl: './legal-page.component.html',
-  styleUrls: ['./legal-page.component.scss'],
+  styleUrls: ['../../shared/styles/dialog-title-header.scss', './legal-page.component.scss'],
 })
 export class LegalPageComponent implements OnInit, OnDestroy {
   private readonly location = inject(Location);
@@ -32,6 +32,8 @@ export class LegalPageComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
   content = signal<SafeHtml | null>(null);
+  /** Aktuelle Legal-Route (für Kopfzeile); leer während des ersten Ladens. */
+  slug = signal<'imprint' | 'privacy' | ''>('');
 
   back(): void {
     this.location.back();
@@ -49,6 +51,7 @@ export class LegalPageComponent implements OnInit, OnDestroy {
       this.loading.set(true);
       this.error.set(null);
       this.content.set(null);
+      this.slug.set(slug === 'imprint' || slug === 'privacy' ? slug : '');
 
       if (slug !== 'imprint' && slug !== 'privacy') {
         this.error.set($localize`Seite nicht gefunden.`);
@@ -69,7 +72,8 @@ export class LegalPageComponent implements OnInit, OnDestroy {
           next: (md) => {
             Promise.resolve(marked.parse(md)).then((html: string) => {
               this.ngZone.run(() => {
-                this.content.set(this.sanitizer.bypassSecurityTrustHtml(html));
+                const withoutH1 = html.replace(/<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+                this.content.set(this.sanitizer.bypassSecurityTrustHtml(withoutH1));
                 this.loading.set(false);
               });
             });

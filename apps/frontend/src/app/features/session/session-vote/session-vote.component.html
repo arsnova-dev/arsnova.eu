@@ -5,13 +5,20 @@
     aria-modal="true"
     aria-labelledby="session-end-gate-title"
   >
-    <h1
-      class="vote-session-end-gate__title"
-      id="session-end-gate-title"
-      i18n="@@sessionVote.sessionEndGateTitle"
-    >
-      Session beendet
-    </h1>
+    <header class="dialog-title-header dialog-title-header--page vote-session-end-gate__hero">
+      <span class="dialog-title-header__icon" aria-hidden="true">
+        <mat-icon>event_busy</mat-icon>
+      </span>
+      <div class="dialog-title-header__copy">
+        <h1
+          id="session-end-gate-title"
+          class="dialog-title-header__heading"
+          i18n="@@sessionVote.sessionEndGateTitle"
+        >
+          Session beendet
+        </h1>
+      </div>
+    </header>
 
     @if (bonusToken(); as gateToken) {
       <p class="vote-session-end-gate__lead" i18n="@@sessionVote.bonusGateLead">
@@ -58,7 +65,10 @@
         [class.vote-feedback-card--serious]="!isPlayfulPreset()"
       >
         <h2 class="vote-feedback-card__title" id="session-end-feedback-heading">
-          {{ vpc.voteFeedbackTitle(isPlayfulPreset()) }}
+          <mat-icon class="vote-feedback-card__title-icon" aria-hidden="true">feedback</mat-icon>
+          <span class="vote-feedback-card__title-text">{{
+            vpc.voteFeedbackTitle(isPlayfulPreset())
+          }}</span>
         </h2>
 
         <fieldset class="vote-feedback-card__group">
@@ -269,6 +279,9 @@
                   width="320"
                   height="320"
                 />
+              </div>
+              <div class="vote-live-banner__join-icon-tile" aria-hidden="true">
+                <mat-icon>qr_code_2</mat-icon>
               </div>
             }
             <div class="vote-live-banner__code-block">
@@ -542,7 +555,12 @@
               [class.vote-feedback-card--serious]="!isPlayfulPreset()"
             >
               <h2 class="vote-feedback-card__title" id="feedback-heading">
-                {{ vpc.voteFeedbackTitle(isPlayfulPreset()) }}
+                <mat-icon class="vote-feedback-card__title-icon" aria-hidden="true"
+                  >feedback</mat-icon
+                >
+                <span class="vote-feedback-card__title-text">{{
+                  vpc.voteFeedbackTitle(isPlayfulPreset())
+                }}</span>
               </h2>
 
               <fieldset class="vote-feedback-card__group">
@@ -1166,6 +1184,9 @@
         aria-labelledby="vote-qa-heading"
       >
         <div class="session-channel-card__header">
+          <mat-icon class="session-channel-card__header-lead-icon" aria-hidden="true"
+            >forum</mat-icon
+          >
           <div class="session-channel-card__header-main">
             <p class="session-channel-card__eyebrow">{{ channelLabel('qa') }}</p>
             <h2 class="session-channel-card__title" id="vote-qa-heading">{{ qaHeading() }}</h2>

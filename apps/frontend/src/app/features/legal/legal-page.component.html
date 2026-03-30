@@ -1,6 +1,12 @@
 <div class="legal-page l-page l-section">
   <nav class="legal-back" aria-label="Navigation">
-    <button mat-button type="button" (click)="back()" i18n-aria-label="@@contentPage.backAria" aria-label="Zurück zur vorherigen Seite">
+    <button
+      mat-button
+      type="button"
+      (click)="back()"
+      i18n-aria-label="@@contentPage.backAria"
+      aria-label="Zurück zur vorherigen Seite"
+    >
       <mat-icon>arrow_back</mat-icon>
       <span i18n="@@contentPage.back">Zurück</span>
     </button>
@@ -9,7 +15,27 @@
     <p class="legal-loading" i18n>Wird geladen…</p>
   } @else if (error()) {
     <p class="legal-error" role="alert">{{ error() }}</p>
-  } @else if (content()) {
-    <article class="legal-article" [innerHTML]="content()"></article>
+  } @else if (content(); as legalHtml) {
+    <article class="legal-article">
+      <header class="dialog-title-header dialog-title-header--page legal-page__hero">
+        <span class="dialog-title-header__icon" aria-hidden="true">
+          @if (slug() === 'imprint') {
+            <mat-icon>gavel</mat-icon>
+          } @else {
+            <mat-icon>privacy_tip</mat-icon>
+          }
+        </span>
+        <span class="dialog-title-header__copy">
+          <h1 class="dialog-title-header__heading">
+            @if (slug() === 'imprint') {
+              <span i18n="@@legal.pageTitleImprint">Impressum</span>
+            } @else {
+              <span i18n="@@legal.pageTitlePrivacy">Datenschutzerklärung</span>
+            }
+          </h1>
+        </span>
+      </header>
+      <div class="legal-page__md" [innerHTML]="legalHtml"></div>
+    </article>
   }
 </div>

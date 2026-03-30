@@ -55,12 +55,22 @@
     <mat-card appearance="outlined" class="quiz-list__ai-card">
       <mat-card-content class="quiz-list__ai-content">
         <div class="quiz-list__ai-intro">
-          <h2 class="quiz-list__ai-title" i18n="@@quizList.aiImport.title">
-            Mit unserem Prompt zum fertigen Quiz
-          </h2>
-          <p class="quiz-list__ai-hint" i18n="@@quizList.aiImport.hint">
-            In drei kurzen Schritten kommst du vom KI-Chat direkt zu einem neuen Quiz.
-          </p>
+          <div class="dialog-title-header dialog-title-header--page quiz-list__ai-head">
+            <span class="dialog-title-header__icon" aria-hidden="true">
+              <mat-icon>auto_awesome</mat-icon>
+            </span>
+            <span class="dialog-title-header__copy">
+              <h2 class="dialog-title-header__heading" i18n="@@quizList.aiImport.title">
+                Mit unserem Prompt zum fertigen Quiz
+              </h2>
+              <p
+                class="dialog-title-header__sub quiz-list__ai-hint"
+                i18n="@@quizList.aiImport.hint"
+              >
+                In drei kurzen Schritten kommst du vom KI-Chat direkt zu einem neuen Quiz.
+              </p>
+            </span>
+          </div>
         </div>
         <div
           class="quiz-list__ai-steps"
@@ -413,7 +423,7 @@
             [matTooltipDisabled]="!!quiz.lastServerQuizId"
             (click)="openLastSessionFeedbackDialog(quiz)"
           >
-            <mat-icon>rate_review</mat-icon>
+            <mat-icon>feedback</mat-icon>
             <span i18n="@@quizList.lastSessionFeedback">Letztes Feedback</span>
           </button>
           <a

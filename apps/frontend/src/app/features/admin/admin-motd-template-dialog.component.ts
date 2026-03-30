@@ -9,6 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { trpc } from '../../core/trpc.client';
@@ -24,13 +25,17 @@ export type AdminMotdTemplateDialogData = { templateId: string | null };
     MatDialogContent,
     MatDialogActions,
     MatButton,
+    MatIcon,
     MatFormField,
     MatLabel,
     MatInput,
     MatProgressSpinner,
   ],
   templateUrl: './admin-motd-template-dialog.component.html',
-  styleUrl: './admin-motd-template-dialog.component.scss',
+  styleUrls: [
+    '../../shared/styles/dialog-title-header.scss',
+    './admin-motd-template-dialog.component.scss',
+  ],
 })
 export class AdminMotdTemplateDialogComponent implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);

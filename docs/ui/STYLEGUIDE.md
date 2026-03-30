@@ -30,6 +30,15 @@ Ergaenzend zur ADR `docs/architecture/decisions/0005-use-angular-material-design
 - Keine CSS-Selektoren gegen interne Material-DOM-Strukturen.
 - Komponentenanpassungen nur ueber offizielle Override-APIs.
 
+## Material-Dialoge: Titelzeile mit Icon (MUSS)
+
+- **Einheitliche Gestaltung:** Alle `MatDialog`-Komponenten im Frontend nutzen fuer die **Kopfzeile** dieselbe Struktur und Typografie wie der **Bonus-Codes-Dialog** (Icon-Kachel links, Ueberschrift rechts, optional zweite Zeile).
+- **Stylesheet:** `apps/frontend/src/app/shared/styles/dialog-title-header.scss` — Klassen `dialog-title-header`, `dialog-title-header__icon`, `dialog-title-header__copy`, `dialog-title-header__heading`, optional `dialog-title-header__sub`.
+- **Markup:** `h2` mit `mat-dialog-title` und Klasse `dialog-title-header`; das Icon liegt in `dialog-title-header__icon` mit `mat-icon`, der Text in `dialog-title-header__copy` (Ueberschrift mindestens in `dialog-title-header__heading`).
+- **Einbindung:** Zusaetzlich zur Komponenten-SCSS `styleUrls` um diese Datei erweitern (Pfad je nach Ordner, z. B. `../../../shared/styles/dialog-title-header.scss` aus `features/quiz/quiz-list/`).
+- **Warnung / Verlassen:** Bestaetigungsdialoge mit kritischem Inhalt: Icon-Wrapper mit `dialog-title-header__icon dialog-title-header__icon--warn` (Farbton aus Error-/Error-Container-Tokens).
+- **Neue Dialoge:** Keine rein textlichen `mat-dialog-title`-Zeilen ohne Icon-Kachel; bei Sonderfaellen (z. B. Schließen-Button in derselben Zeile wie beim News-Archiv) bleibt die **linke Gruppe** trotzdem die Icon+Titel-Struktur innerhalb des `h2`.
+
 ## Token-Nutzung
 
 - System-Tokens: `--mat-sys-*`.

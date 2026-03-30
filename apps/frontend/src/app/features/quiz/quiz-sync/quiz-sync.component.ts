@@ -16,7 +16,7 @@ import { QuizStoreService } from '../data/quiz-store.service';
   standalone: true,
   imports: [RouterLink, MatButton, MatCard, MatCardContent, MatIcon],
   templateUrl: './quiz-sync.component.html',
-  styleUrl: './quiz-sync.component.scss',
+  styleUrls: ['../../../shared/styles/dialog-title-header.scss', './quiz-sync.component.scss'],
 })
 export class QuizSyncComponent {
   readonly localizedPath = localizePath;
@@ -29,7 +29,10 @@ export class QuizSyncComponent {
   readonly syncError = signal<string | null>(null);
   readonly copyStatus = signal<string | null>(null);
   readonly syncCode = computed(() =>
-    this.docId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase(),
+    this.docId
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .slice(0, 8)
+      .toUpperCase(),
   );
   readonly syncStatusLabel = computed(() => {
     const state = this.syncConnectionState();
@@ -47,7 +50,8 @@ export class QuizSyncComponent {
     try {
       this.quizStore.activateSyncRoom(this.docId, { markShared: true, registerOrigin: true });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Sync-Raum konnte nicht aktiviert werden.';
+      const message =
+        error instanceof Error ? error.message : 'Sync-Raum konnte nicht aktiviert werden.';
       this.syncError.set(message);
     }
   }

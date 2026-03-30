@@ -64,7 +64,7 @@ import { LastSessionFeedbackDialogComponent } from './last-session-feedback-dial
     MatTooltip,
   ],
   templateUrl: './quiz-list.component.html',
-  styleUrl: './quiz-list.component.scss',
+  styleUrls: ['../../../shared/styles/dialog-title-header.scss', './quiz-list.component.scss'],
 })
 export class QuizListComponent implements OnInit {
   private readonly document = inject(DOCUMENT);
@@ -753,7 +753,6 @@ export class QuizListComponent implements OnInit {
               defaultTimer: optionEnabled('defaultTimer', typeof payload.defaultTimer === 'number')
                 ? (payload.defaultTimer ?? DEFAULT_TIMER_SECONDS)
                 : null,
-              backgroundMusic: null,
             };
           }
         } catch {

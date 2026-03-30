@@ -252,6 +252,16 @@
   display: grid;
   gap: 0.25rem;
   min-width: 0;
+  flex: 1 1 auto;
+}
+
+.session-channel-card__header-lead-icon {
+  flex-shrink: 0;
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: 0.1rem;
+  color: var(--mat-sys-primary);
 }
 
 .session-channel-card__eyebrow {
@@ -337,6 +347,11 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* Mobile: Mini-QR aus Platzgründen ausgeblendet → sichtbares QR-Icon wie Host-Beitritt */
+.vote-live-banner__join-icon-tile {
+  display: none;
 }
 
 .vote-live-banner__code-block {
@@ -428,6 +443,26 @@
 
   .vote-live-banner__qr-wrap {
     display: none;
+  }
+
+  .vote-live-banner__join-icon-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    padding: 0.3rem;
+    border-radius: var(--mat-sys-corner-large);
+    box-sizing: border-box;
+    border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 78%, transparent);
+    background: color-mix(in srgb, var(--mat-sys-primary-container) 65%, transparent);
+    color: var(--mat-sys-on-primary-container);
+
+    mat-icon {
+      font-size: 1.75rem;
+      width: 1.75rem;
+      height: 1.75rem;
+    }
   }
 
   .vote-live-banner__code-block,
@@ -2259,10 +2294,15 @@
   padding: 1.5rem 1rem 2rem;
 }
 
-.vote-session-end-gate__title {
-  font: var(--mat-sys-headline-small);
-  margin: 0;
+.vote-session-end-gate__hero.dialog-title-header {
+  justify-content: center;
+  align-items: center;
   text-align: center;
+}
+
+.vote-session-end-gate__hero .dialog-title-header__copy {
+  gap: 0;
+  align-items: center;
 }
 
 .vote-session-end-gate__lead {
@@ -2524,9 +2564,28 @@
 }
 
 .vote-feedback-card__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   font: var(--mat-sys-title-medium);
   color: var(--mat-sys-on-surface);
   margin: 0 0 0.5rem;
+  text-align: center;
+}
+
+.vote-feedback-card__title-icon {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--mat-sys-primary);
+}
+
+.vote-feedback-card__title-text {
+  min-width: 0;
+  text-wrap: balance;
 }
 
 .vote-feedback-card__group {

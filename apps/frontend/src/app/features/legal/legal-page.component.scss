@@ -41,18 +41,10 @@
   word-break: break-word;
 }
 
-.legal-article :deep(h1) {
-  font: var(--mat-sys-headline-large);
-  color: var(--mat-sys-on-surface);
-  margin: 0 0 0.5rem;
-  padding-bottom: 0.75rem;
+.legal-page__hero {
   border-bottom: 1px solid var(--mat-sys-outline-variant);
-}
-
-.legal-article :deep(h1 + p) {
-  margin-top: 0;
-  font: var(--mat-sys-body-medium);
-  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 .legal-article :deep(h2) {
@@ -62,7 +54,7 @@
 }
 
 .legal-article :deep(h2:first-of-type) {
-  margin-top: 1.5rem;
+  margin-top: 0;
 }
 
 .legal-article :deep(p) {

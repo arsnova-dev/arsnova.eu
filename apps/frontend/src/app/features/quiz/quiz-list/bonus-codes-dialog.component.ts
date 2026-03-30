@@ -32,7 +32,10 @@ export interface BonusCodesDialogData {
     DatePipe,
   ],
   templateUrl: './bonus-codes-dialog.component.html',
-  styleUrl: './bonus-codes-dialog.component.scss',
+  styleUrls: [
+    '../../../shared/styles/dialog-title-header.scss',
+    './bonus-codes-dialog.component.scss',
+  ],
 })
 export class BonusCodesDialogComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<BonusCodesDialogComponent>);

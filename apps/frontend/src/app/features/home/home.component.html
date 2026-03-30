@@ -310,7 +310,7 @@
                 [value]="syncLinkValue()"
                 (input)="onSyncLinkInput($event)"
                 (keydown.enter)="openSyncLink()"
-                placeholder="https://arsnova.eu/quiz/sync/sync-room-12345678"
+                placeholder="sync-room-12345678"
                 i18n-placeholder="@@homeHostCard.syncLinkPlaceholder"
                 autocapitalize="off"
                 autocomplete="off"
@@ -351,9 +351,22 @@
         (touchend)="onMotdTouchEnd($event)"
       >
         <div class="home-motd-sheet__head">
-          <h2 id="home-motd-title" class="home-motd-sheet__title" i18n="@@motd.overlayTitle">
-            Aktuelle Meldung
-          </h2>
+          <header
+            class="dialog-title-header dialog-title-header--page home-motd-sheet__title-header"
+          >
+            <span class="dialog-title-header__icon" aria-hidden="true">
+              <mat-icon>campaign</mat-icon>
+            </span>
+            <div class="dialog-title-header__copy">
+              <h2
+                id="home-motd-title"
+                class="dialog-title-header__heading"
+                i18n="@@motd.overlayTitle"
+              >
+                Aktuelle Meldung
+              </h2>
+            </div>
+          </header>
           <button
             #motdCloseBtn
             type="button"

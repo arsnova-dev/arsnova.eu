@@ -100,7 +100,11 @@ export const PRESET_OPTION_IDS = [
 
 export const NICKNAME_THEME_OPTIONS: { value: NicknameTheme; label: string; icon: string }[] = [
   { value: 'NOBEL_LAUREATES', label: $localize`Nobelpreis`, icon: 'military_tech' },
-  { value: 'KINDERGARTEN', label: $localize`Kita`, icon: 'child_care' },
+  {
+    value: 'KINDERGARTEN',
+    label: $localize`:@@quiz.nicknameTheme.kindergarten:Kindergarten (Tier-Emojis)`,
+    icon: 'child_care',
+  },
   { value: 'PRIMARY_SCHOOL', label: $localize`Grundschule`, icon: 'abc' },
   { value: 'MIDDLE_SCHOOL', label: $localize`Mittelstufe`, icon: 'calculate' },
   { value: 'HIGH_SCHOOL', label: $localize`Oberstufe`, icon: 'school' },
@@ -158,7 +162,7 @@ export function getPresetDefaults(preset: 'serious' | 'spielerisch'): PresetOpti
     MatSelectTrigger,
   ],
   templateUrl: './preset-toast.component.html',
-  styleUrls: ['./preset-toast.component.scss'],
+  styleUrls: ['../styles/dialog-title-header.scss', './preset-toast.component.scss'],
 })
 export class PresetToastComponent implements OnInit {
   private readonly document = inject(DOCUMENT);

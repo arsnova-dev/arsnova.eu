@@ -1,14 +1,14 @@
-<h2 mat-dialog-title class="last-session-feedback-dialog__title">
-  <span class="last-session-feedback-dialog__title-icon" aria-hidden="true">
-    <mat-icon>rate_review</mat-icon>
+<h2 mat-dialog-title class="dialog-title-header">
+  <span class="dialog-title-header__icon" aria-hidden="true">
+    <mat-icon>feedback</mat-icon>
   </span>
-  <span class="last-session-feedback-dialog__title-copy">
-    <span
-      class="last-session-feedback-dialog__heading"
-      i18n="@@quizList.lastSessionFeedbackDialogHeading"
+  <span class="dialog-title-header__copy">
+    <span class="dialog-title-header__heading" i18n="@@quizList.lastSessionFeedbackDialogHeading"
       >Letztes Session-Feedback</span
     >
-    <span class="last-session-feedback-dialog__quiz-name">{{ data.quizName }}</span>
+    <span class="dialog-title-header__sub last-session-feedback-dialog__quiz-name">{{
+      data.quizName
+    }}</span>
   </span>
 </h2>
 

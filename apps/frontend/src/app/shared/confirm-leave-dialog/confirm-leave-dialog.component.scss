@@ -1,0 +1,27 @@
+.confirm-leave__message {
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.75rem;
+}
+
+.confirm-leave__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.7;
+}
+
+@media (max-width: 28rem) {
+  mat-dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding-inline: 1rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  mat-dialog-actions .mat-mdc-button-base {
+    width: 100%;
+  }
+}

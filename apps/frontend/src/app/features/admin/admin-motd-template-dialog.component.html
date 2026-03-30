@@ -1,9 +1,22 @@
-<h2 mat-dialog-title class="admin-motd-tpl-dialog__title">
-  @if (isEdit()) {
-    <span i18n="@@admin.motd.dialogTplEditTitle">Textvorlage bearbeiten</span>
-  } @else {
-    <span i18n="@@admin.motd.dialogTplNewTitle">Neue Textvorlage</span>
-  }
+<h2 mat-dialog-title class="dialog-title-header">
+  <span class="dialog-title-header__icon" aria-hidden="true">
+    @if (isEdit()) {
+      <mat-icon>edit_note</mat-icon>
+    } @else {
+      <mat-icon>note_add</mat-icon>
+    }
+  </span>
+  <span class="dialog-title-header__copy">
+    @if (isEdit()) {
+      <span class="dialog-title-header__heading" i18n="@@admin.motd.dialogTplEditTitle"
+        >Textvorlage bearbeiten</span
+      >
+    } @else {
+      <span class="dialog-title-header__heading" i18n="@@admin.motd.dialogTplNewTitle"
+        >Neue Textvorlage</span
+      >
+    }
+  </span>
 </h2>
 
 <mat-dialog-content class="admin-motd-tpl-dialog__content">

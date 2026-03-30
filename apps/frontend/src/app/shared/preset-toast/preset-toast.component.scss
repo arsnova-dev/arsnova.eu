@@ -16,8 +16,12 @@
 }
 
 @keyframes preset-toast-backdrop-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes preset-toast-in {
@@ -97,7 +101,11 @@
 }
 
 :host-context(html.light) .preset-toast__head-countdown-wrap {
-  background: color-mix(in srgb, var(--mat-sys-primary) 22%, var(--mat-sys-surface-container)) !important;
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-primary) 22%,
+    var(--mat-sys-surface-container)
+  ) !important;
 }
 
 .preset-toast__head-countdown {
@@ -114,36 +122,10 @@
   min-width: 0;
 }
 
-.preset-toast__title {
+.preset-toast__title.dialog-title-header {
+  padding: 0;
   margin: 0;
-  font: var(--mat-sys-title-large);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
-
-.preset-toast__title-icon-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--mat-sys-corner-medium);
-  background: var(--mat-sys-surface-container-high);
-}
-
-.preset-toast--playful .preset-toast__title-icon-wrap {
-  background: color-mix(in srgb, var(--mat-sys-primary) 18%, transparent);
-  color: var(--mat-sys-primary);
-}
-
-.preset-toast__title-icon {
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  font-size: 1.5rem;
-}
-
 
 .preset-toast__preset-hint {
   margin: 0.35rem 0 0 0;
@@ -163,7 +145,10 @@
   font: var(--mat-sys-label-medium);
   color: var(--mat-sys-on-surface);
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .preset-toast__switch-preset:hover {
@@ -234,7 +219,9 @@
 
 .preset-toast__chips mat-chip {
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -315,6 +302,8 @@
   .preset-toast {
     border-radius: var(--app-corner-playful, 1.5rem);
     border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, transparent);
-    box-shadow: var(--mat-sys-level3), 0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
+    box-shadow:
+      var(--mat-sys-level3),
+      0 0 0 1px color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
   }
 }

@@ -75,7 +75,10 @@ export class QuizNewComponent implements OnInit, OnDestroy {
 
   readonly nicknameThemeOptions: Array<{ value: NicknameTheme; label: string }> = [
     { value: 'NOBEL_LAUREATES', label: $localize`Nobelpreis` },
-    { value: 'KINDERGARTEN', label: $localize`Kita` },
+    {
+      value: 'KINDERGARTEN',
+      label: $localize`:@@quiz.nicknameTheme.kindergarten:Kindergarten (Tier-Emojis)`,
+    },
     { value: 'PRIMARY_SCHOOL', label: $localize`Grundschule` },
     { value: 'MIDDLE_SCHOOL', label: $localize`Mittelstufe` },
     { value: 'HIGH_SCHOOL', label: $localize`Oberstufe` },

@@ -69,6 +69,7 @@ const TARGET_MAP = {
   '5642511860113360206': 'Show leaderboard',
   'quizForm.nicknameThemePseudonymLabel': 'Age group for pseudonyms',
   'quizForm.nicknameThemePseudonymAria': 'Choose age group for pseudonyms',
+  'quiz.nicknameTheme.kindergarten': 'Kindergarten (animal emojis)',
   'quizForm.defaultTimerEnabled': 'Time limit',
   'quizForm.defaultTimerSecondsLabel': 'Seconds per question',
   'quizForm.defaultTimerSecondsAria': 'Select seconds per question',

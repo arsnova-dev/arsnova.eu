@@ -10,7 +10,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-help',
   imports: [MatButton, MatIcon],
   templateUrl: './help.component.html',
-  styleUrls: ['./help.component.scss'],
+  styleUrls: ['../../shared/styles/dialog-title-header.scss', './help.component.scss'],
 })
 export class HelpComponent {
   private readonly location = inject(Location);

@@ -109,19 +109,40 @@
 .session-channel-card {
   width: 100%;
   max-width: var(--app-live-channel-max-width);
+}
+
+.session-channel-card--quick-feedback {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
   text-align: left;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-large);
+  background: var(--mat-sys-surface-container-low);
+  box-sizing: border-box;
 }
 
-.session-channel-card__content {
+.session-channel-card__header {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 1rem;
+  padding-bottom: 0.35rem;
 }
 
-.session-channel-card__icon {
+.session-channel-card__header-main {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.session-channel-card__header-lead-icon {
+  flex-shrink: 0;
   font-size: 2rem;
   width: 2rem;
   height: 2rem;
+  margin-top: 0.1rem;
   color: var(--mat-sys-primary);
 }
 
@@ -129,16 +150,23 @@
   margin: 0;
   font: var(--mat-sys-label-large);
   color: var(--mat-sys-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .session-channel-card__title {
   margin: 0;
-  font: var(--mat-sys-headline-small);
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  line-height: 1.28;
+  text-wrap: balance;
 }
 
 .session-channel-card__text {
   margin: 0;
+  font: var(--mat-sys-body-large);
   color: var(--mat-sys-on-surface-variant);
+  line-height: 1.5;
 }
 
 .feedback-vote__session-code {
@@ -289,24 +317,22 @@
   padding: 1.25rem 1rem;
   border: 2px solid var(--mat-sys-outline-variant);
   border-radius: 1.35rem;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--mat-sys-surface) 96%, transparent),
-      color-mix(in srgb, var(--mat-sys-surface-container-low) 88%, var(--mat-sys-surface))
-    );
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--mat-sys-surface) 96%, transparent),
+    color-mix(in srgb, var(--mat-sys-surface-container-low) 88%, var(--mat-sys-surface))
+  );
   box-shadow: 0 0.65rem 1.35rem color-mix(in srgb, black 6%, transparent);
   cursor: pointer;
   box-sizing: border-box;
 
   &:hover {
     border-color: var(--mat-sys-primary);
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--mat-sys-primary) 8%, var(--mat-sys-surface)),
-        color-mix(in srgb, var(--mat-sys-surface-container) 88%, var(--mat-sys-surface))
-      );
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--mat-sys-primary) 8%, var(--mat-sys-surface)),
+      color-mix(in srgb, var(--mat-sys-surface-container) 88%, var(--mat-sys-surface))
+    );
   }
 
   &:focus-visible {
@@ -321,7 +347,10 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .feedback-vote__mood-btn {
-    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    transition:
+      border-color 0.15s,
+      background 0.15s,
+      transform 0.1s;
 
     &:active {
       transform: scale(0.95);
@@ -431,14 +460,27 @@
 
 @media (prefers-reduced-motion: no-preference) {
   @keyframes fb-discussion-pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.06); opacity: 0.85; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.06);
+      opacity: 0.85;
+    }
   }
 }
 
 @keyframes fb-vote-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // Runde-2-Hinweis

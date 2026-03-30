@@ -45,7 +45,7 @@ const SESSION_POLL_MS = 3000;
     MatOption,
   ],
   templateUrl: './join.component.html',
-  styleUrl: './join.component.scss',
+  styleUrls: ['../../shared/styles/dialog-title-header.scss', './join.component.scss'],
 })
 export class JoinComponent implements OnInit, OnDestroy {
   readonly localizedCommands = localizeCommands;

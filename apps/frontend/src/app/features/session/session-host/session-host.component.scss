@@ -284,14 +284,23 @@
 }
 
 .session-channel-card__header--qa-title {
-  align-items: stretch;
+  align-items: flex-start;
+}
+
+.session-channel-card__header-lead-icon {
+  flex-shrink: 0;
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: 0.1rem;
+  color: var(--mat-sys-primary);
 }
 
 .session-host__qa-title-block {
   display: grid;
   gap: 0.35rem;
   min-width: 0;
-  width: 100%;
+  flex: 1 1 auto;
 }
 
 .session-host__qa-title-view {
@@ -515,12 +524,21 @@
   text-align: center;
 }
 
-.session-host__join-menu-head {
-  display: grid;
+.session-host__join-menu-head.session-host__join-menu-title-header.dialog-title-header {
+  margin: 0;
+  padding: 0.15rem 0 0.25rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.session-host__join-menu-title-copy.dialog-title-header__copy {
   gap: 0.45rem;
-  justify-items: center;
+  align-items: center;
   text-align: center;
-  padding-block: 0.15rem 0.25rem;
 }
 
 .session-host__join-menu-lead {
@@ -649,9 +667,13 @@
     border-radius: calc(var(--mat-sys-corner-extra-large) + 0.15rem);
   }
 
-  .session-host__join-menu-head {
-    gap: 0.55rem;
+  .session-host__join-menu-head.session-host__join-menu-title-header.dialog-title-header {
+    gap: 0.85rem;
     padding-block: 0.35rem 0.45rem;
+  }
+
+  .session-host__join-menu-title-copy.dialog-title-header__copy {
+    gap: 0.55rem;
   }
 
   .session-host__join-menu-qr-wrap {
@@ -1740,21 +1762,35 @@
   color: var(--mat-sys-primary);
 }
 
-.session-host__music-menu-head {
-  padding: 0.55rem 1rem 0.4rem;
+.session-host__music-menu-head.dialog-title-header {
+  margin: 0;
+  padding: 0.55rem 1rem 0.45rem;
+  align-items: flex-start;
+  max-width: 22rem;
+  box-sizing: border-box;
+}
+
+.session-host__music-menu-head .dialog-title-header__copy {
+  gap: 0.35rem;
+}
+
+.session-host__music-menu-head .dialog-title-header__sub {
+  max-width: none;
+  font: var(--mat-sys-body-small);
+  line-height: 1.4;
 }
 
 .session-host__music-menu-title {
   margin: 0;
-  font: var(--mat-sys-title-small);
+  font: var(--mat-sys-title-medium);
+  font-weight: 600;
+  line-height: 1.25;
   color: var(--mat-sys-on-surface);
 }
 
 .session-host__music-menu-subtitle {
-  margin: 0.2rem 0 0;
-  font: var(--mat-sys-body-small);
+  margin: 0;
   color: var(--mat-sys-on-surface-variant);
-  line-height: 1.4;
 }
 
 .session-host__music-phase-picker {

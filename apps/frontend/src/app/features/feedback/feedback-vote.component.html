@@ -17,22 +17,23 @@
       </mat-card-content>
     </mat-card>
   } @else if (embeddedInSession() && !feedbackType() && !loading()) {
-    <mat-card
-      appearance="outlined"
-      class="session-channel-card app-live-channel-shell"
+    <section
+      class="session-channel-card session-channel-card--quick-feedback app-live-channel-shell"
       [class.session-channel-card--embedded-feedback]="embeddedInSession()"
     >
-      <mat-card-content class="session-channel-card__content">
-        <mat-icon class="session-channel-card__icon" aria-hidden="true">bolt</mat-icon>
-        <p class="session-channel-card__eyebrow" i18n="@@sessionTabs.quickFeedback">Blitzlicht</p>
-        <h2 class="session-channel-card__title" i18n="@@sessionTabs.quickFeedbackVoteTitle">
-          Beim Blitzlicht mitmachen
-        </h2>
-        <p class="session-channel-card__text" i18n="@@sessionTabs.quickFeedbackVotePlaceholder">
-          Sobald ein Format startet, kannst du hier in Sekunden deine Einschätzung abgeben.
-        </p>
-      </mat-card-content>
-    </mat-card>
+      <div class="session-channel-card__header">
+        <mat-icon class="session-channel-card__header-lead-icon" aria-hidden="true">bolt</mat-icon>
+        <div class="session-channel-card__header-main">
+          <p class="session-channel-card__eyebrow" i18n="@@sessionTabs.quickFeedback">Blitzlicht</p>
+          <h2 class="session-channel-card__title" i18n="@@sessionTabs.quickFeedbackVoteTitle">
+            Beim Blitzlicht mitmachen
+          </h2>
+        </div>
+      </div>
+      <p class="session-channel-card__text" i18n="@@sessionTabs.quickFeedbackVotePlaceholder">
+        Sobald ein Format startet, kannst du hier in Sekunden deine Einschätzung abgeben.
+      </p>
+    </section>
   } @else if (voted()) {
     <mat-card appearance="outlined" class="feedback-vote__card">
       <mat-card-content class="feedback-vote__done">

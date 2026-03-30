@@ -198,7 +198,7 @@ function musicTracksForPhase(
     FeedbackHostComponent,
   ],
   templateUrl: './session-host.component.html',
-  styleUrl: './session-host.component.scss',
+  styleUrls: ['../../../shared/styles/dialog-title-header.scss', './session-host.component.scss'],
 })
 export class SessionHostComponent implements OnInit, OnDestroy {
   readonly localizedPath = localizePath;

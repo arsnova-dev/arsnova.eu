@@ -1,5 +1,16 @@
 @if (quiz(); as quizData) {
   <section class="quiz-preview l-stack l-stack--sm">
+    <header class="quiz-preview__page-head dialog-title-header dialog-title-header--page">
+      <span class="dialog-title-header__icon" aria-hidden="true">
+        <mat-icon>visibility</mat-icon>
+      </span>
+      <span class="dialog-title-header__copy">
+        <h1 class="dialog-title-header__heading">{{ previewTitleName(quizData) }}</h1>
+        <p class="dialog-title-header__sub" i18n="@@quizPreview.pageSubtitle">
+          Vorschau für Teilnehmende
+        </p>
+      </span>
+    </header>
     @if (questions().length > 0) {
       <header class="quiz-preview__top-bar">
         <mat-progress-bar
@@ -148,13 +159,18 @@
         <mat-card appearance="outlined" class="quiz-preview-editor">
           <mat-card-content class="quiz-preview-editor__content">
             <div class="quiz-preview-editor__header">
-              <div>
-                <p class="quiz-preview-editor__eyebrow" i18n="@@quizPreview.editModeEyebrow">
-                  Bearbeitungsmodus
-                </p>
-                <h2 class="quiz-preview-editor__title" i18n="@@quizPreview.editModeTitle">
-                  Diese Folie bearbeiten
-                </h2>
+              <div class="dialog-title-header quiz-preview-editor__title-row">
+                <span class="dialog-title-header__icon" aria-hidden="true">
+                  <mat-icon>edit_note</mat-icon>
+                </span>
+                <span class="dialog-title-header__copy">
+                  <p class="quiz-preview-editor__eyebrow" i18n="@@quizPreview.editModeEyebrow">
+                    Bearbeitungsmodus
+                  </p>
+                  <h2 class="dialog-title-header__heading" i18n="@@quizPreview.editModeTitle">
+                    Diese Folie bearbeiten
+                  </h2>
+                </span>
               </div>
               <button mat-button type="button" (click)="cancelInlineEditMode()">
                 <mat-icon>close</mat-icon>

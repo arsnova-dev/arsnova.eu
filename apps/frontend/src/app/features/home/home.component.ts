@@ -69,7 +69,7 @@ import { renderMarkdownWithoutKatex } from '../../shared/markdown-katex.util';
     MatTooltip,
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  styleUrls: ['../../shared/styles/dialog-title-header.scss', './home.component.scss'],
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly localizedCommands = localizeCommands;

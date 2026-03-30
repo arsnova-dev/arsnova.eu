@@ -182,7 +182,7 @@ function getContextMotivation(
     FeedbackVoteComponent,
   ],
   templateUrl: './session-vote.component.html',
-  styleUrl: './session-vote.component.scss',
+  styleUrls: ['../../../shared/styles/dialog-title-header.scss', './session-vote.component.scss'],
 })
 export class SessionVoteComponent implements OnInit, OnDestroy {
   /** Preset-abhängige Teilnehmer-Texte (Template: vpc.*) */

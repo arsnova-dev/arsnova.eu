@@ -1,157 +1,187 @@
 <div class="preset-toast-backdrop" (click)="closed.emit()">
-  <div class="preset-toast" [class.preset-toast--playful]="themePreset.preset() === 'spielerisch'" (click)="$event.stopPropagation()">
-  <div class="preset-toast__scroll">
-    <div class="preset-toast__head">
-      @if (themePreset.preset() === 'spielerisch') {
-        <span class="preset-toast__head-countdown-wrap">
-          <img
-            src="assets/images/countdown-fingers.gif"
-            i18n-alt alt="Countdown 5 bis 0 mit Handzeichen"
-            class="preset-toast__head-countdown"
-          />
-        </span>
-      }
-      <div class="preset-toast__head-text">
-        <p class="preset-toast__title">
-          @if (themePreset.preset() !== 'spielerisch') {
-            <span class="preset-toast__title-icon-wrap">
-              <mat-icon class="preset-toast__title-icon">{{ toastIcon() }}</mat-icon>
+  <div
+    class="preset-toast"
+    [class.preset-toast--playful]="themePreset.preset() === 'spielerisch'"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="preset-toast__scroll">
+      <div class="preset-toast__head">
+        @if (themePreset.preset() === 'spielerisch') {
+          <span class="preset-toast__head-countdown-wrap">
+            <img
+              src="assets/images/countdown-fingers.gif"
+              i18n-alt
+              alt="Countdown 5 bis 0 mit Handzeichen"
+              class="preset-toast__head-countdown"
+            />
+          </span>
+        }
+        <div class="preset-toast__head-text">
+          <div class="preset-toast__title dialog-title-header">
+            @if (themePreset.preset() !== 'spielerisch') {
+              <span class="dialog-title-header__icon" aria-hidden="true">
+                <mat-icon>{{ toastIcon() }}</mat-icon>
+              </span>
+            }
+            <span class="dialog-title-header__copy">
+              <span class="dialog-title-header__heading">{{ toastTitle() }}</span>
             </span>
-          }
-          {{ toastTitle() }}
-        </p>
-        <p class="preset-toast__preset-hint">{{ toastHint() }}</p>
-        <button type="button" class="preset-toast__switch-preset" (click)="switchPreset()">
-          <mat-icon class="preset-toast__switch-icon">swap_horiz</mat-icon>
-          {{ switchPresetLabel() }}
+          </div>
+          <p class="preset-toast__preset-hint">{{ toastHint() }}</p>
+          <button type="button" class="preset-toast__switch-preset" (click)="switchPreset()">
+            <mat-icon class="preset-toast__switch-icon">swap_horiz</mat-icon>
+            {{ switchPresetLabel() }}
+          </button>
+        </div>
+        <button
+          matIconButton
+          type="button"
+          class="preset-toast__close"
+          i18n-aria-label
+          aria-label="Einstellungen schließen"
+          (click)="closed.emit()"
+        >
+          <mat-icon>close</mat-icon>
         </button>
       </div>
-      <button matIconButton type="button" class="preset-toast__close" i18n-aria-label aria-label="Einstellungen schließen" (click)="closed.emit()">
-        <mat-icon>close</mat-icon>
+      <p class="preset-toast__subtitle" i18n>
+        Tippen zum An- oder Ausschalten. Mit „Speichern“ übernehmen.
+      </p>
+      <div class="preset-toast__categories">
+        @for (group of optionsByCategory(); track group.categoryId) {
+          <div class="preset-toast__category">
+            <p class="preset-toast__category-label">{{ group.categoryLabel }}</p>
+            @if (group.categoryId === 'participation') {
+              <mat-button-toggle-group
+                [value]="nameMode()"
+                (change)="setNameMode($event.value)"
+                class="preset-toast__name-mode"
+                i18n-aria-label
+                aria-label="Namensmodus wählen"
+              >
+                @for (mode of nameModeOptions; track mode.value) {
+                  <mat-button-toggle [value]="mode.value">
+                    <mat-icon class="preset-toast__chip-icon">{{ mode.icon }}</mat-icon>
+                    {{ mode.label }}
+                  </mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+            }
+            <mat-chip-set class="preset-toast__chips">
+              @for (opt of group.options; track opt.id) {
+                @if (isOptionVisible(opt.id)) {
+                  <mat-chip
+                    [highlighted]="optionEffective(opt.id)"
+                    (click)="toggleOption(opt.id)"
+                    [class.preset-toast__chip--disabled]="isOptionDisabled(opt.id)"
+                    role="button"
+                    [attr.tabindex]="isOptionDisabled(opt.id) ? -1 : 0"
+                    [attr.aria-pressed]="optionEffective(opt.id)"
+                    [attr.aria-disabled]="isOptionDisabled(opt.id)"
+                    [attr.aria-label]="
+                      chipAriaLabel(opt.label, optionEffective(opt.id), isOptionDisabled(opt.id))
+                    "
+                    class="preset-toast__chip"
+                  >
+                    <mat-icon class="preset-toast__chip-icon">{{ opt.icon }}</mat-icon>
+                    {{ opt.label }}
+                    <span
+                      [class.preset-toast__chip-state--on]="optionEffective(opt.id)"
+                      [class.preset-toast__chip-state--off]="!optionEffective(opt.id)"
+                      class="preset-toast__chip-state"
+                      >{{ optionEffective(opt.id) ? chipStateOn() : chipStateOff() }}</span
+                    >
+                  </mat-chip>
+                }
+              }
+            </mat-chip-set>
+            @if (group.categoryId === 'participation' && nameMode() === 'nicknameTheme') {
+              <div class="preset-toast__nickname-theme">
+                <span class="preset-toast__nickname-theme-label" i18n>Altersgruppe:</span>
+                <mat-form-field
+                  appearance="outline"
+                  class="preset-toast__nickname-theme-select"
+                  subscriptSizing="dynamic"
+                >
+                  <mat-select
+                    [(ngModel)]="nicknameThemeSelectValue"
+                    i18n-aria-label
+                    aria-label="Altersgruppe wählen"
+                  >
+                    <mat-select-trigger>
+                      <mat-icon class="preset-toast__option-icon">{{
+                        selectedNicknameTheme().icon
+                      }}</mat-icon>
+                      {{ selectedNicknameTheme().label }}
+                    </mat-select-trigger>
+                    @for (item of nicknameThemeOptions; track item.value) {
+                      <mat-option [value]="item.value">
+                        <mat-icon class="preset-toast__option-icon">{{ item.icon }}</mat-icon>
+                        {{ item.label }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            }
+            @if (group.categoryId === 'team' && optionEffective('teamMode')) {
+              <div class="preset-toast__nickname-theme">
+                <span class="preset-toast__nickname-theme-label" i18n>Anzahl Teams:</span>
+                <mat-form-field
+                  appearance="outline"
+                  class="preset-toast__nickname-theme-select"
+                  subscriptSizing="dynamic"
+                >
+                  <mat-select
+                    [(ngModel)]="teamCountSelectValue"
+                    i18n-aria-label
+                    i18n-aria-label
+                    aria-label="Anzahl Teams wählen"
+                  >
+                    <mat-select-trigger>
+                      <mat-icon class="preset-toast__option-icon">groups</mat-icon>
+                      {{ selectedTeamCount().label }}
+                    </mat-select-trigger>
+                    @for (item of teamCountOptions; track item.value) {
+                      <mat-option [value]="item.value">
+                        <mat-icon class="preset-toast__option-icon">groups</mat-icon>
+                        {{ item.label }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <div class="preset-toast__actions">
+      <input
+        #presetImportInput
+        type="file"
+        accept=".json,application/json"
+        hidden
+        (change)="onImportFileSelected($event)"
+      />
+      <button mat-button type="button" (click)="exportPresets()">
+        <mat-icon>download</mat-icon>
+        <span i18n>Exportieren</span>
+      </button>
+      <button mat-button type="button" (click)="presetImportInput.click()">
+        <mat-icon>upload</mat-icon>
+        <span i18n>Importieren</span>
+      </button>
+      <button mat-button type="button" (click)="resetOptions()">
+        <span i18n>Zurücksetzen</span>
+      </button>
+      <button mat-flat-button type="button" color="primary" (click)="saveAndClose()">
+        <mat-icon>save</mat-icon>
+        <span i18n>Speichern</span>
       </button>
     </div>
-    <p class="preset-toast__subtitle" i18n>Tippen zum An- oder Ausschalten. Mit „Speichern“ übernehmen.</p>
-    <div class="preset-toast__categories">
-      @for (group of optionsByCategory(); track group.categoryId) {
-        <div class="preset-toast__category">
-          <p class="preset-toast__category-label">{{ group.categoryLabel }}</p>
-          @if (group.categoryId === 'participation') {
-            <mat-button-toggle-group
-              [value]="nameMode()"
-              (change)="setNameMode($event.value)"
-              class="preset-toast__name-mode"
-              i18n-aria-label aria-label="Namensmodus wählen"
-            >
-              @for (mode of nameModeOptions; track mode.value) {
-                <mat-button-toggle [value]="mode.value">
-                  <mat-icon class="preset-toast__chip-icon">{{ mode.icon }}</mat-icon>
-                  {{ mode.label }}
-                </mat-button-toggle>
-              }
-            </mat-button-toggle-group>
-          }
-          <mat-chip-set class="preset-toast__chips">
-            @for (opt of group.options; track opt.id) {
-              @if (isOptionVisible(opt.id)) {
-              <mat-chip
-                [highlighted]="optionEffective(opt.id)"
-                (click)="toggleOption(opt.id)"
-                [class.preset-toast__chip--disabled]="isOptionDisabled(opt.id)"
-                role="button"
-                [attr.tabindex]="isOptionDisabled(opt.id) ? -1 : 0"
-                [attr.aria-pressed]="optionEffective(opt.id)"
-                [attr.aria-disabled]="isOptionDisabled(opt.id)"
-                [attr.aria-label]="chipAriaLabel(opt.label, optionEffective(opt.id), isOptionDisabled(opt.id))"
-                class="preset-toast__chip"
-              >
-                <mat-icon class="preset-toast__chip-icon">{{ opt.icon }}</mat-icon>
-                {{ opt.label }}
-                <span [class.preset-toast__chip-state--on]="optionEffective(opt.id)" [class.preset-toast__chip-state--off]="!optionEffective(opt.id)" class="preset-toast__chip-state">{{ optionEffective(opt.id) ? chipStateOn() : chipStateOff() }}</span>
-              </mat-chip>
-              }
-            }
-          </mat-chip-set>
-          @if (group.categoryId === 'participation' && nameMode() === 'nicknameTheme') {
-            <div class="preset-toast__nickname-theme">
-              <span class="preset-toast__nickname-theme-label" i18n>Altersgruppe:</span>
-              <mat-form-field
-                appearance="outline"
-                class="preset-toast__nickname-theme-select"
-                subscriptSizing="dynamic"
-              >
-                <mat-select
-                  [(ngModel)]="nicknameThemeSelectValue"
-                  i18n-aria-label aria-label="Altersgruppe wählen"
-                >
-                  <mat-select-trigger>
-                    <mat-icon class="preset-toast__option-icon">{{ selectedNicknameTheme().icon }}</mat-icon>
-                    {{ selectedNicknameTheme().label }}
-                  </mat-select-trigger>
-                  @for (item of nicknameThemeOptions; track item.value) {
-                    <mat-option [value]="item.value">
-                      <mat-icon class="preset-toast__option-icon">{{ item.icon }}</mat-icon>
-                      {{ item.label }}
-                    </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </div>
-          }
-          @if (group.categoryId === 'team' && optionEffective('teamMode')) {
-            <div class="preset-toast__nickname-theme">
-              <span class="preset-toast__nickname-theme-label" i18n>Anzahl Teams:</span>
-              <mat-form-field
-                appearance="outline"
-                class="preset-toast__nickname-theme-select"
-                subscriptSizing="dynamic"
-              >
-                <mat-select
-                  [(ngModel)]="teamCountSelectValue"
-                  i18n-aria-label
-                  i18n-aria-label aria-label="Anzahl Teams wählen"
-                >
-                  <mat-select-trigger>
-                    <mat-icon class="preset-toast__option-icon">groups</mat-icon>
-                    {{ selectedTeamCount().label }}
-                  </mat-select-trigger>
-                  @for (item of teamCountOptions; track item.value) {
-                    <mat-option [value]="item.value">
-                      <mat-icon class="preset-toast__option-icon">groups</mat-icon>
-                      {{ item.label }}
-                    </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </div>
-          }
-        </div>
-      }
-    </div>
-  </div>
-  <div class="preset-toast__actions">
-    <input
-      #presetImportInput
-      type="file"
-      accept=".json,application/json"
-      hidden
-      (change)="onImportFileSelected($event)"
-    />
-    <button mat-button type="button" (click)="exportPresets()">
-      <mat-icon>download</mat-icon>
-      <span i18n>Exportieren</span>
-    </button>
-    <button mat-button type="button" (click)="presetImportInput.click()">
-      <mat-icon>upload</mat-icon>
-      <span i18n>Importieren</span>
-    </button>
-    <button mat-button type="button" (click)="resetOptions()"><span i18n>Zurücksetzen</span></button>
-    <button mat-flat-button type="button" color="primary" (click)="saveAndClose()">
-      <mat-icon>save</mat-icon>
-      <span i18n>Speichern</span>
-    </button>
-  </div>
-  @if (importExportStatus()) {
-    <p class="preset-toast__import-export-status" role="status">{{ importExportStatus() }}</p>
-  }
+    @if (importExportStatus()) {
+      <p class="preset-toast__import-export-status" role="status">{{ importExportStatus() }}</p>
+    }
   </div>
 </div>

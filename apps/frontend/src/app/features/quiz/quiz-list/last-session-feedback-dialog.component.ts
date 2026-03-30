@@ -32,7 +32,10 @@ export interface LastSessionFeedbackDialogData {
     DatePipe,
   ],
   templateUrl: './last-session-feedback-dialog.component.html',
-  styleUrl: './last-session-feedback-dialog.component.scss',
+  styleUrls: [
+    '../../../shared/styles/dialog-title-header.scss',
+    './last-session-feedback-dialog.component.scss',
+  ],
 })
 export class LastSessionFeedbackDialogComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<LastSessionFeedbackDialogComponent>);

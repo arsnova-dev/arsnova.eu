@@ -19,11 +19,8 @@
     color: var(--mat-sys-on-surface);
   }
 
-  &__title {
-    margin: 0 0 1.25rem;
-    font: var(--mat-sys-headline-small);
-    font-weight: 600;
-    color: var(--mat-sys-on-surface);
+  &__page-head.dialog-title-header {
+    margin-bottom: 0.35rem;
   }
 
   &__session {

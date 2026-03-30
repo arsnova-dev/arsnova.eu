@@ -9,10 +9,8 @@
   padding: clamp(1rem, 2vw, 1.5rem);
 }
 
-.quiz-sync__title {
-  margin: 0;
-  font: var(--mat-sys-title-medium);
-  line-height: 1.35;
+.quiz-sync__head {
+  align-items: flex-start;
 }
 
 .quiz-sync__text {
