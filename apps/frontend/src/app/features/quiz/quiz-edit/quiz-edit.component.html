@@ -976,6 +976,10 @@
                           <span i18n="@@quiz.edit.activateQuestion">Aktivieren</span>
                         </button>
                       }
+                      <button mat-button type="button" (click)="deleteQuestion(question.id)">
+                        <mat-icon>delete</mat-icon>
+                        <span i18n>Löschen</span>
+                      </button>
                     </div>
                   }
                 </div>
