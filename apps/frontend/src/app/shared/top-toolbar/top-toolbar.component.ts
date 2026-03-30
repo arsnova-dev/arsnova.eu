@@ -36,7 +36,7 @@ import { MotdArchiveDialogComponent } from '../motd-archive-dialog/motd-archive-
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
 import { LocaleSwitchGuardService } from '../../core/locale-switch-guard.service';
-import { localizePath } from '../../core/locale-router';
+import { isAppHomeRouterUrl, localizePath } from '../../core/locale-router';
 import {
   ConfirmLeaveDialogComponent,
   type ConfirmLeaveDialogData,
@@ -74,9 +74,10 @@ export class TopToolbarComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly localeGuard = inject(LocaleSwitchGuardService);
   private readonly dialog = inject(MatDialog);
-  readonly showHomeLink = toSignal(this.router.events.pipe(map(() => this.router.url !== '/')), {
-    initialValue: false,
-  });
+  readonly showHomeLink = toSignal(
+    this.router.events.pipe(map(() => !isAppHomeRouterUrl(this.router.url))),
+    { initialValue: !isAppHomeRouterUrl(this.router.url) },
+  );
 
   readonly supportedLanguages = [
     { code: 'de' as const, label: 'Deutsch' },

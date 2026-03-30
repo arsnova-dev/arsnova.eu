@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getLocaleFromPath } from './locale-from-path';
-import { localizeCommands, localizePath } from './locale-router';
+import { isAppHomeRouterUrl, localizeCommands, localizePath } from './locale-router';
 
 vi.mock('./locale-from-path', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./locale-from-path')>();
@@ -13,6 +13,28 @@ vi.mock('./locale-from-path', async (importOriginal) => {
 describe('locale-router', () => {
   afterEach(() => {
     document.querySelectorAll('base').forEach((el) => el.remove());
+  });
+
+  describe('isAppHomeRouterUrl (Toolbar showHomeLink)', () => {
+    it('erkennt Startseite ohne und mit Locale-Präfix', () => {
+      expect(isAppHomeRouterUrl('/')).toBe(true);
+      expect(isAppHomeRouterUrl('/de')).toBe(true);
+      expect(isAppHomeRouterUrl('/de/')).toBe(true);
+      expect(isAppHomeRouterUrl('/en')).toBe(true);
+      expect(isAppHomeRouterUrl('/fr/')).toBe(true);
+    });
+
+    it('ignoriert Query und Hash', () => {
+      expect(isAppHomeRouterUrl('/?tab=1')).toBe(true);
+      expect(isAppHomeRouterUrl('/de#section')).toBe(true);
+      expect(isAppHomeRouterUrl('/de/quiz?x=1')).toBe(false);
+    });
+
+    it('keine Startseite bei echten Unterpfaden', () => {
+      expect(isAppHomeRouterUrl('/quiz')).toBe(false);
+      expect(isAppHomeRouterUrl('/de/quiz')).toBe(false);
+      expect(isAppHomeRouterUrl('/legal/imprint')).toBe(false);
+    });
   });
 
   describe('mit <base href="/de/"> (localized Production)', () => {

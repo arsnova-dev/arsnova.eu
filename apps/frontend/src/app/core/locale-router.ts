@@ -55,6 +55,16 @@ function normalizePath(path: string): string {
   return withLeadingSlash.replace(/\/{2,}/g, '/');
 }
 
+/**
+ * True, wenn die URL der Startseite entspricht (ohne Query/Hash; optionales /{locale}-Präfix wie in Dev entfernt).
+ * Deckt Base `/de/` (Router.url oft `/`) und Dev `/de` bzw. `/de/` ab — konsistent mit `showHomeLink` in der Toolbar.
+ */
+export function isAppHomeRouterUrl(pathOrUrl: string): boolean {
+  const pathOnly = pathOrUrl.split(/[?#]/)[0] ?? '';
+  const normalized = normalizePath(pathOnly);
+  return stripLeadingLocaleFromPath(normalized) === '/';
+}
+
 function normalizeCommands(commands: readonly RouterCommand[]): RouterCommand[] {
   const normalizedCommands: RouterCommand[] = [];
 
