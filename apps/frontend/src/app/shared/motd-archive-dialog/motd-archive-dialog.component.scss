@@ -113,6 +113,13 @@
     min-width: auto;
     max-width: none;
   }
+
+  /* Panel-Inhalt: gleiches Flex-Schrumpfen wie MOTD-Sheet, damit Markdown-Bilder skalieren */
+  ::ng-deep .mat-expansion-panel-body {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 }
 
 .motd-archive__panel-title {
@@ -147,6 +154,8 @@
   line-height: 1.5;
   overflow-wrap: break-word;
   color: var(--mat-sys-on-surface);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .motd-archive__body.markdown-body :first-child {

@@ -1807,6 +1807,8 @@ mat-card-actions.l-stack {
 .home-motd-sheet__body {
   flex: 1 1 auto;
   min-height: 0;
+  /* Flex min-width:auto würde breite Bilder durchreichen → img max-width 100% wirkungslos */
+  min-width: 0;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;

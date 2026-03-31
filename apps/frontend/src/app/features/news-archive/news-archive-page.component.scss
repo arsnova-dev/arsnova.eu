@@ -105,6 +105,8 @@
   font: inherit;
   line-height: inherit;
   color: inherit;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .news-archive-page__article-root .news-archive-page__md :deep(h2) {

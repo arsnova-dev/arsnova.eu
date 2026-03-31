@@ -523,12 +523,18 @@ html.dark .cdk-overlay-pane.live-session-dialog-panel .mat-mdc-dialog-surface {
   margin: 0 !important;
 }
 
-/* Markdown (MOTD-Overlay, News-Archiv, Dialog, Admin-Vorschau): Bilder an Inhaltsbreite */
+/* Markdown (MOTD …): Flex-Eltern dürfen unter natürlicher Bildbreite schrumpfen (sonst kein max-width:100%) */
+.markdown-body {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Bilder an Inhaltsbreite; !important gegen evtl. Attribute/Third-Party */
 .markdown-body img {
   display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
   box-sizing: border-box;
 }
 
