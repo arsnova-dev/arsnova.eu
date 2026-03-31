@@ -8,7 +8,7 @@ const mockSanitizer = {
 } as DomSanitizer;
 
 describe('buildMotdArchiveItemDisplay', () => {
-  it('nutzt ATX-Überschrift als Titel und rendert Rumpf', () => {
+  it('nutzt ATX-Überschrift als Titel und rendert nur Rumpf (ohne Titel-Wiederholung)', () => {
     const it: MotdArchiveItemDTO = {
       id: 'a',
       markdown: '# Hallo\n\nText.',
@@ -18,6 +18,22 @@ describe('buildMotdArchiveItemDisplay', () => {
     const r = buildMotdArchiveItemDisplay(it, mockSanitizer, 'Fallback');
     expect(r.title).toBe('Hallo');
     expect(String(r.html)).toContain('Text');
+    expect(String(r.html)).not.toContain('Hallo');
+  });
+
+  it('wiederholt ATX-Titel im Markdown-Rumpf wenn repeatTitleInMarkdownBody', () => {
+    const it: MotdArchiveItemDTO = {
+      id: 'a2',
+      markdown: '# Hallo\n\nText.',
+      startsAt: '2026-01-01T00:00:00.000Z',
+      endsAt: '2026-01-02T00:00:00.000Z',
+    };
+    const r = buildMotdArchiveItemDisplay(it, mockSanitizer, 'Fallback', {
+      repeatTitleInMarkdownBody: true,
+    });
+    expect(r.title).toBe('Hallo');
+    expect(String(r.html)).toContain('Text');
+    expect(String(r.html)).toContain('Hallo');
   });
 
   it('nutzt Fallback ohne führende Überschrift', () => {

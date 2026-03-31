@@ -25,8 +25,8 @@
   </url>
   <url>
     <loc>https://arsnova.eu/de/news-archive</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="de" href="https://arsnova.eu/de/news-archive" />
     <xhtml:link rel="alternate" hreflang="en" href="https://arsnova.eu/en/news-archive" />
     <xhtml:link rel="alternate" hreflang="fr" href="https://arsnova.eu/fr/news-archive" />

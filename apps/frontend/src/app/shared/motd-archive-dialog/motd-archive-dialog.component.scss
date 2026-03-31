@@ -156,3 +156,12 @@
 .motd-archive__body.markdown-body :last-child {
   margin-bottom: 0;
 }
+
+/* Wiederholter ATX-Titel im Rumpf (voller Text; Panel-Label nur Ellipse) */
+.motd-archive__body.markdown-body :deep(h1:first-child) {
+  font: var(--mat-sys-title-large);
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.75rem;
+  line-height: 1.3;
+}
