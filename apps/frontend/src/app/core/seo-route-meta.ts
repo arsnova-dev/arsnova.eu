@@ -29,6 +29,9 @@ export function resolveSeoForPath(pathRest: string): SeoRoutePayload {
   if (r === '/help') {
     return { title: seoTitleHelp(), description: seoDescHelp() };
   }
+  if (r === '/news-archive') {
+    return { title: seoTitleNewsArchive(), description: seoDescNewsArchive() };
+  }
   if (r === '/legal/imprint') {
     return { title: seoTitleImprint(), description: seoDescImprint() };
   }
@@ -112,6 +115,14 @@ function seoTitleHelp(): string {
 
 function seoDescHelp(): string {
   return $localize`:@@seo.descHelp:Kurze Anleitungen zu Sessions, Quiz, Blitzlicht und den wichtigsten Abläufen auf arsnova.eu.`;
+}
+
+function seoTitleNewsArchive(): string {
+  return $localize`:@@seo.titleNewsArchive:News-Archiv – arsnova.eu`;
+}
+
+function seoDescNewsArchive(): string {
+  return $localize`:@@seo.descNewsArchive:Freigegebene Meldungen aus dem News-Archiv: Chronik zu Releases, Hinweisen und Transparenz rund um arsnova.eu.`;
 }
 
 function seoTitleImprint(): string {

@@ -107,9 +107,11 @@
     min-width: 0;
   }
 
+  /* Datum immer vollständig: nicht schrumpfen, kein Ellipsis */
   ::ng-deep .mat-expansion-panel-header .mat-expansion-panel-header-description {
-    flex: 0 1 auto;
-    min-width: 0;
+    flex: 0 0 auto;
+    min-width: auto;
+    max-width: none;
   }
 }
 
@@ -131,15 +133,12 @@
 
 .motd-archive__panel-meta {
   flex-shrink: 0;
-  max-width: 40%;
-  min-width: 0;
+  min-width: auto;
+  max-width: none;
 }
 
 .motd-archive__panel-meta-text {
   display: block;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

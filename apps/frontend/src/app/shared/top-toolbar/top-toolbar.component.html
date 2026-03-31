@@ -49,7 +49,7 @@
           <mat-icon>home</mat-icon>
         </a>
       }
-      @if (motdToolbarIcon()) {
+      @if (motdHeaderState.motdToolbarIcon()) {
         <button
           type="button"
           matIconButton
@@ -58,7 +58,7 @@
           [matTooltip]="motdToolbarArchiveTooltip()"
           [attr.aria-label]="motdArchiveAriaLabel()"
           [matBadge]="motdArchiveBadgeText()"
-          [matBadgeHidden]="motdArchiveCount() === 0"
+          [matBadgeHidden]="motdHeaderState.archiveUnreadCount() === 0"
           matBadgePosition="above after"
         >
           <mat-icon>campaign</mat-icon>

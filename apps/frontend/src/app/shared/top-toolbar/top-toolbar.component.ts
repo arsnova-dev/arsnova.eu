@@ -1,15 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  Input,
-  OnInit,
-  PLATFORM_ID,
-  LOCALE_ID,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Input, PLATFORM_ID, LOCALE_ID, computed, inject, signal } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { tryExitDocumentFullscreen } from '../../core/document-fullscreen.util';
 import { Router, RouterLink } from '@angular/router';
@@ -24,7 +13,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import type { AppLocale } from '@arsnova/shared-types';
-import { trpc } from '../../core/trpc.client';
 import {
   getEffectiveLocale,
   getLocaleFromPath,
@@ -32,6 +20,7 @@ import {
   localeIdToSupported,
   SUPPORTED_LOCALES,
 } from '../../core/locale-from-path';
+import { MotdHeaderStateService } from '../../core/motd-header-state.service';
 import { MotdArchiveDialogComponent } from '../motd-archive-dialog/motd-archive-dialog.component';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
@@ -41,9 +30,6 @@ import {
   ConfirmLeaveDialogComponent,
   type ConfirmLeaveDialogData,
 } from '../confirm-leave-dialog/confirm-leave-dialog.component';
-import { getMotdArchiveSeenUpToEndsAtIso, motdDismissedPairsForApi } from '../../core/motd-storage';
-import { MotdHeaderRefreshService } from '../../core/motd-header-refresh.service';
-
 @Component({
   selector: 'app-top-toolbar',
   standalone: true,
@@ -62,11 +48,10 @@ import { MotdHeaderRefreshService } from '../../core/motd-header-refresh.service
   templateUrl: './top-toolbar.component.html',
   styleUrls: ['./top-toolbar.component.scss'],
 })
-export class TopToolbarComponent implements OnInit {
+export class TopToolbarComponent {
   readonly localizedPath = localizePath;
   readonly themePreset = inject(ThemePresetService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly motdHeaderRefresh = inject(MotdHeaderRefreshService);
+  readonly motdHeaderState = inject(MotdHeaderStateService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly localeId = inject(LOCALE_ID);
   private readonly document = inject(DOCUMENT);
@@ -89,21 +74,15 @@ export class TopToolbarComponent implements OnInit {
   language = signal<'de' | 'en' | 'fr' | 'it' | 'es'>('de');
   controlsMenuOpen = signal(false);
 
-  /** MOTD: Icon, wenn aktive Meldung oder Archiv-Einträge (Epic 10). */
-  readonly motdToolbarIcon = signal(false);
-
-  /** Ungelesene Archiv-MOTDs relativ zum Client-Wasserzeichen (Epic 10). */
-  readonly motdArchiveCount = signal(0);
-
   /** Badge-Text (max. „99+“). */
   readonly motdArchiveBadgeText = computed(() => {
-    const n = this.motdArchiveCount();
+    const n = this.motdHeaderState.archiveUnreadCount();
     return n > 99 ? '99+' : String(n);
   });
 
   /** Barrierefrei: Zähler in der Beschriftung, wenn Archiv-Einträge existieren. */
   readonly motdArchiveAriaLabel = computed(() => {
-    const n = this.motdArchiveCount();
+    const n = this.motdHeaderState.archiveUnreadCount();
     if (n <= 0) {
       return $localize`:@@motd.toolbarArchiveAria:News und Archiv`;
     }
@@ -115,7 +94,7 @@ export class TopToolbarComponent implements OnInit {
 
   /** Kurzinfo beim Hover (unterscheidet ungelesene Meldungen). */
   readonly motdToolbarArchiveTooltip = computed(() => {
-    const n = this.motdArchiveCount();
+    const n = this.motdHeaderState.archiveUnreadCount();
     if (n <= 0) {
       return $localize`:@@motd.toolbarArchiveTooltip:News und Archiv`;
     }
@@ -134,15 +113,6 @@ export class TopToolbarComponent implements OnInit {
   @Input() hideOnScroll = false;
   /** Bei hideOnScroll: Toolbar ausgeblendet (translateY -100%). */
   @Input() toolbarHidden = false;
-
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      void this.refreshMotdToolbarIcon();
-      this.motdHeaderRefresh.requests.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        void this.refreshMotdToolbarIcon();
-      });
-    }
-  }
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -232,24 +202,6 @@ export class TopToolbarComponent implements OnInit {
     tryExitDocumentFullscreen(this.document);
   }
 
-  private async refreshMotdToolbarIcon(): Promise<void> {
-    const locale = getEffectiveLocale(localeIdToSupported(this.localeId)) as AppLocale;
-    try {
-      const seen = getMotdArchiveSeenUpToEndsAtIso();
-      const dismissed = motdDismissedPairsForApi();
-      const s = await trpc.motd.getHeaderState.query({
-        locale,
-        ...(seen ? { archiveSeenUpToEndsAtIso: seen } : {}),
-        ...(dismissed.length ? { overlayDismissedUpTo: dismissed } : {}),
-      });
-      this.motdToolbarIcon.set(s.hasActiveOverlay || s.hasArchiveEntries);
-      this.motdArchiveCount.set(s.archiveUnreadCount);
-    } catch {
-      this.motdToolbarIcon.set(false);
-      this.motdArchiveCount.set(0);
-    }
-  }
-
   openMotdArchive(): void {
     const locale = getEffectiveLocale(localeIdToSupported(this.localeId)) as AppLocale;
     this.dialog
@@ -265,7 +217,7 @@ export class TopToolbarComponent implements OnInit {
       .afterClosed()
       .subscribe(() => {
         if (isPlatformBrowser(this.platformId)) {
-          void this.refreshMotdToolbarIcon();
+          void this.motdHeaderState.refresh();
         }
       });
   }

@@ -4,6 +4,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 export const serverRoutes: ServerRoute[] = [
   { path: '', renderMode: RenderMode.Prerender },
   { path: 'help', renderMode: RenderMode.Prerender },
+  { path: 'news-archive', renderMode: RenderMode.Prerender },
   { path: 'quiz', renderMode: RenderMode.Prerender },
   { path: 'legal/imprint', renderMode: RenderMode.Prerender },
   { path: 'legal/privacy', renderMode: RenderMode.Prerender },

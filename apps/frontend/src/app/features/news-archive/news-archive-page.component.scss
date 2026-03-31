@@ -1,0 +1,188 @@
+/* Optik wie legal-page.component.scss (Werte gespiegelt; Legal-Komponente unverändert). */
+
+.news-archive-page {
+  padding-bottom: 3rem;
+  padding-inline: 1.5rem;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+@media (min-width: 600px) {
+  .news-archive-page {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 840px) {
+  .news-archive-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+.news-archive-page__back {
+  margin-bottom: 2rem;
+}
+
+.news-archive-page__error {
+  margin: 0;
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-large);
+}
+
+.news-archive-page__empty {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-large);
+  line-height: 1.7;
+}
+
+.news-archive-page__article-root {
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface);
+  line-height: 1.7;
+  max-inline-size: min(65ch, 100%);
+  margin-inline: auto;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.news-archive-page__hero {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  margin-bottom: 0.5rem;
+  padding-bottom: 1rem;
+}
+
+.news-archive-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+.news-archive-page__mark-all-wrap {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.news-archive-page__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.news-archive-page__entry {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.news-archive-page__entry:not(:first-of-type) {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
+
+.news-archive-page__entry-title {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.news-archive-page__entry-meta {
+  margin: 0 0 1rem;
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.news-archive-page__entry-meta time {
+  font: inherit;
+  color: inherit;
+}
+
+/* Markdown-Rumpf: gleiche Lesespur wie .legal-article :deep in legal-page */
+.news-archive-page__article-root .news-archive-page__md {
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(h2) {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 2rem 0 0.5rem;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(h2:first-of-type) {
+  margin-top: 0;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(p) {
+  margin: 0 0 1rem;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(ul) {
+  margin: 0 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(li) {
+  margin-bottom: 0.5rem;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(li::marker) {
+  color: var(--mat-sys-primary);
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(hr) {
+  border: none;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin: 2rem 0;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(strong) {
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(a) {
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: text-decoration 0.15s ease;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(a:hover) {
+  text-decoration: underline;
+}
+
+.news-archive-page__article-root .news-archive-page__md :deep(a:focus-visible) {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.news-archive-page__article-root .news-archive-page__md.markdown-body :first-child {
+  margin-top: 0;
+}
+
+.news-archive-page__article-root .news-archive-page__md.markdown-body :last-child {
+  margin-bottom: 0;
+}
+
+.news-archive-page__load-more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.news-archive-page__load-more-spinner {
+  flex-shrink: 0;
+}

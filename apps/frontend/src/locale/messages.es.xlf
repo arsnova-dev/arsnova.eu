@@ -86,12 +86,44 @@
           <context context-type="linenumber">74,77</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="app.footer.newsArchiveAria" datatype="html">
+        <source>News-Archiv öffnen</source>
+        <target>Abrir archivo de noticias</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">120,122</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="app.footer.newsArchive" datatype="html">
+        <source>News-Archiv</source>
+        <target>Archivo News</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">123,125</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="app.footer.newsArchiveAriaOne" datatype="html">
+        <source>News-Archiv öffnen, eine ungelesene Meldung</source>
+        <target>Abrir archivo de noticias, un mensaje sin leer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.ts</context>
+          <context context-type="linenumber">168,170</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="app.footer.newsArchiveAriaCount" datatype="html">
+        <source>News-Archiv öffnen, <x id="INTERPOLATION" equiv-text="n"/> ungelesene Meldungen</source>
+        <target>Abrir archivo de noticias, <x id="INTERPOLATION" equiv-text="{{ n }}"/> mensajes sin leer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.ts</context>
+          <context context-type="linenumber">171,172</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="8443252743112048692" datatype="html">
         <source>Hilfe öffnen</source>
         <target>Abrir ayuda</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
-          <context context-type="linenumber">120,121</context>
+          <context context-type="linenumber">129,130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7842597623910989718" datatype="html">
@@ -99,7 +131,7 @@
         <target>Ayuda</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
-          <context context-type="linenumber">123,124</context>
+          <context context-type="linenumber">132,133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1547876271716599756" datatype="html">
@@ -107,7 +139,7 @@
         <target>Aviso legal</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
-          <context context-type="linenumber">127,128</context>
+          <context context-type="linenumber">136,137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4082114936887396529" datatype="html">
@@ -115,7 +147,7 @@
         <target>Privacidad</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
-          <context context-type="linenumber">131,132</context>
+          <context context-type="linenumber">140,141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="app.footer.statusHelpTriggerAria" datatype="html">
@@ -123,7 +155,7 @@
         <target>Ayuda sobre el estado del servidor</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
-          <context context-type="linenumber">153,155</context>
+          <context context-type="linenumber">162,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7981911571029514989" datatype="html">
@@ -187,7 +219,7 @@
         <target>arsnova.eu | La alternativa europea a Mentimeter y Kahoot</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descHome" datatype="html">
@@ -195,7 +227,7 @@
         <target>Sesiones interactivas, quizzes y feedback – Made in Europe. La solución de privacidad para educación y empresas desde 2012. ¡Prueba arsnova.eu!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleQuizList" datatype="html">
@@ -203,7 +235,7 @@
         <target>Mis cuestionarios – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descQuizList" datatype="html">
@@ -211,7 +243,7 @@
         <target>Cree, edite y utilice colecciones de pruebas para sesiones en vivo, localmente o sincronizadas entre dispositivos.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleQuizNew" datatype="html">
@@ -219,7 +251,7 @@
         <target>Nuevo cuestionario – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descQuizNew" datatype="html">
@@ -227,7 +259,7 @@
         <target>Crea un nuevo cuestionario: preguntas, respuestas y configuraciones para tu próxima sesión en vivo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleQuizEdit" datatype="html">
@@ -235,7 +267,7 @@
         <target>Editar cuestionario – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descQuizEdit" datatype="html">
@@ -243,7 +275,7 @@
         <target>Edite preguntas y metadatos de un cuestionario, prepare una vista previa y cárguelos para la sesión.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleQuizPreview" datatype="html">
@@ -251,7 +283,7 @@
         <target>Vista previa del cuestionario – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descQuizPreview" datatype="html">
@@ -259,7 +291,7 @@
         <target>Vea el cuestionario tal como lo ven los participantes en la sesión; pruébelo antes de comenzar.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleQuizSync" datatype="html">
@@ -267,7 +299,7 @@
         <target>Compartir biblioteca de cuestionarios – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descQuizSync" datatype="html">
@@ -275,7 +307,7 @@
         <target>Biblioteca de sincronización entre dispositivos: ID de sincronización compartida y acceso compartido.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleHelp" datatype="html">
@@ -283,7 +315,7 @@
         <target>Ayuda e instrucciones – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">110</context>
+          <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descHelp" datatype="html">
@@ -291,7 +323,23 @@
         <target>Instrucciones breves sobre sesiones, cuestionarios, sondeo rápido y los procesos principales en arsnova.eu.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="seo.titleNewsArchive" datatype="html">
+        <source>News-Archiv – arsnova.eu</source>
+        <target>Archivo de noticias – arsnova.eu</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="seo.descNewsArchive" datatype="html">
+        <source>Freigegebene Meldungen aus dem News-Archiv: Chronik zu Releases, Hinweisen und Transparenz rund um arsnova.eu.</source>
+        <target>Reportajes publicados del archivo de noticias: Crónica de comunicados, información y transparencia en torno a arsnova.eu.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleImprint" datatype="html">
@@ -299,7 +347,7 @@
         <target>Pie de imprenta – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descImprint" datatype="html">
@@ -307,7 +355,7 @@
         <target>Pie de imprenta e identificación del proveedor de acuerdo con la información legalmente requerida.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titlePrivacy" datatype="html">
@@ -315,7 +363,7 @@
         <target>Protección de datos – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descPrivacy" datatype="html">
@@ -323,7 +371,7 @@
         <target>Declaración de protección de datos: Tratamiento de datos personales al utilizar arsnova.eu.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleJoin" datatype="html">
@@ -331,7 +379,7 @@
         <target>Unirse a la sesión – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descJoin" datatype="html">
@@ -339,7 +387,7 @@
         <target>Únete a un evento en vivo con el código de sesión: cuestionario, Q&amp;A o sondeo rápido.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">149</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleSession" datatype="html">
@@ -347,7 +395,7 @@
         <target>Sesión en vivo – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">153</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descSession" datatype="html">
@@ -355,7 +403,7 @@
         <target>Moderación o participación en una sesión en curso: preguntas, votaciones y resultados en tiempo real.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleFeedbackHost" datatype="html">
@@ -363,7 +411,7 @@
         <target>Moderar Sondeo rápido – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">150</context>
+          <context context-type="linenumber">161</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descFeedbackHost" datatype="html">
@@ -371,7 +419,7 @@
         <target>Configure comentarios rápidos en el evento y controle los resultados en vivo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">154</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleFeedbackVote" datatype="html">
@@ -379,7 +427,7 @@
         <target>Participar en Sondeo rápido – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">158</context>
+          <context context-type="linenumber">169</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descFeedbackVote" datatype="html">
@@ -387,7 +435,7 @@
         <target>Vote brevemente o dé su opinión: sin cuenta, ahorrando datos.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleAdmin" datatype="html">
@@ -395,7 +443,7 @@
         <target>Administración – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">166</context>
+          <context context-type="linenumber">177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descAdmin" datatype="html">
@@ -403,7 +451,7 @@
         <target>Administración interna (solo para operadores).</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="feedback.voteSessionCodeAria" datatype="html">
@@ -2193,6 +2241,10 @@
           <context context-type="sourcefile">src/app/features/legal/legal-page.component.html</context>
           <context context-type="linenumber">8,10</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
+          <context context-type="linenumber">8,10</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="contentPage.back" datatype="html">
         <source>Zurück</source>
@@ -2203,6 +2255,10 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/legal/legal-page.component.html</context>
+          <context context-type="linenumber">11,14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
           <context context-type="linenumber">11,14</context>
         </context-group>
         <context-group purpose="location">
@@ -3564,6 +3620,118 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/legal/legal-page.component.ts</context>
           <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveTitle" datatype="html">
+        <source>News-Archiv</source>
+        <target>Archivo News</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
+          <context context-type="linenumber">21,23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
+          <context context-type="linenumber">8,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveMarkAllReadDisabled" datatype="html">
+        <source>Alle Meldungen sind bereits als gelesen markiert.</source>
+        <target>Todos los mensajes ya están marcados como leídos.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
+          <context context-type="linenumber">37,39</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveMarkAllRead" datatype="html">
+        <source> Alles als gelesen markieren</source>
+        <target>Marcar todo como leído</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
+          <context context-type="linenumber">48,50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
+          <context context-type="linenumber">46,48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveEmpty" datatype="html">
+        <source>Keine archivierten Meldungen.</source>
+        <target>No hay mensajes archivados.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
+          <context context-type="linenumber">54,56</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveLoadMore" datatype="html">
+        <source> Weitere Meldungen laden</source>
+        <target>Cargar más mensajes</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.html</context>
+          <context context-type="linenumber">86,88</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
+          <context context-type="linenumber">88,90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveItemFallbackTitle" datatype="html">
+        <source>Archiv-Meldung</source>
+        <target>Archivar mensaje</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.resolver.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveMarkedAllReadSnack" datatype="html">
+        <source>Archiv als gelesen markiert.</source>
+        <target>Archivo marcado como leído.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.ts</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveLoadMoreError" datatype="html">
+        <source>Weitere Meldungen konnten nicht geladen werden.</source>
+        <target>No se pudieron cargar más mensajes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.component.ts</context>
+          <context context-type="linenumber">141</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
+          <context context-type="linenumber">207</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motd.archiveLoadError" datatype="html">
+        <source>Archiv konnte nicht geladen werden.</source>
+        <target>No se pudo cargar el archivo.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/news-archive/news-archive-page.resolver.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
+          <context context-type="linenumber">160</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1935634587105901671" datatype="html">
@@ -10101,84 +10269,12 @@
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="motd.archiveTitle" datatype="html">
-        <source>News-Archiv</source>
-        <target>Archivo News</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
-          <context context-type="linenumber">8,11</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="motd.archiveCloseAria" datatype="html">
         <source>Schließen</source>
         <target>Cerca</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
           <context context-type="linenumber">16,18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveMarkAllReadDisabled" datatype="html">
-        <source>Alle Meldungen sind bereits als gelesen markiert.</source>
-        <target>Todos los mensajes ya están marcados como leídos.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
-          <context context-type="linenumber">35,37</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveMarkAllRead" datatype="html">
-        <source> Alles als gelesen markieren</source>
-        <target>Marcar todo como leído</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
-          <context context-type="linenumber">46,48</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveEmpty" datatype="html">
-        <source>Keine archivierten Meldungen.</source>
-        <target>No hay mensajes archivados.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
-          <context context-type="linenumber">52,54</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveLoadMore" datatype="html">
-        <source> Weitere Meldungen laden</source>
-        <target>Cargar más mensajes</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.html</context>
-          <context context-type="linenumber">84,86</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveItemFallbackTitle" datatype="html">
-        <source>Archiv-Meldung</source>
-        <target>Archivar mensaje</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
-          <context context-type="linenumber">78</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveMarkedAllReadSnack" datatype="html">
-        <source>Archiv als gelesen markiert.</source>
-        <target>Archivo marcado como leído.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
-          <context context-type="linenumber">108</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveLoadError" datatype="html">
-        <source>Archiv konnte nicht geladen werden.</source>
-        <target>No se pudo cargar el archivo.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
-          <context context-type="linenumber">157</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="motd.archiveLoadMoreError" datatype="html">
-        <source>Weitere Meldungen konnten nicht geladen werden.</source>
-        <target>No se pudieron cargar más mensajes.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/motd-archive-dialog/motd-archive-dialog.component.ts</context>
-          <context context-type="linenumber">204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4311861466399153181" datatype="html">

@@ -196,15 +196,60 @@
 }
 
 .app-footer a {
+  position: relative;
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-small);
 }
 
+/* Icon + Text: gleiche Abstände für alle Footer-Links (News-Archiv jetzt auch: Icon | gap | Label). */
+.app-footer__links .mat-mdc-button-base .mdc-button__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .app-footer__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.125rem;
   width: 1.125rem;
   height: 1.125rem;
-  margin-right: 0.35rem;
+  line-height: 1;
+}
+
+/* Schmale Viewports: nur Icons (Text per Clip aus dem sichtbaren Layout, bleibt für Screenreader). */
+@media (max-width: 599px) {
+  .app-footer__link-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/*
+ * M3: matBadgeSize="small" → Textgröße 0. Kompaktes „medium“ + Ziffer lesbar.
+ * Badge auf demselben mat-icon wie die anderen Links (Icon + gap + Label).
+ */
+.app-footer__link--news-archive .app-footer__icon.mat-badge-medium {
+  --mat-badge-container-size: 14px;
+  --mat-badge-line-height: 14px;
+  --mat-badge-text-size: 0.625rem;
+  --mat-badge-container-padding: 0 3px;
+  overflow: visible;
+}
+
+/* MatBadge am Footer-Link „News-Archiv“ darf nicht abgeschnitten werden */
+.app-footer__link--news-archive {
+  overflow: visible;
 }
 
 .app-footer__status-line {

@@ -16,6 +16,7 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { MatBadge } from '@angular/material/badge';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -31,6 +32,7 @@ import { ServerStatusHelpDialogComponent } from './shared/server-status-help-dia
 import { localizePath } from './core/locale-router';
 import { HostDisplayModeService } from './core/host-display-mode.service';
 import { SeoService } from './core/seo.service';
+import { MotdHeaderStateService } from './core/motd-header-state.service';
 
 const STORAGE_PLAYFUL_WELCOMED = 'home-playful-welcomed';
 const STORAGE_PWA_INSTALL_DISMISSED = 'pwa-install-dismissed';
@@ -59,6 +61,7 @@ class ConnectionBannerHostDirective {
   imports: [
     RouterOutlet,
     RouterLink,
+    MatBadge,
     MatButton,
     MatIcon,
     TopToolbarComponent,
@@ -107,6 +110,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly dialog = inject(MatDialog);
   private readonly hostDisplayMode = inject(HostDisplayModeService);
   private readonly seo = inject(SeoService);
+  readonly motdHeaderState = inject(MotdHeaderStateService);
   private versionSub: Subscription | null = null;
   private routerSub: Subscription | null = null;
   private presetSub: Subscription | null = null;
@@ -150,6 +154,24 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Offline-Styling + Retry nur nach abgeschlossenem Check und fehlgeschlagenem API-Status. */
   footerShowApiOffline = computed(() => this.footerHealthCheckDone() && !this.apiStatus());
   isImmersiveHostView = computed(() => this.hostDisplayMode.immersiveHostActive());
+
+  /** Footer: Badge mit ungelesenen Archiv-Meldungen (max. „99+“), wie Toolbar-Megafon. */
+  footerNewsArchiveBadgeText = computed(() => {
+    const n = this.motdHeaderState.archiveUnreadCount();
+    return n > 99 ? '99+' : String(n);
+  });
+
+  /** Barrierefrei: Zähler in der Link-Beschriftung bei ungelesenen Meldungen. */
+  footerNewsArchiveAria = computed(() => {
+    const n = this.motdHeaderState.archiveUnreadCount();
+    if (n <= 0) {
+      return $localize`:@@app.footer.newsArchiveAria:News-Archiv öffnen`;
+    }
+    if (n === 1) {
+      return $localize`:@@app.footer.newsArchiveAriaOne:News-Archiv öffnen, eine ungelesene Meldung`;
+    }
+    return $localize`:@@app.footer.newsArchiveAriaCount:News-Archiv öffnen, ${n}:INTERPOLATION: ungelesene Meldungen`;
+  });
 
   ngOnInit(): void {
     this.seo.applyFromRouter();

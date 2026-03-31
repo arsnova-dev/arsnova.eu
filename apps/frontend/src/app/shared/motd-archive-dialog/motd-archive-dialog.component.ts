@@ -27,8 +27,7 @@ import {
   setMotdArchiveSeenUpToEndsAtIso,
 } from '../../core/motd-storage';
 import { formatMotdArchiveStartsAtForDisplay } from '../../core/motd-ends-display';
-import { splitMotdArchiveFirstAtxHeading } from '../../core/motd-archive-split.util';
-import { renderMarkdownWithoutKatex } from '../markdown-katex.util';
+import { buildMotdArchiveItemDisplay } from '../motd-archive-render.util';
 
 export type MotdArchiveDialogData = { locale: AppLocale };
 
@@ -98,14 +97,7 @@ export class MotdArchiveDialogComponent implements OnInit {
   }
 
   private buildArchiveRender(it: MotdArchiveItemDTO): { title: string; html: SafeHtml } {
-    const { title: atxTitle, bodyMarkdown } = splitMotdArchiveFirstAtxHeading(it.markdown);
-    const displayTitle = atxTitle ?? this.archiveItemFallbackTitle;
-    const mdForBody =
-      atxTitle !== null ? (bodyMarkdown.trim().length > 0 ? bodyMarkdown : '\n') : it.markdown;
-    return {
-      title: displayTitle,
-      html: this.sanitizer.bypassSecurityTrustHtml(renderMarkdownWithoutKatex(mdForBody)),
-    };
+    return buildMotdArchiveItemDisplay(it, this.sanitizer, this.archiveItemFallbackTitle);
   }
 
   markArchiveAllRead(): void {

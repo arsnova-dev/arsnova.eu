@@ -703,7 +703,7 @@ html.preset-playful {
     @include app-playful-inner-card-nested;
   }
 
-  // --- Welle 6: Feedback (Standalone / eingebettet), Help, Legal, Admin ---
+  // --- Welle 6: Feedback (Standalone / eingebettet), Help, Legal, News-Archiv, Admin ---
   mat-card.session-channel-card.app-live-channel-shell {
     @include app-playful-inner-card-nested;
   }
@@ -717,7 +717,8 @@ html.preset-playful {
   }
 
   .help-page .legal-article,
-  .legal-page .legal-article {
+  .legal-page .legal-article,
+  .news-archive-page .news-archive-page__article-root {
     padding: clamp(1.15rem, 3vw, 1.75rem);
     border-radius: var(--mat-sys-corner-extra-large);
     border: 1px solid

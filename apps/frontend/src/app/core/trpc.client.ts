@@ -9,6 +9,23 @@ import type { AppRouter } from '@arsnova/api';
 import { getTrpcWsUrl } from './ws-urls';
 
 const isBrowser = typeof window !== 'undefined';
+
+/** SSR/Prerender: relatives `/trpc` in Node nicht zuverlässig – öffentliche Produktions-API als Fallback. */
+const DEFAULT_PRERENDER_TRPC_URL = 'https://arsnova.eu/trpc';
+
+function resolveTrpcBatchLinkUrl(): string {
+  if (isBrowser) {
+    return '/trpc';
+  }
+  const fromEnv =
+    typeof process !== 'undefined' && process.env
+      ? process.env['ARSNOVA_PRERENDER_TRPC_URL']
+      : undefined;
+  if (fromEnv && String(fromEnv).trim()) {
+    return String(fromEnv).trim();
+  }
+  return DEFAULT_PRERENDER_TRPC_URL;
+}
 const ADMIN_TOKEN_STORAGE_KEY = 'arsnova-admin-token';
 let adminToken: string | null = null;
 
@@ -101,14 +118,14 @@ export const trpc = createTRPCProxyClient<AppRouter>({
           condition: (op) => op.type === 'subscription',
           true: wsLink({ client: wsClient }),
           false: httpBatchLink({
-            url: '/trpc',
+            url: resolveTrpcBatchLinkUrl(),
             headers() {
               return adminToken ? { 'x-admin-token': adminToken } : {};
             },
           }),
         })
       : httpBatchLink({
-          url: '/trpc',
+          url: resolveTrpcBatchLinkUrl(),
           headers() {
             return adminToken ? { 'x-admin-token': adminToken } : {};
           },
