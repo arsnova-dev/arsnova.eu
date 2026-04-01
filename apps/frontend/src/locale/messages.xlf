@@ -123,28 +123,28 @@
         <source>Jetzt noch schneller und flüssiger!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1136696335453039978" datatype="html">
         <source>Preset: Seriös</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6151253518820826531" datatype="html">
         <source>Preset: Spielerisch</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">147</context>
+          <context context-type="linenumber">151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2911090466936872230" datatype="html">
         <source>Verbinde…</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">150</context>
+          <context context-type="linenumber">154</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/feedback/feedback-host.component.html</context>
@@ -159,28 +159,28 @@
         <source>Nochmal versuchen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">150</context>
+          <context context-type="linenumber">154</context>
         </context-group>
       </trans-unit>
       <trans-unit id="app.footer.newsArchiveAria" datatype="html">
         <source>News-Archiv öffnen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="app.footer.newsArchiveAriaOne" datatype="html">
         <source>News-Archiv öffnen, eine ungelesene Meldung</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="app.footer.newsArchiveAriaCount" datatype="html">
         <source>News-Archiv öffnen, <x id="INTERPOLATION" equiv-text="n"/> ungelesene Meldungen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
-          <context context-type="linenumber">173</context>
+          <context context-type="linenumber">177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="motd.archiveDateLongRunning" datatype="html">
@@ -429,328 +429,323 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.imageAssetHelp" datatype="html">
-        <source>
-      Bilder aus dem gebündelten Frontend: im Markdown <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>![](/assets/images/…)<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> mit
-      führendem Schrägstrich (Webroot) verwenden — nicht den lokalen Ordner
-      <x id="START_TAG_CODE_1" ctype="x-code" equiv-text="&lt;code&gt;"/>apps/frontend/src/…<x id="CLOSE_TAG_CODE_1" ctype="x-code" equiv-text="&lt;/code&gt;"/>. Die Datei muss unter <x id="START_TAG_CODE_2" ctype="x-code" equiv-text="&lt;code&gt;"/>src/assets/<x id="CLOSE_TAG_CODE_2" ctype="x-code" equiv-text="&lt;/code&gt;"/> liegen und im
-      Deployment enthalten sein.
-    </source>
+        <source> Bilder aus dem gebündelten Frontend: im Markdown <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>![](/assets/images/…)<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> mit führendem Schrägstrich (Webroot) verwenden — nicht den lokalen Ordner <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>apps/frontend/src/…<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/>. Die Datei muss unter <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>src/assets/<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> liegen und im Deployment enthalten sein. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">14,21</context>
+          <context context-type="linenumber">14,19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.new" datatype="html">
         <source> Neue Meldung </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">18,20</context>
+          <context context-type="linenumber">24,26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.reloadTooltip" datatype="html">
         <source>Holt Meldungen und Textvorlagen erneut vom Server. Das ist nicht dasselbe wie „Speichern“: Das Formular wird dabei nicht auf den Server geschrieben.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">25,26</context>
+          <context context-type="linenumber">31,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.reloadAria" datatype="html">
         <source>Meldungen und Vorlagen vom Server neu laden</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.reload" datatype="html">
         <source> Liste neu laden </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">30,32</context>
+          <context context-type="linenumber">36,38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listTitle" datatype="html">
         <source>Vorhandene Meldungen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">45,46</context>
+          <context context-type="linenumber">51,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listEmpty" datatype="html">
         <source>Noch keine Meldungen angelegt.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">51,53</context>
+          <context context-type="linenumber">57,59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listItemMeta" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ m.status }}"/> · v<x id="INTERPOLATION_1" equiv-text="{{ m.contentVersion }}"/> · Priorität <x id="INTERPOLATION_2" equiv-text="{{ m.priority }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">58,59</context>
+          <context context-type="linenumber">64,65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.statsLine" datatype="html">
         <source> Nutzerreaktionen (Zähler): Alles klar <x id="INTERPOLATION" equiv-text="{{ m.interaction.ackCount }}"/>, Daumen hoch <x id="INTERPOLATION_1" equiv-text="{{ m.interaction.thumbUp }}"/>, Daumen runter <x id="INTERPOLATION_2" equiv-text="{{ m.interaction.thumbDown }}"/>, Overlay geschlossen <x id="INTERPOLATION_3" equiv-text="{{ m.interaction.dismissClose }}"/>, Wegwischen <x id="INTERPOLATION_4" equiv-text="{{ m.interaction.dismissSwipe }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">65,70</context>
+          <context context-type="linenumber">71,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listRowActionsAria" datatype="html">
         <source>Aktionen für diese Meldung</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">75,77</context>
+          <context context-type="linenumber">81,83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.resetStatsTooltip" datatype="html">
         <source>Setzt alle Zähler (Alles klar, Daumen, Schließen, Wegwischen) für diese Meldung auf null. Betrifft nur Server-Statistik, nicht Nutzer-localStorage.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">84,85</context>
+          <context context-type="linenumber">90,91</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">193,194</context>
+          <context context-type="linenumber">199,200</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listRowResetAria" datatype="html">
         <source>Nutzerreaktionen für diese Meldung zurücksetzen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">86,88</context>
+          <context context-type="linenumber">92,94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listRowReset" datatype="html">
         <source> Nutzerreaktionen zurücksetzen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">88,89</context>
+          <context context-type="linenumber">94,95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listRowEdit" datatype="html">
         <source> Bearbeiten </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">96,97</context>
+          <context context-type="linenumber">102,103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.listRowDelete" datatype="html">
         <source> Löschen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">104,105</context>
+          <context context-type="linenumber">110,111</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.tplSectionTitle" datatype="html">
         <source>Textvorlagen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">118,119</context>
+          <context context-type="linenumber">124,125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.tplSectionHelp" datatype="html">
         <source> Wiederverwendbare Textbausteine in allen Sprachen; in Meldungen über „Vorlage übernehmen“ nutzbar. Beispielvorlagen für Wartung, Feature und Spende liefert das Setup-Skript im Repository (siehe README). </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">124,126</context>
+          <context context-type="linenumber">130,132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.tplNew" datatype="html">
         <source> Neue Vorlage </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">135,136</context>
+          <context context-type="linenumber">141,142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.edit" datatype="html">
         <source> Bearbeiten </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">155,156</context>
+          <context context-type="linenumber">161,162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.delete" datatype="html">
         <source> Löschen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">163,164</context>
+          <context context-type="linenumber">169,170</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.formTitle" datatype="html">
         <source>Bearbeitung</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">174,175</context>
+          <context context-type="linenumber">180,181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.statsDetail" datatype="html">
         <source> Nutzerreaktionen (Zähler): Alles klar <x id="INTERPOLATION" equiv-text="{{ st.ackCount }}"/>, Daumen hoch <x id="INTERPOLATION_1" equiv-text="{{ st.thumbUp }}"/>, Daumen runter <x id="INTERPOLATION_2" equiv-text="{{ st.thumbDown }}"/>, Overlay geschlossen <x id="INTERPOLATION_3" equiv-text="{{ st.dismissClose }}"/>, Wegwischen <x id="INTERPOLATION_4" equiv-text="{{ st.dismissSwipe }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">178,183</context>
+          <context context-type="linenumber">184,189</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.resetStatsAria" datatype="html">
         <source>Nutzerreaktionen für diese Meldung zurücksetzen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">195,197</context>
+          <context context-type="linenumber">201,203</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.resetStats" datatype="html">
         <source> Nutzerreaktionen zurücksetzen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">197,198</context>
+          <context context-type="linenumber">203,204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.resetStatsNeedEdit" datatype="html">
         <source> Zum Zurücksetzen der Zähler zuerst die Meldung in der Liste oben mit „Bearbeiten“ öffnen. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">204,206</context>
+          <context context-type="linenumber">210,212</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.status" datatype="html">
         <source>Status</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">212,213</context>
+          <context context-type="linenumber">218,219</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.statusDraft" datatype="html">
         <source>Entwurf</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">214,215</context>
+          <context context-type="linenumber">220,221</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.statusScheduled" datatype="html">
         <source>Geplant</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">215,216</context>
+          <context context-type="linenumber">221,222</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.statusPublished" datatype="html">
         <source>Veröffentlicht</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">217,219</context>
+          <context context-type="linenumber">223,225</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.statusArchived" datatype="html">
         <source>Archiviert</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">219,221</context>
+          <context context-type="linenumber">225,227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.priority" datatype="html">
         <source>Priorität</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">223,225</context>
+          <context context-type="linenumber">229,231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.priorityHint" datatype="html">
         <source> Höhere Zahl wird zuerst gezeigt, wenn mehrere Meldungen zur gleichen Zeit aktiv sind. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">235,237</context>
+          <context context-type="linenumber">241,243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.priorityRangeHint" datatype="html">
         <source> Erlaubter Bereich: 0 bis 1.000.000. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">238,240</context>
+          <context context-type="linenumber">244,246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.priorityHintDev" datatype="html">
         <source> Nur lokale Entwicklung: Eine Test-Meldung aus <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>npm run seed:dev-motd<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> wird auf der Startseite hinter deinen eigenen veröffentlichten Meldungen mit Priorität 0 oder höher einsortiert (feste technische ID). </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">242,245</context>
+          <context context-type="linenumber">248,251</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.starts" datatype="html">
         <source>Start (lokal)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">252,254</context>
+          <context context-type="linenumber">258,260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.fieldDate" datatype="html">
         <source>Datum</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">255,256</context>
+          <context context-type="linenumber">261,262</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">285,286</context>
+          <context context-type="linenumber">291,292</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.fieldTime" datatype="html">
         <source>Uhrzeit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">267,268</context>
+          <context context-type="linenumber">273,274</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">297,298</context>
+          <context context-type="linenumber">303,304</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.ends" datatype="html">
         <source>Ende (lokal)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">282,284</context>
+          <context context-type="linenumber">288,290</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.visibleArchive" datatype="html">
         <source>Im Nutzer-Archiv sichtbar</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">315,317</context>
+          <context context-type="linenumber">321,323</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.visibleArchiveHint" datatype="html">
         <source> Erscheint im Archiv-Dialog während der Laufzeit und nach Ende der Meldung (nicht bei Entwürfen). </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">318,321</context>
+          <context context-type="linenumber">324,327</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.template" datatype="html">
         <source>Vorlage übernehmen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">323,324</context>
+          <context context-type="linenumber">329,330</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.noTemplate" datatype="html">
         <source>— keine —</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">325,326</context>
+          <context context-type="linenumber">331,332</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.applyTemplate" datatype="html">
         <source> Vorlage in Felder laden </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">337,340</context>
+          <context context-type="linenumber">343,346</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.localeDe" datatype="html">
         <source>Deutsch (Markdown)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">340,341</context>
+          <context context-type="linenumber">346,347</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-template-dialog.component.html</context>
@@ -761,7 +756,7 @@
         <source>Englisch</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">349,350</context>
+          <context context-type="linenumber">356,357</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-template-dialog.component.html</context>
@@ -772,7 +767,7 @@
         <source>Französisch</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">358,359</context>
+          <context context-type="linenumber">366,367</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-template-dialog.component.html</context>
@@ -783,7 +778,7 @@
         <source>Spanisch</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">367,368</context>
+          <context context-type="linenumber">376,377</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-template-dialog.component.html</context>
@@ -794,7 +789,7 @@
         <source>Italienisch</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">376,377</context>
+          <context context-type="linenumber">386,387</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-template-dialog.component.html</context>
@@ -805,7 +800,7 @@
         <source>Vorschau (Deutsch)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">386,387</context>
+          <context context-type="linenumber">397,398</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-template-dialog.component.html</context>
@@ -816,7 +811,7 @@
         <source> Speichern </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin-motd-panel.component.html</context>
-          <context context-type="linenumber">400,401</context>
+          <context context-type="linenumber">411,412</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.motd.errorLoad" datatype="html">
@@ -2427,21 +2422,21 @@
         <source> Gemessen am <x id="INTERPOLATION" equiv-text="{{ dateLabel }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
-          <context context-type="linenumber">285,286</context>
+          <context context-type="linenumber">288,289</context>
         </context-group>
       </trans-unit>
       <trans-unit id="help.statsHint" datatype="html">
         <source> Bisher höchste Teilnehmerzahl in einer einzelnen Live-Session auf diesem Server – nur aggregiert, ohne Namen oder andere personenbezogene Daten. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
-          <context context-type="linenumber">290,292</context>
+          <context context-type="linenumber">293,295</context>
         </context-group>
       </trans-unit>
       <trans-unit id="help.statsDevDemoNote" datatype="html">
         <source> Zahl und Zeitstempel sind Beispieldaten (nur Entwicklungsmodus, solange kein echter Rekord aus der API kommt). </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
-          <context context-type="linenumber">295,297</context>
+          <context context-type="linenumber">298,300</context>
         </context-group>
       </trans-unit>
       <trans-unit id="homeHero.channelQuiz" datatype="html">
