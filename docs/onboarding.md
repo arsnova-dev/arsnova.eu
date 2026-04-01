@@ -21,9 +21,11 @@ Willkommen im Entwickler-Team von **arsnova.eu**. Dieses Dokument hilft dir als 
 
 **Node-Version:** Odd-/Current-Majors (z. B. **21**, **23**) sind für lokale Builds **nicht** unterstützt — bitte auf **20** oder **22** LTS wechseln. Vollständige Regel: Root-[`package.json`](../package.json) (`engines`) und [README](../README.md) „Voraussetzungen“. Die **CI** baut mit **Node 20 und 22** (GitHub Actions).
 
-### Setup in 5 Schritten
+### Setup in wenigen Schritten
 
-Nach **Clone oder Fork** müssen PostgreSQL und Redis laufen und das Datenbankschema angewendet sein, damit die App mit der aktuellen DB-Struktur (inkl. aller Tabellen) arbeitet.
+Nach **Clone oder Fork** müssen PostgreSQL und Redis laufen, das Datenbankschema angewendet sein und **`@arsnova/shared-types` einmal gebaut** sein — sonst fehlt u. a. `libs/shared-types/dist/` und das Backend startet beim ersten `npm run dev` nicht.
+
+**Reproduzierbar wie in der CI:** Dependencies mit **`npm ci`** installieren (nutzt das Lockfile 1:1). Alternativ: `npm install`.
 
 ```bash
 # 1. Repository klonen (oder deinen Fork)
@@ -32,20 +34,27 @@ cd arsnova.eu
 
 # 2. Umgebungsvariablen anlegen
 cp .env.example .env
+# Optional: für /admin lokal ADMIN_SECRET in .env setzen (siehe Root-README)
 
 # 3. Datenbank & Redis starten (Docker) – nur Postgres + Redis für Lokalentwicklung
 docker compose up -d postgres redis
 # → PostgreSQL (Port 5432), Redis (Port 6379)
+# Entspricht inhaltlich: npm run docker:up:dev
 
-# 4. Dependencies installieren (npm Workspaces)
-npm install
+# 4. Dependencies (npm Workspaces)
+npm ci
 
-# 5. Datenbank-Schema anwenden und Prisma-Client generieren (DB auf aktuellen Stand)
-npx prisma db push
-npx prisma generate
+# 5. Datenbank-Schema anwenden und Prisma-Client generieren
+npm run prisma:push
+npm run prisma:generate
+
+# 6. Geteilte Typen bauen (Pflicht vor erstem Dev-Start)
+npm run build -w @arsnova/shared-types
 ```
 
-**Kurz:** Einmalig `npm run setup:dev` (startet Postgres + Redis, wendet Schema an, generiert Client, baut shared-types), danach `npm run dev`.
+**Kurz:** Einmalig **`npm run setup:dev`** (startet Postgres + Redis, `prisma:push`, `prisma:generate`, **shared-types-Build**) — deckt die Schritte 3–6 ab, danach **`npm run dev`**.
+
+**Vor dem ersten Commit / bei Pre-Commit-Hook:** Ist nach `npm ci` noch kein Prisma-Client da, **`npm run prisma:generate`** ausführen (sonst schlägt `tsc` fehl).
 
 ### Entwicklungsserver starten
 

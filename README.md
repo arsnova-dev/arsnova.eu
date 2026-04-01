@@ -88,7 +88,7 @@ Klone dieses Repository (oder deinen Fork) und wechsle in den Ordner:
 ```bash
 git clone https://github.com/kqc-real/arsnova.eu.git
 cd arsnova.eu
-npm install
+npm ci          # empfohlen: wie CI / Lockfile 1:1 — alternativ: npm install
 ```
 
 **PostgreSQL und Redis auf aktuellen Stand bringen** (wichtig z. B. nach Fork/Clone): Kopiere die Environment-Datei und starte **PostgreSQL und Redis** (für Lokalentwicklung reichen die beiden Dienste; der App-Container bleibt aus, damit `npm run dev` Port 3000 nutzen kann). Anschließend Schema anwenden und Prisma-Client erzeugen – so ist die Datenbank auf dem Stand des aktuellen `schema.prisma` (inkl. aller Tabellen, z. B. AdminAuditLog):
@@ -112,6 +112,8 @@ npm run prisma:push
 npm run prisma:generate
 ```
 
+War die Installation nur mit **`npm ci`** (ohne vorheriges `npm run setup:dev`), kann der Prisma-Client unter `node_modules` noch fehlen — dann einmal **`npm run prisma:generate`** ausführen, bevor du **`npm run typecheck`** oder Husky/Pre-Commit laufen lässt.
+
 Baue einmalig die geteilten Typen (wird von Backend und Frontend benötigt):
 
 ```bash
@@ -122,7 +124,7 @@ Ohne diesen Schritt startet das Backend beim ersten `npm run dev` ggf. nicht (fe
 
 **Alles in einem Durchgang (z. B. nach Fork):** `npm run setup:dev` startet Postgres + Redis (`docker:up:dev`), wendet das Schema an (`prisma:push`), generiert den Prisma-Client und baut die shared-types. Danach nur noch `npm run dev`.
 
-**Kurzfassung vor dem ersten Start:** `install` → `.env` + `docker:up:dev` → `prisma:push` → `prisma:generate` → `build -w @arsnova/shared-types` → `npm run dev`
+**Kurzfassung vor dem ersten Start:** `npm ci` (oder `install`) → `.env` + `docker:up:dev` → `prisma:push` → `prisma:generate` → `build -w @arsnova/shared-types` → `npm run dev`
 
 ### 3. Server starten
 
