@@ -25,6 +25,7 @@ Dieses Dokument ist die **kanonische Referenz** für Struktur, Stack, Konvention
 
 ## 3. Technologie-Stack (strikt)
 
+- **Node.js (lokal / CI):** **LTS** **20.x** oder **22.x** (Repo-Root `.nvmrc` = 20); keine Odd-/Current-Majors (z. B. 23) für Build/Entwicklung. CI (GitHub Actions): Matrix **Node 20 + 22** für `build` und `typecheck`. Details: Root-`package.json` (`engines`), README „Voraussetzungen“.
 - **Kommunikation:** Ausschließlich tRPC (Queries, Mutations, Subscriptions). Kein REST.
 - **Datenbank:** PostgreSQL über Prisma ORM.
 - **Echtzeit:** Redis (Rate-Limits, Blitzlicht-Keys u. a.); tRPC-WebSocket für Subscriptions (viele Session-/Q&A-Pfade: **Polling** in den Subscription-Generatoren gegen PostgreSQL, nicht Redis-Pub/Sub pro Event).

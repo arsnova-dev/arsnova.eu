@@ -75,9 +75,11 @@ Folge diesen Schritten, um das Projekt lokal auf deiner Maschine zum Laufen zu b
 
 ### 1. Voraussetzungen
 
-- Node.js (v20 oder neuer)
-- npm (v10 oder neuer empfohlen)
+- **Node.js:** aktuelle **LTS**-Versionen **20.x** oder **22.x** (empfohlen). Die Datei **`.nvmrc`** pinnt **20** — mit [nvm](https://github.com/nvm-sh/nvm), [fnm](https://github.com/Schniz/fnm) oder [asdf](https://asdf-vm.com/) einfach `nvm use` / `fnm use` im Repo-Root ausführen. **Keine „Current“- oder Odd-Majors** (z. B. **21**, **23**) für Build und Entwicklung verwenden; Angular-CLI, esbuild und native Abhängigkeiten sind darauf nicht abgesichert (typische Abstürze im Production-Build). Optional spätere **LTS** (z. B. 24.x): siehe `engines` in der Root-`package.json`.
+- **npm:** mit dem gelieferten **Lockfile** arbeiten — **`npm ci`** nach Clone (empfohlen) bzw. die in der Lockfile dokumentierte npm-Version; kein blindes Upgrade der npm-Hauptversion nötig.
 - Docker Desktop (für die lokale Datenbank)
+
+**Windows:** Wenn native Tooling (esbuild, Prisma) zickt, **WSL2** mit Ubuntu und dieselben Node-LTS-Schritte wie oben nutzen — reduziert Abweichungen zum Team und zur CI.
 
 ### 2. Infrastruktur & Installation
 

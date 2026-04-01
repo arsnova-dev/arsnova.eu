@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [22]
+        node-version: [20, 22]
 
     steps:
       - name: Checkout
@@ -58,8 +58,7 @@ jobs:
       - name: TypeScript compile – frontend
         run: npx tsc --project apps/frontend/tsconfig.app.json --noEmit
 
-      - name: Frontend localized production build (de/en)
-        if: matrix.node-version == 22
+      - name: Frontend localized production build (alle Locales)
         run: npm run build:localize -w @arsnova/frontend
 
   # Explizites `npm run typecheck` (Backend + Frontend, --noEmit) — ergänzt die
@@ -70,7 +69,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [22]
+        node-version: [20, 22]
 
     steps:
       - name: Checkout

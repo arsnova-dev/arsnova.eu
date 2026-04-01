@@ -12,12 +12,14 @@ Willkommen im Entwickler-Team von **arsnova.eu**. Dieses Dokument hilft dir als 
 
 ### Voraussetzungen
 
-| Tool                    | Version               | Prüfbefehl               |
-| ----------------------- | --------------------- | ------------------------ |
-| Node.js                 | ≥ 20 (siehe `.nvmrc`) | `node -v`                |
-| npm                     | ≥ 10                  | `npm -v`                 |
-| Docker & Docker Compose | aktuell               | `docker compose version` |
-| Git                     | aktuell               | `git -v`                 |
+| Tool                    | Version                                                               | Prüfbefehl               |
+| ----------------------- | --------------------------------------------------------------------- | ------------------------ |
+| Node.js                 | **LTS** **20.x** oder **22.x** (`.nvmrc` = 20; `nvm use` / `fnm use`) | `node -v`                |
+| npm                     | ≥ 10 (nach `npm ci` zur Lockfile-Passung)                             | `npm -v`                 |
+| Docker & Docker Compose | aktuell                                                               | `docker compose version` |
+| Git                     | aktuell                                                               | `git -v`                 |
+
+**Node-Version:** Odd-/Current-Majors (z. B. **21**, **23**) sind für lokale Builds **nicht** unterstützt — bitte auf **20** oder **22** LTS wechseln. Vollständige Regel: Root-[`package.json`](../package.json) (`engines`) und [README](../README.md) „Voraussetzungen“. Die **CI** baut mit **Node 20 und 22** (GitHub Actions).
 
 ### Setup in 5 Schritten
 
