@@ -18,7 +18,8 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000',
+      /** Sofort registrieren — sonst feuern frühe `checkForUpdate()`-Aufrufe oft vor dem ngsw (Banner bleibt aus). */
+      registrationStrategy: 'registerImmediately',
     }),
     provideClientHydration(withEventReplay()),
     {

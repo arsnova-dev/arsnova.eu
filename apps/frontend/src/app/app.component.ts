@@ -39,6 +39,8 @@ const STORAGE_PWA_INSTALL_DISMISSED = 'pwa-install-dismissed';
 const PWA_INSTALL_DISMISSED_DAYS = 7;
 /** Ohne regelmäßige `checkForUpdate()`-Aufrufe feuert `versionUpdates` nicht — Banner erscheint nie. */
 const PWA_UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
+/** Wenn `serviceWorker.ready` nicht zeitnah auflöst (selten), Polling trotzdem starten. */
+const PWA_UPDATE_READY_FALLBACK_MS = 8_000;
 
 /** Browser-Event für „App installieren“ (PWA). */
 interface BeforeInstallPromptEvent extends Event {
@@ -114,8 +116,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private versionSub: Subscription | null = null;
   private routerSub: Subscription | null = null;
   private presetSub: Subscription | null = null;
-  /** Browser: `setInterval` liefert `number` (nicht Node-`Timeout`). */
+  /** Browser: `setInterval` / `setTimeout` liefern `number` (nicht Node-`Timeout`). */
   private pwaUpdateIntervalId: number | null = null;
+  private pwaUpdateReadyFallbackId: number | null = null;
+  private pwaUpdatePollingArmed = false;
 
   /** true wenn gescrollt wurde (für stärkeren Schatten, Elevation). */
   hasScrolled = signal(false);
@@ -228,6 +232,10 @@ export class AppComponent implements OnInit, OnDestroy {
         clearInterval(this.pwaUpdateIntervalId);
         this.pwaUpdateIntervalId = null;
       }
+      if (this.pwaUpdateReadyFallbackId !== null) {
+        clearTimeout(this.pwaUpdateReadyFallbackId);
+        this.pwaUpdateReadyFallbackId = null;
+      }
       window.removeEventListener('beforeinstallprompt', this.beforeInstallPromptListener);
       window.removeEventListener('appinstalled', this.appInstalledListener);
       if (isDevMode()) {
@@ -256,12 +264,43 @@ export class AppComponent implements OnInit, OnDestroy {
     this.versionSub = this.swUpdate.versionUpdates.subscribe((evt) => {
       if (evt.type === 'VERSION_READY') this.updateAvailable.set(true);
     });
-    this.requestPwaUpdateCheck();
-    this.pwaUpdateIntervalId = window.setInterval(
-      () => this.requestPwaUpdateCheck(),
-      PWA_UPDATE_CHECK_INTERVAL_MS,
-    );
-    document.addEventListener('visibilitychange', this.onDocumentVisibilityForPwaUpdate);
+
+    const armPolling = (): void => {
+      if (this.pwaUpdatePollingArmed) return;
+      this.pwaUpdatePollingArmed = true;
+      this.requestPwaUpdateCheck();
+      this.pwaUpdateIntervalId = window.setInterval(
+        () => this.requestPwaUpdateCheck(),
+        PWA_UPDATE_CHECK_INTERVAL_MS,
+      );
+      document.addEventListener('visibilitychange', this.onDocumentVisibilityForPwaUpdate);
+    };
+
+    const clearReadyFallback = (): void => {
+      if (this.pwaUpdateReadyFallbackId !== null) {
+        clearTimeout(this.pwaUpdateReadyFallbackId);
+        this.pwaUpdateReadyFallbackId = null;
+      }
+    };
+
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      this.pwaUpdateReadyFallbackId = window.setTimeout(() => {
+        this.pwaUpdateReadyFallbackId = null;
+        armPolling();
+      }, PWA_UPDATE_READY_FALLBACK_MS);
+
+      void navigator.serviceWorker.ready
+        .then(() => {
+          clearReadyFallback();
+          armPolling();
+        })
+        .catch(() => {
+          clearReadyFallback();
+          armPolling();
+        });
+    } else {
+      armPolling();
+    }
   }
 
   private requestPwaUpdateCheck(): void {
