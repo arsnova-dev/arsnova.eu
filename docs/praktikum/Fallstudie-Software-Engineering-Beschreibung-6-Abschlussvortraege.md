@@ -68,6 +68,8 @@ Die sechs Themen sollen zusammen mindestens diese Schichten verständlich machen
 | Persistenz, Migrationen und Laufzeitverhalten        | Thema 5         | `prisma/schema.prisma`, `prisma/migrations/`, [`ENVIRONMENT.md`](../ENVIRONMENT.md), Backend-Libs                                                                                                                                                        |
 | Qualitätssicherung, CI und KI-gestützte Arbeitsweise | Thema 6         | [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml), [`TESTING.md`](../TESTING.md), [`CONTRIBUTING.md`](../../CONTRIBUTING.md), [`AGENT.md`](../../AGENT.md)                                                                                    |
 
+Falls ihr später ein **zusätzliches freiwilliges Vertiefungsthema** braucht, bietet sich ein Block zu **Architekturentscheidungen und technischer Steuerung mit ADRs** an. Das ist bewusst **kein offizieller siebter Pflichtvortrag**, sondern eine mögliche Ergänzung zu den sechs bestehenden Themen.
+
 ---
 
 ## Thema 1 – Typisierte Schnittstellen: Zod, `shared-types`, tRPC
@@ -278,6 +280,42 @@ Dieser Vortrag gewinnt, wenn ihr beide Seiten zeigt: Wo KI euch Zeit gespart hat
 - komplette Wiederholung der Architekturthemen 1 bis 5
 - reine Story-Nacherzählung ohne Prozessbezug
 - allgemeine KI-Meinungen ohne Projektbeispiel
+
+---
+
+## Optionales Ergänzungsthema – Architekturentscheidungen und technische Steuerung mit ADRs
+
+**Warum dieses Thema sinnvoll ist:** Dieses Thema macht sichtbar, dass gute Software nicht nur aus Code besteht, sondern auch aus nachvollziehbaren Entscheidungen. Wer diesen Block übernimmt, zeigt, wie im Projekt technische Optionen bewertet, dokumentiert und über längere Zeit konsistent gehalten werden.
+
+### Was ihr zeigen könntet
+
+- die Rolle von ADRs als dokumentierte Architekturentscheidungen
+- den Zusammenhang zwischen Anforderungen, Architektur und konkreter Umsetzung
+- Beispiele dafür, wie Entscheidungen spätere Tickets, Reviews und Implementierungen prägen
+- die Frage, wie technische Konsistenz über mehrere Beiträge und Personen hinweg erhalten bleibt
+
+### Guter Einstieg im Repo
+
+- `docs/architecture/decisions/`
+- [`handbook.md`](../architecture/handbook.md)
+- [ADR-0002](../architecture/decisions/0002-use-angular-signals-for-ui-state.md)
+- [ADR-0003](../architecture/decisions/0003-use-trpc-for-api.md)
+- [ADR-0008](../architecture/decisions/0008-i18n-internationalization.md)
+- [ADR-0018](../architecture/decisions/0018-message-of-the-day-platform-communication.md)
+
+### Anknüpfung an eure Tickets
+
+Besonders geeignet sind Tickets, bei denen ihr nicht einfach nur Code ergänzt habt, sondern euch an bestehende Architekturentscheidungen halten oder bewusst zwischen mehreren Lösungen abwägen musstet. Genau dort wird sichtbar, ob das Projekt technisch gesteuert ist oder nur ad hoc wächst.
+
+### KI-Reflexion
+
+Spannend ist hier die Frage, ob KI euch beim Sammeln und Strukturieren von Optionen geholfen hat, die eigentliche Entscheidung aber trotzdem klar von Menschen begründet werden musste. Ein guter Beitrag zeigt genau diese Grenze.
+
+### Was bewusst nicht dazugehört
+
+- reine Wiederholung der Implementierungsdetails aus den anderen Themen
+- bloßes Auflisten von ADRs ohne Zusammenhang zur Praxis
+- Qualitätsprozess im engeren Sinn ohne Architekturbezug
 
 ---
 

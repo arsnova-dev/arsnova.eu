@@ -60,6 +60,8 @@ Die vier Themen sollen zusammen ein in sich geschlossenes SQM-Bild des Projekts 
 | Nicht-funktionale Qualität: Performance, Last, Supply Chain  | Thema 3         | [`SECURITY-OVERVIEW.md`](../SECURITY-OVERVIEW.md), Lighthouse- oder Audit-Artefakte, relevante Architektur-ADRs                  |
 | Nutzerqualität, Barrierefreiheit, Methodik und Dokumentation | Thema 4         | SQM-Praktikumsdoku, Nutzungs- und A11y-Artefakte, Projekt- und Kursdokumentation                                                 |
 
+Falls ihr später ein **zusätzliches freiwilliges Vertiefungsthema** braucht, bietet sich ein Block zu **Qualitätsmetriken, Beobachtbarkeit und kontinuierlicher Verbesserung** an. Das ist bewusst **kein offizielles fünftes Pflichtreferat**, sondern eine mögliche Ergänzung zu den vier bestehenden Themen.
+
 ---
 
 ## Thema 1 – Teststrategie, Automatisierung und CI
@@ -196,6 +198,42 @@ Interessant ist hier vor allem, ob KI euch bei Leitfäden, Testskripten oder Aus
 - tiefe Backend- oder Datenbankerklärungen ohne Nutzungsbezug
 - vollständige CI- oder Teststrategie-Wiederholung
 - reine Theorie ohne Projektbeispiel
+
+---
+
+## Optionales Ergänzungsthema – Qualitätsmetriken, Beobachtbarkeit und kontinuierliche Verbesserung
+
+**Warum dieses Thema sinnvoll ist:** Dieses Thema ergänzt die bisherigen vier Referate um die Frage, woran man Qualität im Projekt systematisch erkennt. Wer diesen Block übernimmt, zeigt, wie Qualitätsaussagen nicht nur gefühlt, sondern mit Signalen, Messwerten und wiederkehrenden Beobachtungen begründet werden können.
+
+### Was ihr zeigen könntet
+
+- welche Qualitätsindikatoren im Projekt sinnvoll sind
+- wie sich Teststände, CI-Signale, Audit-Befunde, Lighthouse-Werte oder Review-Beobachtungen zusammen lesen lassen
+- wie wiederkehrende Qualitätsprobleme sichtbar gemacht und priorisiert werden
+- wie aus Beobachtung konkrete Verbesserung entsteht
+
+### Guter Einstieg im Repo
+
+- [`TESTING.md`](../TESTING.md)
+- [`Backlog.md`](../../Backlog.md)
+- [`SECURITY-OVERVIEW.md`](../SECURITY-OVERVIEW.md)
+- [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+- Lighthouse- oder A11y-Artefakte im Frontend-Bereich
+- relevante Qualitätsdokumentation in `docs/`
+
+### Anknüpfung an eure Tickets
+
+Geeignet sind alle Arbeiten, bei denen ihr nicht nur ein Problem gelöst, sondern auch ein Qualitätsmuster erkannt habt, etwa wiederkehrende CI-Fehler, typische Review-Mängel, Performance-Auffälligkeiten oder häufige Nutzungsprobleme. Gerade daraus entsteht kontinuierliche Verbesserung.
+
+### KI-Reflexion
+
+Eine gute Reflexionsfrage lautet hier: Hat KI euch geholfen, Muster in Tests, Diffs, Reports oder Audits schneller zu erkennen, ohne dass sie die eigentliche Qualitätsbewertung übernehmen konnte? Genau diese Differenz ist für SQM interessant.
+
+### Was bewusst nicht dazugehört
+
+- bloße Wiederholung von Teststrategie, Review oder UX-Methodik
+- reine Tool-Auflistung ohne Aussagekraft
+- abstrakte Metrikdiskussion ohne Projektbezug
 
 ---
 
