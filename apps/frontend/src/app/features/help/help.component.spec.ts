@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -35,6 +36,21 @@ describe('HelpComponent', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('ruft bei Klick auf den Backdrop location.back auf', async () => {
+    const fixture = TestBed.createComponent(HelpComponent);
+    const location = TestBed.inject(Location);
+    const spy = vi.spyOn(location, 'back');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const backdrop = (fixture.nativeElement as HTMLElement).querySelector(
+      '.content-page-backdrop-sheet',
+    );
+    expect(backdrop).toBeTruthy();
+    backdrop!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(spy).toHaveBeenCalledOnce();
   });
 
   it('blendet die Statistik-Karte ein und zeigt maxParticipantsSingleSession', async () => {

@@ -94,17 +94,17 @@
           <context context-type="linenumber">131,133</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8443252743112048692" datatype="html">
-        <source>Hilfe öffnen</source>
-        <target>Abrir ayuda</target>
+      <trans-unit id="app.footer.helpOpenAria" datatype="html">
+        <source>So funktioniert’s</source>
+        <target>Cómo funciona</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">137,138</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7842597623910989718" datatype="html">
-        <source>Hilfe</source>
-        <target>Ayuda</target>
+      <trans-unit id="app.footer.help" datatype="html">
+        <source>So funktioniert’s</source>
+        <target>Cómo funciona</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">140,141</context>
@@ -311,16 +311,16 @@
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleHelp" datatype="html">
-        <source>Hilfe &amp; Anleitung – arsnova.eu</source>
-        <target>Ayuda e instrucciones – arsnova.eu</target>
+        <source>So funktioniert’s – arsnova.eu</source>
+        <target>Cómo funciona – arsnova.eu</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descHelp" datatype="html">
-        <source>Kurze Anleitungen zu Sessions, Quiz, Blitzlicht und den wichtigsten Abläufen auf arsnova.eu.</source>
-        <target>Instrucciones breves sobre sesiones, cuestionarios, sondeo rápido y los procesos principales en arsnova.eu.</target>
+        <source>Kurz erklärt: Sessions, Quiz, Blitzlicht und die wichtigsten Abläufe auf arsnova.eu.</source>
+        <target>Sesiones, cuestionarios, rondas relámpago y flujos clave en arsnova.eu, en resumen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">117</context>
@@ -2275,16 +2275,16 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.pageTitle" datatype="html">
-        <source>Hilfe</source>
-        <target>Ayuda</target>
+        <source>So funktioniert’s</source>
+        <target>Cómo funciona</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="help.intro" datatype="html">
-        <source> Die Hilfe richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Trainings, Workshops, Lehrveranstaltungen oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, alle Teilnehmenden sind direkt mit dabei.</source>
-        <target>Esta ayuda va dirigida a <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>docentes, formadores y responsables de seminarios<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: preparas formaciones, talleres, clases o eventos y buscas interacción sin fricción — cuestionario, Q&amp;A y sondeo rápido en una misma sesión. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sin registro obligatorio<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> ni para ti ni para tu grupo: tú inicias y todas las personas participantes están al momento contigo.</target>
+        <source> Diese Seite richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Trainings, Workshops, Lehrveranstaltungen oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, alle Teilnehmenden sind direkt mit dabei.</source>
+        <target>Esta página va dirigida a <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>docentes, formadores y responsables de seminarios<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: preparas formaciones, talleres, clases o eventos y buscas interacción sin fricción — cuestionario, Q&amp;A y sondeo rápido en una misma sesión. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Sin registro obligatorio<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> ni para ti ni para tu grupo: tú inicias y todas las personas participantes están al momento contigo.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">24,31</context>

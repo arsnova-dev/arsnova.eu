@@ -18,7 +18,11 @@ import {
   selector: 'app-legal-page',
   imports: [MatButton, MatIcon],
   templateUrl: './legal-page.component.html',
-  styleUrls: ['../../shared/styles/dialog-title-header.scss', './legal-page.component.scss'],
+  styleUrls: [
+    '../../shared/styles/dialog-title-header.scss',
+    '../../shared/styles/content-page-backdrop.scss',
+    './legal-page.component.scss',
+  ],
 })
 export class LegalPageComponent implements OnInit, OnDestroy {
   private readonly location = inject(Location);

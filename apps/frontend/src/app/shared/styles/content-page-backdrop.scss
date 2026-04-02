@@ -1,0 +1,56 @@
+/**
+ * Hilfe-, Legal- und News-Archiv-Seiten: Seitenränder sind echte „Rails“ (kein Scrim).
+ * Mittelspalte: unsichtbare Klickfläche hinter dem Panel (auch unter kurzem Inhalt bis min-height).
+ *
+ * Vorher: ein durchgehender Scrim — die Lesespalte lag genau unter dem undurchsichtigen Panel,
+ * der Scrim war dort optisch wirkungslos; nur Gradient an den Rändern war kaum vom App-Hintergrund zu unterscheiden.
+ */
+.content-page-layer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(42rem, 100%) minmax(0, 1fr);
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 100dvh;
+}
+
+.content-page-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+}
+
+/** Vollflächig in der Mittelspalte, unter dem Panel — nur Schließen per Klick, kein Overlay. */
+.content-page-backdrop-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.content-page-backdrop-rail {
+  z-index: 1;
+  cursor: pointer;
+  min-height: 100%;
+}
+
+.content-page-panel {
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
+  background: var(--mat-sys-surface);
+  pointer-events: auto;
+}
+
+/**
+ * Preset Spielerisch (playful-inner-chrome): Karten-Rahmen auf Help/Legal/News-Archiv flach ins Panel.
+ */
+:host-context(html.preset-playful) .content-page-panel .legal-article,
+:host-context(html.preset-playful) .content-page-panel .news-archive-page__article-root {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+}

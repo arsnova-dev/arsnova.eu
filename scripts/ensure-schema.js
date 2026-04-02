@@ -16,6 +16,17 @@ function createClient() {
   return new Client({ connectionString });
 }
 
+/** Node kann bei connect() AggregateError liefern — dann ist err.message leer. */
+function formatErr(err) {
+  if (!err) return 'Unbekannter Fehler';
+  if (typeof err.message === 'string' && err.message.trim()) return err.message;
+  if (Array.isArray(err.errors) && err.errors.length) {
+    return err.errors.map((e) => (e && e.message) || String(e)).join('; ');
+  }
+  if (err.cause && err.cause.message) return err.cause.message;
+  return String(err);
+}
+
 const statements = [
   // Story 2.7: Peer Instruction
   `ALTER TYPE "SessionStatus" ADD VALUE IF NOT EXISTS 'DISCUSSION' AFTER 'RESULTS'`,
@@ -236,6 +247,21 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('>>> ensure-schema fehlgeschlagen:', err.message);
+  const detail = formatErr(err);
+  console.error('>>> ensure-schema fehlgeschlagen:', detail);
+  const code = err && err.code;
+  const text = `${detail} ${code || ''}`;
+  if (
+    code === 'ECONNREFUSED' ||
+    /ECONNREFUSED|connect ECONNREFUSED/i.test(text) ||
+    /Connection refused/i.test(text)
+  ) {
+    console.error(
+      '>>> Hinweis: PostgreSQL nicht erreichbar (Port 5432). Dev-DB: npm run docker:up:dev',
+    );
+    console.error(
+      '>>> Wenn docker compose „docker.sock“ / „daemon“ meldet: Docker Desktop (oder Colima) starten — ohne laufenden Docker-Daemon gibt es keine Postgres-Container.',
+    );
+  }
   process.exit(1);
 });

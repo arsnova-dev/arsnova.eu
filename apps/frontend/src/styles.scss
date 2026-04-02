@@ -387,22 +387,26 @@ html {
 
 /* Abstand Toolbar → erstes Inhaltselement: Routed Component ist Kind von .app-main__content, .l-page/.l-section dessen erstes Kind. */
 .app-main__content:has(> * > .l-page:first-child),
-.app-main__content:has(> * > .l-section:first-child) {
+.app-main__content:has(> * > .l-section:first-child),
+.app-main__content:has(> * > .content-page-layer:first-child) {
   margin-top: 0;
 }
 .app-main__content > * > .l-page:first-child,
-.app-main__content > * > .l-section:first-child {
+.app-main__content > * > .l-section:first-child,
+.app-main__content > * > .content-page-layer:first-child {
   margin-top: 1rem;
 }
 @media (min-width: 600px) {
   .app-main__content > * > .l-page:first-child,
-  .app-main__content > * > .l-section:first-child {
+  .app-main__content > * > .l-section:first-child,
+  .app-main__content > * > .content-page-layer:first-child {
     margin-top: 1.25rem;
   }
 }
 @media (min-width: 840px) {
   .app-main__content > * > .l-page:first-child,
-  .app-main__content > * > .l-section:first-child {
+  .app-main__content > * > .l-section:first-child,
+  .app-main__content > * > .content-page-layer:first-child {
     margin-top: 1.5rem;
   }
 }

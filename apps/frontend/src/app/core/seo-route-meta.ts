@@ -110,11 +110,11 @@ function seoDescQuizSync(): string {
 }
 
 function seoTitleHelp(): string {
-  return $localize`:@@seo.titleHelp:Hilfe & Anleitung – arsnova.eu`;
+  return $localize`:@@seo.titleHelp:So funktioniert’s – arsnova.eu`;
 }
 
 function seoDescHelp(): string {
-  return $localize`:@@seo.descHelp:Kurze Anleitungen zu Sessions, Quiz, Blitzlicht und den wichtigsten Abläufen auf arsnova.eu.`;
+  return $localize`:@@seo.descHelp:Kurz erklärt: Sessions, Quiz, Blitzlicht und die wichtigsten Abläufe auf arsnova.eu.`;
 }
 
 function seoTitleNewsArchive(): string {

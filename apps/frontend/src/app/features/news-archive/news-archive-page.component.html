@@ -1,98 +1,108 @@
-<div class="news-archive-page l-page l-section">
-  <nav class="news-archive-page__back" aria-label="Navigation">
-    <button
-      mat-button
-      type="button"
-      (click)="back()"
-      i18n-aria-label="@@contentPage.backAria"
-      aria-label="Zurück zur vorherigen Seite"
-    >
-      <mat-icon>arrow_back</mat-icon>
-      <span i18n="@@contentPage.back">Zurück</span>
-    </button>
-  </nav>
+<div class="content-page-layer">
+  <div class="content-page-backdrop-rail" aria-hidden="true" (click)="back()"></div>
+  <div class="content-page-column">
+    <div class="content-page-backdrop-sheet" aria-hidden="true" (click)="back()"></div>
+    <div class="news-archive-page l-page l-section content-page-panel">
+      <nav class="news-archive-page__back" aria-label="Navigation">
+        <button
+          mat-button
+          type="button"
+          (click)="back()"
+          i18n-aria-label="@@contentPage.backAria"
+          aria-label="Zurück zur vorherigen Seite"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          <span i18n="@@contentPage.back">Zurück</span>
+        </button>
+      </nav>
 
-  @if (error(); as err) {
-    <p class="news-archive-page__error" role="alert">{{ err }}</p>
-  } @else {
-    <article class="news-archive-page__article-root">
-      <header class="dialog-title-header dialog-title-header--page news-archive-page__hero">
-        <span class="dialog-title-header__icon" aria-hidden="true">
-          <mat-icon>newspaper</mat-icon>
-        </span>
-        <span class="dialog-title-header__copy">
-          <h1 class="dialog-title-header__heading" i18n="@@motd.archiveTitle">News-Archiv</h1>
-        </span>
-      </header>
-
-      @if (archiveMaxEndsAtIso()) {
-        <div class="news-archive-page__actions">
-          <span
-            class="news-archive-page__mark-all-wrap"
-            i18n-matTooltip="@@motd.archiveMarkAllReadDisabled"
-            matTooltip="Alle Meldungen sind bereits als gelesen markiert."
-            matTooltipPosition="below"
-            [matTooltipDisabled]="archiveUnreadCount() > 0"
-          >
-            <button
-              mat-stroked-button
-              type="button"
-              i18n="@@motd.archiveMarkAllRead"
-              [disabled]="archiveUnreadCount() === 0"
-              (click)="markArchiveAllRead()"
-            >
-              Alles als gelesen markieren
-            </button>
-          </span>
-        </div>
-      }
-      @if (items().length === 0) {
-        <p class="news-archive-page__empty" i18n="@@motd.archiveEmpty">
-          Keine archivierten Meldungen.
-        </p>
+      @if (error(); as err) {
+        <p class="news-archive-page__error" role="alert">{{ err }}</p>
       } @else {
-        <div class="news-archive-page__entries">
-          @for (it of items(); track it.id) {
-            @let archiveMeta = formatArchiveDate(it.startsAt);
-            <section class="news-archive-page__entry" [attr.id]="'motd-archive-' + it.id">
-              <h2 class="news-archive-page__entry-title">{{ archiveItemTitle(it.id) }}</h2>
-              @if (archiveMeta) {
-                <p class="news-archive-page__entry-meta">
-                  <time [attr.datetime]="it.startsAt">{{ archiveMeta }}</time>
-                </p>
-              }
-              @if (htmlById()[it.id]; as safe) {
-                <div
-                  class="news-archive-page__md motd-archive__body markdown-body"
-                  [innerHTML]="safe"
-                ></div>
-              }
-            </section>
+        <article class="news-archive-page__article-root">
+          <header class="dialog-title-header dialog-title-header--page news-archive-page__hero">
+            <span class="dialog-title-header__icon" aria-hidden="true">
+              <mat-icon>newspaper</mat-icon>
+            </span>
+            <span class="dialog-title-header__copy">
+              <h1 class="dialog-title-header__heading" i18n="@@motd.archiveTitle">News-Archiv</h1>
+            </span>
+          </header>
+
+          @if (archiveMaxEndsAtIso()) {
+            <div class="news-archive-page__actions">
+              <span
+                class="news-archive-page__mark-all-wrap"
+                i18n-matTooltip="@@motd.archiveMarkAllReadDisabled"
+                matTooltip="Alle Meldungen sind bereits als gelesen markiert."
+                matTooltipPosition="below"
+                [matTooltipDisabled]="archiveUnreadCount() > 0"
+              >
+                <button
+                  mat-stroked-button
+                  type="button"
+                  i18n="@@motd.archiveMarkAllRead"
+                  [disabled]="archiveUnreadCount() === 0"
+                  (click)="markArchiveAllRead()"
+                >
+                  Alles als gelesen markieren
+                </button>
+              </span>
+            </div>
           }
-        </div>
-      }
-      @if (nextCursor()) {
-        <div class="news-archive-page__load-more" [attr.aria-busy]="loadingMore() ? 'true' : null">
-          <button
-            matButton="tonal"
-            type="button"
-            i18n="@@motd.archiveLoadMore"
-            [disabled]="loadingMore()"
-            (click)="loadMoreArchive()"
-          >
-            Weitere Meldungen laden
-          </button>
-          @if (loadingMore()) {
-            <mat-progress-spinner
-              class="news-archive-page__load-more-spinner"
-              color="primary"
-              diameter="28"
-              mode="indeterminate"
-              aria-hidden="true"
-            />
+          @if (items().length === 0) {
+            <p class="news-archive-page__empty" i18n="@@motd.archiveEmpty">
+              Keine archivierten Meldungen.
+            </p>
+          } @else {
+            <div class="news-archive-page__entries">
+              @for (it of items(); track it.id) {
+                @let archiveMeta = formatArchiveDate(it.startsAt);
+                <section class="news-archive-page__entry" [attr.id]="'motd-archive-' + it.id">
+                  <h2 class="news-archive-page__entry-title">{{ archiveItemTitle(it.id) }}</h2>
+                  @if (archiveMeta) {
+                    <p class="news-archive-page__entry-meta">
+                      <time [attr.datetime]="it.startsAt">{{ archiveMeta }}</time>
+                    </p>
+                  }
+                  @if (htmlById()[it.id]; as safe) {
+                    <div
+                      class="news-archive-page__md motd-archive__body markdown-body"
+                      [innerHTML]="safe"
+                    ></div>
+                  }
+                </section>
+              }
+            </div>
           }
-        </div>
+          @if (nextCursor()) {
+            <div
+              class="news-archive-page__load-more"
+              [attr.aria-busy]="loadingMore() ? 'true' : null"
+            >
+              <button
+                matButton="tonal"
+                type="button"
+                i18n="@@motd.archiveLoadMore"
+                [disabled]="loadingMore()"
+                (click)="loadMoreArchive()"
+              >
+                Weitere Meldungen laden
+              </button>
+              @if (loadingMore()) {
+                <mat-progress-spinner
+                  class="news-archive-page__load-more-spinner"
+                  color="primary"
+                  diameter="28"
+                  mode="indeterminate"
+                  aria-hidden="true"
+                />
+              }
+            </div>
+          }
+        </article>
       }
-    </article>
-  }
+    </div>
+  </div>
+  <div class="content-page-backdrop-rail" aria-hidden="true" (click)="back()"></div>
 </div>

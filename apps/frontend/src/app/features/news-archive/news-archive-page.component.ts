@@ -47,7 +47,11 @@ function appLocaleFromInjectedId(localeId: string): AppLocale {
   standalone: true,
   imports: [MatButton, MatIcon, MatProgressSpinner, MatTooltip],
   templateUrl: './news-archive-page.component.html',
-  styleUrls: ['../../shared/styles/dialog-title-header.scss', './news-archive-page.component.scss'],
+  styleUrls: [
+    '../../shared/styles/dialog-title-header.scss',
+    '../../shared/styles/content-page-backdrop.scss',
+    './news-archive-page.component.scss',
+  ],
 })
 export class NewsArchivePageComponent {
   private readonly sanitizer = inject(DomSanitizer);

@@ -84,15 +84,15 @@
           <context context-type="linenumber">131,133</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8443252743112048692" datatype="html">
-        <source>Hilfe öffnen</source>
+      <trans-unit id="app.footer.helpOpenAria" datatype="html">
+        <source>So funktioniert’s</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">137,138</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7842597623910989718" datatype="html">
-        <source>Hilfe</source>
+      <trans-unit id="app.footer.help" datatype="html">
+        <source>So funktioniert’s</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.html</context>
           <context context-type="linenumber">140,141</context>
@@ -275,14 +275,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="seo.titleHelp" datatype="html">
-        <source>Hilfe &amp; Anleitung – arsnova.eu</source>
+        <source>So funktioniert’s – arsnova.eu</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seo.descHelp" datatype="html">
-        <source>Kurze Anleitungen zu Sessions, Quiz, Blitzlicht und den wichtigsten Abläufen auf arsnova.eu.</source>
+        <source>Kurz erklärt: Sessions, Quiz, Blitzlicht und die wichtigsten Abläufe auf arsnova.eu.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/seo-route-meta.ts</context>
           <context context-type="linenumber">117</context>
@@ -2013,14 +2013,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="help.pageTitle" datatype="html">
-        <source>Hilfe</source>
+        <source>So funktioniert’s</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="help.intro" datatype="html">
-        <source> Die Hilfe richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Trainings, Workshops, Lehrveranstaltungen oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, alle Teilnehmenden sind direkt mit dabei. </source>
+        <source> Diese Seite richtet sich an <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Lehrende, Trainer:innen und Seminarleiter:innen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Du planst Trainings, Workshops, Lehrveranstaltungen oder Events und willst Interaktion ohne Hürden – Quiz, Q&amp;A und Blitzlicht in einer Session. <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ohne verpflichtende Anmeldung<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> für dich und deine Gruppe: Du startest, alle Teilnehmenden sind direkt mit dabei. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">24,31</context>

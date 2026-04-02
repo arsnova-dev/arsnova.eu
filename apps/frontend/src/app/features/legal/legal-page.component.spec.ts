@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
@@ -39,6 +40,23 @@ describe('LegalPageComponent', () => {
 
   afterEach(() => {
     httpMock.verify();
+  });
+
+  it('ruft bei Klick auf den Backdrop location.back auf', async () => {
+    const fixture = TestBed.createComponent(LegalPageComponent);
+    const location = TestBed.inject(Location);
+    const spy = vi.spyOn(location, 'back');
+    fixture.detectChanges();
+    const req = httpMock.expectOne((r) => r.url.includes('assets/legal/imprint.de.md'));
+    req.flush('# Titel\n\nText.');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const backdrop = (fixture.nativeElement as HTMLElement).querySelector(
+      '.content-page-backdrop-sheet',
+    );
+    expect(backdrop).toBeTruthy();
+    backdrop!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(spy).toHaveBeenCalledOnce();
   });
 
   it('lädt Markdown per HttpClient und rendert Inhalt (kein leerer SSR-Abbruch)', async () => {

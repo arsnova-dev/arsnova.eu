@@ -19,13 +19,17 @@ const HELP_STATS_DEV_FAKE_MAX = 184;
 const HELP_STATS_DEV_FAKE_UPDATED_AT_ISO = '2025-11-08T16:45:00.000Z';
 
 /**
- * Hilfe-Seite: Nutzerorientierte Anleitung, Layout und Stil wie Legal-Seiten.
+ * „So funktioniert’s“: Nutzerorientierte Anleitung, Layout und Stil wie Legal-Seiten.
  */
 @Component({
   selector: 'app-help',
   imports: [MatButton, MatIcon],
   templateUrl: './help.component.html',
-  styleUrls: ['../../shared/styles/dialog-title-header.scss', 'help.component.scss'],
+  styleUrls: [
+    '../../shared/styles/dialog-title-header.scss',
+    '../../shared/styles/content-page-backdrop.scss',
+    'help.component.scss',
+  ],
 })
 export class HelpComponent implements OnInit {
   private readonly location = inject(Location);
