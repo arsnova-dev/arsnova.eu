@@ -59,8 +59,14 @@ describe('renderMarkdownWithoutKatex', () => {
 
   it('absolutizeMarkdownHtmlRootAssetImgSrc setzt MOTD-Banner auf volle Origin-URL', () => {
     const raw = '<p><img src="/assets/images/AI-REVOLUTION.png" alt="" title="" /></p>';
-    const out = absolutizeMarkdownHtmlRootAssetImgSrc(raw, 'https://arsnova.eu');
-    expect(out).toContain('src="https://arsnova.eu/assets/images/AI-REVOLUTION.png"');
+    const out = absolutizeMarkdownHtmlRootAssetImgSrc(raw, 'https://arsnova.eu/de');
+    expect(out).toContain('src="https://arsnova.eu/de/assets/images/AI-REVOLUTION.png"');
+  });
+
+  it('absolutizeMarkdownHtmlRootAssetImgSrc normalisiert auch assets/ ohne führenden Slash', () => {
+    const raw = '<p><img src="assets/images/AI-REVOLUTION.png" alt="" title="" /></p>';
+    const out = absolutizeMarkdownHtmlRootAssetImgSrc(raw, 'https://arsnova.eu/en');
+    expect(out).toContain('src="https://arsnova.eu/en/assets/images/AI-REVOLUTION.png"');
   });
 
   it('appendMotdContentVersionToAssetImgSrc hängt cv an /assets/-Bilder (PWA-Cache-Bust)', () => {

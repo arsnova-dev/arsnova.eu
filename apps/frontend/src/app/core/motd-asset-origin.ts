@@ -1,16 +1,37 @@
 /**
- * Kanonische Produktions-Origin für MOTD-Bilder bei SSR/Prerender (ohne Browser).
- * Im Browser: `window.location.origin` (Staging/Preview-tauglich).
+ * SSR/Prerender-Fallback für MOTD-Bilder ohne Browser-Kontext.
+ * Im Browser wird bevorzugt die aktuelle `base href` genutzt, damit lokalisierte Builds
+ * konsistent `/<locale>/assets/...` auflösen und nicht auf eine harte Root-URL festgelegt sind.
  */
-export const DEFAULT_MOTD_PUBLIC_ORIGIN = 'https://arsnova.eu';
+export const DEFAULT_MOTD_PUBLIC_BASE = 'https://arsnova.eu/';
 
-/** Für `<img src="/assets/…">` in MOTD-[innerHTML]: volle URL, konsistent mit &lt;base href&gt; pro Locale. */
+/**
+ * Basis-URL für MOTD-Bilder in `[innerHTML]`.
+ * Browser: aktuelle `base href` (z. B. `https://arsnova.eu/de/`),
+ * SSR/Prerender: kanonische Produktionsbasis.
+ */
 export function resolveMotdAssetOrigin(): string {
-  if (typeof globalThis !== 'undefined' && 'location' in globalThis) {
-    const origin = (globalThis as { location?: { origin?: string } }).location?.origin;
-    if (origin && /^https?:\/\//i.test(origin)) {
-      return origin;
+  if (typeof document !== 'undefined') {
+    const rawBase = (document.querySelector('base')?.getAttribute('href') ?? '/').trim();
+    if (rawBase) {
+      const origin =
+        typeof globalThis !== 'undefined' && 'location' in globalThis
+          ? (globalThis as { location?: { origin?: string } }).location?.origin
+          : undefined;
+      try {
+        return new URL(rawBase, origin ?? DEFAULT_MOTD_PUBLIC_BASE).href.replace(/\/+$/, '');
+      } catch {
+        /* fallback below */
+      }
     }
   }
-  return DEFAULT_MOTD_PUBLIC_ORIGIN;
+
+  if (typeof globalThis !== 'undefined' && 'location' in globalThis) {
+    const fallbackOrigin = (globalThis as { location?: { origin?: string } }).location?.origin;
+    if (fallbackOrigin && /^https?:\/\//i.test(fallbackOrigin)) {
+      return fallbackOrigin.replace(/\/+$/, '');
+    }
+  }
+
+  return DEFAULT_MOTD_PUBLIC_BASE.replace(/\/+$/, '');
 }

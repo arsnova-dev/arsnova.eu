@@ -46,6 +46,11 @@ vi.mock('../../core/trpc.client', () => ({
   },
 }));
 
+function createHomeComponent(): HomeComponent {
+  const fixture = TestBed.createComponent(HomeComponent);
+  return fixture.componentInstance;
+}
+
 describe('HomeComponent', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -57,19 +62,14 @@ describe('HomeComponent', () => {
 
   afterEach(() => localStorage.clear());
 
-  function createComponent(): HomeComponent {
-    const fixture = TestBed.createComponent(HomeComponent);
-    return fixture.componentInstance;
-  }
-
   describe('isPlayfulPreset', () => {
     it('ist true im Standard-Preset Spielerisch', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       expect(comp.isPlayfulPreset()).toBe(true);
     });
 
     it('ist false nach Umschalten auf Seriös', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.themePreset.setPreset('serious');
       expect(comp.isPlayfulPreset()).toBe(false);
     });
@@ -77,37 +77,37 @@ describe('HomeComponent', () => {
 
   describe('isValidSessionCode', () => {
     it('akzeptiert gültigen 6-stelligen alphanumerischen Code', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('ABC123');
       expect(comp.isValidSessionCode()).toBe(true);
     });
 
     it('lehnt zu kurzen Code ab', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('ABC');
       expect(comp.isValidSessionCode()).toBe(false);
     });
 
     it('lehnt zu langen Code ab', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('ABCDEFG');
       expect(comp.isValidSessionCode()).toBe(false);
     });
 
     it('lehnt Kleinbuchstaben ab', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('abc123');
       expect(comp.isValidSessionCode()).toBe(false);
     });
 
     it('lehnt Sonderzeichen ab', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('ABC-12');
       expect(comp.isValidSessionCode()).toBe(false);
     });
 
     it('lehnt leeren String ab', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('');
       expect(comp.isValidSessionCode()).toBe(false);
     });
@@ -131,28 +131,28 @@ describe('HomeComponent', () => {
 
   describe('onSessionCodeInput', () => {
     it('normalisiert Eingabe zu Großbuchstaben', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const event = { target: { value: 'abc123' } } as unknown as Event;
       comp.onSessionCodeInput(event);
       expect(comp.sessionCode()).toBe('ABC123');
     });
 
     it('entfernt ungültige Zeichen', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const event = { target: { value: 'AB-C!1@2' } } as unknown as Event;
       comp.onSessionCodeInput(event);
       expect(comp.sessionCode()).toBe('ABC12');
     });
 
     it('kürzt auf maximal 6 Zeichen', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const event = { target: { value: 'ABCDEFGH' } } as unknown as Event;
       comp.onSessionCodeInput(event);
       expect(comp.sessionCode()).toBe('ABCDEF');
     });
 
     it('löscht joinError bei neuer Eingabe', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.joinError.set('Alter Fehler');
       const event = { target: { value: 'X' } } as unknown as Event;
       comp.onSessionCodeInput(event);
@@ -162,14 +162,14 @@ describe('HomeComponent', () => {
 
   describe('joinSession', () => {
     it('setzt joinError bei ungültigem Code', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('AB');
       await comp.joinSession();
       expect(comp.joinError()).toBeTruthy();
     });
 
     it('navigiert zu /join/:code bei gültigem Code', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -183,7 +183,7 @@ describe('HomeComponent', () => {
       const { trpc } = await import('../../core/trpc.client');
       vi.mocked(trpc.quickFeedback.isActive.query).mockResolvedValueOnce({ active: true });
 
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -194,7 +194,7 @@ describe('HomeComponent', () => {
     });
 
     it('speichert Code in recentSessionCodes', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
       comp.sessionCode.set('NEW001');
@@ -204,7 +204,7 @@ describe('HomeComponent', () => {
     });
 
     it('verhindert doppelten Join während isJoining', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -221,7 +221,7 @@ describe('HomeComponent', () => {
         new Error('Session nicht gefunden.'),
       );
 
-      const comp = createComponent();
+      const comp = createHomeComponent();
       comp.sessionCode.set('NOTFND');
       await comp.joinSession();
 
@@ -238,7 +238,7 @@ describe('HomeComponent', () => {
         sessionCode: 'ABC123',
       });
 
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -254,9 +254,48 @@ describe('HomeComponent', () => {
     });
   });
 
+  describe('MOTD overlay', () => {
+    it('rendert MOTD-Bilder relativ zur aktuellen Locale-Basis und hängt die contentVersion an', async () => {
+      const baseEl =
+        document.querySelector('base') ?? document.head.appendChild(document.createElement('base'));
+      const previousBaseHref = baseEl.getAttribute('href');
+      baseEl.setAttribute('href', '/de/');
+
+      try {
+        const { trpc } = await import('../../core/trpc.client');
+        vi.mocked(trpc.motd.getCurrent.query).mockResolvedValueOnce({
+          motd: {
+            id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            contentVersion: 7,
+            markdown: '![Banner](/assets/images/AI-REVOLUTION.png)',
+            endsAt: '2099-12-31T12:00:00.000Z',
+          },
+        });
+
+        const fixture = TestBed.createComponent(HomeComponent);
+        const comp = fixture.componentInstance;
+
+        await comp['loadMotdOverlay']();
+
+        const safeHtml = comp.motdBodyHtml() as unknown as {
+          changingThisBreaksApplicationSecurity?: string;
+        } | null;
+        expect(safeHtml?.changingThisBreaksApplicationSecurity).toContain(
+          '/de/assets/images/AI-REVOLUTION.png?cv=7',
+        );
+      } finally {
+        if (previousBaseHref === null) {
+          baseEl.removeAttribute('href');
+        } else {
+          baseEl.setAttribute('href', previousBaseHref);
+        }
+      }
+    });
+  });
+
   describe('openSyncLink', () => {
     it('aktiviert mit kompletter Sync-URL den Raum und oeffnet die Quiz-Sammlung', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const quizStore = TestBed.inject(QuizStoreService);
       const activateSpy = vi.spyOn(quizStore, 'activateSyncRoom');
@@ -273,7 +312,7 @@ describe('HomeComponent', () => {
     });
 
     it('akzeptiert auch nur die rohe Sync-ID und oeffnet die Quiz-Sammlung', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const quizStore = TestBed.inject(QuizStoreService);
       const activateSpy = vi.spyOn(quizStore, 'activateSyncRoom');
@@ -290,7 +329,7 @@ describe('HomeComponent', () => {
     });
 
     it('zeigt einen Fehler bei ungueltigem Sync-Link', async () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
       const router = TestBed.inject(Router);
       const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -306,7 +345,7 @@ describe('HomeComponent', () => {
 
   describe('latestHostedQuizId', () => {
     it('ist null, wenn noch kein eigenes Quiz vorhanden ist', () => {
-      const comp = createComponent();
+      const comp = createHomeComponent();
 
       expect(comp.latestHostedQuizId()).toBeNull();
       expect(comp.hasHostedQuiz()).toBe(false);
@@ -329,7 +368,7 @@ describe('HomeComponent', () => {
         description: 'Aktualisiert',
       });
 
-      const comp = createComponent();
+      const comp = createHomeComponent();
 
       expect(comp.latestHostedQuizId()).toBe(newerQuiz.id);
       expect(comp.hasHostedQuiz()).toBe(true);

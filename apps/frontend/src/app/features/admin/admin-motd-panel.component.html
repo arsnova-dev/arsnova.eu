@@ -14,7 +14,8 @@
       Bilder aus dem gebündelten Frontend: im Markdown <code>![](/assets/images/…)</code> mit
       führendem Schrägstrich (Webroot) verwenden — nicht den lokalen Ordner
       <code>apps/frontend/src/…</code>. Die Datei muss unter <code>src/assets/</code> liegen und im
-      Deployment enthalten sein.
+      Deployment enthalten sein. Im lokalisierten Produktiv-Build wird der Pfad automatisch relativ
+      zur aktuellen Sprache aufgelöst.
     </p>
     @if (loading()) {
       <mat-progress-spinner diameter="32" mode="indeterminate" />

@@ -41,7 +41,11 @@ import {
   formatMotdEndsAtForDisplay,
 } from '../../core/motd-ends-display';
 import { trpc } from '../../core/trpc.client';
-import { renderMarkdownWithoutKatex } from '../../shared/markdown-katex.util';
+import { resolveMotdAssetOrigin } from '../../core/motd-asset-origin';
+import {
+  absolutizeMarkdownHtmlRootAssetImgSrc,
+  renderMarkdownWithoutKatex,
+} from '../../shared/markdown-katex.util';
 import { AdminMotdTemplateDialogComponent } from './admin-motd-template-dialog.component';
 
 const ADMIN_MOTD_DATE_LOCALE: Record<string, string> = {
@@ -441,7 +445,10 @@ export class AdminMotdPanelComponent implements OnInit {
 
   updatePreview(): void {
     const raw = this.mdDe().trim() || this.mdEn().trim() || '…';
-    const html = renderMarkdownWithoutKatex(raw);
+    const html = absolutizeMarkdownHtmlRootAssetImgSrc(
+      renderMarkdownWithoutKatex(raw),
+      resolveMotdAssetOrigin(),
+    );
     this.previewHtml.set(this.sanitizer.bypassSecurityTrustHtml(html));
   }
 

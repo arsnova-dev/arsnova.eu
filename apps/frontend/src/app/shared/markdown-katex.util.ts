@@ -6,8 +6,8 @@ export interface MarkdownRenderResult {
   katexError: string | null;
 }
 
-export function renderMarkdownWithKatex(source: string): MarkdownRenderResult {
-  const input = source ?? '';
+export function renderMarkdownWithKatex(source = ''): MarkdownRenderResult {
+  const input = source;
   let katexError: string | null = null;
   const renderedMath: string[] = [];
 
@@ -27,19 +27,20 @@ export function renderMarkdownWithKatex(source: string): MarkdownRenderResult {
       );
     } catch (error) {
       const message = error instanceof Error ? error.message : $localize`Ungültige KaTeX-Syntax.`;
+      const katexErrorLabel = $localize`KaTeX-Fehler`;
       if (!katexError) {
         katexError = message;
       }
       return storeRenderedMath(
-        `<span class="markdown-katex-error">${$localize`KaTeX-Fehler`}: ${escapeHtml(message)}</span>`,
+        `<span class="markdown-katex-error">${katexErrorLabel}: ${escapeHtml(message)}</span>`,
       );
     }
   };
 
-  const withBlockMath = input.replace(/\$\$([\s\S]+?)\$\$/g, (_, expression: string) =>
+  const withBlockMath = input.replaceAll(/\$\$([\s\S]+?)\$\$/g, (_, expression: string) =>
     renderExpression(expression, true),
   );
-  const withInlineMath = withBlockMath.replace(/\$([^$\n]+?)\$/g, (_, expression: string) =>
+  const withInlineMath = withBlockMath.replaceAll(/\$([^$\n]+?)\$/g, (_, expression: string) =>
     renderExpression(expression, false),
   );
 
@@ -67,18 +68,20 @@ function parseMarkdownEscapingInlineHtml(source: string): string {
 }
 
 /** Markdown → HTML ohne KaTeX (kein `$…$`-Parsing). Für lange System-Prompts mit JSON-Beispielen. */
-export function renderMarkdownWithoutKatex(source: string): string {
-  return parseMarkdownEscapingInlineHtml(source ?? '');
+export function renderMarkdownWithoutKatex(source = ''): string {
+  return parseMarkdownEscapingInlineHtml(source);
 }
 
 /**
- * Ersetzt `src="/assets/…"` durch absolute URLs, damit MOTD-Bilder in `[innerHTML]` zuverlässig
- * von der Site-Root geladen werden (lokalisiertes `&lt;base href="/de/"&gt;` o. ä.).
+ * Ersetzt MOTD-Bilder unter `/assets/...` oder `assets/...` durch absolute URLs relativ zur aktuellen
+ * Build-Basis (z. B. `https://arsnova.eu/de/`). Das hält lokalisierte Builds und Admin-Preview konsistent.
  */
 export function absolutizeMarkdownHtmlRootAssetImgSrc(html: string, origin: string): string {
   const base = origin.replace(/\/$/, '');
   if (!base) return html;
-  return html.replace(/src="\/(assets\/[^"]+)"/g, `src="${base}/$1"`);
+  return html
+    .replaceAll(/src="\/(assets\/[^"]+)"/g, `src="${base}/$1"`)
+    .replaceAll(/src="(assets\/[^"]+)"/g, `src="${base}/$1"`);
 }
 
 /**
@@ -96,10 +99,10 @@ export function appendMotdContentVersionToAssetImgSrc(
     const sep = url.includes('?') ? '&' : '?';
     return `${url}${sep}cv=${cv}`;
   };
-  let out = html.replace(/src="(https?:\/\/[^"]+\/assets\/[^"]+)"/gi, (_full, url: string) => {
+  let out = html.replaceAll(/src="(https?:\/\/[^"']+\/assets\/[^"']+)"/gi, (_full, url: string) => {
     return `src="${bump(url)}"`;
   });
-  out = out.replace(/src="(\/assets\/[^"]+)"/gi, (_full, path: string) => {
+  out = out.replaceAll(/src="(\/assets\/[^"']+)"/gi, (_full, path: string) => {
     return `src="${bump(path)}"`;
   });
   return out;
