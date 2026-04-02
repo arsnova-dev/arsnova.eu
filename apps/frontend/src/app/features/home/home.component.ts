@@ -135,6 +135,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Erzwingt Neuablesung der MOTD-Interaktions-Flags aus localStorage. */
   private readonly motdInteractionRev = signal(0);
   private motdTouchStartY = 0;
+  /** Schutz gegen ungewollte Request-Loops (z. B. Reload-/Reinit-Kaskaden): niemals parallel + Cooldown. */
+  private motdLoadInFlight: Promise<void> | null = null;
+  private motdLastLoadAtMs = 0;
+  private static readonly MOTD_MIN_LOAD_INTERVAL_MS = 1500;
 
   readonly thumbUpRecorded = computed(() => {
     this.motdInteractionRev();
@@ -511,29 +515,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private async loadMotdOverlay(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
-    const locale = getEffectiveLocale(localeIdToSupported(this.localeId)) as AppLocale;
-    try {
-      const dismissed = motdDismissedPairsForApi();
-      const { motd } = await trpc.motd.getCurrent.query({
-        locale,
-        ...(dismissed.length ? { overlayDismissedUpTo: dismissed } : {}),
-      });
-      if (!motd || isMotdDismissedForVersion(motd.id, motd.contentVersion)) {
-        return;
-      }
-      this.motd.set(motd);
-      const html = appendMotdContentVersionToAssetImgSrc(
-        absolutizeMarkdownHtmlRootAssetImgSrc(
-          renderMarkdownWithoutKatex(motd.markdown),
-          resolveMotdAssetOrigin(),
-        ),
-        motd.contentVersion,
-      );
-      this.motdBodyHtml.set(this.sanitizer.bypassSecurityTrustHtml(html));
-      setTimeout(() => this.motdCloseBtn?.nativeElement?.focus(), 0);
-    } catch {
-      /* Rate-Limit / Offline: kein Overlay */
+    if (this.motdLoadInFlight) return this.motdLoadInFlight;
+    const now = Date.now();
+    if (now - this.motdLastLoadAtMs < HomeComponent.MOTD_MIN_LOAD_INTERVAL_MS) {
+      return;
     }
+    this.motdLastLoadAtMs = now;
+    const locale = getEffectiveLocale(localeIdToSupported(this.localeId)) as AppLocale;
+    this.motdLoadInFlight = (async () => {
+      try {
+        const dismissed = motdDismissedPairsForApi();
+        const { motd } = await trpc.motd.getCurrent.query({
+          locale,
+          ...(dismissed.length ? { overlayDismissedUpTo: dismissed } : {}),
+        });
+        if (!motd || isMotdDismissedForVersion(motd.id, motd.contentVersion)) {
+          return;
+        }
+        this.motd.set(motd);
+        const html = appendMotdContentVersionToAssetImgSrc(
+          absolutizeMarkdownHtmlRootAssetImgSrc(
+            renderMarkdownWithoutKatex(motd.markdown),
+            resolveMotdAssetOrigin(),
+          ),
+          motd.contentVersion,
+        );
+        this.motdBodyHtml.set(this.sanitizer.bypassSecurityTrustHtml(html));
+        setTimeout(() => this.motdCloseBtn?.nativeElement?.focus(), 0);
+      } catch {
+        /* Rate-Limit / Offline: kein Overlay */
+      }
+    })().finally(() => {
+      this.motdLoadInFlight = null;
+    });
+    return this.motdLoadInFlight;
   }
 
   private clearMotdOverlay(): void {
