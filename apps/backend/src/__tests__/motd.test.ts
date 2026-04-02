@@ -68,6 +68,23 @@ describe('motd router', () => {
 
   const ctx = { req: undefined as undefined };
 
+  it('getCurrent: leeres/fehlendes input → Locale de (kein 400)', async () => {
+    prismaMock.motd.findMany.mockResolvedValue([
+      {
+        id: M1,
+        priority: 5,
+        contentVersion: 1,
+        startsAt: new Date('2026-06-01T00:00:00.000Z'),
+        endsAt: new Date('2026-06-20T00:00:00.000Z'),
+        locales: [{ locale: 'de', markdown: 'OK' }],
+      },
+    ]);
+
+    const caller = motdRouter.createCaller(ctx);
+    const result = await caller.getCurrent({});
+    expect(result.motd?.markdown).toBe('OK');
+  });
+
   it('getCurrent wählt höchste Priorität bei Überlappung', async () => {
     prismaMock.motd.findMany.mockResolvedValue([
       {

@@ -1439,23 +1439,37 @@ export const MotdOverlayDismissedPairSchema = z.object({
 });
 export type MotdOverlayDismissedPair = z.infer<typeof MotdOverlayDismissedPairSchema>;
 
-export const MotdGetCurrentInputSchema = z.object({
-  locale: AppLocaleEnum,
+/**
+ * tRPC-HTTP kann ohne Transformer bei Batch/Prefetch ein fehlendes `input` liefern (`undefined`).
+ * `locale` ist optional; der Server leitet sie aus `Accept-Language` ab (s. Backend).
+ */
+const MotdGetCurrentInputPayloadSchema = z.object({
+  locale: AppLocaleEnum.optional(),
   overlayDismissedUpTo: z.array(MotdOverlayDismissedPairSchema).max(32).optional(),
 });
-export type MotdGetCurrentInput = z.infer<typeof MotdGetCurrentInputSchema>;
+
+export const MotdGetCurrentInputSchema = z.preprocess(
+  (raw: unknown) => (raw === undefined || raw === null ? {} : raw),
+  MotdGetCurrentInputPayloadSchema,
+);
+export type MotdGetCurrentInput = z.infer<typeof MotdGetCurrentInputPayloadSchema>;
 
 export const MotdGetCurrentOutputSchema = z.object({
   motd: MotdPublicDTOSchema.nullable(),
 });
 export type MotdGetCurrentOutput = z.infer<typeof MotdGetCurrentOutputSchema>;
 
-export const MotdListArchiveInputSchema = z.object({
-  locale: AppLocaleEnum,
+const MotdListArchiveInputPayloadSchema = z.object({
+  locale: AppLocaleEnum.optional(),
   cursor: z.string().uuid().optional(),
   pageSize: z.number().int().min(1).max(50).default(20),
 });
-export type MotdListArchiveInput = z.infer<typeof MotdListArchiveInputSchema>;
+
+export const MotdListArchiveInputSchema = z.preprocess(
+  (raw: unknown) => (raw === undefined || raw === null ? {} : raw),
+  MotdListArchiveInputPayloadSchema,
+);
+export type MotdListArchiveInput = z.infer<typeof MotdListArchiveInputPayloadSchema>;
 
 export const MotdArchiveItemDTOSchema = z.object({
   id: z.uuid(),
@@ -1474,13 +1488,18 @@ export const MotdListArchiveOutputSchema = z.object({
 export type MotdListArchiveOutput = z.infer<typeof MotdListArchiveOutputSchema>;
 
 /** Header: ob Nachrichten-Icon sinnvoll ist */
-export const MotdHeaderStateInputSchema = z.object({
-  locale: AppLocaleEnum,
+const MotdHeaderStateInputPayloadSchema = z.object({
+  locale: AppLocaleEnum.optional(),
   /** Client-Wasserzeichen: MOTDs mit späterem `endsAt` gelten als ungelesen (globales Archiv). */
   archiveSeenUpToEndsAtIso: z.string().optional(),
   overlayDismissedUpTo: z.array(MotdOverlayDismissedPairSchema).max(32).optional(),
 });
-export type MotdHeaderStateInput = z.infer<typeof MotdHeaderStateInputSchema>;
+
+export const MotdHeaderStateInputSchema = z.preprocess(
+  (raw: unknown) => (raw === undefined || raw === null ? {} : raw),
+  MotdHeaderStateInputPayloadSchema,
+);
+export type MotdHeaderStateInput = z.infer<typeof MotdHeaderStateInputPayloadSchema>;
 
 export const MotdHeaderStateOutputSchema = z.object({
   hasActiveOverlay: z.boolean(),

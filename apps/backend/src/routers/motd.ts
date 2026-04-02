@@ -15,19 +15,33 @@ import {
   MotdRecordInteractionOutputSchema,
 } from '@arsnova/shared-types';
 import { prisma } from '../db';
+import { pickLocaleFromAcceptLanguage } from '../lib/pick-locale-from-accept-language';
 import { localesToMap, resolveMotdMarkdown } from '../lib/motdMarkdown';
 import {
   checkMotdGetCurrentRate,
   checkMotdListArchiveRate,
   checkMotdRecordInteractionRate,
 } from '../lib/rateLimit';
-import { getClientIp, publicProcedure, router } from '../trpc';
+import { getClientIp, publicProcedure, router, type Context } from '../trpc';
 
 /**
  * Obergrenze gleichzeitig aktiver PUBLISHED-MOTDs für die Overlay-Auswahl (Sortierung im Speicher).
  * 32 reicht für übliche Deployments; höhere Werte erhöhen nur DB-Payload ohne Nutzen.
  */
 const MOTD_ACTIVE_FETCH_CAP = 32;
+
+const MOTD_GET_CURRENT_LOCALES: AppLocale[] = ['de', 'en', 'fr', 'it', 'es'];
+
+function resolveMotdLocale(explicit: AppLocale | undefined, ctx: Context): AppLocale {
+  return (
+    explicit ??
+    (pickLocaleFromAcceptLanguage(
+      ctx.req?.headers['accept-language'],
+      MOTD_GET_CURRENT_LOCALES,
+      'de',
+    ) as AppLocale)
+  );
+}
 
 /**
  * Feste ID der dauerhaften Willkommens-MOTD (Migration `motd_welcome_message` + `seed-dev-motd.mjs`).
@@ -153,7 +167,8 @@ export const motdRouter = router({
           cause: { retryAfterSeconds: limit.retryAfterSeconds },
         });
       }
-      const motd = await fetchCurrentMotdDto(input.locale, new Date(), input.overlayDismissedUpTo);
+      const locale = resolveMotdLocale(input.locale, ctx);
+      const motd = await fetchCurrentMotdDto(locale, new Date(), input.overlayDismissedUpTo);
       return { motd };
     }),
 
@@ -176,6 +191,7 @@ export const motdRouter = router({
       }
       const now = new Date();
       const take = input.pageSize;
+      const locale = resolveMotdLocale(input.locale, ctx);
 
       const baseWhere = motdArchiveListWhere(now);
 
@@ -211,7 +227,7 @@ export const motdRouter = router({
       const items = page
         .map((m) => {
           const map = localesToMap(m.locales);
-          const markdown = resolveMotdMarkdown(map, input.locale);
+          const markdown = resolveMotdMarkdown(map, locale);
           if (!markdown.trim()) return null;
           return {
             id: m.id,
@@ -243,6 +259,7 @@ export const motdRouter = router({
         });
       }
       const now = new Date();
+      const locale = resolveMotdLocale(input.locale, ctx);
       const archiveWhere = motdArchiveListWhere(now);
       const seenRaw = input.archiveSeenUpToEndsAtIso;
       const seen = seenRaw && !Number.isNaN(new Date(seenRaw).getTime()) ? new Date(seenRaw) : null;
@@ -250,7 +267,7 @@ export const motdRouter = router({
       const dismissed = input.overlayDismissedUpTo;
       const results = seen
         ? await Promise.all([
-            fetchCurrentMotdDto(input.locale, now, dismissed),
+            fetchCurrentMotdDto(locale, now, dismissed),
             prisma.motd.count({ where: archiveWhere }),
             prisma.motd.aggregate({
               where: archiveWhere,
@@ -261,7 +278,7 @@ export const motdRouter = router({
             }),
           ])
         : await Promise.all([
-            fetchCurrentMotdDto(input.locale, now, dismissed),
+            fetchCurrentMotdDto(locale, now, dismissed),
             prisma.motd.count({ where: archiveWhere }),
             prisma.motd.aggregate({
               where: archiveWhere,
