@@ -35,6 +35,7 @@ import { DEMO_QUIZ_ID, QuizStoreService } from '../quiz/data/quiz-store.service'
 import { QUICK_FEEDBACK_PRESET_CHIPS } from '../feedback/feedback.config';
 import type { MotdInteractionKind, MotdPublicDTO, QuickFeedbackType } from '@arsnova/shared-types';
 import {
+  clearMotdThumbInteractionKeys,
   hasMotdInteractionRecorded,
   isMotdDismissedForVersion,
   markMotdDismissed,
@@ -138,17 +139,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.motdInteractionRev();
     const m = this.motd();
     return m ? hasMotdInteractionRecorded(m.id, m.contentVersion, 'THUMB_DOWN') : false;
-  });
-
-  /** Nur eine Daumen-Bewertung pro Meldung/Version (Up und Down schließen sich aus). */
-  readonly motdThumbVoteDone = computed(() => {
-    this.motdInteractionRev();
-    const m = this.motd();
-    if (!m) return false;
-    return (
-      hasMotdInteractionRecorded(m.id, m.contentVersion, 'THUMB_UP') ||
-      hasMotdInteractionRecorded(m.id, m.contentVersion, 'THUMB_DOWN')
-    );
   });
 
   isValidSessionCode = computed(() => /^[A-Z0-9]{6}$/.test(this.sessionCode()));
@@ -583,13 +573,57 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   async thumbMotd(up: boolean): Promise<void> {
     const m = this.motd();
     if (!m) return;
-    if (
-      hasMotdInteractionRecorded(m.id, m.contentVersion, 'THUMB_UP') ||
-      hasMotdInteractionRecorded(m.id, m.contentVersion, 'THUMB_DOWN')
-    ) {
+    const id = m.id;
+    const cv = m.contentVersion;
+    const hadUp = hasMotdInteractionRecorded(id, cv, 'THUMB_UP');
+    const hadDown = hasMotdInteractionRecorded(id, cv, 'THUMB_DOWN');
+
+    if (hadUp && up) {
+      if (await this.mutateMotdInteraction('THUMB_UP_REVOKE')) {
+        clearMotdThumbInteractionKeys(id, cv);
+        this.motdInteractionRev.update((n) => n + 1);
+      }
+      return;
+    }
+    if (hadDown && !up) {
+      if (await this.mutateMotdInteraction('THUMB_DOWN_REVOKE')) {
+        clearMotdThumbInteractionKeys(id, cv);
+        this.motdInteractionRev.update((n) => n + 1);
+      }
+      return;
+    }
+    if (hadUp && !up) {
+      if (await this.mutateMotdInteraction('THUMB_SWITCH_UP_TO_DOWN')) {
+        clearMotdThumbInteractionKeys(id, cv);
+        markMotdInteractionRecorded(id, cv, 'THUMB_DOWN');
+        this.motdInteractionRev.update((n) => n + 1);
+      }
+      return;
+    }
+    if (hadDown && up) {
+      if (await this.mutateMotdInteraction('THUMB_SWITCH_DOWN_TO_UP')) {
+        clearMotdThumbInteractionKeys(id, cv);
+        markMotdInteractionRecorded(id, cv, 'THUMB_UP');
+        this.motdInteractionRev.update((n) => n + 1);
+      }
       return;
     }
     await this.tryRecordMotdInteraction(up ? 'THUMB_UP' : 'THUMB_DOWN');
+  }
+
+  private async mutateMotdInteraction(kind: MotdInteractionKind): Promise<boolean> {
+    const m = this.motd();
+    if (!m) return false;
+    try {
+      await trpc.motd.recordInteraction.mutate({
+        motdId: m.id,
+        contentVersion: m.contentVersion,
+        kind,
+      });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   private async tryRecordMotdInteraction(kind: MotdInteractionKind): Promise<void> {

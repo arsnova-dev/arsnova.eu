@@ -3211,32 +3211,32 @@
         </context-group>
       </trans-unit>
       <trans-unit id="motd.thumbUpTooltip" datatype="html">
-        <source>Hilfreich</source>
-        <target>Útil</target>
+        <source>Hilfreich – erneut tippen zum Zurücknehmen</source>
+        <target>Útil — pulsa de nuevo para quitar tu voto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">473,474</context>
         </context-group>
       </trans-unit>
       <trans-unit id="motd.thumbUpAria" datatype="html">
-        <source>Hilfreich</source>
-        <target>Útil</target>
+        <source>Hilfreich, erneut tippen zum Zurücknehmen</source>
+        <target>Útil, pulsa de nuevo para quitar tu voto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">475,477</context>
         </context-group>
       </trans-unit>
       <trans-unit id="motd.thumbDownTooltip" datatype="html">
-        <source>Nicht hilfreich</source>
-        <target>No es útil</target>
+        <source>Nicht hilfreich – erneut tippen zum Zurücknehmen</source>
+        <target>No es útil — pulsa de nuevo para quitar tu voto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">488,489</context>
         </context-group>
       </trans-unit>
       <trans-unit id="motd.thumbDownAria" datatype="html">
-        <source>Nicht hilfreich</source>
-        <target>No es útil</target>
+        <source>Nicht hilfreich, erneut tippen zum Zurücknehmen</source>
+        <target>No es útil, pulsa de nuevo para quitar tu voto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/home/home.component.html</context>
           <context context-type="linenumber">490,492</context>

@@ -104,6 +104,14 @@ export function markMotdInteractionRecorded(
   writeMotdClientStorage(cur);
 }
 
+/** Entfernt lokale Daumen-hoch/runter-Markierung (Toggle / Wechsel). */
+export function clearMotdThumbInteractionKeys(motdId: string, contentVersion: number): void {
+  const cur = readMotdClientStorage();
+  delete cur.interactions[interactionStorageKey(motdId, contentVersion, 'THUMB_UP')];
+  delete cur.interactions[interactionStorageKey(motdId, contentVersion, 'THUMB_DOWN')];
+  writeMotdClientStorage(cur);
+}
+
 export function getMotdArchiveSeenUpToEndsAtIso(): string | undefined {
   const v = readMotdClientStorage().archiveSeenUpToEndsAtIso;
   return typeof v === 'string' && v.length > 0 ? v : undefined;

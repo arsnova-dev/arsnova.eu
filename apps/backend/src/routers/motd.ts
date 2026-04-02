@@ -424,6 +424,70 @@ export const motdRouter = router({
             update: { thumbDown: inc },
           });
           break;
+        case 'THUMB_UP_REVOKE': {
+          const row = await prisma.motdInteractionCounter.findUnique({
+            where: { motdId: input.motdId },
+          });
+          if (row && row.thumbUp > 0) {
+            await prisma.motdInteractionCounter.update({
+              where: { motdId: input.motdId },
+              data: { thumbUp: row.thumbUp - 1 },
+            });
+          }
+          break;
+        }
+        case 'THUMB_DOWN_REVOKE': {
+          const row = await prisma.motdInteractionCounter.findUnique({
+            where: { motdId: input.motdId },
+          });
+          if (row && row.thumbDown > 0) {
+            await prisma.motdInteractionCounter.update({
+              where: { motdId: input.motdId },
+              data: { thumbDown: row.thumbDown - 1 },
+            });
+          }
+          break;
+        }
+        case 'THUMB_SWITCH_UP_TO_DOWN':
+          await prisma.$transaction(async (tx) => {
+            const row = await tx.motdInteractionCounter.findUnique({
+              where: { motdId: input.motdId },
+            });
+            if (!row) {
+              await tx.motdInteractionCounter.create({
+                data: { ...base, thumbDown: 1 },
+              });
+              return;
+            }
+            await tx.motdInteractionCounter.update({
+              where: { motdId: input.motdId },
+              data: {
+                thumbUp: Math.max(0, row.thumbUp - 1),
+                thumbDown: { increment: 1 },
+              },
+            });
+          });
+          break;
+        case 'THUMB_SWITCH_DOWN_TO_UP':
+          await prisma.$transaction(async (tx) => {
+            const row = await tx.motdInteractionCounter.findUnique({
+              where: { motdId: input.motdId },
+            });
+            if (!row) {
+              await tx.motdInteractionCounter.create({
+                data: { ...base, thumbUp: 1 },
+              });
+              return;
+            }
+            await tx.motdInteractionCounter.update({
+              where: { motdId: input.motdId },
+              data: {
+                thumbDown: Math.max(0, row.thumbDown - 1),
+                thumbUp: { increment: 1 },
+              },
+            });
+          });
+          break;
         case 'DISMISS_CLOSE':
           await prisma.motdInteractionCounter.upsert({
             where: { motdId: input.motdId },

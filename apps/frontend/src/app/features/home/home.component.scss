@@ -1831,21 +1831,22 @@ mat-card-actions.l-stack {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
+  gap: 0.75rem 1.25rem;
   flex-shrink: 0;
 }
 
 .home-motd-sheet__thumbs {
   display: inline-flex;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 0.65rem;
+  margin-inline-start: 0.15rem;
 }
 
-/* Nach Daumen-Entscheidung: gewählte Taste hervorheben, andere zurücknehmen */
-.home-motd-sheet__thumb-btn--chosen.mat-mdc-icon-button[disabled] {
+.home-motd-sheet__thumb-btn--chosen {
   color: var(--mat-sys-primary);
-  opacity: 1;
 }
 
-.home-motd-sheet__thumb-btn.mat-mdc-icon-button[disabled]:not(.home-motd-sheet__thumb-btn--chosen) {
-  opacity: 0.35;
+.home-motd-sheet__thumbs:has(.home-motd-sheet__thumb-btn--chosen)
+  .home-motd-sheet__thumb-btn:not(.home-motd-sheet__thumb-btn--chosen) {
+  opacity: 0.42;
 }

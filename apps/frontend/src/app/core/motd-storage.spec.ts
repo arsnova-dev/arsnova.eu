@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   MOTD_LOCAL_STORAGE_KEY,
+  clearMotdThumbInteractionKeys,
   getMotdArchiveSeenUpToEndsAtIso,
   isMotdDismissedForVersion,
   markMotdDismissed,
@@ -43,5 +44,13 @@ describe('motd-storage', () => {
     expect(hasMotdInteractionRecorded(id, 1, 'THUMB_DOWN')).toBe(false);
     expect(hasMotdInteractionRecorded(id, 2, 'THUMB_UP')).toBe(false);
     expect(localStorage.getItem(MOTD_LOCAL_STORAGE_KEY)).toContain('interactions');
+  });
+
+  it('clearMotdThumbInteractionKeys entfernt Daumen-hoch und -runter', () => {
+    const id = '00000000-0000-4000-8000-000000000003';
+    markMotdInteractionRecorded(id, 2, 'THUMB_UP');
+    clearMotdThumbInteractionKeys(id, 2);
+    expect(hasMotdInteractionRecorded(id, 2, 'THUMB_UP')).toBe(false);
+    expect(hasMotdInteractionRecorded(id, 2, 'THUMB_DOWN')).toBe(false);
   });
 });

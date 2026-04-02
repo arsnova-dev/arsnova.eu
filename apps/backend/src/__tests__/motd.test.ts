@@ -20,7 +20,12 @@ const { redisMock, prismaMock, motdRateMocks } = vi.hoisted(() => ({
     },
     motdInteractionCounter: {
       upsert: vi.fn(),
+      findUnique: vi.fn(),
+      update: vi.fn(),
+      create: vi.fn(),
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $transaction: vi.fn(async (fn: (tx: any) => Promise<unknown>) => fn(prismaMock)),
   },
   motdRateMocks: {
     checkMotdGetCurrentRate: vi.fn(),
@@ -286,6 +291,48 @@ describe('motd router', () => {
     const caller = motdRouter.createCaller(ctx);
     await caller.recordInteraction({ motdId: M1, contentVersion: 2, kind: 'ACK' });
     expect(prismaMock.motdInteractionCounter.upsert).toHaveBeenCalled();
+  });
+
+  it('recordInteraction THUMB_UP_REVOKE verringert Zähler wenn vorhanden', async () => {
+    prismaMock.motd.findUnique.mockResolvedValue({
+      id: M1,
+      contentVersion: 1,
+    });
+    prismaMock.motdInteractionCounter.findUnique.mockResolvedValue({
+      motdId: M1,
+      thumbUp: 3,
+      thumbDown: 0,
+    });
+    prismaMock.motdInteractionCounter.update.mockResolvedValue({});
+    const caller = motdRouter.createCaller(ctx);
+    await caller.recordInteraction({ motdId: M1, contentVersion: 1, kind: 'THUMB_UP_REVOKE' });
+    expect(prismaMock.motdInteractionCounter.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { motdId: M1 },
+        data: { thumbUp: 2 },
+      }),
+    );
+  });
+
+  it('recordInteraction THUMB_SWITCH_UP_TO_DOWN nutzt Transaktion', async () => {
+    prismaMock.motd.findUnique.mockResolvedValue({
+      id: M1,
+      contentVersion: 1,
+    });
+    prismaMock.motdInteractionCounter.findUnique.mockResolvedValue({
+      motdId: M1,
+      thumbUp: 2,
+      thumbDown: 1,
+    });
+    prismaMock.motdInteractionCounter.update.mockResolvedValue({});
+    const caller = motdRouter.createCaller(ctx);
+    await caller.recordInteraction({
+      motdId: M1,
+      contentVersion: 1,
+      kind: 'THUMB_SWITCH_UP_TO_DOWN',
+    });
+    expect(prismaMock.$transaction).toHaveBeenCalled();
+    expect(prismaMock.motdInteractionCounter.update).toHaveBeenCalled();
   });
 
   it('recordInteraction NOT_FOUND bei Versionskonflikt', async () => {

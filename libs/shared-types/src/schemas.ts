@@ -1404,6 +1404,14 @@ export const MotdInteractionKindEnum = z.enum([
   'ACK',
   'THUMB_UP',
   'THUMB_DOWN',
+  /** Daumen hoch-Zähler −1 (min. 0); Korrektur nach Fehlklick */
+  'THUMB_UP_REVOKE',
+  /** Daumen runter-Zähler −1 (min. 0) */
+  'THUMB_DOWN_REVOKE',
+  /** Von Daumen hoch zu runter wechseln (eine Server-Transaktion) */
+  'THUMB_SWITCH_UP_TO_DOWN',
+  /** Von Daumen runter zu hoch wechseln */
+  'THUMB_SWITCH_DOWN_TO_UP',
   'DISMISS_CLOSE',
   'DISMISS_SWIPE',
 ]);
