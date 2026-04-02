@@ -26,8 +26,15 @@ const statements = [
   // Unique-Constraint: eine Stimme pro Frage PRO RUNDE
   // Alten Constraint sicher entfernen, dann neuen anlegen
   `ALTER TABLE "Vote" DROP CONSTRAINT IF EXISTS "Vote_sessionId_participantId_questionId_key"`,
+  // Baseline (migration.sql) legt ggf. schon CREATE UNIQUE INDEX …_round_key an — gleicher Name wie
+  // Constraint; nur pg_constraint prüfen reicht dann nicht (ERROR: relation … already exists).
   `DO $$ BEGIN
      IF NOT EXISTS (
+       SELECT 1 FROM pg_class c
+       JOIN pg_namespace n ON n.oid = c.relnamespace
+       WHERE n.nspname = 'public'
+         AND c.relname = 'Vote_sessionId_participantId_questionId_round_key'
+     ) AND NOT EXISTS (
        SELECT 1 FROM pg_constraint WHERE conname = 'Vote_sessionId_participantId_questionId_round_key'
      ) THEN
        ALTER TABLE "Vote" ADD CONSTRAINT "Vote_sessionId_participantId_questionId_round_key"
