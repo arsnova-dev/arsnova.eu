@@ -356,7 +356,7 @@ model Motd {
   templateId       String?
   template         MotdTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
   locales          MotdLocale[]
-  interaction      MotdInteractionCounter?
+  interactions     MotdInteractionCounter[]
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
@@ -376,13 +376,17 @@ model MotdLocale {
 }
 
 model MotdInteractionCounter {
-  motdId       String @id
-  motd         Motd   @relation(fields: [motdId], references: [id], onDelete: Cascade)
-  ackCount     Int    @default(0)
-  thumbUp      Int    @default(0)
-  thumbDown    Int    @default(0)
-  dismissClose Int    @default(0)
-  dismissSwipe Int    @default(0)
+  motdId         String
+  contentVersion Int
+  motd           Motd @relation(fields: [motdId], references: [id], onDelete: Cascade)
+  ackCount       Int  @default(0)
+  thumbUp        Int  @default(0)
+  thumbDown      Int  @default(0)
+  dismissClose   Int  @default(0)
+  dismissSwipe   Int  @default(0)
+
+  @@id([motdId, contentVersion])
+  @@index([motdId])
 }
 
 enum MotdAuditAction {

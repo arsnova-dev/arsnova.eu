@@ -11,6 +11,21 @@ const { Client } = require('pg');
 const DEFAULT_DATABASE_URL =
   'postgresql://arsnova_user:secretpassword@localhost:5432/arsnova_v3_dev?schema=public';
 
+function shouldSeedMotdMakingOfRuntime(nodeEnv) {
+  return nodeEnv !== 'production';
+}
+
+function getMotdMakingOfSeedFiles() {
+  return [
+    'prisma/migrations/20260329140000_motd_making_of_ai/migration.sql',
+    'prisma/migrations/20260331100000_motd_making_of_align_start/migration.sql',
+    'prisma/migrations/20260331150000_motd_making_of_greeting_line/migration.sql',
+    'prisma/migrations/20260331160000_motd_making_of_herstellungskosten/migration.sql',
+    'prisma/migrations/20260331170000_motd_making_of_openhub_active/migration.sql',
+    'prisma/migrations/20260401120000_motd_making_of_banner_image/migration.sql',
+  ];
+}
+
 function createClient() {
   const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
   return new Client({ connectionString });
@@ -166,16 +181,17 @@ const statements = [
 /**
  * Making-of-MOTD (Epic 10): SQL wie in prisma/migrations — idempotent (ON CONFLICT).
  * Ohne `prisma migrate` fehlte die zweite Meldung bei reinem `npm run dev` + ensure-schema.
+ * In Produktion NICHT erneut ausführen: `prisma migrate deploy` übernimmt das bereits,
+ * und spätere Runtime-Ausführung würde redaktionelle Änderungen an festen MOTD-IDs überschreiben.
  */
 function seedMotdMakingOfSql() {
+  if (!shouldSeedMotdMakingOfRuntime(process.env.NODE_ENV)) {
+    console.log('>>> MOTD Making-of: übersprungen (Produktion nutzt prisma migrate deploy).');
+    return;
+  }
+
   const root = path.join(__dirname, '..');
-  const files = [
-    'prisma/migrations/20260329140000_motd_making_of_ai/migration.sql',
-    'prisma/migrations/20260331100000_motd_making_of_align_start/migration.sql',
-    'prisma/migrations/20260331150000_motd_making_of_greeting_line/migration.sql',
-    'prisma/migrations/20260331160000_motd_making_of_herstellungskosten/migration.sql',
-    'prisma/migrations/20260331170000_motd_making_of_openhub_active/migration.sql',
-  ];
+  const files = getMotdMakingOfSeedFiles();
   let applied = 0;
   for (const rel of files) {
     const abs = path.join(root, rel);
@@ -246,22 +262,31 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  const detail = formatErr(err);
-  console.error('>>> ensure-schema fehlgeschlagen:', detail);
-  const code = err && err.code;
-  const text = `${detail} ${code || ''}`;
-  if (
-    code === 'ECONNREFUSED' ||
-    /ECONNREFUSED|connect ECONNREFUSED/i.test(text) ||
-    /Connection refused/i.test(text)
-  ) {
-    console.error(
-      '>>> Hinweis: PostgreSQL nicht erreichbar (Port 5432). Dev-DB: npm run docker:up:dev',
-    );
-    console.error(
-      '>>> Wenn docker compose „docker.sock“ / „daemon“ meldet: Docker Desktop (oder Colima) starten — ohne laufenden Docker-Daemon gibt es keine Postgres-Container.',
-    );
-  }
-  process.exit(1);
-});
+module.exports = {
+  DEFAULT_DATABASE_URL,
+  shouldSeedMotdMakingOfRuntime,
+  getMotdMakingOfSeedFiles,
+  seedMotdMakingOfSql,
+};
+
+if (require.main === module) {
+  main().catch((err) => {
+    const detail = formatErr(err);
+    console.error('>>> ensure-schema fehlgeschlagen:', detail);
+    const code = err && err.code;
+    const text = `${detail} ${code || ''}`;
+    if (
+      code === 'ECONNREFUSED' ||
+      /ECONNREFUSED|connect ECONNREFUSED/i.test(text) ||
+      /Connection refused/i.test(text)
+    ) {
+      console.error(
+        '>>> Hinweis: PostgreSQL nicht erreichbar (Port 5432). Dev-DB: npm run docker:up:dev',
+      );
+      console.error(
+        '>>> Wenn docker compose „docker.sock“ / „daemon“ meldet: Docker Desktop (oder Colima) starten — ohne laufenden Docker-Daemon gibt es keine Postgres-Container.',
+      );
+    }
+    process.exit(1);
+  });
+}

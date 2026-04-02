@@ -17,7 +17,7 @@ import {
   AdminMotdUpdateInputSchema,
   MotdLocaleBodiesSchema,
 } from '@arsnova/shared-types';
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 import type { MotdAuditAction } from '@prisma/client';
 import { prisma } from '../db';
 import { adminProcedure, router } from '../trpc';
@@ -51,6 +51,86 @@ function rowsToBodies(rows: Array<{ locale: string; markdown: string }>): MotdLo
     if (r.locale in raw) raw[r.locale] = r.markdown;
   }
   return MotdLocaleBodiesSchema.parse(raw);
+}
+
+function withDefinedProp<K extends string, V>(key: K, value: V | undefined): Partial<Record<K, V>> {
+  if (value === undefined) return {};
+  return { [key]: value } as Partial<Record<K, V>>;
+}
+
+function resolveMotdTimeRange(
+  currentStartsAt: Date,
+  currentEndsAt: Date,
+  inputStartsAt: string | undefined,
+  inputEndsAt: string | undefined,
+) {
+  const startsAt = inputStartsAt === undefined ? currentStartsAt : new Date(inputStartsAt);
+  const endsAt = inputEndsAt === undefined ? currentEndsAt : new Date(inputEndsAt);
+  if (endsAt.getTime() <= startsAt.getTime()) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'endsAt muss nach startsAt liegen.' });
+  }
+  return { startsAt, endsAt };
+}
+
+function shouldIncrementMotdContentVersion(
+  existing: {
+    contentVersion: number;
+    startsAt: Date;
+    endsAt: Date;
+    priority: number;
+    locales: MotdLocaleBodies;
+  },
+  next: {
+    startsAt: Date;
+    endsAt: Date;
+    priority: number | undefined;
+    locales: MotdLocaleBodies | undefined;
+  },
+): boolean {
+  const nextLocales = next.locales;
+  const localeChanged =
+    nextLocales === undefined
+      ? false
+      : APP_LOCALES.some((loc) => existing.locales[loc] !== nextLocales[loc]);
+  const scheduleChanged =
+    next.startsAt.getTime() !== existing.startsAt.getTime() ||
+    next.endsAt.getTime() !== existing.endsAt.getTime();
+  const priorityChanged = next.priority !== undefined && next.priority !== existing.priority;
+  return localeChanged || scheduleChanged || priorityChanged;
+}
+
+function buildTemplateUpdateData(input: {
+  name?: string;
+  description?: string | null;
+  markdownDe?: string;
+  markdownEn?: string;
+  markdownFr?: string;
+  markdownEs?: string;
+  markdownIt?: string;
+}) {
+  return {
+    ...withDefinedProp('name', input.name),
+    ...withDefinedProp('description', input.description),
+    ...withDefinedProp('markdownDe', input.markdownDe),
+    ...withDefinedProp('markdownEn', input.markdownEn),
+    ...withDefinedProp('markdownFr', input.markdownFr),
+    ...withDefinedProp('markdownEs', input.markdownEs),
+    ...withDefinedProp('markdownIt', input.markdownIt),
+  };
+}
+
+function buildMotdUpdateData(input: {
+  status?: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
+  priority?: number;
+  visibleInArchive?: boolean;
+  templateId?: string | null;
+}) {
+  return {
+    ...withDefinedProp('status', input.status),
+    ...withDefinedProp('priority', input.priority),
+    ...withDefinedProp('visibleInArchive', input.visibleInArchive),
+    ...withDefinedProp('templateId', input.templateId),
+  };
 }
 
 async function replaceMotdLocales(motdId: string, bodies: MotdLocaleBodies) {
@@ -94,6 +174,7 @@ function toTemplateDto(t: {
 function interactionStatsDto(
   row:
     | {
+        contentVersion?: number;
         ackCount: number;
         thumbUp: number;
         thumbDown: number;
@@ -115,6 +196,37 @@ function interactionStatsDto(
   };
 }
 
+function interactionKey(motdId: string, contentVersion: number): string {
+  return `${motdId}:${contentVersion}`;
+}
+
+async function fetchInteractionStats(motdId: string, contentVersion: number) {
+  const row = await prisma.motdInteractionCounter.findUnique({
+    where: {
+      motdId_contentVersion: {
+        motdId,
+        contentVersion,
+      },
+    },
+  });
+  return interactionStatsDto(row);
+}
+
+async function fetchInteractionStatsMap(rows: Array<{ id: string; contentVersion: number }>) {
+  if (rows.length <= 0) return new Map<string, ReturnType<typeof interactionStatsDto>>();
+  const counters = await prisma.motdInteractionCounter.findMany({
+    where: {
+      OR: rows.map((row) => ({ motdId: row.id, contentVersion: row.contentVersion })),
+    },
+  });
+  return new Map(
+    counters.map((counter) => [
+      interactionKey(counter.motdId, counter.contentVersion),
+      interactionStatsDto(counter),
+    ]),
+  );
+}
+
 function toMotdListItem(m: {
   id: string;
   status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
@@ -125,7 +237,7 @@ function toMotdListItem(m: {
   contentVersion: number;
   templateId: string | null;
   updatedAt: Date;
-  interaction: {
+  interaction?: {
     ackCount: number;
     thumbUp: number;
     thumbDown: number;
@@ -165,8 +277,10 @@ export const adminMotdRouter = router({
     .output(AdminMotdTemplateDTOSchema)
     .query(async ({ input }) => {
       const t = await prisma.motdTemplate.findUnique({ where: { id: input.id } });
-      if (!t) throw new TRPCError({ code: 'NOT_FOUND', message: 'Vorlage nicht gefunden.' });
-      return toTemplateDto(t);
+      if (t) {
+        return toTemplateDto(t);
+      }
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Vorlage nicht gefunden.' });
     }),
 
   templateCreate: adminProcedure
@@ -196,15 +310,7 @@ export const adminMotdRouter = router({
       if (!existing) throw new TRPCError({ code: 'NOT_FOUND', message: 'Vorlage nicht gefunden.' });
       const t = await prisma.motdTemplate.update({
         where: { id: input.id },
-        data: {
-          ...(input.name !== undefined ? { name: input.name } : {}),
-          ...(input.description !== undefined ? { description: input.description } : {}),
-          ...(input.markdownDe !== undefined ? { markdownDe: input.markdownDe } : {}),
-          ...(input.markdownEn !== undefined ? { markdownEn: input.markdownEn } : {}),
-          ...(input.markdownFr !== undefined ? { markdownFr: input.markdownFr } : {}),
-          ...(input.markdownEs !== undefined ? { markdownEs: input.markdownEs } : {}),
-          ...(input.markdownIt !== undefined ? { markdownIt: input.markdownIt } : {}),
-        },
+        data: buildTemplateUpdateData(input),
       });
       await logMotdAudit('MOTD_TEMPLATE_UPDATE', t.id, ctx.adminToken);
       return toTemplateDto(t);
@@ -224,9 +330,14 @@ export const adminMotdRouter = router({
   motdList: adminProcedure.output(AdminMotdListOutputSchema).query(async () => {
     const rows = await prisma.motd.findMany({
       orderBy: [{ updatedAt: 'desc' }],
-      include: { interaction: true },
     });
-    return rows.map(toMotdListItem);
+    const interactionMap = await fetchInteractionStatsMap(rows);
+    return rows.map((row) =>
+      toMotdListItem({
+        ...row,
+        interaction: interactionMap.get(interactionKey(row.id, row.contentVersion)) ?? null,
+      }),
+    );
   }),
 
   motdGet: adminProcedure
@@ -235,9 +346,10 @@ export const adminMotdRouter = router({
     .query(async ({ input }) => {
       const m = await prisma.motd.findUnique({
         where: { id: input.id },
-        include: { locales: true, interaction: true },
+        include: { locales: true },
       });
       if (!m) throw new TRPCError({ code: 'NOT_FOUND', message: 'MOTD nicht gefunden.' });
+      const interaction = await fetchInteractionStats(m.id, m.contentVersion);
       return AdminMotdDetailDTOSchema.parse({
         id: m.id,
         status: m.status,
@@ -248,7 +360,7 @@ export const adminMotdRouter = router({
         contentVersion: m.contentVersion,
         templateId: m.templateId,
         locales: rowsToBodies(m.locales),
-        interaction: interactionStatsDto(m.interaction),
+        interaction,
         createdAt: m.createdAt.toISOString(),
         updatedAt: m.updatedAt.toISOString(),
       });
@@ -260,7 +372,7 @@ export const adminMotdRouter = router({
     .mutation(async ({ ctx, input }) => {
       const startsAt = new Date(input.startsAt);
       const endsAt = new Date(input.endsAt);
-      if (!(endsAt.getTime() > startsAt.getTime())) {
+      if (endsAt.getTime() <= startsAt.getTime()) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'endsAt muss nach startsAt liegen.' });
       }
       if (input.templateId) {
@@ -285,8 +397,9 @@ export const adminMotdRouter = router({
       }
       const full = await prisma.motd.findUniqueOrThrow({
         where: { id: m.id },
-        include: { locales: true, interaction: true },
+        include: { locales: true },
       });
+      const interaction = await fetchInteractionStats(full.id, full.contentVersion);
       return AdminMotdDetailDTOSchema.parse({
         id: full.id,
         status: full.status,
@@ -297,7 +410,7 @@ export const adminMotdRouter = router({
         contentVersion: full.contentVersion,
         templateId: full.templateId,
         locales: rowsToBodies(full.locales),
-        interaction: interactionStatsDto(full.interaction),
+        interaction,
         createdAt: full.createdAt.toISOString(),
         updatedAt: full.updatedAt.toISOString(),
       });
@@ -311,33 +424,41 @@ export const adminMotdRouter = router({
         where: { id: input.id },
         include: { locales: true },
       });
-      if (!existing) throw new TRPCError({ code: 'NOT_FOUND', message: 'MOTD nicht gefunden.' });
-
-      let startsAt = existing.startsAt;
-      let endsAt = existing.endsAt;
-      if (input.startsAt !== undefined) startsAt = new Date(input.startsAt);
-      if (input.endsAt !== undefined) endsAt = new Date(input.endsAt);
-      if (!(endsAt.getTime() > startsAt.getTime())) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'endsAt muss nach startsAt liegen.' });
+      if (existing === null) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'MOTD nicht gefunden.' });
       }
+
+      const { startsAt, endsAt } = resolveMotdTimeRange(
+        existing.startsAt,
+        existing.endsAt,
+        input.startsAt,
+        input.endsAt,
+      );
 
       if (input.templateId !== undefined && input.templateId !== null) {
         const tpl = await prisma.motdTemplate.findUnique({ where: { id: input.templateId } });
         if (!tpl) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Vorlage nicht gefunden.' });
       }
 
-      let contentVersion = existing.contentVersion;
       const nextLocales = input.locales;
       const oldBodies = rowsToBodies(existing.locales);
-      const localeChanged =
-        nextLocales !== undefined && APP_LOCALES.some((loc) => oldBodies[loc] !== nextLocales[loc]);
-      const scheduleChanged =
-        startsAt.getTime() !== existing.startsAt.getTime() ||
-        endsAt.getTime() !== existing.endsAt.getTime();
-      const priorityChanged = input.priority !== undefined && input.priority !== existing.priority;
-      if (localeChanged || scheduleChanged || priorityChanged) {
-        contentVersion = existing.contentVersion + 1;
-      }
+      const contentVersion = shouldIncrementMotdContentVersion(
+        {
+          contentVersion: existing.contentVersion,
+          startsAt: existing.startsAt,
+          endsAt: existing.endsAt,
+          priority: existing.priority,
+          locales: oldBodies,
+        },
+        {
+          startsAt,
+          endsAt,
+          priority: input.priority,
+          locales: nextLocales,
+        },
+      )
+        ? existing.contentVersion + 1
+        : existing.contentVersion;
 
       const prevPublished = existing.status === 'PUBLISHED';
       const nextStatus = input.status ?? existing.status;
@@ -346,14 +467,9 @@ export const adminMotdRouter = router({
       const m = await prisma.motd.update({
         where: { id: input.id },
         data: {
-          ...(input.status !== undefined ? { status: input.status } : {}),
-          ...(input.priority !== undefined ? { priority: input.priority } : {}),
+          ...buildMotdUpdateData(input),
           startsAt,
           endsAt,
-          ...(input.visibleInArchive !== undefined
-            ? { visibleInArchive: input.visibleInArchive }
-            : {}),
-          ...(input.templateId !== undefined ? { templateId: input.templateId } : {}),
           contentVersion,
         },
       });
@@ -374,8 +490,9 @@ export const adminMotdRouter = router({
 
       const full = await prisma.motd.findUniqueOrThrow({
         where: { id: m.id },
-        include: { locales: true, interaction: true },
+        include: { locales: true },
       });
+      const interaction = await fetchInteractionStats(full.id, full.contentVersion);
       return AdminMotdDetailDTOSchema.parse({
         id: full.id,
         status: full.status,
@@ -386,7 +503,7 @@ export const adminMotdRouter = router({
         contentVersion: full.contentVersion,
         templateId: full.templateId,
         locales: rowsToBodies(full.locales),
-        interaction: interactionStatsDto(full.interaction),
+        interaction,
         createdAt: full.createdAt.toISOString(),
         updatedAt: full.updatedAt.toISOString(),
       });
@@ -403,19 +520,22 @@ export const adminMotdRouter = router({
       return undefined;
     }),
 
-  /** Setzt aggregierte Nutzerreaktionen (ACK, Daumen, Dismiss) für eine MOTD auf null – ohne contentVersion zu ändern. */
+  /** Setzt aggregierte Nutzerreaktionen der aktuellen contentVersion auf null – ohne contentVersion zu ändern. */
   motdResetInteractionStats: adminProcedure
     .input(AdminMotdIdInputSchema)
     .output(AdminMotdDetailDTOSchema)
     .mutation(async ({ ctx, input }) => {
       const existing = await prisma.motd.findUnique({ where: { id: input.id } });
       if (!existing) throw new TRPCError({ code: 'NOT_FOUND', message: 'MOTD nicht gefunden.' });
-      await prisma.motdInteractionCounter.deleteMany({ where: { motdId: input.id } });
+      await prisma.motdInteractionCounter.deleteMany({
+        where: { motdId: input.id, contentVersion: existing.contentVersion },
+      });
       await logMotdAudit('MOTD_RESET_INTERACTION_STATS', input.id, ctx.adminToken);
       const full = await prisma.motd.findUniqueOrThrow({
         where: { id: input.id },
-        include: { locales: true, interaction: true },
+        include: { locales: true },
       });
+      const interaction = await fetchInteractionStats(full.id, full.contentVersion);
       return AdminMotdDetailDTOSchema.parse({
         id: full.id,
         status: full.status,
@@ -426,7 +546,7 @@ export const adminMotdRouter = router({
         contentVersion: full.contentVersion,
         templateId: full.templateId,
         locales: rowsToBodies(full.locales),
-        interaction: interactionStatsDto(full.interaction),
+        interaction,
         createdAt: full.createdAt.toISOString(),
         updatedAt: full.updatedAt.toISOString(),
       });

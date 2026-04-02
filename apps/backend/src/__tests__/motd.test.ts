@@ -87,7 +87,7 @@ describe('motd router', () => {
     vi.useRealTimers();
   });
 
-  const ctx = { req: undefined as undefined };
+  const ctx = { req: undefined };
 
   it('getCurrent: leeres/fehlendes input → Locale de (kein 400)', async () => {
     prismaMock.motd.findMany.mockResolvedValue([
@@ -264,6 +264,9 @@ describe('motd router', () => {
     const now = new Date('2026-06-15T12:00:00.000Z');
     prismaMock.motd.findUnique.mockResolvedValue(null);
     prismaMock.motd.findMany.mockResolvedValue([]);
+    prismaMock.motd.count.mockResolvedValue(0);
+    prismaMock.motd.aggregate.mockResolvedValue({ _max: { endsAt: null } });
+    prismaMock.motdInteractionCounter.findUnique.mockResolvedValue(null);
     const caller = motdRouter.createCaller(ctx);
     await caller.listArchive({ locale: 'de', pageSize: 10 });
     expect(prismaMock.motd.findMany).toHaveBeenCalledWith(
@@ -290,7 +293,16 @@ describe('motd router', () => {
     prismaMock.motdInteractionCounter.upsert.mockResolvedValue({});
     const caller = motdRouter.createCaller(ctx);
     await caller.recordInteraction({ motdId: M1, contentVersion: 2, kind: 'ACK' });
-    expect(prismaMock.motdInteractionCounter.upsert).toHaveBeenCalled();
+    expect(prismaMock.motdInteractionCounter.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          motdId_contentVersion: {
+            motdId: M1,
+            contentVersion: 2,
+          },
+        },
+      }),
+    );
   });
 
   it('recordInteraction THUMB_UP_REVOKE verringert Zähler wenn vorhanden', async () => {
@@ -308,10 +320,45 @@ describe('motd router', () => {
     await caller.recordInteraction({ motdId: M1, contentVersion: 1, kind: 'THUMB_UP_REVOKE' });
     expect(prismaMock.motdInteractionCounter.update).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { motdId: M1 },
+        where: {
+          motdId_contentVersion: {
+            motdId: M1,
+            contentVersion: 1,
+          },
+        },
         data: { thumbUp: 2 },
       }),
     );
+  });
+
+  it('getHeaderState zählt nur Archiveinträge mit nutzbarem Fallback-Markdown', async () => {
+    prismaMock.motd.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([
+      {
+        id: M1,
+        contentVersion: 1,
+        startsAt: new Date('2026-06-01T00:00:00.000Z'),
+        endsAt: new Date('2026-06-10T00:00:00.000Z'),
+        locales: [{ locale: 'de', markdown: '  ' }],
+      },
+      {
+        id: M2,
+        contentVersion: 1,
+        startsAt: new Date('2026-06-02T00:00:00.000Z'),
+        endsAt: new Date('2026-06-11T00:00:00.000Z'),
+        locales: [{ locale: 'en', markdown: 'Visible fallback' }],
+      },
+    ]);
+
+    const caller = motdRouter.createCaller(ctx);
+    const result = await caller.getHeaderState({
+      locale: 'de',
+      archiveSeenUpToEndsAtIso: '2026-06-10T12:00:00.000Z',
+    });
+
+    expect(result.hasArchiveEntries).toBe(true);
+    expect(result.archiveCount).toBe(1);
+    expect(result.archiveUnreadCount).toBe(1);
+    expect(result.archiveMaxEndsAtIso).toBe('2026-06-11T00:00:00.000Z');
   });
 
   it('recordInteraction THUMB_SWITCH_UP_TO_DOWN nutzt Transaktion', async () => {
@@ -397,20 +444,47 @@ describe('motd router', () => {
   });
 
   it('getHeaderState liefert Overlay- und Archiv-Flags inkl. archiveCount', async () => {
-    prismaMock.motd.findMany.mockResolvedValue([
-      {
-        id: M1,
-        priority: 1,
-        contentVersion: 2,
-        startsAt: new Date('2026-06-01T00:00:00.000Z'),
-        endsAt: new Date('2026-06-20T00:00:00.000Z'),
-        locales: [{ locale: 'de', markdown: 'Live' }],
-      },
-    ]);
-    prismaMock.motd.count.mockResolvedValue(4);
-    prismaMock.motd.aggregate.mockResolvedValue({
-      _max: { endsAt: new Date('2026-12-31T23:59:59.000Z') },
-    });
+    prismaMock.motd.findMany
+      .mockResolvedValueOnce([
+        {
+          id: M1,
+          priority: 1,
+          contentVersion: 2,
+          startsAt: new Date('2026-06-01T00:00:00.000Z'),
+          endsAt: new Date('2026-06-20T00:00:00.000Z'),
+          locales: [{ locale: 'de', markdown: 'Live' }],
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          id: 'a',
+          contentVersion: 1,
+          startsAt: new Date('2026-06-01T00:00:00.000Z'),
+          endsAt: new Date('2026-12-31T23:59:59.000Z'),
+          locales: [{ locale: 'de', markdown: 'A' }],
+        },
+        {
+          id: 'b',
+          contentVersion: 1,
+          startsAt: new Date('2026-05-01T00:00:00.000Z'),
+          endsAt: new Date('2026-11-30T23:59:59.000Z'),
+          locales: [{ locale: 'en', markdown: 'B' }],
+        },
+        {
+          id: 'c',
+          contentVersion: 1,
+          startsAt: new Date('2026-04-01T00:00:00.000Z'),
+          endsAt: new Date('2026-10-31T23:59:59.000Z'),
+          locales: [{ locale: 'de', markdown: 'C' }],
+        },
+        {
+          id: 'd',
+          contentVersion: 1,
+          startsAt: new Date('2026-03-01T00:00:00.000Z'),
+          endsAt: new Date('2026-09-30T23:59:59.000Z'),
+          locales: [{ locale: 'fr', markdown: 'D' }],
+        },
+      ]);
     const caller = motdRouter.createCaller(ctx);
     const r = await caller.getHeaderState({ locale: 'de' });
     expect(r.hasActiveOverlay).toBe(true);
@@ -421,21 +495,19 @@ describe('motd router', () => {
   });
 
   it('getHeaderState setzt archiveUnreadCount anhand archiveSeenUpToEndsAtIso', async () => {
-    prismaMock.motd.findMany.mockResolvedValue([]);
-    prismaMock.motd.count.mockImplementation((args: { where?: { AND?: unknown[] } }) => {
-      const and = args?.where?.AND;
-      if (Array.isArray(and) && and.length >= 2) {
-        return Promise.resolve(3);
-      }
-      return Promise.resolve(10);
-    });
-    prismaMock.motd.aggregate.mockResolvedValue({
-      _max: { endsAt: new Date('2026-08-01T00:00:00.000Z') },
-    });
+    prismaMock.motd.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce(
+      Array.from({ length: 10 }, (_, index) => ({
+        id: `archive-${index + 1}`,
+        contentVersion: 1,
+        startsAt: new Date('2026-05-01T00:00:00.000Z'),
+        endsAt: new Date(`2026-06-${String(index + 1).padStart(2, '0')}T00:00:00.000Z`),
+        locales: [{ locale: 'de', markdown: `Eintrag ${index + 1}` }],
+      })),
+    );
     const caller = motdRouter.createCaller(ctx);
     const r = await caller.getHeaderState({
       locale: 'de',
-      archiveSeenUpToEndsAtIso: '2026-06-01T00:00:00.000Z',
+      archiveSeenUpToEndsAtIso: '2026-06-07T00:00:00.000Z',
     });
     expect(r.hasActiveOverlay).toBe(false);
     expect(r.archiveCount).toBe(10);

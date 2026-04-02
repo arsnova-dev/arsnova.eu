@@ -55,9 +55,23 @@ export function renderMarkdownWithKatex(source = ''): MarkdownRenderResult {
 function parseMarkdownEscapingInlineHtml(source: string): string {
   const renderer = new marked.Renderer();
   renderer.html = ({ text }) => escapeHtml(text);
+  renderer.link = ({ href, title, text }): string => {
+    const safeHref = sanitizeMarkdownUrl(href, 'link');
+    if (!safeHref) {
+      return text;
+    }
+    const hrefEsc = escapeHtml(safeHref);
+    const hasTitle = title !== undefined && title !== null && String(title).trim() !== '';
+    const titleAttr = hasTitle ? ` title="${escapeHtml(String(title).trim())}"` : '';
+    return `<a href="${hrefEsc}"${titleAttr}>${text}</a>`;
+  };
   /** `alt` allein löst keinen Hover-Tooltip aus; `title` schon (optional explizit in `![](url "title")`). */
   renderer.image = ({ href, title, text }): string => {
-    const hrefEsc = escapeHtml(href);
+    const safeHref = sanitizeMarkdownUrl(href, 'image');
+    if (!safeHref) {
+      return escapeHtml(text);
+    }
+    const hrefEsc = escapeHtml(safeHref);
     const altEsc = escapeHtml(text);
     const hasTitle = title !== undefined && title !== null && String(title).trim() !== '';
     const tooltip = hasTitle ? String(title).trim() : text;
@@ -110,6 +124,29 @@ export function appendMotdContentVersionToAssetImgSrc(
 
 function mathPlaceholder(index: number): string {
   return `KATEXPLACEHOLDERTOKEN${index}`;
+}
+
+function sanitizeMarkdownUrl(
+  href: string | null | undefined,
+  type: 'link' | 'image',
+): string | null {
+  if (!href) return null;
+  const value = href.trim();
+  if (!value) return null;
+  if (value.startsWith('#') || value.startsWith('?')) return value;
+  if (value.startsWith('/')) {
+    return value.startsWith('//') ? null : value;
+  }
+  if (value.startsWith('./') || value.startsWith('../')) return value;
+  if (/^[^\s/:?#]+(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#.*)?$/.test(value)) return value;
+
+  const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(value);
+  if (!schemeMatch) return null;
+
+  const scheme = schemeMatch[1].toLowerCase();
+  const allowedSchemes =
+    type === 'image' ? new Set(['https']) : new Set(['https', 'mailto', 'tel']);
+  return allowedSchemes.has(scheme) ? value : null;
 }
 
 function escapeHtml(value: string): string {

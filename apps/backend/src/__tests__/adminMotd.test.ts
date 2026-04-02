@@ -7,6 +7,8 @@ const { prismaMock, extractAdminTokenMock, isAdminSessionTokenValidMock } = vi.h
       findUniqueOrThrow: vi.fn(),
     },
     motdInteractionCounter: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
       deleteMany: vi.fn(),
     },
     motdAuditLog: {
@@ -52,6 +54,7 @@ describe('adminMotdRouter', () => {
       templateId: null,
     });
     prismaMock.motdInteractionCounter.deleteMany.mockResolvedValue({ count: 1 });
+    prismaMock.motdInteractionCounter.findUnique.mockResolvedValue(null);
     prismaMock.motdAuditLog.create.mockResolvedValue({});
     prismaMock.motd.findUniqueOrThrow.mockResolvedValue({
       id: MID,
@@ -68,14 +71,13 @@ describe('adminMotdRouter', () => {
         { locale: 'de', markdown: 'Hallo' },
         { locale: 'en', markdown: 'Hi' },
       ],
-      interaction: null,
     });
 
     const caller = adminMotdRouter.createCaller({ req: {} as never });
     const out = await caller.motdResetInteractionStats({ id: MID });
 
     expect(prismaMock.motdInteractionCounter.deleteMany).toHaveBeenCalledWith({
-      where: { motdId: MID },
+      where: { motdId: MID, contentVersion: 3 },
     });
     expect(prismaMock.motdAuditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({

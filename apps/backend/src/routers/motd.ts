@@ -28,8 +28,13 @@ import {
   redisKeyMotdRecordInteraction,
   shouldBypassMotdGetCurrentRate,
 } from '../lib/rateLimit';
-import { publicProcedure, resolveClientIp, router, type Context } from '../trpc';
-import type { ResolvedClientIp } from '../trpc';
+import {
+  publicProcedure,
+  resolveClientIp,
+  router,
+  type Context,
+  type ResolvedClientIp,
+} from '../trpc';
 
 /**
  * Obergrenze gleichzeitig aktiver PUBLISHED-MOTDs für die Overlay-Auswahl (Sortierung im Speicher).
@@ -95,6 +100,13 @@ function motdArchiveListWhere(now: Date): Prisma.MotdWhereInput {
 }
 
 type OverlayDismissedPair = { motdId: string; contentVersion: number };
+type ArchiveLocalizedRow = {
+  id: string;
+  contentVersion: number;
+  startsAt: Date;
+  endsAt: Date;
+  locales: Array<{ locale: string; markdown: string }>;
+};
 
 function mergeOverlayDismissedMap(
   pairs: OverlayDismissedPair[] | undefined,
@@ -160,6 +172,49 @@ async function fetchCurrentMotdDto(
     };
   }
   return null;
+}
+
+function mapArchiveRowsForLocale(rows: ArchiveLocalizedRow[], locale: AppLocale) {
+  return rows
+    .map((m) => {
+      const map = localesToMap(m.locales);
+      const markdown = resolveMotdMarkdown(map, locale);
+      if (!markdown.trim()) return null;
+      return {
+        id: m.id,
+        contentVersion: m.contentVersion,
+        markdown,
+        startsAt: m.startsAt.toISOString(),
+        endsAt: m.endsAt.toISOString(),
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
+}
+
+async function fetchArchiveHeaderStats(locale: AppLocale, now: Date, seen: Date | null) {
+  const rows = await prisma.motd.findMany({
+    where: motdArchiveListWhere(now),
+    select: {
+      id: true,
+      contentVersion: true,
+      startsAt: true,
+      endsAt: true,
+      locales: true,
+    },
+    orderBy: [{ endsAt: 'desc' }, { id: 'desc' }],
+  });
+  const visible = mapArchiveRowsForLocale(rows, locale);
+  const archiveCount = visible.length;
+  const archiveMaxEndsAtIso = visible[0]?.endsAt ?? null;
+  const archiveUnreadCount =
+    seen === null
+      ? archiveCount
+      : visible.reduce((count, item) => count + (new Date(item.endsAt) > seen ? 1 : 0), 0);
+  return {
+    archiveCount,
+    archiveMaxEndsAtIso,
+    archiveUnreadCount,
+  };
 }
 
 /** Belegt bei jedem MOTD-429: welche IP, welcher Redis-Schlüssel, welches Limit — ohne Raten. */
@@ -274,22 +329,9 @@ export const motdRouter = router({
 
       const page = motds.slice(0, take);
       const hasMore = motds.length > take;
-      const nextCursor = hasMore && page.length > 0 ? page[page.length - 1]!.id : null;
+      const nextCursor = hasMore ? (page.at(-1)?.id ?? null) : null;
 
-      const items = page
-        .map((m) => {
-          const map = localesToMap(m.locales);
-          const markdown = resolveMotdMarkdown(map, locale);
-          if (!markdown.trim()) return null;
-          return {
-            id: m.id,
-            contentVersion: m.contentVersion,
-            markdown,
-            startsAt: m.startsAt.toISOString(),
-            endsAt: m.endsAt.toISOString(),
-          };
-        })
-        .filter((x): x is NonNullable<typeof x> => x !== null);
+      const items = mapArchiveRowsForLocale(page, locale);
 
       return { items, nextCursor };
     }),
@@ -322,37 +364,16 @@ export const motdRouter = router({
       }
       const now = new Date();
       const locale = resolveMotdLocale(input.locale, ctx);
-      const archiveWhere = motdArchiveListWhere(now);
       const seenRaw = input.archiveSeenUpToEndsAtIso;
       const seen = seenRaw && !Number.isNaN(new Date(seenRaw).getTime()) ? new Date(seenRaw) : null;
 
       const dismissed = input.overlayDismissedUpTo;
-      const results = seen
-        ? await Promise.all([
-            fetchCurrentMotdDto(locale, now, dismissed),
-            prisma.motd.count({ where: archiveWhere }),
-            prisma.motd.aggregate({
-              where: archiveWhere,
-              _max: { endsAt: true },
-            }),
-            prisma.motd.count({
-              where: { AND: [archiveWhere, { endsAt: { gt: seen } }] },
-            }),
-          ])
-        : await Promise.all([
-            fetchCurrentMotdDto(locale, now, dismissed),
-            prisma.motd.count({ where: archiveWhere }),
-            prisma.motd.aggregate({
-              where: archiveWhere,
-              _max: { endsAt: true },
-            }),
-          ]);
+      const [motd, archiveStats] = await Promise.all([
+        fetchCurrentMotdDto(locale, now, dismissed),
+        fetchArchiveHeaderStats(locale, now, seen),
+      ]);
 
-      const motd = results[0];
-      const archiveCount = results[1];
-      const agg = results[2];
-      const archiveMaxEndsAtIso = agg._max.endsAt?.toISOString() ?? null;
-      const archiveUnreadCount = seen ? results[3]! : archiveCount;
+      const { archiveCount, archiveMaxEndsAtIso, archiveUnreadCount } = archiveStats;
 
       return {
         hasActiveOverlay: motd !== null,
@@ -389,48 +410,55 @@ export const motdRouter = router({
       }
 
       const motd = await prisma.motd.findUnique({ where: { id: input.motdId } });
-      if (!motd || motd.contentVersion !== input.contentVersion) {
+      if (motd?.contentVersion !== input.contentVersion) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'MOTD nicht gefunden.' });
       }
 
       const base = {
         motdId: input.motdId,
+        contentVersion: input.contentVersion,
         ackCount: 0,
         thumbUp: 0,
         thumbDown: 0,
         dismissClose: 0,
         dismissSwipe: 0,
       };
+      const where = {
+        motdId_contentVersion: {
+          motdId: input.motdId,
+          contentVersion: input.contentVersion,
+        },
+      };
       const inc = { increment: 1 };
       switch (input.kind) {
         case 'ACK':
           await prisma.motdInteractionCounter.upsert({
-            where: { motdId: input.motdId },
+            where,
             create: { ...base, ackCount: 1 },
             update: { ackCount: inc },
           });
           break;
         case 'THUMB_UP':
           await prisma.motdInteractionCounter.upsert({
-            where: { motdId: input.motdId },
+            where,
             create: { ...base, thumbUp: 1 },
             update: { thumbUp: inc },
           });
           break;
         case 'THUMB_DOWN':
           await prisma.motdInteractionCounter.upsert({
-            where: { motdId: input.motdId },
+            where,
             create: { ...base, thumbDown: 1 },
             update: { thumbDown: inc },
           });
           break;
         case 'THUMB_UP_REVOKE': {
           const row = await prisma.motdInteractionCounter.findUnique({
-            where: { motdId: input.motdId },
+            where,
           });
           if (row && row.thumbUp > 0) {
             await prisma.motdInteractionCounter.update({
-              where: { motdId: input.motdId },
+              where,
               data: { thumbUp: row.thumbUp - 1 },
             });
           }
@@ -438,11 +466,11 @@ export const motdRouter = router({
         }
         case 'THUMB_DOWN_REVOKE': {
           const row = await prisma.motdInteractionCounter.findUnique({
-            where: { motdId: input.motdId },
+            where,
           });
           if (row && row.thumbDown > 0) {
             await prisma.motdInteractionCounter.update({
-              where: { motdId: input.motdId },
+              where,
               data: { thumbDown: row.thumbDown - 1 },
             });
           }
@@ -451,7 +479,7 @@ export const motdRouter = router({
         case 'THUMB_SWITCH_UP_TO_DOWN':
           await prisma.$transaction(async (tx) => {
             const row = await tx.motdInteractionCounter.findUnique({
-              where: { motdId: input.motdId },
+              where,
             });
             if (!row) {
               await tx.motdInteractionCounter.create({
@@ -460,7 +488,7 @@ export const motdRouter = router({
               return;
             }
             await tx.motdInteractionCounter.update({
-              where: { motdId: input.motdId },
+              where,
               data: {
                 thumbUp: Math.max(0, row.thumbUp - 1),
                 thumbDown: { increment: 1 },
@@ -471,7 +499,7 @@ export const motdRouter = router({
         case 'THUMB_SWITCH_DOWN_TO_UP':
           await prisma.$transaction(async (tx) => {
             const row = await tx.motdInteractionCounter.findUnique({
-              where: { motdId: input.motdId },
+              where,
             });
             if (!row) {
               await tx.motdInteractionCounter.create({
@@ -480,7 +508,7 @@ export const motdRouter = router({
               return;
             }
             await tx.motdInteractionCounter.update({
-              where: { motdId: input.motdId },
+              where,
               data: {
                 thumbDown: Math.max(0, row.thumbDown - 1),
                 thumbUp: { increment: 1 },
@@ -490,14 +518,14 @@ export const motdRouter = router({
           break;
         case 'DISMISS_CLOSE':
           await prisma.motdInteractionCounter.upsert({
-            where: { motdId: input.motdId },
+            where,
             create: { ...base, dismissClose: 1 },
             update: { dismissClose: inc },
           });
           break;
         case 'DISMISS_SWIPE':
           await prisma.motdInteractionCounter.upsert({
-            where: { motdId: input.motdId },
+            where,
             create: { ...base, dismissSwipe: 1 },
             update: { dismissSwipe: inc },
           });

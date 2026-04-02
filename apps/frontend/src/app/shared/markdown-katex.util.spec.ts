@@ -16,7 +16,7 @@ describe('renderMarkdownWithKatex', () => {
   });
 
   it('liefert bei ungültiger KaTeX-Syntax eine lesbare Fehlermarkierung', () => {
-    const result = renderMarkdownWithKatex('Formel: $\\\\frac{1}{2$');
+    const result = renderMarkdownWithKatex(String.raw`Formel: $\frac{1}{2$`);
 
     expect(result.katexError).toBeTruthy();
     expect(result.html).toContain('KaTeX-Fehler');
@@ -55,6 +55,39 @@ describe('renderMarkdownWithoutKatex', () => {
   it('nutzt optionalen Markdown-Bildtitel als title-Attribut', () => {
     const html = renderMarkdownWithoutKatex('![a](b.svg "Expliziter Titel")');
     expect(html).toMatch(/title="Expliziter Titel"/);
+  });
+
+  it('entfernt javascript-Links aus dem gerenderten HTML', () => {
+    const html = renderMarkdownWithoutKatex('[klick](javascript:alert(1))');
+    expect(html).toContain('<p>klick</p>');
+    expect(html).not.toContain('href="javascript:alert(1)"');
+    expect(html).not.toContain('<a ');
+  });
+
+  it('entfernt javascript-Bildquellen aus dem gerenderten HTML', () => {
+    const html = renderMarkdownWithoutKatex('![Alarm](javascript:alert(1))');
+    expect(html).toContain('<p>Alarm</p>');
+    expect(html).not.toContain('<img ');
+    expect(html).not.toContain('src="javascript:alert(1)"');
+  });
+
+  it('erlaubt sichere relative und https-Links weiterhin', () => {
+    const html = renderMarkdownWithoutKatex(
+      '[intern](/de/datenschutz) [extern](https://arsnova.eu/info) [mail](mailto:test@example.org)',
+    );
+    expect(html).toContain('href="/de/datenschutz"');
+    expect(html).toContain('href="https://arsnova.eu/info"');
+    expect(html).toContain('href="mailto:test@example.org"');
+  });
+
+  it('entfernt unsichere http-Links und http-Bildquellen', () => {
+    const html = renderMarkdownWithoutKatex(
+      '[unsicher](http://arsnova.eu/info) ![unsicher](http://arsnova.eu/banner.png)',
+    );
+    expect(html).not.toContain('href="http://arsnova.eu/info"');
+    expect(html).not.toContain('src="http://arsnova.eu/banner.png"');
+    expect(html).not.toContain('<img ');
+    expect(html).toContain('unsicher');
   });
 
   it('absolutizeMarkdownHtmlRootAssetImgSrc setzt MOTD-Banner auf volle Origin-URL', () => {
