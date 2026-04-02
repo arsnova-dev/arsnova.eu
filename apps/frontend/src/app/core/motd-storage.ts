@@ -1,7 +1,7 @@
 /**
  * Browser-Persistenz für MOTD (Epic 10): Dismiss-Versionen und einmalige Interaktionen pro Build.
  */
-export const MOTD_LOCAL_STORAGE_KEY = 'arsnova-motd-v1';
+export const MOTD_LOCAL_STORAGE_KEY = 'arsnova-motd-v2';
 
 export type MotdClientStorageV1 = {
   /** motdId → zuletzt bestätigte contentVersion (Overlay nicht mehr zeigen) */

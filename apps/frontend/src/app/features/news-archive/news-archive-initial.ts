@@ -4,6 +4,7 @@ import { trpc } from '../../core/trpc.client';
 import { resolveMotdAssetOrigin } from '../../core/motd-asset-origin';
 import { getMotdArchiveSeenUpToEndsAtIso, motdDismissedPairsForApi } from '../../core/motd-storage';
 import { buildMotdArchiveItemDisplay } from '../../shared/motd-archive-render.util';
+import { sortMotdArchiveItemsNewFirst } from '../../shared/motd-archive-sort.util';
 
 export type NewsArchiveInitialModel = {
   items: MotdArchiveItemDTO[];
@@ -55,9 +56,9 @@ export async function loadNewsArchivePageModel(
 
   if (listResult.status === 'fulfilled') {
     const first = listResult.value;
-    items = first.items;
+    items = sortMotdArchiveItemsNewFirst(first.items);
     nextCursor = first.nextCursor;
-    for (const it of first.items) {
+    for (const it of items) {
       const { title, html } = buildMotdArchiveItemDisplay(it, sanitizer, fallbackTitle, {
         assetOrigin: resolveMotdAssetOrigin(),
       });

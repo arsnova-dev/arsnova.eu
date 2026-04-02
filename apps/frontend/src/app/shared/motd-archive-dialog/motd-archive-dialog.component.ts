@@ -29,6 +29,7 @@ import {
 import { resolveMotdAssetOrigin } from '../../core/motd-asset-origin';
 import { formatMotdArchiveStartsAtForDisplay } from '../../core/motd-ends-display';
 import { buildMotdArchiveItemDisplay } from '../motd-archive-render.util';
+import { sortMotdArchiveItemsNewFirst } from '../motd-archive-sort.util';
 
 export type MotdArchiveDialogData = { locale: AppLocale };
 
@@ -142,11 +143,12 @@ export class MotdArchiveDialogComponent implements OnInit {
 
     if (listResult.status === 'fulfilled') {
       const first = listResult.value;
-      this.items.set(first.items);
+      const sorted = sortMotdArchiveItemsNewFirst(first.items);
+      this.items.set(sorted);
       this.nextCursor.set(first.nextCursor);
       const titles: Record<string, string> = {};
       const map: Record<string, SafeHtml> = {};
-      for (const it of first.items) {
+      for (const it of sorted) {
         const { title, html } = this.buildArchiveRender(it);
         titles[it.id] = title;
         map[it.id] = html;
@@ -181,7 +183,7 @@ export class MotdArchiveDialogComponent implements OnInit {
         pageSize: 30,
         cursor,
       });
-      this.items.update((prev) => [...prev, ...page.items]);
+      this.items.update((prev) => sortMotdArchiveItemsNewFirst([...prev, ...page.items]));
       this.nextCursor.set(page.nextCursor);
       const rendered = page.items.map((it) => {
         const r = this.buildArchiveRender(it);

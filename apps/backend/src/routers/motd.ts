@@ -61,7 +61,9 @@ const DEV_SEED_MOTD_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
  * soll sie vor allen anderen aktiven Overlays erscheinen (Onboarding).
  * Danach: niedrigste effektive Priorität, damit Betriebsmeldungen nicht dauerhaft „hinter“ ihr stehen bleiben.
  */
-const WELCOME_FIRST_OVERLAY_PRIORITY_BOOST = 1_000_000;
+// Admin-UI erlaubt priority bis 1_000_000. Der Boost muss darüber liegen, damit Welcome garantiert
+// auch vor sehr hoch priorisierten „Betriebsmeldungen“ erscheint (solange nicht dismissed).
+const WELCOME_FIRST_OVERLAY_PRIORITY_BOOST = 2_000_000;
 
 function effectiveOverlayPriority(
   id: string,
@@ -138,7 +140,12 @@ async function fetchCurrentMotdDto(
     const pa = effectiveOverlayPriority(a.id, a.priority, welcomeNotYetDismissed);
     const pb = effectiveOverlayPriority(b.id, b.priority, welcomeNotYetDismissed);
     if (pb !== pa) return pb - pa;
-    return b.startsAt.getTime() - a.startsAt.getTime();
+    const ds = b.startsAt.getTime() - a.startsAt.getTime();
+    if (ds !== 0) return ds;
+    // Stabiler Tiebreaker bei identischer Priorität und identischem Start:
+    // DB-Reihenfolge ist nicht garantiert, daher nach id absteigend.
+    if (b.id !== a.id) return b.id < a.id ? -1 : 1;
+    return 0;
   });
   for (const row of rows) {
     if (isMotdSkippedByClientDismiss(row.id, row.contentVersion, dismissedMap)) continue;
@@ -209,7 +216,8 @@ export const motdRouter = router({
     }),
 
   /**
-   * Archivliste (nur `visibleInArchive`, nicht DRAFT); sortiert nach `endsAt` absteigend.
+   * Archivliste (nur `visibleInArchive`, nicht DRAFT); sortiert nach `startsAt` absteigend
+   * (Anzeige im Client nutzt `startsAt` als Veröffentlichungsdatum).
    * Optional `cursor` (letzte MOTD-`id` der vorherigen Seite) für Pagination.
    */
   listArchive: publicProcedure
@@ -248,8 +256,8 @@ export const motdRouter = router({
               baseWhere,
               {
                 OR: [
-                  { endsAt: { lt: c.endsAt } },
-                  { AND: [{ endsAt: c.endsAt }, { id: { lt: c.id } }] },
+                  { startsAt: { lt: c.startsAt } },
+                  { AND: [{ startsAt: c.startsAt }, { id: { lt: c.id } }] },
                 ],
               },
             ],
@@ -259,7 +267,7 @@ export const motdRouter = router({
 
       const motds = await prisma.motd.findMany({
         where,
-        orderBy: [{ endsAt: 'desc' }, { id: 'desc' }],
+        orderBy: [{ startsAt: 'desc' }, { id: 'desc' }],
         take: take + 1,
         include: { locales: true },
       });

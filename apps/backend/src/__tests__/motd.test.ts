@@ -124,6 +124,33 @@ describe('motd router', () => {
     );
   });
 
+  it('getCurrent: deterministischer Tiebreak bei gleicher priority und startsAt (id DESC)', async () => {
+    prismaMock.motd.findMany.mockResolvedValue([
+      {
+        id: M1,
+        priority: 0,
+        contentVersion: 1,
+        startsAt: new Date('2026-06-01T00:00:00.000Z'),
+        endsAt: new Date('2026-06-20T00:00:00.000Z'),
+        locales: [{ locale: 'de', markdown: 'A' }],
+      },
+      {
+        id: M2,
+        priority: 0,
+        contentVersion: 1,
+        startsAt: new Date('2026-06-01T00:00:00.000Z'),
+        endsAt: new Date('2026-06-20T00:00:00.000Z'),
+        locales: [{ locale: 'de', markdown: 'B' }],
+      },
+    ]);
+
+    const caller = motdRouter.createCaller(ctx);
+    const result = await caller.getCurrent({ locale: 'de' });
+    // Bei id DESC gewinnt M2 (da M2 > M1 lexikografisch).
+    expect(result.motd?.id).toBe(M2);
+    expect(result.motd?.markdown).toBe('B');
+  });
+
   it('getCurrent überspringt per overlayDismissedUpTo gemeldete MOTD (nächste Priorität)', async () => {
     const welcomeId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
     prismaMock.motd.findMany.mockResolvedValue([
@@ -160,7 +187,7 @@ describe('motd router', () => {
     prismaMock.motd.findMany.mockResolvedValue([
       {
         id: welcomeId,
-        priority: 100,
+        priority: -100,
         contentVersion: 1,
         startsAt: new Date('2026-06-01T00:00:00.000Z'),
         endsAt: new Date('2026-06-20T00:00:00.000Z'),
@@ -168,7 +195,7 @@ describe('motd router', () => {
       },
       {
         id: M2,
-        priority: 0,
+        priority: 999_999,
         contentVersion: 1,
         startsAt: new Date('2026-06-01T00:00:00.000Z'),
         endsAt: new Date('2026-06-20T00:00:00.000Z'),

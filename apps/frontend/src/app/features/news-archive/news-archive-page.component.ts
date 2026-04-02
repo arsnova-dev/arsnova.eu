@@ -14,6 +14,7 @@ import { setMotdArchiveSeenUpToEndsAtIso } from '../../core/motd-storage';
 import { resolveMotdAssetOrigin } from '../../core/motd-asset-origin';
 import { formatMotdArchiveStartsAtForDisplay } from '../../core/motd-ends-display';
 import { buildMotdArchiveItemDisplay } from '../../shared/motd-archive-render.util';
+import { sortMotdArchiveItemsNewFirst } from '../../shared/motd-archive-sort.util';
 import type { NewsArchiveInitialModel } from './news-archive-initial';
 
 const ARCHIVE_DATE_LOCALE: Record<AppLocale, string> = {
@@ -68,7 +69,7 @@ export class NewsArchivePageComponent {
 
   constructor() {
     const data = inject(ActivatedRoute).snapshot.data['newsArchive'] as NewsArchiveInitialModel;
-    this.items.set(data.items);
+    this.items.set(sortMotdArchiveItemsNewFirst(data.items));
     this.nextCursor.set(data.nextCursor);
     this.archiveMaxEndsAtIso.set(data.archiveMaxEndsAtIso);
     this.archiveUnreadCount.set(data.archiveUnreadCount);
@@ -118,7 +119,7 @@ export class NewsArchivePageComponent {
         pageSize: 30,
         cursor,
       });
-      this.items.update((prev) => [...prev, ...page.items]);
+      this.items.update((prev) => sortMotdArchiveItemsNewFirst([...prev, ...page.items]));
       this.nextCursor.set(page.nextCursor);
       const rendered = page.items.map((it) =>
         buildMotdArchiveItemDisplay(it, this.sanitizer, this.archiveItemFallbackTitle, {
