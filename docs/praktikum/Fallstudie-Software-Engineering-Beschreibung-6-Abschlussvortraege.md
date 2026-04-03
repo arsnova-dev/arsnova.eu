@@ -2,9 +2,20 @@
 
 # Fallstudie Software Engineering – Beschreibung der sechs Abschlussvorträge
 
-**Kontext:** Fallstudie **arsnova.eu** · **Zielgruppe:** Studierende nach dem Bearbeiten der **didaktischen 13-Ticket-Reihenfolge** (siehe [`STUDENT-STORY-REIHENFOLGE.md`](./STUDENT-STORY-REIHENFOLGE.md))  
+**Kontext:** Fallstudie **arsnova.eu** · **Zielgruppe:** Studierende nach dem Bearbeiten von **Pflichtkern + gewählten Vertiefungen** (siehe [`STUDENT-STORY-REIHENFOLGE.md`](./STUDENT-STORY-REIHENFOLGE.md) und [`PRAKTIKUM.md`](./PRAKTIKUM.md))  
 **Zweck:** Dieses Dokument hilft euch dabei, euer Thema klar abzugrenzen, sinnvoll zu gewichten und mit belastbaren Repo-Bezügen vorzubereiten. Es ersetzt keine Prüfungsabsprachen mit der Betreuung.  
 **Backlog-Stand:** 93 Stories (79 erledigt, 14 offen) – bei größeren Änderungen in [`Backlog.md`](../../Backlog.md) bitte Themenabgrenzungen und Beispiele neu prüfen.
+
+Wichtig: Eure **eigene praktische Arbeit** kann schmaler sein als die **sechs Vortragsthemen** zusammen. Genau deshalb dienen die Vorträge dazu, aus einzelnen Tickets oder Schwerpunkten wieder ein **größeres softwaretechnisches Bild** von **arsnova.eu** zu machen.
+
+## Kurz gesagt
+
+Für die Vorbereitung heißt das in einfacher Form:
+
+- Du hältst **nicht einfach einen Ticket-Bericht**.
+- Du erklärst **ein Software-Engineering-Thema** am Beispiel von `arsnova.eu`.
+- Du brauchst dafür **konkrete Repo-Stellen**, **ein eigenes Beispiel** und **eine ehrliche KI-Reflexion**.
+- Dein eigener Praktikumsbeitrag darf kleiner sein als das Thema, das du im Vortrag einordnest.
 
 ---
 
@@ -25,7 +36,7 @@ Die sechs Abschlussvorträge sind **sechs getrennte Einzeltermine**. Pro Termin 
 
 ### 1.2 Was das Handout leisten soll
 
-Das Handout soll **nicht** die 13 Tickets nacherzählen. Es soll zeigen, wie aus euren sechs Einzelthemen **ein gemeinsames softwaretechnisches Bild** von arsnova.eu entsteht.
+Das Handout soll **nicht nur** eure einzelnen Tickets nacherzählen. Es soll zeigen, wie aus euren sechs Einzelthemen **ein gemeinsames softwaretechnisches Bild** von arsnova.eu entsteht.
 
 - Jedes Thema bekommt ungefähr **gleich viel Platz**.
 - Jedes Thema benennt **Stack**, **Architekturmuster**, **ein konkretes Repo-Beispiel** und **eine reflektierte KI-Erfahrung**.
@@ -69,6 +80,8 @@ Die sechs Themen sollen zusammen mindestens diese Schichten verständlich machen
 | Qualitätssicherung, CI und KI-gestützte Arbeitsweise | Thema 6         | [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml), [`TESTING.md`](../TESTING.md), [`CONTRIBUTING.md`](../../CONTRIBUTING.md), [`AGENT.md`](../../AGENT.md)                                                                                    |
 
 Falls ihr später ein **zusätzliches freiwilliges Vertiefungsthema** braucht, bietet sich ein Block zu **Architekturentscheidungen und technischer Steuerung mit ADRs** an. Das ist bewusst **kein offizieller siebter Pflichtvortrag**, sondern eine mögliche Ergänzung zu den sechs bestehenden Themen.
+
+Die sechs Themen sind also **breiter** als ein einzelner Praktikumsbeitrag. Genau das ist beabsichtigt: Das Praktikum liefert konkrete Erfahrungen an Teilproblemen, die Vortragsreihe verdichtet diese Erfahrungen zu einem **Software-Engineering-Gesamtbild** des Projekts.
 
 ---
 

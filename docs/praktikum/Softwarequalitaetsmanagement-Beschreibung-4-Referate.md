@@ -6,6 +6,14 @@
 **Zweck:** Dieses Dokument gibt euch eine klare, eigenständige Orientierung für Themenwahl, Abgrenzung, Nachweise und Gewichtung der vier Referate. Es ersetzt keine Vorgaben der Betreuung.  
 **Backlog-Stand:** 93 Stories (79 erledigt, 14 offen) – bei größeren Änderungen in [`Backlog.md`](../../Backlog.md) bitte Beispiele, Begriffe und Nachweise aktualisieren.
 
+## Kurz gesagt
+
+Für die Referate heißt das praktisch:
+
+- Ihr erklärt **nicht einzelne Tickets**, sondern **Qualitätsthemen**.
+- Jedes Thema braucht ein **Qualitätsziel**, **Repo-Belege**, **eigene Beispiele** und **KI-Reflexion**.
+- Zusammen sollen die vier Referate zeigen, wie Qualität in `arsnova.eu` geplant, geprüft und verbessert wird.
+
 ---
 
 ## 1. Was ihr vorbereitet

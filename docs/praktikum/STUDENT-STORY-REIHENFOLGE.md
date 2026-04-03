@@ -1,10 +1,21 @@
+<!-- markdownlint-disable MD060 -->
+
 # Didaktische Reihenfolge: Offene User Stories
 
 **Zielgruppe:** Betreuende, Studierende im Praktikum  
-**Voraussetzung:** Jede Person soll **jede offene Story** aus dem Produkt-Backlog **einmal** umsetzen oder den vollständigen Katalog durchlaufen — **ausgenommen** die Story **1.7a**, wenn diese in der **Greenfield-Demo** (3×45 Min.) von der **Lehrperson** mit KI-Agent live umgesetzt wird; siehe [`docs/didaktik/greenfield-demo-1-7a-vorlesung.md`](../didaktik/greenfield-demo-1-7a-vorlesung.md). **Epic 10 (MOTD)** bleibt im Repo **bereits fertig** und dient bei Bedarf als Referenzcode. Die **Reihenfolge** ist entscheidend für **Verständnis**, **Lernkurve** und **Review-Sicherheit**, wenn die **Umsetzung überwiegend mit KI-Unterstützung** erfolgt und die studierende Person **überwacht, steuert und abnimmt**.
+**Voraussetzung:** Die **Kohorte** soll die **offenen Stories** aus dem Produkt-Backlog **didaktisch sinnvoll abdecken** — **ausgenommen** die Story **1.7a**, wenn diese in der **Greenfield-Demo** (3×45 Min.) von der **Lehrperson** mit KI-Agent live umgesetzt wird; siehe [`docs/didaktik/greenfield-demo-1-7a-vorlesung.md`](../didaktik/greenfield-demo-1-7a-vorlesung.md). **Epic 10 (MOTD)** bleibt im Repo **bereits fertig** und dient bei Bedarf als Referenzcode. Für **eine einzelne Person** im Rahmen von ca. **40 Stunden** ist der Standard **nicht** der Vollkatalog, sondern **Pflichtkern + Vertiefungspfad**. Die **Reihenfolge** bleibt entscheidend für **Verständnis**, **Lernkurve** und **Review-Sicherheit**, wenn die **Umsetzung überwiegend mit KI-Unterstützung** erfolgt und die studierende Person **überwacht, steuert und abnimmt**.
 
 **Referenz:** [`Backlog.md`](../../Backlog.md) (Status ⬜ Offen).  
 **Stand dieser Empfehlung:** 2026-04-01 — bei Änderungen im Backlog Reihenfolge und Begründungen anpassen.
+
+## Kurz gesagt
+
+Wenn du nur wissen willst, **was das für dich praktisch heißt**, dann ist der Regelfall:
+
+- Du machst **nicht** alle 13 Tickets allein.
+- Du startest nach der Vorlesungs-Demo mit dem **Pflichtkern**: **5.4a**, **8.7**, **8.6**.
+- Danach nimmst du **mindestens ein** Vertiefungsticket aus dem mittleren Block.
+- Die letzten Tickets mit **Security** oder großem **Querschnitt** machst du nur mit enger Betreuung.
 
 ---
 
@@ -34,33 +45,61 @@ Der Einstieg beginnt mit einer **Greenfield-Demo** am Beamer: **Story 1.7a** (Ma
 
 ## 2. Rollenklärung (didaktisch)
 
+Kurz übersetzt:
+
+- **Du** steuerst, prüfst und dokumentierst.
+- **Die KI** hilft beim Umsetzen, entscheidet aber nicht über Richtigkeit.
+- **Die Betreuung** hilft bei Scope, Reihenfolge und riskanten Themen.
+
 - **Studierende Person:** Versteht die Story, zerlegt sie in Schritte, formuliert Aufträge an die KI, **liest Diff und Tests**, führt manuelle Checks aus und dokumentiert kurz das Ergebnis.
 - **KI:** Implementiert nach Vorgabe; **kein Ersatz** für Abnahme gegen Backlog und DoD.
 - **Betreuung:** Reihenfolge durchsetzen oder begründet abweichen; bei Security-/A11y-Stories zusätzliche Review-Luke einplanen.
 
 ---
 
-## 3. Empfohlene Reihenfolge (offene Stories für Studierende)
+## 3. Empfohlene Reihenfolge (Pflichtkern + Vertiefung)
 
-Die folgende Tabelle listet **alle aktuell offenen Stories**, die **Studierende** im Kursverlauf umsetzen — **ohne** Epic 10 (MOTD) und **ohne 1.7a**, sofern diese in der **Greenfield-Demo** durch die Lehrperson abgedeckt wird.
+Die folgende Struktur listet **alle aktuell offenen Stories** didaktisch geordnet — **ohne** Epic 10 (MOTD) und **ohne 1.7a**, sofern diese in der **Greenfield-Demo** durch die Lehrperson abgedeckt wird.
 
-**Standard-Reihenfolge** nach dem Vorlesungsblock (Abschnitt 0): Ticket **1 → … → 13**.
+**Standard für eine einzelne Person nach dem Vorlesungsblock (Abschnitt 0):**
 
-| Nr. | Story     | Titel (Kurz)                         | Didaktischer Schwerpunkt                       | Warum an dieser Stelle                                                                                                                                                                                                     |
-| --- | --------- | ------------------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **5.4a**  | Foyer-Einflug, Preset Spielerisch    | Mini-Feature, schnelles Feedback               | **Einstieg:** wenige Dateien, Ergebnis oft visuell/sofort prüfbar; Training im Umgang mit Repo, Branch, CI.                                                                                                                |
-| 2   | **8.7**   | Q&A „Beste Fragen“ (Wilson-Score)    | Algorithmus + tRPC + Tests                     | **Spezifikationsgetrieben:** Formel und SQL-Hintergrund in [`docs/features/controversy-score.md`](../features/controversy-score.md); ohne \(N\)-Glättung etwas fokussierter als 8.6; gut **gegen Dokument verifizierbar**. |
-| 3   | **8.6**   | Q&A Kontroversitäts-Score            | Gleiche Domäne wie 8.7, mehr Produktentscheide | **Aufbau:** gleiche Q&A-Basis; zusätzlich \(N\) für Glättung, Badge/Schwellen, i18n — **nach** 8.7, wenn Sortier-/Score-Muster schon verstanden sind.                                                                      |
-| 4   | **6.6**   | UX Thinking Aloud & Umsetzung        | Methode, Findings, iterative UX                | **Methodenkompetenz:** weniger „ein Algorithmus“, mehr Testprotokoll und gezielte UI-Anpassungen; bricht reine Code-Linie bewusst auf.                                                                                     |
-| 5   | **8.5**   | Delegierbare Q&A-Moderation          | Rollen, Tokens, Rechte, UI                     | **Komplexes Feature** mit vielen Schichten; sinnvoll, wenn Q&A (8.6/8.7) bereits vertraut ist.                                                                                                                             |
-| 6   | **0.7**   | Last- & Performance-Tests (E2E)      | Tooling, CI, Metriken                          | **Qualitätsschicht:** weniger Produktlogik, mehr Infra-Verständnis; sinnvoll, wenn Features aus vorherigen Tickets bekannt sind.                                                                                           |
-| 7   | **1.6d**  | Sync-Performance & Skalierung        | Messen, Profiling, Hypothesen                  | **Nicht-trivial „fertig“:** Lernziel ist evidenzbasierte Optimierung, nicht nur „Code ändern“.                                                                                                                             |
-| 8   | **1.2d**  | Numerische Schätzfrage               | Voller Fragentyp End-to-End                    | **Domänentiefe:** Backend, Shared-Types, UI, Auswertung — hoher Koordinationsaufwand; besser mit Codebase-Erfahrung.                                                                                                       |
-| 9   | **1.14a** | Word Cloud 2.0                       | Layout, UX, Performance                        | **Große UX-Fläche**, viele Feinschliff-Runden; braucht Geduld und klare Abnahme-Kriterien.                                                                                                                                 |
-| 10  | **1.7b**  | Markdown/KaTeX-Editor, MD3-Toolbar   | Großes Editor-Feature                          | **Viele Kantenfälle** und UI-Zustände; KI-Output hier besonders kritisch lesen; **baut auf 1.7a** (Vorlesung) inhaltlich auf.                                                                                              |
-| 11  | **2.1c**  | Host-/Presenter-Session-Token härten | Security, Bedrohungsmodell                     | **Hohes Risiko bei Fehlern** — Review-Zeit einplanen; Pair-Review mit Betreuung empfohlen.                                                                                                                                 |
-| 12  | **1.6c**  | Sync-Sicherheit härten               | Security, verteilte Logik                      | Ebenfalls **Security**; von 1.6d/2.1c konzeptionell profitieren, aber eigenständiges Audit nötig.                                                                                                                          |
-| 13  | **6.5**   | Barrierefreiheit (Projektende)       | Querschnitt, Standards, Tests                  | **Am Ende:** greift in viele bestehende Oberflächen; sinnvoll, wenn der Großteil der Features steht.                                                                                                                       |
+- **Pflichtkern:** Ticket **1 → 3**
+- **Vertiefung:** **mindestens ein** Ticket aus **4 → 10** nach Absprache
+- **Nur mit enger Betreuung / Pair-Review:** Ticket **11 → 13**
+
+Wenn die Kohorte klein ist oder Vorerfahrung hoch ist, kann eine Person mehr übernehmen. Wenn die Kohorte größer oder heterogener ist, sollte die **Kohorte gemeinsam** den Katalog abdecken.
+
+### 3.1 Pflichtkern
+
+| Nr. | Story    | Titel (Kurz)                      | Didaktischer Schwerpunkt                       | Warum im Pflichtkern                                                                                                                                                   |
+| --- | -------- | --------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **5.4a** | Foyer-Einflug, Preset Spielerisch | Mini-Feature, schnelles Feedback               | **Einstieg:** wenige Dateien, Ergebnis oft visuell und sofort prüfbar; Training im Umgang mit Repo, Branch und CI.                                                     |
+| 2   | **8.7**  | Q&A „Beste Fragen“ (Wilson-Score) | Algorithmus + tRPC + Tests                     | **Spezifikationsgetrieben:** Formel und SQL-Hintergrund in [`docs/features/controversy-score.md`](../features/controversy-score.md); gut gegen Dokument verifizierbar. |
+| 3   | **8.6**  | Q&A Kontroversitäts-Score         | Gleiche Domäne wie 8.7, mehr Produktentscheide | **Aufbau:** gleiche Q&A-Basis; zusätzlich \(N\) für Glättung, Badge/Schwellen und i18n, wenn Sortier- und Score-Muster schon verstanden sind.                          |
+
+### 3.2 Vertiefungspfad
+
+Mindestens **ein** Ticket aus diesem Block ist der sinnvolle Regelfall. Die Auswahl hängt von Gruppengröße, Vorwissen und Semesterdynamik ab.
+
+| Nr. | Story     | Titel (Kurz)                       | Didaktischer Schwerpunkt        | Warum als Vertiefung sinnvoll                                                      |
+| --- | --------- | ---------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------- |
+| 4   | **6.6**   | UX Thinking Aloud & Umsetzung      | Methode, Findings, iterative UX | Bricht die reine Code-Linie bewusst auf und stärkt Methodenkompetenz.              |
+| 5   | **8.5**   | Delegierbare Q&A-Moderation        | Rollen, Tokens, Rechte, UI      | Komplexes Feature mit vielen Schichten; sinnvoll nach Q&A-Vertrautheit.            |
+| 6   | **0.7**   | Last- & Performance-Tests (E2E)    | Tooling, CI, Metriken           | Qualitätsschicht statt reinem Nutzerfeature; passt gut nach ersten Produktstories. |
+| 7   | **1.6d**  | Sync-Performance & Skalierung      | Messen, Profiling, Hypothesen   | Lernziel ist evidenzbasierte Optimierung, nicht nur Codeänderung.                  |
+| 8   | **1.2d**  | Numerische Schätzfrage             | Voller Fragentyp End-to-End     | Hoher Koordinationsaufwand über Backend, Shared Types, UI und Auswertung.          |
+| 9   | **1.14a** | Word Cloud 2.0                     | Layout, UX, Performance         | Große UX-Fläche mit mehreren Feinschliff-Runden; braucht klare Abnahme-Kriterien.  |
+| 10  | **1.7b**  | Markdown/KaTeX-Editor, MD3-Toolbar | Großes Editor-Feature           | Viele Kantenfälle und UI-Zustände; baut inhaltlich auf 1.7a aus der Vorlesung auf. |
+
+### 3.3 Nur mit enger Betreuung
+
+Diese Tickets sind didaktisch wertvoll, aber für **eine einzelne Person** in kurzer Zeit nur mit enger Betreuung, Pair-Review oder als Teamverantwortung sinnvoll.
+
+| Nr. | Story    | Titel (Kurz)                         | Didaktischer Schwerpunkt  | Warum nicht Standard für jede Person                                                              |
+| --- | -------- | ------------------------------------ | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| 11  | **2.1c** | Host-/Presenter-Session-Token härten | Security                  | Hohes Risiko bei Fehlern; Bedrohungsmodell und Review-Tiefe sollten aktiv begleitet werden.       |
+| 12  | **1.6c** | Sync-Sicherheit härten               | Security, verteilte Logik | Eigenständiges Audit nötig; Fehlerwirkung deutlich größer als bei typischen Einstiegstickets.     |
+| 13  | **6.5**  | Barrierefreiheit (Projektende)       | Querschnitt               | Greift in viele bestehende Oberflächen; sinnvoll, wenn der Produktstand schon relativ stabil ist. |
 
 ---
 
@@ -70,10 +109,8 @@ Zur Orientierung für die Betreuung — nicht separate „Pflicht“, sondern **
 
 1. **Phase A (1):** Erstes eigenes Feature nach der Vorlesung (**5.4a**).
 2. **Phase B (2–3):** Q&A-Scores, Spezifikation lesen, Backend/Frontend/tRPC durchgängig.
-3. **Phase C (4–5):** Methodik + komplexes Feature mit Rollen.
-4. **Phase D (6–7):** Qualität und Performance ohne neues Nutzer-Feature im Mittelpunkt.
-5. **Phase E (8–10):** Große Produktfeatures, hoher Integrationsaufwand.
-6. **Phase F (11–13):** Security und Barrierefreiheit — **maximale Sorgfalt** beim Review.
+3. **Phase C (4–10):** Vertiefungen nach Schwerpunkt der Person oder des Teams.
+4. **Phase D (11–13):** Security und Querschnitt nur mit erhöhter Review-Sorgfalt.
 
 ---
 
@@ -93,7 +130,7 @@ Kurz und wiederholbar — unabhängig von der Story-Nummer:
 
 Erlaubt, wenn **begründet**, z. B.:
 
-- **6.6** früher einsetzen, wenn eine Person **explizit UX/Methoden** stärken soll (parallel zu technischen Tickets einer anderen Person ist möglich, widerspricht aber nicht dem „jede Story einmal“-Prinzip, solange alle Stories durchlaufen werden).
+- **6.6** früher einsetzen, wenn eine Person **explizit UX/Methoden** stärken soll (parallel zu technischen Tickets einer anderen Person ist möglich, solange der **Pflichtkern** stabil bleibt und die **Kohorte gemeinsam** die relevanten Flächen abdeckt).
 - Backlog-**Priorität** (🔴 Must) zwingt zur Vorderei — dann Reihenfolge mit Betreuung neu bewerten und dieses Dokument aktualisieren.
 - Wenn **1.7a** in der Vorlesung **nicht** abgeschlossen wird: entweder nachziehen (Lehrperson) oder **1.7a** wieder als Studierenden-Ticket einplanen — Tabelle und Abschnitt 0 anpassen.
 

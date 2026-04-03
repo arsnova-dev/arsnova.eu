@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD024 -->
+
 # Vorlesungsplan: 10 Wochen arsnova.eu begleiten
 
 > Vorschlag fuer eine semesterbegleitende Vorlesungsreihe auf Basis des Repos `arsnova.eu`.
@@ -7,15 +9,15 @@
 
 ## 1. Ziel der Reihe
 
-Die Vorlesungsreihe nutzt `arsnova.eu` als durchgaengigen Fallstudienkern fuer moderne Softwareentwicklung im Hochschulkontext. Das Repo eignet sich besonders gut, weil dort Produktidee, technische Architektur, Sicherheitsmodell, Entwicklungsprozess, Tests, UX-Regeln und KI-Leitplanken gemeinsam im Versionskontrollsystem liegen.
+Die Vorlesungsreihe nutzt `arsnova.eu` als durchgehende Fallstudie fuer moderne Softwareentwicklung. Das Repo eignet sich gut, weil dort Produktidee, Architektur, Sicherheit, Entwicklungsprozess, Tests, UX-Regeln und KI-Leitplanken zusammen sichtbar sind.
 
-Die Studierenden sollen am Ende nicht nur einzelne Technologien benennen koennen, sondern verstehen, wie aus Anforderungen, Regeln und Architekturentscheidungen ein konsistentes Softwaresystem entsteht.
+Am Ende sollen die Studierenden nicht nur einzelne Technologien kennen. Sie sollen verstehen, wie aus Anforderungen, Regeln und Architekturentscheidungen ein zusammenhaengendes Softwaresystem entsteht.
 
 ---
 
 ## 2. Leitidee
 
-`arsnova.eu` ist didaktisch und technisch interessant, weil mehrere Spannungsfelder gleichzeitig sichtbar werden:
+`arsnova.eu` ist als Studienobjekt stark, weil mehrere Spannungsfelder gleichzeitig sichtbar werden:
 
 - Local-First versus serverseitige Kontrolle
 - Datenschutz versus Komfort
@@ -24,7 +26,7 @@ Die Studierenden sollen am Ende nicht nur einzelne Technologien benennen koennen
 - Dokumentation versus Geschwindigkeit
 - KI-Unterstuetzung versus Architekturdisziplin
 
-Diese Spannungen machen das Repo zu einer starken Lehrgrundlage fuer Software Engineering, Web Engineering und agentische KI in der Entwicklung.
+Genau diese Spannungen machen das Repo zu einer guten Grundlage fuer Software Engineering, Web Engineering und KI-gestuetzte Entwicklung.
 
 ---
 
@@ -73,6 +75,11 @@ Die Studierenden koennen ein fremdes Projekt strukturiert erschliessen und zwisc
 
 Diese Sitzung zeigt, dass professionelles Onboarding selbst ein Architekturthema ist. Wer ein Projekt nicht lesen kann, kann es auch nicht verantwortungsvoll weiterentwickeln.
 
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Ohne diesen Einstieg wirken Tickets schnell wie isolierte Einzelaufgaben statt wie Teile eines Systems.
+- Genau diese Sitzung hilft euch, beim ersten eigenen Beitrag nicht im Repo verloren zu gehen.
+
 ---
 
 ## Woche 2: Documentation as Code und Architekturkommunikation
@@ -91,6 +98,11 @@ Die Studierenden verstehen den Mehrwert von Architekturhandbuch, ADRs, Backlog u
 ### Lehrwert
 
 Das Repo zeigt vorbildlich, wie Dokumentation nicht neben dem Code steht, sondern im selben Entwicklungsprozess entsteht.
+
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Ihr braucht diese Perspektive, um Tickets nicht nur umzusetzen, sondern auch gegen Backlog, ADRs und Regeln zu plausibilisieren.
+- Spaetestens bei Review, Begruendung oder Abgabe merkt man, ob ihr Entscheidungen im Projektkontext verorten koennt.
 
 ---
 
@@ -111,6 +123,11 @@ Die Studierenden koennen erklaeren, warum `shared-types` in diesem Projekt der e
 
 Hier laesst sich sehr gut zeigen, wie sich “erst Vertrag, dann Implementierung” von ad hoc entwickelten Webprojekten unterscheidet.
 
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Fast jede ernsthafte Aenderung in `arsnova.eu` beruehrt frueher oder spaeter `shared-types`, Router oder Datenmodell.
+- Diese Sitzung erklaert, warum ein kleines Schema oft mehr Auswirkungen hat als eine sichtbare UI-Aenderung.
+
 ---
 
 ## Woche 4: tRPC und End-to-End-Typsicherheit
@@ -129,6 +146,11 @@ Die Studierenden verstehen, wie tRPC HTTP, WebSockets und Typinferenz in einem F
 ### Lehrwert
 
 Das Thema eignet sich hervorragend, um REST, GraphQL und tRPC systematisch zu vergleichen.
+
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Wer Backend und Frontend im gleichen Ticket aendert, muss verstehen, warum API-Aenderungen im Projekt compile-time sichtbar werden.
+- Das spart spaeter viel Blindflug bei Routern, Inputs und Rueckgabetypen.
 
 ---
 
@@ -149,6 +171,11 @@ Die Studierenden koennen begruenden, wie Datenschutz zu einer architektonischen 
 
 Das ist eines der staerksten Themen des Projekts, weil fachliche Gefahr, technische Gegenmassnahme und automatisierter Test unmittelbar zusammenhaengen.
 
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Diese Denkweise schuetzt euch davor, Daten nur deshalb an den Client zu geben, weil es kurzfristig bequem ist.
+- Gerade bei Host-, Admin- oder Moderationsfaellen ist das direkt relevant fuer eure eigenen Tickets.
+
 ---
 
 ## Woche 6: Local-First mit Yjs und IndexedDB
@@ -167,6 +194,11 @@ Die Studierenden koennen CRDTs, lokale Persistenz und Sync-Mechanismen in ihrer 
 ### Lehrwert
 
 Diese Sitzung eignet sich besonders gut, um “Cloud-First” als implizite Norm zu hinterfragen.
+
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Sobald ihr an Quiz-Sync, Browserpersistenz oder Multi-Device-Verhalten arbeitet, braucht ihr dieses Modell.
+- Auch wenn euer Ticket nicht direkt Yjs heisst, beeinflusst diese Architektur viele Randbedingungen des Produkts.
 
 ---
 
@@ -187,6 +219,11 @@ Die Studierenden verstehen, welche Realtime-Muster im Repo koexistieren und waru
 
 Das Thema zeigt, dass Realtime-Architektur immer fachlich motiviert sein sollte und nicht nur technologisch.
 
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Q&A, Blitzlicht, Session-Zustaende und laufende Abstimmungen wirken nur stabil, wenn ihr die Live-Muster dahinter versteht.
+- Diese Sitzung hilft euch, Realtime-Probleme nicht als Zufall, sondern als Architekturthema zu lesen.
+
 ---
 
 ## Woche 8: Produktarchitektur: Eine Session, mehrere Live-Kanaele
@@ -205,6 +242,11 @@ Die Studierenden erkennen, wie Domänenmodellierung UX, Routing und Backend-Vert
 ### Lehrwert
 
 Diese Sitzung ist ideal, um zu zeigen, dass Architekturentscheidungen oft fachliche Modellierungsentscheidungen sind.
+
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Sie hilft euch zu erkennen, wann ein Ticket wirklich ein Feature erweitert und wann es das Domänenmodell verschiebt.
+- Gerade fuer Q&A-, Quiz- und Session-Tickets ist das der Unterschied zwischen lokalem Fix und sauberer Produktentscheidung.
 
 ---
 
@@ -225,6 +267,11 @@ Die Studierenden koennen erklaeren, wie sich DoD, Tests, CI und Review-Regeln ge
 
 Hier wird sichtbar, dass Qualitaet nicht nur aus Unit-Tests besteht, sondern aus Prozess, Automatisierung und Standards.
 
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Spätestens bei PR, CI oder Abgabe ist das direkt euer Alltag.
+- Diese Sitzung begründet, warum „fertig“ im Projekt mehr bedeutet als „funktioniert lokal einmal“.
+
 ---
 
 ## Woche 10: Entwicklung mit KI-Agenten unter Governance
@@ -243,6 +290,11 @@ Die Studierenden verstehen den Unterschied zwischen “KI generiert Code” und 
 ### Lehrwert
 
 Das Repo ist ein selten gutes Beispiel dafuer, wie KI-Nutzung im Entwicklungsprozess formalisiert und lehrbar gemacht werden kann.
+
+### Was das fuer eure Arbeit im Praktikum heisst
+
+- Ihr arbeitet selbst mit KI-Unterstuetzung, also braucht ihr Kriterien fuer sinnvolle Prompts, kleine Diffs und saubere Verifikation.
+- Genau hier lernt ihr, wie KI euch beschleunigt, ohne euch die Verantwortung fuer Architektur und Qualitaet abzunehmen.
 
 ---
 

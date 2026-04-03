@@ -13,7 +13,7 @@
 5. [Bewertete Leistung](#5-bewertete-leistung-orientierung--feinabstimmung-mit-betreuung)
 6. [Aufgabenfelder im Detail](#6-aufgabenfelder-im-detail-spickzettel)
 7. [Agentische KI](#7-agentische-ki--sinnvoll-für-sqm)
-8. [10-Block-Plan](#8-vorschlag-10-blöcke--4-stunden-sqm)
+8. [10-Block-Plan](#8-10-block-plan-sqm)
 9. [Bewertung](#9-bewertung-transparent)
 10. [FAQ](#10-faq)
 11. [Abgabe-Checkliste](#11-abgabe-checkliste)
@@ -21,6 +21,15 @@
 13. [Übungsaufgaben](#13-übungsaufgaben)
 
 Willkommen. Dieses Dokument ist die **Arbeitsgrundlage** für dein SQM-Praktikum an **arsnova.eu**. Du bist **kein** „externer Tester am fertigen Produkt“, sondern arbeitest mit einem klaren Qualitätsauftrag im laufenden Projekt.
+
+## Kurz gesagt
+
+Wenn du erst einmal nur das Grundmodell verstehen willst:
+
+- Du arbeitest **am gleichen Produkt** wie der FSE-Kurs.
+- Dein Schwerpunkt ist **Qualität sichtbar und prüfbar machen**.
+- Du musst **nicht alles** aus dem SQM-Bereich machen, sondern ein **sauberes, belegbares Paket** wählen.
+- Gute SQM-Arbeit heißt: Risiken erkennen, Nachweise liefern und Verbesserungen begründen.
 
 **Wenig Vorerfahrung mit Git, GitHub, Pull Requests oder dem Tech-Stack?** Lies **[`EINSTIEG-TOOLS-UND-STACK.md`](./EINSTIEG-TOOLS-UND-STACK.md)** (Abschnitt zu SQM) und richte die Umgebung wie in [`docs/onboarding.md`](../onboarding.md) ein — für Reviews brauchst du den Code lokal oder zumindest lesbar auf GitHub.
 
@@ -205,7 +214,7 @@ Die KI „ersetzt“ **kein** Review — sie **unterstützt** Lesen und Struktur
 
 ---
 
-## 8. Vorschlag: 10 Blöcke à 4 Stunden (SQM)
+## 8. 10-Block-Plan (SQM)
 
 | Block  | Schwerpunkt                    | Artefakte (Beispiel)                                                          |
 | ------ | ------------------------------ | ----------------------------------------------------------------------------- |
