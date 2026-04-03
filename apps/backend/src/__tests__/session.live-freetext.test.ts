@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createQuizHistoryAccessProof } from '@arsnova/shared-types';
 
 const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
   prismaMock: {
+    quiz: {
+      findMany: vi.fn(),
+    },
     session: {
       findUnique: vi.fn(),
       findMany: vi.fn(),
@@ -28,6 +32,47 @@ import { sessionRouter } from '../routers/session';
 const caller = sessionRouter.createCaller({ req: {} as never });
 const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 const QUESTION_ID = '7ed3cc25-3179-4a91-9dc3-acc00971fb46';
+const ACTIVE_QUIZ_ID = '11111111-1111-4111-8111-111111111111';
+const INACTIVE_QUIZ_ID = '22222222-2222-4222-8222-222222222222';
+const QUIZ_INPUT = {
+  name: 'Chemie',
+  description: undefined,
+  motifImageUrl: null,
+  showLeaderboard: true,
+  allowCustomNicknames: true,
+  defaultTimer: null,
+  enableSoundEffects: true,
+  enableRewardEffects: true,
+  enableMotivationMessages: true,
+  enableEmojiReactions: true,
+  anonymousMode: false,
+  teamMode: false,
+  teamCount: undefined,
+  teamAssignment: 'AUTO' as const,
+  teamNames: [],
+  backgroundMusic: undefined,
+  nicknameTheme: 'NOBEL_LAUREATES' as const,
+  bonusTokenCount: 3,
+  readingPhaseEnabled: true,
+  preset: 'PLAYFUL' as const,
+  questions: [
+    {
+      text: 'Was ist Wasser?',
+      type: 'SINGLE_CHOICE' as const,
+      timer: null,
+      difficulty: 'EASY' as const,
+      order: 0,
+      ratingMin: undefined,
+      ratingMax: undefined,
+      ratingLabelMin: undefined,
+      ratingLabelMax: undefined,
+      answers: [
+        { text: 'H2O', isCorrect: true },
+        { text: 'CO2', isCorrect: false },
+      ],
+    },
+  ],
+};
 
 describe('session.getLiveFreetext', () => {
   beforeEach(() => {
@@ -95,18 +140,43 @@ describe('session.getActiveQuizIds', () => {
     vi.clearAllMocks();
   });
 
-  it('liefert Quiz-IDs von laufenden Sessions', async () => {
-    prismaMock.session.findMany.mockResolvedValue([
-      { quizId: '11111111-1111-4111-8111-111111111111' },
-      { quizId: '22222222-2222-4222-8222-222222222222' },
+  it('liefert nur authorisierte Quiz-IDs von laufenden Sessions', async () => {
+    const accessProof = await createQuizHistoryAccessProof(QUIZ_INPUT);
+    prismaMock.quiz.findMany.mockResolvedValue([
+      {
+        id: ACTIVE_QUIZ_ID,
+        ...QUIZ_INPUT,
+        description: null,
+        teamCount: null,
+        backgroundMusic: null,
+        questions: QUIZ_INPUT.questions.map((question) => ({
+          ...question,
+          ratingMin: null,
+          ratingMax: null,
+          ratingLabelMin: null,
+          ratingLabelMax: null,
+        })),
+      },
+    ]);
+    prismaMock.session.findMany.mockResolvedValue([{ quizId: ACTIVE_QUIZ_ID }]);
+
+    const result = await caller.getActiveQuizIds([
+      { quizId: ACTIVE_QUIZ_ID, accessProof },
+      {
+        quizId: INACTIVE_QUIZ_ID,
+        accessProof: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+      },
     ]);
 
-    const result = await caller.getActiveQuizIds();
-
-    expect(result).toEqual([
-      '11111111-1111-4111-8111-111111111111',
-      '22222222-2222-4222-8222-222222222222',
-    ]);
+    expect(result).toEqual([ACTIVE_QUIZ_ID]);
+    expect(prismaMock.session.findMany).toHaveBeenCalledWith({
+      where: {
+        status: { not: 'FINISHED' },
+        quizId: { in: [ACTIVE_QUIZ_ID] },
+      },
+      select: { quizId: true },
+      distinct: ['quizId'],
+    });
   });
 });
 

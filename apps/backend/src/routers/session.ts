@@ -8,6 +8,7 @@ import {
   CreateSessionOutputSchema,
   GetSessionInfoInputSchema,
   GetLiveFreetextInputSchema,
+  GetActiveQuizIdsInputSchema,
   JoinSessionInputSchema,
   JoinSessionOutputSchema,
   GetExportDataInputSchema,
@@ -284,6 +285,121 @@ async function assertQuizHistoryAccess(quizId: string, accessProof: string): Pro
       message: 'Zugriff auf diese Quiz-Historie ist nicht erlaubt.',
     });
   }
+}
+
+async function collectAuthorizedQuizHistoryIds(
+  entries: Array<{ quizId: string; accessProof: string }>,
+): Promise<string[]> {
+  if (entries.length === 0) {
+    return [];
+  }
+
+  const quizIds = [...new Set(entries.map((entry) => entry.quizId))];
+  const quizzes = await prisma.quiz.findMany({
+    where: { id: { in: quizIds } },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      motifImageUrl: true,
+      showLeaderboard: true,
+      allowCustomNicknames: true,
+      defaultTimer: true,
+      enableSoundEffects: true,
+      enableRewardEffects: true,
+      enableMotivationMessages: true,
+      enableEmojiReactions: true,
+      anonymousMode: true,
+      teamMode: true,
+      teamCount: true,
+      teamAssignment: true,
+      teamNames: true,
+      backgroundMusic: true,
+      nicknameTheme: true,
+      bonusTokenCount: true,
+      readingPhaseEnabled: true,
+      preset: true,
+      questions: {
+        orderBy: { order: 'asc' },
+        select: {
+          text: true,
+          type: true,
+          timer: true,
+          difficulty: true,
+          order: true,
+          ratingMin: true,
+          ratingMax: true,
+          ratingLabelMin: true,
+          ratingLabelMax: true,
+          answers: {
+            select: {
+              text: true,
+              isCorrect: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const proofByQuizId = new Map<string, Buffer>();
+  for (const quiz of quizzes) {
+    proofByQuizId.set(
+      quiz.id,
+      normalizeQuizHistoryAccessProof(
+        await createQuizHistoryAccessProof({
+          name: quiz.name,
+          description: quiz.description ?? undefined,
+          motifImageUrl: quiz.motifImageUrl ?? null,
+          showLeaderboard: quiz.showLeaderboard,
+          allowCustomNicknames: quiz.allowCustomNicknames,
+          defaultTimer: quiz.defaultTimer,
+          enableSoundEffects: quiz.enableSoundEffects,
+          enableRewardEffects: quiz.enableRewardEffects,
+          enableMotivationMessages: quiz.enableMotivationMessages,
+          enableEmojiReactions: quiz.enableEmojiReactions,
+          anonymousMode: quiz.anonymousMode,
+          teamMode: quiz.teamMode,
+          teamCount: quiz.teamCount ?? undefined,
+          teamAssignment: quiz.teamAssignment,
+          teamNames: quiz.teamNames,
+          backgroundMusic: quiz.backgroundMusic ?? undefined,
+          nicknameTheme: quiz.nicknameTheme,
+          bonusTokenCount: quiz.bonusTokenCount ?? undefined,
+          readingPhaseEnabled: quiz.readingPhaseEnabled,
+          preset: quiz.preset === 'SERIOUS' ? 'SERIOUS' : 'PLAYFUL',
+          questions: quiz.questions.map((question) => ({
+            text: question.text,
+            type: question.type,
+            timer: question.timer,
+            difficulty: question.difficulty,
+            order: question.order,
+            ratingMin: question.ratingMin ?? undefined,
+            ratingMax: question.ratingMax ?? undefined,
+            ratingLabelMin: question.ratingLabelMin ?? undefined,
+            ratingLabelMax: question.ratingLabelMax ?? undefined,
+            answers: question.answers.map((answer) => ({
+              text: answer.text,
+              isCorrect: answer.isCorrect,
+            })),
+          })),
+        }),
+      ),
+    );
+  }
+
+  return entries.flatMap((entry) => {
+    const expectedProof = proofByQuizId.get(entry.quizId);
+    const providedProof = normalizeQuizHistoryAccessProof(entry.accessProof);
+    if (
+      !expectedProof ||
+      expectedProof.length !== providedProof.length ||
+      !timingSafeEqual(expectedProof, providedProof)
+    ) {
+      return [];
+    }
+    return [entry.quizId];
+  });
 }
 
 function generateSessionCode(): string {
@@ -1598,21 +1714,29 @@ export const sessionRouter = router({
       return null;
     }),
 
-  /** Quiz-IDs mit laufender Session (Story 1.10: Löschsperre in Quiz-Liste). */
-  getActiveQuizIds: publicProcedure.output(ActiveQuizIdsDTOSchema).query(async () => {
-    const sessions = await prisma.session.findMany({
-      where: {
-        status: { not: 'FINISHED' },
-        quizId: { not: null },
-      },
-      select: { quizId: true },
-      distinct: ['quizId'],
-    });
+  /** Quiz-IDs mit laufender Session, begrenzt auf authorisierte Quizkopien aus der Sammlung. */
+  getActiveQuizIds: publicProcedure
+    .input(GetActiveQuizIdsInputSchema)
+    .output(ActiveQuizIdsDTOSchema)
+    .query(async ({ input }) => {
+      const authorizedQuizIds = await collectAuthorizedQuizHistoryIds(input);
+      if (authorizedQuizIds.length === 0) {
+        return [];
+      }
 
-    return sessions
-      .map((session) => session.quizId)
-      .filter((quizId): quizId is string => typeof quizId === 'string');
-  }),
+      const sessions = await prisma.session.findMany({
+        where: {
+          status: { not: 'FINISHED' },
+          quizId: { in: authorizedQuizIds },
+        },
+        select: { quizId: true },
+        distinct: ['quizId'],
+      });
+
+      return sessions
+        .map((session) => session.quizId)
+        .filter((quizId): quizId is string => typeof quizId === 'string');
+    }),
 
   /** Live-Freitextdaten der aktuell aktiven Frage (Story 1.14, polling-ready). */
   getLiveFreetext: hostProcedure

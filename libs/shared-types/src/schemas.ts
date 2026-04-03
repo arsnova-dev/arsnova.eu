@@ -712,6 +712,15 @@ export type LiveFreetextDTO = z.infer<typeof LiveFreetextDTOSchema>;
 export const ActiveQuizIdsDTOSchema = z.array(z.uuid());
 export type ActiveQuizIdsDTO = z.infer<typeof ActiveQuizIdsDTOSchema>;
 
+export const ActiveQuizLookupEntrySchema = z.object({
+  quizId: z.uuid(),
+  accessProof: QuizHistoryAccessProofSchema,
+});
+export type ActiveQuizLookupEntry = z.infer<typeof ActiveQuizLookupEntrySchema>;
+
+export const GetActiveQuizIdsInputSchema = z.array(ActiveQuizLookupEntrySchema).max(200);
+export type GetActiveQuizIdsInput = z.infer<typeof GetActiveQuizIdsInputSchema>;
+
 /** DTO: Teilnehmer-Info (Story 2.2 Lobby). */
 export const ParticipantDTOSchema = z.object({
   id: z.uuid(),

@@ -55,6 +55,7 @@ describe('QuizListComponent', () => {
     duplicateQuiz: vi.fn(),
     deleteQuiz: vi.fn(),
     exportQuiz: vi.fn(),
+    getUploadPayload: vi.fn(),
     importQuiz: vi.fn(),
     setLastServerUploadAccess: vi.fn(),
   };
@@ -287,16 +288,26 @@ describe('QuizListComponent', () => {
         questionCount: 2,
         teamMode: false,
         hasBonus: false,
-        lastServerQuizId: null,
-        lastServerQuizAccessProof: null,
+        lastServerQuizId: '11111111-1111-4111-8111-111111111111',
+        lastServerQuizAccessProof:
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
       },
     ]);
-    getActiveQuizIdsQueryMock.mockResolvedValue(['e31fef3f-f7b1-4705-a739-28c8ec4486bf']);
+    getActiveQuizIdsQueryMock.mockResolvedValue(['11111111-1111-4111-8111-111111111111']);
 
     const fixture = TestBed.createComponent(QuizListComponent);
-    fixture.detectChanges();
-    await fixture.whenStable();
+    await fixture.componentInstance.ngOnInit();
 
+    expect(getActiveQuizIdsQueryMock).toHaveBeenCalledWith([
+      {
+        quizId: '11111111-1111-4111-8111-111111111111',
+        accessProof: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      },
+    ]);
+
+    fixture.componentInstance['activeLiveQuizIds'].set(
+      new Set(['11111111-1111-4111-8111-111111111111']),
+    );
     expect(fixture.componentInstance.isQuizLive('e31fef3f-f7b1-4705-a739-28c8ec4486bf')).toBe(true);
   });
 

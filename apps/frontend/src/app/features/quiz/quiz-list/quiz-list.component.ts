@@ -264,7 +264,9 @@ export class QuizListComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const activeQuizIds = await trpc.session.getActiveQuizIds.query();
+      const activeQuizIds = await trpc.session.getActiveQuizIds.query(
+        await this.collectActiveQuizLookupEntries(),
+      );
       this.activeLiveQuizIds.set(new Set(activeQuizIds));
     } catch {
       this.activeLiveQuizIds.set(new Set());
@@ -530,7 +532,8 @@ export class QuizListComponent implements OnInit {
   }
 
   isQuizLive(quizId: string): boolean {
-    return this.activeLiveQuizIds().has(quizId);
+    const serverQuizId = this.quizzes().find((quiz) => quiz.id === quizId)?.lastServerQuizId;
+    return typeof serverQuizId === 'string' && this.activeLiveQuizIds().has(serverQuizId);
   }
 
   async openLiveStartDialog(
@@ -855,6 +858,30 @@ export class QuizListComponent implements OnInit {
     } catch {
       return null;
     }
+  }
+
+  private async collectActiveQuizLookupEntries(): Promise<
+    Array<{ quizId: string; accessProof: string }>
+  > {
+    const entries = await Promise.all(
+      this.quizzes().map(async (quiz) => {
+        if (!quiz.lastServerQuizId) {
+          return null;
+        }
+
+        const accessProof = await this.resolveQuizHistoryAccessProof(quiz);
+        if (!accessProof) {
+          return null;
+        }
+
+        return {
+          quizId: quiz.lastServerQuizId,
+          accessProof,
+        };
+      }),
+    );
+
+    return entries.filter((entry): entry is { quizId: string; accessProof: string } => !!entry);
   }
 }
 
