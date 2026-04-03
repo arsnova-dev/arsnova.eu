@@ -23,6 +23,10 @@ Welche **weiteren** Dokumente für deine Veranstaltung Pflicht sind, sagt dir di
 
 **Wenn du nur den ersten lauffaehigen Stand brauchst:** `cp .env.example .env` → `npm ci` → `npm run setup:dev` → `npm run dev` → Browser auf **`http://localhost:4200`**. Das ist fuer Einsteiger der einfachste Start.
 
+**Wenn du Windows nutzt:** Fuer dieses Repo bitte direkt **WSL2 mit Ubuntu** verwenden. Klone das Repo in WSL (z. B. `~/projects/arsnova.eu`) und fuehre die Befehle dort aus. **Nicht** PowerShell, **nicht** Git Bash und moeglichst **nicht** unter `/mnt/c/...` arbeiten.
+
+**Kurzfassung fuer Windows-Newcomer:** In **PowerShell** einmal `wsl --install -d Ubuntu`, danach in **Ubuntu/WSL**: `mkdir -p ~/projects && cd ~/projects && git clone https://github.com/kqc-real/arsnova.eu.git && cd arsnova.eu && cp .env.example .env && npm ci && npm run setup:dev && npm run dev`.
+
 ---
 
 ## 2. Entwicklungswerkzeuge (kurz erklärt)
@@ -50,6 +54,13 @@ Welche **weiteren** Dokumente für deine Veranstaltung Pflicht sind, sagt dir di
 - **Was:** Läuft **PostgreSQL** und **Redis** lokal in Containern, ohne sie „von Hand“ zu installieren.
 - **Im Projekt:** `docker compose up -d postgres redis` (siehe `onboarding.md`).
 - **Einstieg:** Du musst Docker nicht programmieren — nur installieren und den Befehl aus der Anleitung ausführen. [Docker — Get Started](https://docs.docker.com/get-started/) (Englisch).
+
+### Windows + WSL2 (für dieses Repo der Standardweg)
+
+- **Was:** WSL2 ist eine Linux-Umgebung auf deinem Windows-Rechner.
+- **Warum hier wichtig:** Node, Docker, Prisma, Watcher und Build-Tools laufen fuer Einsteiger dort deutlich berechenbarer.
+- **Im Projekt:** VS Code mit **Remote - WSL** oeffnen, Repo in WSL klonen, dann dieselben Befehle wie unter macOS/Linux nutzen.
+- **Merksatz:** Wenn du Windows hast, ist **WSL2 hier der normale Weg**, nicht der Sonderfall.
 
 ---
 

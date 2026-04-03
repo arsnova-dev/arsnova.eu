@@ -21,6 +21,45 @@ Willkommen im Entwickler-Team von **arsnova.eu**. Dieses Dokument hilft dir als 
 
 **Node-Version:** Odd-/Current-Majors (z. B. **21**, **23**) sind für lokale Builds **nicht** unterstützt — bitte auf **20** oder **22** LTS wechseln. Vollständige Regel: Root-[`package.json`](../package.json) (`engines`) und [README](../README.md) „Voraussetzungen“. Die **CI** baut mit **Node 20 und 22** (GitHub Actions).
 
+### Windows? Bitte direkt WSL2 nutzen
+
+Wenn du **Windows** nutzt und noch **wenig Erfahrung** mit Entwicklungsumgebungen hast, nimm für dieses Repo bitte **WSL2 mit Ubuntu** als Standardweg.
+
+**Empfohlener Weg für Windows-Newcomer:**
+
+1. **WSL2 + Ubuntu** installieren.
+2. **Docker Desktop** installieren und die **WSL-Integration** aktivieren.
+3. **VS Code** mit **Remote - WSL** nutzen.
+4. Das Repo **in WSL** klonen, z. B. nach `~/projects/arsnova.eu`.
+5. Alle Befehle **im Ubuntu-Terminal** ausführen, nicht in PowerShell.
+
+Für Einsteiger ist das deutlich robuster als ein natives Windows-Setup. So vermeidest du viele typische Probleme mit Docker, Prisma, File-Watchern und Build-Tools.
+
+### Windows in 10 Minuten: Copy-Paste-Weg
+
+Wenn **WSL2**, **Ubuntu**, **Docker Desktop** und **VS Code mit Remote - WSL** bereits installiert sind, reicht in der **Ubuntu-WSL-Konsole** meist dieser Ablauf:
+
+```bash
+mkdir -p ~/projects
+cd ~/projects
+git clone https://github.com/kqc-real/arsnova.eu.git
+cd arsnova.eu
+cp .env.example .env
+npm ci
+npm run setup:dev
+npm run dev
+```
+
+Dann im Windows-Browser: **`http://localhost:4200`**
+
+Wenn **WSL2/Ubuntu** noch nicht installiert ist, zuerst in **PowerShell als Administrator**:
+
+```powershell
+wsl --install -d Ubuntu
+```
+
+Danach Windows neu starten, Ubuntu einmal initial einrichten, Docker Desktop starten und erst dann den Linux-Block oben ausführen.
+
 ### Schnellster Weg zur ersten laufenden Minute
 
 Wenn du das Repo zum **ersten Mal** startest und einfach nur eine **laufende Entwicklungsumgebung** brauchst, nimm genau diesen Weg:
@@ -37,6 +76,8 @@ npm run dev
 Dann im Browser: **`http://localhost:4200`**
 
 Das ist absichtlich der einfachste Pfad: **Deutsch**, beide Server laufen parallel, Postgres + Redis sind gestartet, Prisma ist vorbereitet und `shared-types` ist gebaut. **Englisch** brauchst du erst spaeter; dafuer gibt es **`npm run dev:en`**.
+
+**Wichtig für Windows:** Diese Befehle laufen dann in **WSL/Ubuntu**, nicht in PowerShell oder Git Bash.
 
 ### Setup in wenigen Schritten
 
@@ -104,6 +145,8 @@ npm run dev:frontend:de   # → http://localhost:4200 (Angular, DE-Quelltexte)
 | Fehler zu Prisma oder fehlenden Typen   | `setup:dev`, `prisma:generate` oder `shared-types`-Build fehlt | `npm run setup:dev` erneut ausfuehren                                  |
 | Port 3000 oder 4200 ist schon belegt    | Voriger Dev-Server laeuft noch                                 | `npm run free-dev-ports` und dann erneut `npm run dev`                 |
 | `/admin` funktioniert lokal nicht       | `ADMIN_SECRET` wurde nicht gesetzt                             | `.env` ergaenzen und Backend neu starten                               |
+
+**Spezialfall Windows:** Wenn das Setup unter Windows „zufaellig kaputt“ wirkt, wechsle auf **WSL2/Ubuntu**, klone das Repo dort unter `~/...` neu und starte den Ablauf noch einmal komplett in WSL.
 
 ### Production-ähnlich lokal (Build + ein Server)
 

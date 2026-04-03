@@ -79,7 +79,7 @@ Folge diesen Schritten, um das Projekt lokal auf deiner Maschine zum Laufen zu b
 - **npm:** mit dem gelieferten **Lockfile** arbeiten — **`npm ci`** nach Clone (empfohlen) bzw. die in der Lockfile dokumentierte npm-Version; kein blindes Upgrade der npm-Hauptversion nötig.
 - Docker Desktop (für die lokale Datenbank)
 
-**Windows:** Wenn native Tooling (esbuild, Prisma) zickt, **WSL2** mit Ubuntu und dieselben Node-LTS-Schritte wie oben nutzen — reduziert Abweichungen zum Team und zur CI.
+**Windows:** Für **Newcomer** ist **WSL2 mit Ubuntu der empfohlene Standardweg**. Bitte das Repo in WSL klonen (z. B. `~/projects/arsnova.eu`), **nicht** unter `/mnt/c/...`, und die Befehle im WSL-Terminal ausführen. Das reduziert Probleme mit Docker, Prisma, File-Watchern und nativen Build-Tools deutlich. Natives Windows-Setup ist nur Best-Effort.
 
 ### 2. Infrastruktur & Installation
 
