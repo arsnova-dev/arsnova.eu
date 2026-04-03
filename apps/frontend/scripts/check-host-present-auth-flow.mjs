@@ -19,6 +19,7 @@ const DESKTOP = { width: 1440, height: 1000 };
 const MOBILE = { width: 430, height: 932 };
 const HOST_TOKEN_STORAGE_PREFIX = 'arsnova-host-token:';
 const PARTICIPANT_JOIN_BUTTON = /Jetzt beitreten/i;
+const PARTICIPANT_DIRECT_JOIN_BUTTON = /join now|jetzt beitreten|mitmachen/i;
 const QUIZ_PAYLOAD = {
   name: `Host Present Auth ${Date.now()}`,
   description: undefined,
@@ -117,6 +118,22 @@ async function chooseJoinIdentity(page, fallbackName) {
         return true;
       }
     }
+  }
+
+  return false;
+}
+
+async function clickJoinAction(page) {
+  const localizedJoinButton = page.getByRole('button', { name: PARTICIPANT_JOIN_BUTTON });
+  if (await localizedJoinButton.isVisible().catch(() => false)) {
+    await localizedJoinButton.click();
+    return true;
+  }
+
+  const directJoinButton = page.getByRole('button', { name: PARTICIPANT_DIRECT_JOIN_BUTTON });
+  if (await directJoinButton.isVisible().catch(() => false)) {
+    await directJoinButton.click();
+    return true;
   }
 
   return false;
@@ -235,13 +252,13 @@ async function main() {
       timeout: 30_000,
     });
     await participant.waitForTimeout(1_500);
-    const joinReady = await chooseJoinIdentity(participant, 'SmokeTester');
-    if (joinReady) {
-      await participant.getByRole('button', { name: PARTICIPANT_JOIN_BUTTON }).click();
+    await chooseJoinIdentity(participant, 'SmokeTester');
+    const joined = await clickJoinAction(participant);
+    if (joined) {
       await waitForPathSuffix(participant, `/session/${code}/vote`);
       logStep(true, 'Teilnehmer tritt der Session bei');
     } else {
-      failures.push('Join-Ansicht bot keine nutzbare Identitaetsauswahl.');
+      failures.push('Join-Ansicht bot weder Identitaetsauswahl noch einen nutzbaren Join-CTA.');
     }
 
     const updatedCount = await waitForParticipantCount(host, 1);
