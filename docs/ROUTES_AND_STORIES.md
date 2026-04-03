@@ -3,7 +3,7 @@
 > **Konvention:** Alle Routen auf Englisch, kurz, prägnant. Die URL zeigt eindeutig **wo** man ist und **welche Rolle** (Host vs. Teilnehmende).
 > **Architektur-Entscheidungen:** [ADR-0006: Rollen, Routen und Autorisierung (Host, Teilnehmer, Admin)](../architecture/decisions/0006-roles-routes-authorization-host-admin.md).
 >
-> **Wichtig:** Diese Datei beschreibt primär den **aktuellen Angular-Router und den Repo-Ist-Stand**. Das in ADR-0006 beschriebene **Host-Token-Zielbild** ist im aktuellen Backend noch **nicht vollständig umgesetzt**.
+> **Wichtig:** Diese Datei beschreibt primär den **aktuellen Angular-Router und den Repo-Ist-Stand**. Die konkrete Härtung des Host- und Sammlungszugriffs ist zusätzlich in [ADR-0019](../architecture/decisions/0019-host-hardening-and-owner-bound-session-access.md) beschrieben.
 
 ---
 
@@ -20,26 +20,32 @@
 | **Admin**         | Admin/Betreiber        | `/admin` (Login; danach u. a. Sessions + **MOTD**-Tab, Epic 10) |
 
 - **`/join/:code`** = Ziel des QR-Codes (Story 2.1b). Nach Nickname (oder anonym) → Redirect auf `/session/:code/vote`.
-- **`/session/:code`** ohne Segment: Im aktuellen Router **immer** Redirect auf `/session/:code/host`. Das ist derzeit **kein** rollenabhängiger Redirect.
+- **`/session/:code`** ohne Segment: Im aktuellen Router **rollenabhängiger Redirect**: mit Host-Token → `/session/:code/host`, sonst `/join/:code`.
 - Locale-Präfixe wie `/de/...`, `/en/...` usw. werden über denselben Router aufgelöst; fachlich ist also z. B. `/de/session/ABC123/host` dieselbe Route wie `/session/ABC123/host`.
 
 ---
 
-## 1.1 Host-Autorisierung: Zielbild vs. aktueller Repo-Stand
+## 1.1 Host-Autorisierung: aktueller Repo-Stand
 
 **Problem:** Wenn die URL `/session/:code/host` öffentlich ist, wie verhindern wir, dass sich jemand einfach dorthin navigiert und sich als Host ausgibt?
 
-**ADR-Zielbild:** Host-Rechte werden über ein **Host-Token** vergeben, nicht über die URL.
+**Aktueller Stand:** Host-Rechte werden über ein **Host-Token** vergeben, nicht über die URL.
 
-| Aspekt                  | ADR-Zielbild                                                  | Aktueller Repo-Stand                                                                                                                                                            |
-| ----------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Wer ist Host?**       | Nur, wer die Session erstellt hat, erhält ein **Host-Token**. | Im aktuellen Backend gibt es **noch keine** eigenständige Host-Token-Prozedur oder `hostProcedure`.                                                                             |
-| **Token-Speicherung**   | Token nur in `sessionStorage`, nie in der URL.                | Im Frontend gibt es derzeit **nur** eine tokenbasierte Speicherung für **Admin** (`arsnova-admin-token`). Ein entsprechender Host-Token-Speicher ist aktuell nicht vorhanden.   |
-| **Host-Route aufrufen** | Ohne gültiges Token: Zugriff verweigern oder umleiten.        | Die Route `/session/:code/host` existiert und ist direkt navigierbar; eine dedizierte Frontend-Host-Guard-Logik ist derzeit nicht als eigener Router-Guard umgesetzt.           |
-| **Backend-Schutz**      | Host-only-Prozeduren erwarten Token und prüfen serverseitig.  | Zentrale Session-Steuerung wie `nextQuestion`, `revealAnswers`, `revealResults`, `end`, `getBonusTokens`, `getExportData` läuft aktuell über `publicProcedure` in `session.ts`. |
-| **Fazit**               | URL trennt Ansichten, Rechte kommen vom Token.                | Die **URL-Struktur** ist klar, die **serverseitige Host-Härtung** aus ADR-0006 ist aber noch ein **offener Implementierungsschritt**.                                           |
+- **Wer ist Host?** Nur, wer `session.create` erfolgreich aufruft, erhält ein **Host-Token**.
+- **Token-Speicherung:** Host-Tokens liegen pro Session-Code in `sessionStorage`; Standalone-Blitzlicht nutzt separat gespeicherte Feedback-Host-Tokens.
+- **Host-Route aufrufen:** `/session/:code/host` und `/session/:code/present` sind clientseitig tokengebunden; ohne Token Redirect auf `/join/:code` oder Zugriff verweigert.
+- **Backend-Schutz:** Zentrale Session-Steuerung, Export, Bonus-Liste, Q&A-Moderation und session-gebundenes Blitzlicht laufen serverseitig über `hostProcedure` bzw. rollenbezogene Token-Prüfung.
+- **Fazit:** Die **URL-Struktur** trennt Ansichten, die **Rechte** kommen aus Token-Prüfung und nicht aus der Route.
 
-**Didaktisch wichtig:** Wer das Repo liest, sollte das nicht verwechseln: **ADR-0006 beschreibt hier das Zielbild**, nicht die bereits vollständig durchgezogene Ist-Architektur.
+Zusätzliche Details und die besitzgebundene Absicherung der Quiz-Sammlung stehen in [ADR-0019](../architecture/decisions/0019-host-hardening-and-owner-bound-session-access.md).
+
+## 1.1a Quiz-Sammlung: besitzgebundene Historie statt öffentlicher `quizId`
+
+Für die Quiz-Liste gilt zusätzlich:
+
+- `lastServerQuizId` allein reicht **nicht** mehr als Leseschlüssel für Sammlungs-Historie.
+- Historienzugriffe wie `Bonus-Codes`, `letztes Session-Feedback` und `aktive Live-Markierung` nutzen einen **`accessProof`** zur hochgeladenen Quizkopie.
+- Der Proof wird lokal zusammen mit `lastServerQuizId` gespeichert und serverseitig gegen die gespeicherte Quiz-Kopie geprüft.
 
 ---
 
@@ -151,22 +157,20 @@ Diese Stories bestimmen **keine** neue Page/URL, sondern Logik, Backend, globale
 
 ## 5. Kurz: Erreichbarkeit und Erkennbarkeit an der URL
 
-| Frage                                          | Antwort                                                                                                                                                                                                                           |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Wo bin ich?**                                | `/` = Home, `/quiz` = Quiz-Bereich, `/session/:code/...` = konkrete Session, `/feedback/:code...` = Blitzlicht, `/help`, `/news-archive`, `/legal/...`                                                                            |
-| **Wer bin ich?**                               | `host` = Host-Steuerung, `present` = Beamer, `vote` = Teilnehmende aktiv, `join` = Teilnehmenden-Einstieg                                                                                                                         |
-| **Klare Trennung Host vs. Teilnehmende?**      | Auf URL-Ebene ja: `host`/`present` gegenüber `join`/`vote`. Die **serverseitige Host-Härtung** aus ADR-0006 ist aber noch nicht vollständig umgesetzt.                                                                            |
-| **Kann sich jemand per URL zum Host machen?**  | **Im Zielbild nein.** Im aktuellen Code fehlt dafür noch die vollständige host-tokenbasierte Backend-Absicherung. Siehe Abschnitt 1.1.                                                                                            |
-| **Kann sich jemand per URL zum Admin machen?** | Nein. Admin-Rechte hängen an **Admin-Authentifizierung** (Token/API-Key oder Admin-Login). Ohne gültige Credentials: `/admin` zeigt Login oder „Zugriff verweigert“, Backend lehnt alle Admin-Prozeduren ab. Siehe Abschnitt 1.2. |
-| **Routen englisch & prägnant?**                | Ja: home, join, quiz, new, preview, sync, host, present, vote, help, legal, imprint, privacy.                                                                                                                                     |
-| **Backlog-Vorgaben erfüllt?**                  | QR = `/join/:code` (2.1b), Beamer = `/session/:code/present` (2.5), Legal = `/legal/imprint`, `/legal/privacy` (6.3), News-Archiv = `/news-archive` (Epic 10).                                                                    |
+- **Wo bin ich?** `/` = Home, `/quiz` = Quiz-Bereich, `/session/:code/...` = konkrete Session, `/feedback/:code...` = Blitzlicht, `/help`, `/news-archive`, `/legal/...`
+- **Wer bin ich?** `host` = Host-Steuerung, `present` = Beamer, `vote` = Teilnehmende aktiv, `join` = Teilnehmenden-Einstieg
+- **Klare Trennung Host vs. Teilnehmende?** Ja: `host`/`present` gegenüber `join`/`vote` auf URL-Ebene, plus tokenbasierte serverseitige Prüfung für Host-only-Aktionen.
+- **Kann sich jemand per URL zum Host machen?** Nein. Die Route allein reicht nicht; es braucht ein gültiges Host-Token bzw. im Standalone-Blitzlicht ein gültiges Feedback-Host-Token.
+- **Kann sich jemand per URL zum Admin machen?** Nein. Admin-Rechte hängen an **Admin-Authentifizierung** (Token/API-Key oder Admin-Login). Ohne gültige Credentials: `/admin` zeigt Login oder „Zugriff verweigert“, Backend lehnt alle Admin-Prozeduren ab. Siehe Abschnitt 1.2.
+- **Routen englisch & prägnant?** Ja: home, join, quiz, new, preview, sync, host, present, vote, help, legal, imprint, privacy.
+- **Backlog-Vorgaben erfüllt?** QR = `/join/:code` (2.1b), Beamer = `/session/:code/present` (2.5), Legal = `/legal/imprint`, `/legal/privacy` (6.3), News-Archiv = `/news-archive` (Epic 10).
 
 ---
 
 ## 6. Sub-Routes (Child Routes) – Empfehlung
 
 - **`/quiz`**: Child Routes `''` (Liste), `new`, `:id`, `:id/preview`, `sync/:docId` (oder `sync/:docId` als Sibling).
-- **`/session/:code`**: Child Routes `host`, `present`, `vote`; aktueller Default-Redirect von `''` auf `host`.
+- **`/session/:code`**: Child Routes `host`, `present`, `vote`; aktueller Default-Pfad `''` entscheidet tokenabhängig zwischen `host` und `join`.
 - **`/admin`**: Im aktuellen Repo eine einzelne SPA-Ansicht mit Login, Liste, Detail und MOTD-Tab; Zugriff komponentenintern und über `adminProcedure` abgesichert.
 - **`/legal`**: Child Routes `imprint`, `privacy` (oder weiterhin `:slug` mit erlaubten Werten).
 

@@ -13,6 +13,13 @@ In der **UI** heißt der Modus **Blitzlicht** ([ADR-0010](../architecture/decisi
 - **`quickFeedback.create`** mit `sessionCode`: Backend prüft, ob die Session existiert und Blitzlicht aktiviert ist (`assertSessionQuickFeedbackEnabled`).
 - **Standalone** (Startseite): `create` ohne Session-Code erzeugt einen neuen 6-stelligen Code und schreibt nur Redis-Keys.
 
+## Autorisierung
+
+- **Session-gebundenes Blitzlicht:** host-only Mutationen erwarten das normale Session-Host-Token über `x-host-token`.
+- **Standalone-Blitzlicht:** host-only Mutationen erwarten ein eigenes **Feedback-Host-Token** über `x-feedback-host-token`.
+- **Teilnehmendenpfad:** `/feedback/:code/vote` bleibt ohne Host-Token nutzbar; geschützt werden nur host-only Aktionen wie `changeType`, `toggleLock`, `reset`, `end` oder `startSecondRound`.
+- Die Architektur dazu ist in [ADR-0019](../architecture/decisions/0019-host-hardening-and-owner-bound-session-access.md) festgehalten.
+
 ---
 
 ## Procedures (`quickFeedback.*`)

@@ -157,7 +157,7 @@ Das System ist nach dem **Local-First**-Prinzip entworfen:
 
 > **Epics 0–5, 7.1, 8, 9 und 10 (MOTD) sind umgesetzt.** Dieser Abschnitt zeigt den groben aktuellen Stand; für Architekturdetails sind die Living Docs in `docs/diagrams/` und die ADRs maßgeblich. Offene Stories: [`Backlog.md`](../Backlog.md).
 
-### Was bereits funktioniert (✅ Implementiert – Stand: 2026-04-01)
+### Was bereits funktioniert (✅ Implementiert – Stand: 2026-04-03)
 
 | Komponente                                                 | Beschreibung                                                                                                               |
 | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -173,13 +173,13 @@ Das System ist nach dem **Local-First**-Prinzip entworfen:
 | Zod-Schemas (`shared-types`)                               | Alle Input-/Output-Schemas und DTOs definiert                                                                              |
 | Docker Compose                                             | PostgreSQL 16 + Redis 7 (+ optional App-Container) per `docker compose up`                                                 |
 | CI/CD-Pipeline                                             | GitHub Actions: Prisma validate/generate, TypeScript, ESLint, Tests, Docker-Build (Node 20/22)                             |
+| Session- und Besitzhärtung                                 | Host-Token, `hostProcedure`, Feedback-Host-Token, datensparsame Teilnehmerpfade und `accessProof` für Quiz-Historie        |
 
 ### Was als nächstes ansteht (🔲 Geplant / offen)
 
 | Thema                 | Kurzbeschreibung                                           | Backlog / Referenz    |
 | --------------------- | ---------------------------------------------------------- | --------------------- |
 | Barrierefreiheit & UX | Story **6.5** (Abschlussprüfung), **6.6** (Thinking Aloud) | Epic 6                |
-| Sicherheit Session    | Host-/Presenter-Zugang serverseitig härten (**2.1c**)      | Epic 2                |
 | Markdown & Editor     | Bilder/Lightbox (**1.7a**), Editor-Toolbar (**1.7b**)      | Epic 1, ADR-0015–0017 |
 | Q&A-Erweiterungen     | Delegation, Kontrovers-/Wilson-Sortierung (**8.5–8.7**)    | Epic 8                |
 | Last & Performance    | Ausführbares Lasttest-Setup (**0.7**)                      | Epic 0, ADR-0013      |
@@ -294,7 +294,7 @@ Das Frontend nutzt modernste Angular-Features:
 > Dieser Ablauf beschreibt das aktuelle Referenzmodell. Details dazu stehen in `docs/diagrams/diagrams.md`, `ADR-0009` und `ADR-0010`.
 
 1. **Quiz-Upload:** Die Lehrperson wählt ein Quiz aus ihrer lokalen IndexedDB. Das Frontend sendet eine Kopie via `quiz.upload` (Zod-validiert) an das Backend.
-2. **Session-Initialisierung:** Das Backend speichert die Quiz-Kopie in PostgreSQL, generiert einen 6-stelligen Code und registriert ihn in Redis.
+2. **Session-Initialisierung:** Das Backend speichert die Quiz-Kopie in PostgreSQL, generiert einen 6-stelligen Code, erzeugt ein Host-Token und registriert die Session-/Token-Zustände in PostgreSQL bzw. Redis.
 3. **Lobby-Phase:** Teilnehmende treten mit dem Code bei. Das Backend erstellt einen `Participant`-Eintrag und informiert die Lehrperson in Echtzeit via Redis Pub/Sub → tRPC Subscription.
 4. **Frage-Aktivierung (Security):**
    - Die Lehrperson klickt „Nächste Frage“.
@@ -303,7 +303,7 @@ Das Frontend nutzt modernste Angular-Features:
    - Die gefilterten Daten (`QuestionStudentDTO`) werden via tRPC Subscription an die Geräte aller Teilnehmenden gepusht.
 5. **Abstimmung:** Teilnehmende senden ihre Votes. Der ScoringService berechnet Punkte basierend auf Korrektheit, Antwortzeit und Schwierigkeitsgrad.
 6. **Auflösung:** Die Lehrperson beendet die Frage (Status → `RESULTS`). _Erst jetzt_ sendet das Backend das vollständige Objekt (`QuestionRevealedDTO` inkl. `isCorrect`) an die Teilnehmenden.
-7. **Parallele Live-Kanäle:** Innerhalb derselben Session können zusätzlich `Q&A` und `Blitzlicht` aktiv sein. Blitzlicht ist sowohl im Session-Kanal als auch direkt über die Startseite verfügbar.
+7. **Parallele Live-Kanäle:** Innerhalb derselben Session können zusätzlich `Q&A` und `Blitzlicht` aktiv sein. Blitzlicht ist sowohl im Session-Kanal als auch direkt über die Startseite verfügbar; Standalone-Blitzlicht nutzt dabei ein eigenes Feedback-Host-Token.
 
 ---
 

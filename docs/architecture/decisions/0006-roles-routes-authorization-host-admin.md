@@ -14,13 +14,16 @@ Die App ist für Lehrende und Teilnehmende **accountfrei**; Sessions und Quiz-Da
 2. **Admin-Rolle:** Für rechtliche und operative Kontrolle (Inspektion, Löschen, Auszug für Behörden) wird eine **Admin-Rolle** benötigt – ohne Einführung von Nutzerkonten für normale Nutzende.
 3. **Einheitliche Routen:** Alle Routen sollen englisch, kurz und prägnant sein; an der URL soll erkennbar sein, wo man ist und welche Rolle man hat.
 
-## Implementierungsstatus im Repo (Stand 2026-04-01)
+## Implementierungsstatus im Repo (Stand 2026-04-03)
 
 - **Routenstruktur:** `host`, `present`, `vote`, `join`, `admin`, `help`, `news-archive`, `legal/*` sind im Angular-Router vorhanden.
 - **Admin-Modell:** Das Admin-Secret mit opakem Session-Token in Redis und zentraler `adminProcedure` ist umgesetzt.
-- **Host-Modell:** Das in dieser ADR beschriebene **Host-Token-Zielbild** ist im aktuellen Backend noch **nicht** vollständig umgesetzt; zentrale Session-Steuerung läuft derzeit noch nicht über eine eigene `hostProcedure`.
-- **`/session/:code` ohne Segment:** Der aktuelle Router leitet schlicht auf `host` um; der in dieser ADR beschriebene kontextabhängige Redirect ist noch kein Ist-Stand.
+- **Host-Modell:** Das Host-Token-Zielbild ist im Repo jetzt weitgehend umgesetzt: `session.create` liefert ein Host-Token, Host-only-Endpunkte laufen über `hostProcedure`, und Host-/Present-Routen sind clientseitig tokengebunden.
+- **`/session/:code` ohne Segment:** Der Router entscheidet kontextabhängig zwischen Host-Ansicht (mit Token) und Join-Pfad (ohne Token).
+- **Standalone-Blitzlicht:** `/feedback/:code` verwendet einen separaten Feedback-Host-Token statt des Session-Host-Tokens.
 - **Moderator-Route:** Als Zielbild beschrieben, aber im aktuellen Frontend-Router noch nicht als eigene Route vorhanden.
+
+Die konkrete Härtung des Ist-Stands ist in [ADR-0019](./0019-host-hardening-and-owner-bound-session-access.md) beschrieben.
 
 ## Entscheidung
 
@@ -98,4 +101,4 @@ Zusätzliche delegierte Rollen wie **Presenter** und **Moderator** bauen auf der
 
 ---
 
-**Referenzen:** Backlog Epic 9 (Admin), [docs/ROUTES_AND_STORIES.md](../../ROUTES_AND_STORIES.md) (Routen, Host-/Admin-Autorisierung, Absicherung), [ADR-0011: Delegierbare Moderatorrolle für Live-Sessions](./0011-delegated-moderator-role-for-live-sessions.md).
+**Referenzen:** Backlog Epic 9 (Admin), [docs/ROUTES_AND_STORIES.md](../../ROUTES_AND_STORIES.md) (Routen, Host-/Admin-Autorisierung, Absicherung), [ADR-0011: Delegierbare Moderatorrolle für Live-Sessions](./0011-delegated-moderator-role-for-live-sessions.md), [ADR-0019: Host-Härtung und besitzgebundene Session-Zugriffe ohne Accounts](./0019-host-hardening-and-owner-bound-session-access.md).
