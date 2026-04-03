@@ -21,6 +21,23 @@ Willkommen im Entwickler-Team von **arsnova.eu**. Dieses Dokument hilft dir als 
 
 **Node-Version:** Odd-/Current-Majors (z. B. **21**, **23**) sind für lokale Builds **nicht** unterstützt — bitte auf **20** oder **22** LTS wechseln. Vollständige Regel: Root-[`package.json`](../package.json) (`engines`) und [README](../README.md) „Voraussetzungen“. Die **CI** baut mit **Node 20 und 22** (GitHub Actions).
 
+### Schnellster Weg zur ersten laufenden Minute
+
+Wenn du das Repo zum **ersten Mal** startest und einfach nur eine **laufende Entwicklungsumgebung** brauchst, nimm genau diesen Weg:
+
+```bash
+git clone https://github.com/kqc-real/arsnova.eu.git
+cd arsnova.eu
+cp .env.example .env
+npm ci
+npm run setup:dev
+npm run dev
+```
+
+Dann im Browser: **`http://localhost:4200`**
+
+Das ist absichtlich der einfachste Pfad: **Deutsch**, beide Server laufen parallel, Postgres + Redis sind gestartet, Prisma ist vorbereitet und `shared-types` ist gebaut. **Englisch** brauchst du erst spaeter; dafuer gibt es **`npm run dev:en`**.
+
 ### Setup in wenigen Schritten
 
 Nach **Clone oder Fork** müssen PostgreSQL und Redis laufen, das Datenbankschema angewendet sein und **`@arsnova/shared-types` einmal gebaut** sein — sonst fehlt u. a. `libs/shared-types/dist/` und das Backend startet beim ersten `npm run dev` nicht.
@@ -59,19 +76,34 @@ npm run build -w @arsnova/shared-types
 ### Entwicklungsserver starten
 
 ```bash
-# Alles auf einmal (Backend + Frontend parallel, UI Englisch):
+# Alles auf einmal (Backend + Frontend parallel, UI Deutsch):
 npm run dev
 
-# Oberfläche in Quellsprache Deutsch (ohne XLF-Merge):
+# Gleiches Verhalten, explizit benannt:
 npm run dev:de
+
+# Oberfläche auf Englisch:
+npm run dev:en
 
 # Oder einzeln:
 npm run dev:backend       # → http://localhost:3000 (tRPC-API)
-npm run dev:frontend      # → http://localhost:4200/en/ (Angular, EN)
+npm run dev:frontend      # → http://localhost:4200 (Angular, DE-Quelltexte)
+npm run dev:frontend:en   # → http://localhost:4200/en/ (Angular, EN)
 npm run dev:frontend:de   # → http://localhost:4200 (Angular, DE-Quelltexte)
 ```
 
-**Funktioniert alles?** Öffne **`http://localhost:4200/en/`** im Browser (Standard-`dev`). Du solltest die Startseite mit dem **Server-Status-Widget** sehen (Epic 0.4: englische UI-Strings, Status-Indikator). Bei **`npm run dev:de`** die Root-URL **`http://localhost:4200`**. Backend-Health (inkl. Redis) und tRPC laufen auf Port 3000; WebSocket auf 3001, Yjs auf 3002.
+**Funktioniert alles?** Öffne **`http://localhost:4200`** im Browser (Standard-`dev`). Du solltest die Startseite mit dem **Server-Status-Widget** sehen. Wenn du **`npm run dev:en`** oder **`npm run dev:frontend:en`** nutzt, ist die URL **`http://localhost:4200/en/`**. Backend-Health (inkl. Redis) und tRPC laufen auf Port 3000; WebSocket auf 3001, Yjs auf 3002.
+
+### Typische Stolperstellen beim ersten Start
+
+| Symptom                                 | Wahrscheinliche Ursache                                        | Direkt ausprobieren                                                    |
+| --------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `docker compose` geht nicht             | Docker Desktop ist nicht installiert oder nicht gestartet      | Docker starten, dann `docker compose version` prüfen                   |
+| `npm run dev` bricht sofort ab          | Node-Version ist nicht passend                                 | `node -v` prüfen; dann `nvm use` oder Node 20/22 installieren          |
+| Browser zeigt nicht `/en/`, sondern `/` | Das ist korrekt: Standard-`dev` ist **Deutsch**                | Einfach `http://localhost:4200` nutzen; fuer Englisch `npm run dev:en` |
+| Fehler zu Prisma oder fehlenden Typen   | `setup:dev`, `prisma:generate` oder `shared-types`-Build fehlt | `npm run setup:dev` erneut ausfuehren                                  |
+| Port 3000 oder 4200 ist schon belegt    | Voriger Dev-Server laeuft noch                                 | `npm run free-dev-ports` und dann erneut `npm run dev`                 |
+| `/admin` funktioniert lokal nicht       | `ADMIN_SECRET` wurde nicht gesetzt                             | `.env` ergaenzen und Backend neu starten                               |
 
 ### Production-ähnlich lokal (Build + ein Server)
 

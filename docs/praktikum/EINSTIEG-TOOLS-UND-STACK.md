@@ -21,6 +21,8 @@ Welche **weiteren** Dokumente für deine Veranstaltung Pflicht sind, sagt dir di
 
 **Je nach Veranstaltung:** Die Lehrperson kann den Einstieg über eine **Greenfield-Demo** zu **Story 1.7a** ergänzen. Das hilft beim Überblick über Repo, Werkzeuge und Arbeitsweise, ersetzt aber **nicht** das praktische Setup.
 
+**Wenn du nur den ersten lauffaehigen Stand brauchst:** `cp .env.example .env` → `npm ci` → `npm run setup:dev` → `npm run dev` → Browser auf **`http://localhost:4200`**. Das ist fuer Einsteiger der einfachste Start.
+
 ---
 
 ## 2. Entwicklungswerkzeuge (kurz erklärt)
@@ -70,7 +72,7 @@ Welche **weiteren** Dokumente für deine Veranstaltung Pflicht sind, sagt dir di
 ## 4. Empfohlene Reihenfolge beim Selbstlernen
 
 1. Dieses Dokument **einmal durchlesen** (Orientierung).
-2. [`docs/onboarding.md`](../onboarding.md) — Umgebung **wirklich aufsetzen**, bis `npm run dev` läuft.
+2. [`docs/onboarding.md`](../onboarding.md) — Umgebung **wirklich aufsetzen**, bis `npm run dev` laeuft und **`http://localhost:4200`** die Startseite zeigt.
 3. Die **kursinterne Einführungsveranstaltung** oder die dazugehörige Pflichtlektüre verfolgen.
 4. Mit dem **ersten Arbeitspaket** deiner Veranstaltung starten; bei Begriffen **hierher zurück** oder offizielle Docs öffnen.
 
