@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock } = vi.hoisted(() => ({
+const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn(),
     },
     participant: {
       findUnique: vi.fn(),
@@ -23,15 +25,22 @@ const { prismaMock } = vi.hoisted(() => ({
     },
     $transaction: vi.fn(),
   },
+  extractHostTokenMock: vi.fn(),
+  isHostSessionTokenValidMock: vi.fn(),
 }));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
 }));
 
+vi.mock('../lib/hostAuth', () => ({
+  extractHostToken: extractHostTokenMock,
+  isHostSessionTokenValid: isHostSessionTokenValidMock,
+}));
+
 import { qaRouter } from '../routers/qa';
 
-const caller = qaRouter.createCaller({ req: undefined });
+const caller = qaRouter.createCaller({ req: {} as never });
 const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 const PARTICIPANT_ID = '33333333-3333-4333-8333-333333333333';
 const QUESTION_ID = '44444444-4444-4444-8444-444444444444';
@@ -39,6 +48,8 @@ const QUESTION_ID = '44444444-4444-4444-8444-444444444444';
 describe('qa router (Epic 8)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    extractHostTokenMock.mockReturnValue('host-token-123');
+    isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('liefert sichtbare Fragen für einen Teilnehmer inklusive Upvote-Status', async () => {
@@ -239,5 +250,37 @@ describe('qa router (Epic 8)', () => {
     });
     expect(prismaMock.qaQuestion.updateMany).not.toHaveBeenCalled();
     expect(result.status).toBe('PINNED');
+  });
+
+  it('lehnt Moderation ohne gültigen Host-Token ab', async () => {
+    extractHostTokenMock.mockReturnValue(null);
+
+    await expect(
+      caller.moderate({
+        sessionCode: 'ABC123',
+        questionId: QUESTION_ID,
+        action: 'PIN',
+      }),
+    ).rejects.toMatchObject({
+      code: 'UNAUTHORIZED',
+      message: 'Host-Authentifizierung erforderlich.',
+    });
+  });
+
+  it('schaltet Q&A-Moderation mit Host-Rechten um', async () => {
+    prismaMock.session.findFirst.mockResolvedValue({
+      id: SESSION_ID,
+      status: 'ACTIVE',
+    });
+    prismaMock.session.update.mockResolvedValue({ qaModerationMode: true });
+
+    const result = await caller.toggleModeration({ sessionCode: 'ABC123', enabled: true });
+
+    expect(prismaMock.session.update).toHaveBeenCalledWith({
+      where: { id: SESSION_ID },
+      data: { qaModerationMode: true },
+      select: { qaModerationMode: true },
+    });
+    expect(result).toEqual({ enabled: true });
   });
 });

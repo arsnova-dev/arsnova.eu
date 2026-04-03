@@ -1,9 +1,60 @@
-import { type CanDeactivateFn, type UrlSegment, Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import {
+  type CanActivateFn,
+  type CanDeactivateFn,
+  Router,
+  type UrlSegment,
+  Routes,
+} from '@angular/router';
+import { hasFeedbackHostToken, normalizeFeedbackCode } from './core/feedback-host-token';
+import {
+  getSessionEntryCommands,
+  hasHostToken,
+  normalizeHostSessionCode,
+} from './core/host-session-token';
+import { localizeCommands } from './core/locale-router';
 import type { SessionHostComponent } from './features/session/session-host/session-host.component';
 import { newsArchivePageResolver } from './features/news-archive/news-archive-page.resolver';
 
 const canDeactivateHost: CanDeactivateFn<SessionHostComponent> = (component) =>
   component.canDeactivate();
+
+const redirectSessionEntry: CanActivateFn = (route) => {
+  const codeParam = route.paramMap.get('code');
+  if (!codeParam) {
+    return inject(Router).createUrlTree(localizeCommands(['']));
+  }
+
+  return inject(Router).createUrlTree(localizeCommands(getSessionEntryCommands(codeParam)));
+};
+
+const requireHostToken: CanActivateFn = (route) => {
+  const codeParam = route.paramMap.get('code');
+  if (!codeParam) {
+    return inject(Router).createUrlTree(localizeCommands(['']));
+  }
+
+  const code = normalizeHostSessionCode(codeParam);
+  if (hasHostToken(code)) {
+    return true;
+  }
+
+  return inject(Router).createUrlTree(localizeCommands(['join', code]));
+};
+
+const requireFeedbackHostToken: CanActivateFn = (route) => {
+  const codeParam = route.paramMap.get('code');
+  if (!codeParam) {
+    return inject(Router).createUrlTree(localizeCommands(['']));
+  }
+
+  const code = normalizeFeedbackCode(codeParam);
+  if (hasFeedbackHostToken(code)) {
+    return true;
+  }
+
+  return inject(Router).createUrlTree(localizeCommands(['feedback', code, 'vote']));
+};
 
 const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it', 'es'];
 
@@ -57,6 +108,13 @@ const mainRoutes: Routes = [
   },
   {
     path: 'session/:code',
+    pathMatch: 'full',
+    canActivate: [redirectSessionEntry],
+    loadComponent: () =>
+      import('./features/session/session.component').then((m) => m.SessionComponent),
+  },
+  {
+    path: 'session/:code',
     loadComponent: () =>
       import('./features/session/session.component').then((m) => m.SessionComponent),
     children: [
@@ -67,6 +125,7 @@ const mainRoutes: Routes = [
           import('./features/session/session-host/session-host.component').then(
             (m) => m.SessionHostComponent,
           ),
+        canActivate: [requireHostToken],
         canDeactivate: [canDeactivateHost],
       },
       {
@@ -75,6 +134,7 @@ const mainRoutes: Routes = [
           import('./features/session/session-present/session-present.component').then(
             (m) => m.SessionPresentComponent,
           ),
+        canActivate: [requireHostToken],
       },
       {
         path: 'vote',
@@ -87,6 +147,7 @@ const mainRoutes: Routes = [
   },
   {
     path: 'feedback/:code',
+    canActivate: [requireFeedbackHostToken],
     loadComponent: () =>
       import('./features/feedback/feedback-host.component').then((m) => m.FeedbackHostComponent),
   },

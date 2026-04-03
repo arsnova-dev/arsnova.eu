@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock } = vi.hoisted(() => ({
+const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
+  extractHostTokenMock: vi.fn(),
+  isHostSessionTokenValidMock: vi.fn(),
 }));
 
 vi.mock('../db', () => ({
@@ -19,14 +21,21 @@ vi.mock('../lib/rateLimit', () => ({
   recordFailedSessionCodeAttempt: vi.fn(),
 }));
 
+vi.mock('../lib/hostAuth', () => ({
+  extractHostToken: extractHostTokenMock,
+  isHostSessionTokenValid: isHostSessionTokenValidMock,
+}));
+
 import { sessionRouter } from '../routers/session';
 
-const caller = sessionRouter.createCaller({ req: undefined });
+const caller = sessionRouter.createCaller({ req: {} as never });
 const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 
 describe('session.startQa (Story 8.1)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    extractHostTokenMock.mockReturnValue('host-token-123');
+    isHostSessionTokenValidMock.mockResolvedValue(true);
     prismaMock.session.update.mockResolvedValue({
       id: SESSION_ID,
       status: 'ACTIVE',

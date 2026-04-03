@@ -23,10 +23,17 @@ import {
 import { publicProcedure, router } from '../trpc';
 import { getRedis } from '../redis';
 import { prisma } from '../db';
+import { assertHostSessionAccess } from '../lib/hostAuth';
+import {
+  assertFeedbackHostAccess,
+  createFeedbackHostToken,
+  invalidateFeedbackHostToken,
+} from '../lib/feedbackHostAuth';
 
 const FEEDBACK_TTL_SECONDS = 30 * 60;
 const QUICK_FEEDBACK_POLL_ACTIVE_MS = 500;
 const QUICK_FEEDBACK_POLL_IDLE_MS = 1200;
+type StoredQuickFeedbackResult = QuickFeedbackResult & { sessionBound?: boolean };
 
 function feedbackKey(code: string): string {
   return `qf:${code}`;
@@ -120,25 +127,56 @@ async function assertSessionAllowsQuickFeedbackVote(code: string): Promise<void>
   }
 }
 
+function parseStoredQuickFeedbackResult(raw: string): StoredQuickFeedbackResult {
+  return JSON.parse(raw) as StoredQuickFeedbackResult;
+}
+
+async function loadQuickFeedbackForHost(
+  req: Parameters<typeof assertHostSessionAccess>[0],
+  code: string,
+): Promise<StoredQuickFeedbackResult> {
+  const redis = getRedis();
+  const raw = await redis.get(feedbackKey(code));
+
+  if (!raw) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
+    });
+  }
+
+  const result = parseStoredQuickFeedbackResult(raw);
+  if (result.sessionBound === true) {
+    await assertHostSessionAccess(req, code);
+  } else {
+    await assertFeedbackHostAccess(req, code);
+  }
+
+  return result;
+}
+
 export const quickFeedbackRouter = router({
   create: publicProcedure
     .input(CreateQuickFeedbackInputSchema)
     .output(CreateQuickFeedbackOutputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
       const code = input.sessionCode?.toUpperCase() ?? generateCode();
+      const sessionBound = !!input.sessionCode;
       if (input.sessionCode) {
+        await assertHostSessionAccess(ctx.req, code);
         await assertSessionQuickFeedbackEnabled(code);
       }
       const key = feedbackKey(code);
 
-      const initial: QuickFeedbackResult = {
+      const initial: StoredQuickFeedbackResult = {
         type: input.type,
         theme: input.theme,
         preset: input.preset,
         locked: false,
         totalVotes: 0,
         distribution: emptyDistribution(input.type),
+        sessionBound,
       };
 
       const multi = redis.multi();
@@ -147,24 +185,18 @@ export const quickFeedbackRouter = router({
       multi.del(choicesKey(code));
       multi.del(choicesR1Key(code));
       await multi.exec();
-      return { feedbackId: key, sessionCode: code };
+
+      const hostToken = sessionBound ? null : await createFeedbackHostToken(code);
+      return { feedbackId: key, sessionCode: code, hostToken };
     }),
 
   updateStyle: publicProcedure
     .input(UpdateQuickFeedbackStyleInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
-      const key = feedbackKey(input.sessionCode.toUpperCase());
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
-        });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
+      const code = input.sessionCode.toUpperCase();
+      const key = feedbackKey(code);
+      const result = await loadQuickFeedbackForHost(ctx.req, code);
       result.theme = input.theme;
       result.preset = input.preset;
 
@@ -174,20 +206,11 @@ export const quickFeedbackRouter = router({
 
   changeType: publicProcedure
     .input(UpdateQuickFeedbackTypeInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
-        });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
+      const result = await loadQuickFeedbackForHost(ctx.req, code);
       result.type = input.type;
       result.theme = input.theme;
       result.preset = input.preset;
@@ -212,20 +235,11 @@ export const quickFeedbackRouter = router({
 
   reset: publicProcedure
     .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
-        });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
+      const result = await loadQuickFeedbackForHost(ctx.req, code);
       result.totalVotes = 0;
       result.locked = false;
       result.distribution = emptyDistribution(result.type);
@@ -247,9 +261,11 @@ export const quickFeedbackRouter = router({
 
   end: publicProcedure
     .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
+
+      await loadQuickFeedbackForHost(ctx.req, code);
 
       const multi = redis.multi();
       multi.del(feedbackKey(code));
@@ -257,25 +273,18 @@ export const quickFeedbackRouter = router({
       multi.del(choicesKey(code));
       multi.del(choicesR1Key(code));
       await multi.exec();
+      await invalidateFeedbackHostToken(code);
 
       return { ok: true };
     }),
 
   toggleLock: publicProcedure
     .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
-      const key = feedbackKey(input.sessionCode.toUpperCase());
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
-        });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
+      const code = input.sessionCode.toUpperCase();
+      const key = feedbackKey(code);
+      const result = await loadQuickFeedbackForHost(ctx.req, code);
       result.locked = !result.locked;
 
       await redis.set(key, JSON.stringify(result), 'EX', FEEDBACK_TTL_SECONDS);
@@ -285,20 +294,11 @@ export const quickFeedbackRouter = router({
   /** Diskussionsphase starten (Story 2.7): Runde 1 sichern, Abstimmung sperren. */
   startDiscussion: publicProcedure
     .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
-        });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
+      const result = await loadQuickFeedbackForHost(ctx.req, code);
       if (result.discussion) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Diskussionsphase bereits aktiv.' });
       }
@@ -327,20 +327,11 @@ export const quickFeedbackRouter = router({
   /** Zweite Abstimmungsrunde starten (Story 2.7): Votes zurücksetzen, Runde 2 freigeben. */
   startSecondRound: publicProcedure
     .input(QuickFeedbackVoteInputSchema.pick({ sessionCode: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const raw = await redis.get(key);
-
-      if (!raw) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Feedback-Runde nicht gefunden oder abgelaufen.',
-        });
-      }
-
-      const result = JSON.parse(raw) as QuickFeedbackResult;
+      const result = await loadQuickFeedbackForHost(ctx.req, code);
       if (!result.discussion) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Erst Diskussionsphase starten.' });
       }

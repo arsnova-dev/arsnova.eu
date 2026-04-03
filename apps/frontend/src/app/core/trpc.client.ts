@@ -6,9 +6,15 @@ import {
   wsLink,
 } from '@trpc/client';
 import type { AppRouter } from '@arsnova/api';
+import { getFeedbackHostToken, normalizeFeedbackCode } from './feedback-host-token';
+import {
+  getHostToken,
+  normalizeHostSessionCode,
+  setHostToken as storeHostToken,
+} from './host-session-token';
 import { getTrpcWsUrl } from './ws-urls';
 
-const isBrowser = typeof window !== 'undefined';
+const isBrowser = globalThis.window !== undefined;
 
 /** SSR/Prerender: relatives `/trpc` in Node nicht zuverlässig – öffentliche Produktions-API als Fallback. */
 const DEFAULT_PRERENDER_TRPC_URL = 'https://arsnova.eu/trpc';
@@ -28,9 +34,62 @@ function resolveTrpcBatchLinkUrl(): string {
 }
 const ADMIN_TOKEN_STORAGE_KEY = 'arsnova-admin-token';
 let adminToken: string | null = null;
+let pendingHostSessionCode: string | null = null;
+
+function resolveRouteHostSessionCode(): string | null {
+  if (!isBrowser) return null;
+
+  const sessionHostMatch = /\/session\/([a-zA-Z0-9]{6})\/host(?:\/|$)/.exec(
+    globalThis.window.location.pathname,
+  );
+  if (sessionHostMatch?.[1]) {
+    return normalizeHostSessionCode(sessionHostMatch[1]);
+  }
+
+  return null;
+}
+
+function resolveRouteFeedbackCode(): string | null {
+  if (!isBrowser) return null;
+
+  const feedbackHostMatch = /\/feedback\/([a-zA-Z0-9]{6})(?:\/|$)/.exec(
+    globalThis.window.location.pathname,
+  );
+  if (feedbackHostMatch?.[1]) {
+    return normalizeFeedbackCode(feedbackHostMatch[1]);
+  }
+
+  return null;
+}
+
+function createTrpcHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {};
+
+  if (adminToken) {
+    headers['x-admin-token'] = adminToken;
+  }
+
+  const hostSessionCode = resolveRouteHostSessionCode() ?? pendingHostSessionCode;
+  if (hostSessionCode) {
+    const hostToken = getHostToken(hostSessionCode);
+    if (hostToken) {
+      headers['x-host-token'] = hostToken;
+    }
+  }
+
+  const feedbackCode = resolveRouteFeedbackCode();
+  if (feedbackCode) {
+    const feedbackHostToken = getFeedbackHostToken(feedbackCode);
+    if (feedbackHostToken) {
+      headers['x-feedback-host-token'] = feedbackHostToken;
+    }
+  }
+
+  return headers;
+}
 
 if (isBrowser) {
-  adminToken = window.sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
+  adminToken = globalThis.window.sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
 }
 
 /**
@@ -69,14 +128,26 @@ export function setAdminToken(token: string | null): void {
   adminToken = token?.trim() || null;
   if (!isBrowser) return;
   if (adminToken) {
-    window.sessionStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, adminToken);
+    globalThis.window.sessionStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, adminToken);
   } else {
-    window.sessionStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+    globalThis.window.sessionStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
   }
 }
 
 export function getAdminToken(): string | null {
   return adminToken;
+}
+
+export function setHostToken(sessionCode: string, token: string | null): void {
+  storeHostToken(sessionCode, token);
+}
+
+export function setPendingHostSessionCode(sessionCode: string | null): void {
+  pendingHostSessionCode = sessionCode ? normalizeHostSessionCode(sessionCode) : null;
+}
+
+export function clearPendingHostSessionCode(): void {
+  pendingHostSessionCode = null;
 }
 
 const wsClient = isBrowser
@@ -104,7 +175,7 @@ if (wsClient) {
         return;
       }
       if (cs.state === 'connecting') {
-        setWsState(cs.error !== null ? 'reconnecting' : 'disconnected');
+        setWsState(cs.error === null ? 'disconnected' : 'reconnecting');
       }
     },
   });
@@ -124,14 +195,14 @@ export const trpc = createTRPCProxyClient<AppRouter>({
           false: httpBatchLink({
             url: resolveTrpcBatchLinkUrl(),
             headers() {
-              return adminToken ? { 'x-admin-token': adminToken } : {};
+              return createTrpcHeaders();
             },
           }),
         })
       : httpBatchLink({
           url: resolveTrpcBatchLinkUrl(),
           headers() {
-            return adminToken ? { 'x-admin-token': adminToken } : {};
+            return createTrpcHeaders();
           },
         }),
   ],

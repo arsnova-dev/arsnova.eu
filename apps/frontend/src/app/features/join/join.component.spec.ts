@@ -37,8 +37,8 @@ vi.mock('../../core/trpc.client', () => ({
         }),
       },
       getTeams: { query: vi.fn().mockResolvedValue({ teams: [], teamCount: 0 }) },
-      getParticipants: {
-        query: vi.fn().mockResolvedValue({ participants: [], participantCount: 0 }),
+      getParticipantNicknames: {
+        query: vi.fn().mockResolvedValue({ nicknames: [], participantCount: 0 }),
       },
       join: {
         mutate: vi.fn().mockResolvedValue({
@@ -61,8 +61,8 @@ describe('JoinComponent', () => {
   beforeEach(() => {
     vi.mocked(trpc.session.getInfo.query).mockResolvedValue(mockSession);
     vi.mocked(trpc.session.getTeams.query).mockResolvedValue({ teams: [], teamCount: 0 });
-    vi.mocked(trpc.session.getParticipants.query).mockResolvedValue({
-      participants: [],
+    vi.mocked(trpc.session.getParticipantNicknames.query).mockResolvedValue({
+      nicknames: [],
       participantCount: 0,
     });
     vi.mocked(trpc.session.join.mutate).mockResolvedValue({
@@ -158,8 +158,8 @@ describe('JoinComponent', () => {
   });
 
   it('markiert vergebene Nicknames (isTaken)', async () => {
-    vi.mocked(trpc.session.getParticipants.query).mockResolvedValue({
-      participants: [{ id: 'p1', nickname: 'Marie Curie' }],
+    vi.mocked(trpc.session.getParticipantNicknames.query).mockResolvedValue({
+      nicknames: ['Marie Curie'],
       participantCount: 1,
     });
     const { fixture, comp } = createWithCode('ABC123');

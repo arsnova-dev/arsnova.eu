@@ -16,7 +16,9 @@ import {
   LiveFreetextDTOSchema,
   SessionInfoDTOSchema,
   SessionExportDTOSchema,
+  ParticipantDTOSchema,
   SessionParticipantsPayloadSchema,
+  SessionParticipantNicknamesPayloadSchema,
   SessionTeamsPayloadSchema,
   SessionStatusUpdateSchema,
   HostCurrentQuestionDTOSchema,
@@ -47,6 +49,7 @@ import {
   UpdateSessionPresetInputSchema,
   UpdateSessionQaTitleInputSchema,
   UpdateSessionQaTitleOutputSchema,
+  GetSessionParticipantInputSchema,
   SendEmojiReactionInputSchema,
   EMOJI_REACTIONS,
   DEFAULT_TEAM_COUNT,
@@ -65,8 +68,9 @@ const emojiStore = new Map<string, Map<string, string>>();
 function getEmojiKey(sessionId: string, questionId: string): string {
   return `${sessionId}:${questionId}`;
 }
-import { publicProcedure, router, getClientIp } from '../trpc';
+import { publicProcedure, router, getClientIp, hostProcedure } from '../trpc';
 import { prisma } from '../db';
+import { createHostSessionToken } from '../lib/hostAuth';
 import {
   checkSessionCreateRate,
   isSessionCodeLockedOut,
@@ -535,18 +539,20 @@ export const sessionRouter = router({
           session.quiz.teamNames,
         );
       }
+      const hostToken = await createHostSessionToken(session.code);
       return {
         sessionId: session.id,
         code: session.code,
         status: session.status,
         quizName: session.quiz?.name ?? null,
+        hostToken,
       };
     }),
 
   /** Q&A-Session aus der Lobby starten (Story 8.1).
    * - Nur Q&A (ohne Quiz): LOBBY → ACTIVE, Teilnehmer sehen „Fragerunde läuft“.
    * - Quiz mit Fragen-Kanal: Status bleibt LOBBY – Q&A ist nutzbar, die Quiz-Beitrittsphase (Lobby) bleibt erhalten bis zur ersten Frage. */
-  startQa: publicProcedure
+  startQa: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -670,7 +676,7 @@ export const sessionRouter = router({
     }),
 
   /** Teilnehmerliste einer Session (Story 2.2 Lobby). */
-  getParticipants: publicProcedure
+  getParticipants: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionParticipantsPayloadSchema)
     .query(async ({ input }) => {
@@ -699,6 +705,67 @@ export const sessionRouter = router({
           teamName: p.team?.name ?? null,
         })),
         participantCount: session.participants.length,
+      };
+    }),
+
+  /** Öffentliche Nickname-Liste für Kollisionserkennung beim Join. */
+  getParticipantNicknames: publicProcedure
+    .input(GetSessionInfoInputSchema)
+    .output(SessionParticipantNicknamesPayloadSchema)
+    .query(async ({ input }) => {
+      const session = await prisma.session.findUnique({
+        where: { code: input.code.toUpperCase() },
+        include: {
+          participants: {
+            orderBy: { joinedAt: 'asc' },
+            select: { nickname: true },
+          },
+        },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+      return {
+        nicknames: session.participants.map((participant) => participant.nickname),
+        participantCount: session.participants.length,
+      };
+    }),
+
+  /** Öffentliche Self-Info für Teilnehmende ohne komplette Teilnehmerliste preiszugeben. */
+  getParticipantSelf: publicProcedure
+    .input(GetSessionParticipantInputSchema)
+    .output(ParticipantDTOSchema.nullable())
+    .query(async ({ input }) => {
+      const code = input.code.toUpperCase();
+      const session = await prisma.session.findUnique({
+        where: { code },
+        select: { id: true },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+
+      const participant = await prisma.participant.findFirst({
+        where: {
+          id: input.participantId,
+          sessionId: session.id,
+        },
+        select: {
+          id: true,
+          nickname: true,
+          teamId: true,
+          team: { select: { name: true } },
+        },
+      });
+      if (!participant) {
+        return null;
+      }
+
+      return {
+        id: participant.id,
+        nickname: participant.nickname,
+        teamId: participant.teamId ?? null,
+        teamName: participant.team?.name ?? null,
       };
     }),
 
@@ -737,7 +804,7 @@ export const sessionRouter = router({
     }),
 
   /** Subscription: Lobby-Teilnehmerliste (Story 2.2). Pollt alle 2s und pusht bei Änderung. */
-  onParticipantJoined: publicProcedure
+  onParticipantJoined: hostProcedure
     .input(GetSessionInfoInputSchema)
     .subscription(async function* ({ input }) {
       const code = input.code.toUpperCase();
@@ -779,25 +846,23 @@ export const sessionRouter = router({
     }),
 
   /** Subscription: Status-Wechsel (Story 2.3). Pollt alle 2s und pusht bei Änderung. */
-  updatePreset: publicProcedure
-    .input(UpdateSessionPresetInputSchema)
-    .mutation(async ({ input }) => {
-      const session = await prisma.session.findUnique({
-        where: { code: input.code.toUpperCase() },
-        select: { id: true, quizId: true },
-      });
-      if (!session || !session.quizId) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
-      }
-      await prisma.quiz.update({
-        where: { id: session.quizId },
-        data: { preset: input.preset },
-      });
-      return { preset: input.preset };
-    }),
+  updatePreset: hostProcedure.input(UpdateSessionPresetInputSchema).mutation(async ({ input }) => {
+    const session = await prisma.session.findUnique({
+      where: { code: input.code.toUpperCase() },
+      select: { id: true, quizId: true },
+    });
+    if (!session || !session.quizId) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+    }
+    await prisma.quiz.update({
+      where: { id: session.quizId },
+      data: { preset: input.preset },
+    });
+    return { preset: input.preset };
+  }),
 
   /** Q&A-Kanaltitel ändern (Host; Teilnehmende sehen den Titel beim nächsten getInfo-Poll). */
-  updateQaTitle: publicProcedure
+  updateQaTitle: hostProcedure
     .input(UpdateSessionQaTitleInputSchema)
     .output(UpdateSessionQaTitleOutputSchema)
     .mutation(async ({ input }) => {
@@ -895,7 +960,7 @@ export const sessionRouter = router({
 
   /** Nächste Frage öffnen (Story 2.3). LOBBY/PAUSED/RESULTS/DISCUSSION → QUESTION_OPEN oder ACTIVE; bei Lesephase aus: direkt ACTIVE.
    * Zusätzlich: ACTIVE + currentQuestion null (z. B. nach Q&A-Start aus der Lobby) erlaubt den Start der ersten Quiz-Frage. */
-  nextQuestion: publicProcedure
+  nextQuestion: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -986,7 +1051,7 @@ export const sessionRouter = router({
     }),
 
   /** Antwortoptionen freigeben – Lesephase beenden (Story 2.3). Nur bei QUESTION_OPEN. */
-  revealAnswers: publicProcedure
+  revealAnswers: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -1017,7 +1082,7 @@ export const sessionRouter = router({
     }),
 
   /** Ergebnis anzeigen (Story 2.3). Nur bei ACTIVE. */
-  revealResults: publicProcedure
+  revealResults: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -1046,7 +1111,7 @@ export const sessionRouter = router({
     }),
 
   /** Diskussionsphase starten (Story 2.7 Peer Instruction). Nur bei ACTIVE (Runde 1). */
-  startDiscussion: publicProcedure
+  startDiscussion: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -1078,7 +1143,7 @@ export const sessionRouter = router({
     }),
 
   /** Zweite Abstimmungsrunde starten (Story 2.7 Peer Instruction). Nur bei DISCUSSION. */
-  startSecondRound: publicProcedure
+  startSecondRound: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -1109,7 +1174,7 @@ export const sessionRouter = router({
     }),
 
   /** Aktuelle Frage für Host-Ansicht (Story 2.3): Text + Antwortoptionen inkl. isCorrect. */
-  getCurrentQuestionForHost: publicProcedure
+  getCurrentQuestionForHost: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(HostCurrentQuestionDTOSchema.nullable())
     .query(async ({ input }) => {
@@ -1442,7 +1507,7 @@ export const sessionRouter = router({
   }),
 
   /** Live-Freitextdaten der aktuell aktiven Frage (Story 1.14, polling-ready). */
-  getLiveFreetext: publicProcedure
+  getLiveFreetext: hostProcedure
     .input(GetLiveFreetextInputSchema)
     .output(LiveFreetextDTOSchema)
     .query(async ({ input }) => {
@@ -1509,7 +1574,7 @@ export const sessionRouter = router({
     }),
 
   /** Aggregierte Freitextdaten über alle Freitextfragen einer Session (Story 1.14). */
-  getFreetextSessionExport: publicProcedure
+  getFreetextSessionExport: hostProcedure
     .input(GetLiveFreetextInputSchema)
     .output(FreetextSessionExportDTOSchema)
     .query(async ({ input }) => {
@@ -1869,7 +1934,7 @@ export const sessionRouter = router({
     }),
 
   /** Session manuell beenden (Story 4.2, 4.6). Setzt FINISHED, endedAt, generiert Bonus-Codes. */
-  end: publicProcedure
+  end: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(SessionStatusUpdateSchema)
     .mutation(async ({ input }) => {
@@ -1914,7 +1979,7 @@ export const sessionRouter = router({
     }),
 
   /** Bonus-Codes für Dozent abrufen (Story 4.6). Nur bei FINISHED. */
-  getBonusTokens: publicProcedure
+  getBonusTokens: hostProcedure
     .input(GetSessionInfoInputSchema)
     .output(BonusTokenListDTOSchema)
     .query(async ({ input }) => {
@@ -2277,14 +2342,13 @@ export const sessionRouter = router({
   /**
    * Liefert aggregierte Export-Daten für eine beendete Session (Story 4.7).
    * Nur für Session-Status FINISHED; nur anonymisierte/aggregierte Daten (DSGVO-konform).
-   * TODO: Berechtigung prüfen (nur Dozent/Ersteller der Session), sobald Auth vorhanden.
    */
-  getExportData: publicProcedure
+  getExportData: hostProcedure
     .input(GetExportDataInputSchema)
     .output(SessionExportDTOSchema)
     .query(async ({ input }) => {
       const session = await prisma.session.findUnique({
-        where: { id: input.sessionId },
+        where: { code: input.code.toUpperCase() },
         include: {
           quiz: {
             include: {

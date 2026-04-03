@@ -41,6 +41,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { firstValueFrom } from 'rxjs';
 import type { Unsubscribable } from '@trpc/server/observable';
 import type { Subscription } from 'rxjs';
+import { clearHostToken } from '../../../core/host-session-token';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import { ThemePresetService } from '../../../core/theme-preset.service';
@@ -991,6 +992,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (!this.code) return;
     try {
       await trpc.session.end.mutate({ code: this.code.toUpperCase() });
+      clearHostToken(this.code);
       await this.router.navigateByUrl(this.localizedPath('/'));
       this.dismissHostSteeringCallout();
     } catch {
@@ -1003,7 +1005,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
    * wenn die Session noch läuft.
    */
   async canDeactivate(): Promise<boolean> {
-    if (!this.isSessionActive()) return true;
+    if (!this.isSessionActive()) {
+      if (this.effectiveStatus() === 'FINISHED' && this.code) {
+        clearHostToken(this.code);
+      }
+      return true;
+    }
 
     const participants = this.participantsPayload()?.participantCount ?? 0;
 
@@ -1041,6 +1048,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     if (result === true && this.code) {
       try {
         await trpc.session.end.mutate({ code: this.code.toUpperCase() });
+        clearHostToken(this.code);
       } catch {
         this.openHostSteeringCalloutForSteeringFailure(
           () => void this.retryEndSessionAndNavigateHome(),
@@ -2067,12 +2075,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   }
 
   async exportSessionResultsCsv(): Promise<void> {
-    const sid = this.session()?.id;
-    if (!sid || this.exportExporting()) return;
+    if (!this.code || this.exportExporting()) return;
     this.exportStatus.set(null);
     this.exportExporting.set(true);
     try {
-      const data = await trpc.session.getExportData.query({ sessionId: sid });
+      const data = await trpc.session.getExportData.query({ code: this.code.toUpperCase() });
       const rows: string[] = [$localize`Frage Nr.;Fragentext;Typ;Teilnehmende;Ø Punkte;Details`];
 
       for (const q of data.questions) {

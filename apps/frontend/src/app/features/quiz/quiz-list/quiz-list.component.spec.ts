@@ -13,6 +13,9 @@ const { getActiveQuizIdsQueryMock, snackBarOpenMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('../../../core/trpc.client', () => ({
+  clearPendingHostSessionCode: vi.fn(),
+  setHostToken: vi.fn(),
+  setPendingHostSessionCode: vi.fn(),
   trpc: {
     session: {
       getActiveQuizIds: {

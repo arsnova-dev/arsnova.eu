@@ -4,6 +4,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { FeedbackHostComponent } from './feedback-host.component';
 
+const { clearFeedbackHostTokenMock, setFeedbackHostTokenMock } = vi.hoisted(() => ({
+  clearFeedbackHostTokenMock: vi.fn(),
+  setFeedbackHostTokenMock: vi.fn(),
+}));
+
+vi.mock('../../core/feedback-host-token', () => ({
+  clearFeedbackHostToken: clearFeedbackHostTokenMock,
+  setFeedbackHostToken: setFeedbackHostTokenMock,
+}));
+
 vi.mock('../../core/trpc.client', () => ({
   trpc: {
     session: {
@@ -19,7 +29,11 @@ vi.mock('../../core/trpc.client', () => ({
       reset: { mutate: vi.fn() },
       end: { mutate: vi.fn().mockResolvedValue({ ok: true }) },
       create: {
-        mutate: vi.fn().mockResolvedValue({ feedbackId: 'qf:ABC123', sessionCode: 'ABC123' }),
+        mutate: vi.fn().mockResolvedValue({
+          feedbackId: 'qf:ABC123',
+          sessionCode: 'ABC123',
+          hostToken: 'feedback-owner-token',
+        }),
       },
       changeType: { mutate: vi.fn().mockResolvedValue({ ok: true }) },
     },
@@ -183,6 +197,7 @@ describe('FeedbackHostComponent', () => {
       { duration: 7000 },
     );
     expect(trpc.quickFeedback.end.mutate).toHaveBeenCalledWith({ sessionCode: 'ABC123' });
+    expect(clearFeedbackHostTokenMock).toHaveBeenCalledWith('ABC123');
     expect(trpc.session.end.mutate).not.toHaveBeenCalled();
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/');
     expect(onActionSubscribe).toHaveBeenCalled();

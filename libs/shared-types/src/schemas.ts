@@ -273,6 +273,7 @@ export const CreateSessionOutputSchema = z.object({
   code: z.string().length(6),
   status: SessionStatusEnum,
   quizName: z.string().nullable(),
+  hostToken: z.string().min(1),
 });
 export type CreateSessionOutput = z.infer<typeof CreateSessionOutputSchema>;
 
@@ -611,6 +612,22 @@ export const SessionParticipantsPayloadSchema = z.object({
 });
 export type SessionParticipantsPayload = z.infer<typeof SessionParticipantsPayloadSchema>;
 
+/** Öffentliche Minimaldaten für Nickname-Kollisionen beim Join. */
+export const SessionParticipantNicknamesPayloadSchema = z.object({
+  nicknames: z.array(z.string()),
+  participantCount: z.number(),
+});
+export type SessionParticipantNicknamesPayload = z.infer<
+  typeof SessionParticipantNicknamesPayloadSchema
+>;
+
+/** Öffentlicher Zugriff auf den eigenen Teilnehmerdatensatz. */
+export const GetSessionParticipantInputSchema = z.object({
+  code: z.string().length(6),
+  participantId: z.uuid(),
+});
+export type GetSessionParticipantInput = z.infer<typeof GetSessionParticipantInputSchema>;
+
 /** DTO: Team-Info für Join/Lobby (Story 7.1). */
 export const TeamDTOSchema = z.object({
   id: z.uuid(),
@@ -849,7 +866,7 @@ export type BonusTokensForQuizOutput = z.infer<typeof BonusTokensForQuizOutputSc
 
 /** Input: Export-Daten für eine beendete Session abrufen (nur Dozent, Session FINISHED) */
 export const GetExportDataInputSchema = z.object({
-  sessionId: z.uuid(),
+  code: z.string().length(6, { error: 'Session-Code muss 6 Zeichen lang sein' }),
 });
 export type GetExportDataInput = z.infer<typeof GetExportDataInputSchema>;
 
@@ -1305,6 +1322,7 @@ export type UpdateQuickFeedbackTypeInput = z.infer<typeof UpdateQuickFeedbackTyp
 export const CreateQuickFeedbackOutputSchema = z.object({
   feedbackId: z.string(),
   sessionCode: z.string(),
+  hostToken: z.string().min(1).nullable(),
 });
 export type CreateQuickFeedbackOutput = z.infer<typeof CreateQuickFeedbackOutputSchema>;
 

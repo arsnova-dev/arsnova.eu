@@ -18,6 +18,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { OverlayModule, type ConnectedPosition } from '@angular/cdk/overlay';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { clearFeedbackHostToken, setFeedbackHostToken } from '../../core/feedback-host-token';
 import { trpc } from '../../core/trpc.client';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { localizeCommands, localizePath } from '../../core/locale-router';
@@ -234,6 +235,9 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
     } catch {
       this.result.set(null);
       this.locked.set(false);
+      if (!this.embeddedInSession()) {
+        clearFeedbackHostToken(code);
+      }
       this.error.set(
         this.embeddedInSession() ? null : $localize`Feedback-Runde nicht gefunden oder abgelaufen.`,
       );
@@ -428,6 +432,7 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   private async confirmEndStandaloneFeedback(code: string): Promise<void> {
     try {
       await trpc.quickFeedback.end.mutate({ sessionCode: code });
+      clearFeedbackHostToken(code);
       await this.router.navigateByUrl(localizePath('/'));
     } catch {
       // best-effort
@@ -477,6 +482,10 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
         await this.loadInitialResult();
         this.subscribeToResults();
         return;
+      }
+
+      if (res.hostToken) {
+        setFeedbackHostToken(res.sessionCode, res.hostToken);
       }
 
       await this.router.navigateByUrl(localizePath('/'), { skipLocationChange: true });

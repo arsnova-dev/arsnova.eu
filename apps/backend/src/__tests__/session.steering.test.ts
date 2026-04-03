@@ -1,27 +1,36 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock } = vi.hoisted(() => ({
+const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
+  extractHostTokenMock: vi.fn(),
+  isHostSessionTokenValidMock: vi.fn(),
 }));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
 }));
 
+vi.mock('../lib/hostAuth', () => ({
+  extractHostToken: extractHostTokenMock,
+  isHostSessionTokenValid: isHostSessionTokenValidMock,
+}));
+
 import { sessionRouter } from '../routers/session';
 
-const caller = sessionRouter.createCaller({ req: undefined });
+const caller = sessionRouter.createCaller({ req: {} as never });
 const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 const CODE = 'ABC123';
 
 describe('session.nextQuestion (Story 2.3)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    extractHostTokenMock.mockReturnValue('host-token-123');
+    isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('wechselt von LOBBY zu QUESTION_OPEN wenn Lesephase aktiv', async () => {
@@ -157,6 +166,17 @@ describe('session.nextQuestion (Story 2.3)', () => {
       code: 'BAD_REQUEST',
       message: /Nächste Frage nur aus Status/,
     });
+  });
+
+  it('lehnt Host-Steuerung ohne gültigen Host-Token ab', async () => {
+    extractHostTokenMock.mockReturnValue(null);
+
+    await expect(caller.nextQuestion({ code: CODE })).rejects.toMatchObject({
+      code: 'UNAUTHORIZED',
+      message: 'Host-Authentifizierung erforderlich.',
+    });
+
+    expect(prismaMock.session.findUnique).not.toHaveBeenCalled();
   });
 
   it('erlaubt erste Frage bei ACTIVE ohne currentQuestion (nach Q&A-Start)', async () => {

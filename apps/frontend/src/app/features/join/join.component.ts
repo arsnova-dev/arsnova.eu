@@ -323,8 +323,8 @@ export class JoinComponent implements OnInit, OnDestroy {
 
   private async loadParticipants(): Promise<void> {
     try {
-      const payload = await trpc.session.getParticipants.query({ code: this.code });
-      const set = new Set(payload.participants.map((p) => p.nickname.trim().toLowerCase()));
+      const payload = await trpc.session.getParticipantNicknames.query({ code: this.code });
+      const set = new Set(payload.nicknames.map((nickname) => nickname.trim().toLowerCase()));
       this.takenNicknames.set(set);
     } catch {
       this.takenNicknames.set(new Set());

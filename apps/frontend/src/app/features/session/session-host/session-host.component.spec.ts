@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SessionHostComponent } from './session-host.component';
 
@@ -26,6 +28,8 @@ const {
   updateQaTitleMutateMock,
   onParticipantJoinedSubscribeMock,
   onStatusChangedSubscribeMock,
+  clearHostTokenMock,
+  dialogOpenMock,
 } = vi.hoisted(() => ({
   healthCheckQueryMock: vi.fn(),
   getInfoQueryMock: vi.fn(),
@@ -46,6 +50,8 @@ const {
   updateQaTitleMutateMock: vi.fn(),
   onParticipantJoinedSubscribeMock: vi.fn(() => ({ unsubscribe: unsubscribeMock })),
   onStatusChangedSubscribeMock: vi.fn(() => ({ unsubscribe: unsubscribeMock })),
+  clearHostTokenMock: vi.fn(),
+  dialogOpenMock: vi.fn(),
 }));
 
 vi.mock('../../../core/trpc.client', () => ({
@@ -83,6 +89,10 @@ vi.mock('../../../core/trpc.client', () => ({
 
 vi.mock('qrcode', () => ({
   default: { toDataURL: vi.fn().mockResolvedValue('data:image/png;base64,placeholder') },
+}));
+
+vi.mock('../../../core/host-session-token', () => ({
+  clearHostToken: clearHostTokenMock,
 }));
 
 const defaultSession = {
@@ -150,6 +160,7 @@ describe('SessionHostComponent', () => {
       qaTitle: 'Titel',
     });
     qaToggleModerationMutateMock.mockResolvedValue({ enabled: true });
+    dialogOpenMock.mockReturnValue({ afterClosed: () => of(true) });
     getExportDataQueryMock.mockResolvedValue({
       sessionCode: 'ABC123',
       questions: [],
@@ -162,6 +173,7 @@ describe('SessionHostComponent', () => {
       imports: [SessionHostComponent],
       providers: [
         provideRouter([]),
+        { provide: MatDialog, useValue: { open: dialogOpenMock } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         {
           provide: ActivatedRoute,
@@ -189,6 +201,21 @@ describe('SessionHostComponent', () => {
     const text = fixture.nativeElement.textContent ?? '';
     expect(text).toContain('ABC123');
     expect(text).toContain('Erste Frage starten');
+    fixture.destroy();
+  });
+
+  it('räumt den Host-Token weg, wenn das Verlassen bestätigt wird', async () => {
+    getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'ACTIVE' });
+
+    const fixture = setup();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const canLeave = await fixture.componentInstance.canDeactivate();
+
+    expect(canLeave).toBe(true);
+    expect(endMutateMock).toHaveBeenCalledWith({ code: 'ABC123' });
+    expect(clearHostTokenMock).toHaveBeenCalledWith('ABC123');
     fixture.destroy();
   });
 

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock } = vi.hoisted(() => ({
+const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
@@ -10,21 +10,30 @@ const { prismaMock } = vi.hoisted(() => ({
       findMany: vi.fn(),
     },
   },
+  extractHostTokenMock: vi.fn(),
+  isHostSessionTokenValidMock: vi.fn(),
 }));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
 }));
 
+vi.mock('../lib/hostAuth', () => ({
+  extractHostToken: extractHostTokenMock,
+  isHostSessionTokenValid: isHostSessionTokenValidMock,
+}));
+
 import { sessionRouter } from '../routers/session';
 
-const caller = sessionRouter.createCaller({ req: undefined });
+const caller = sessionRouter.createCaller({ req: {} as never });
 const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 const QUESTION_ID = '7ed3cc25-3179-4a91-9dc3-acc00971fb46';
 
 describe('session.getLiveFreetext', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    extractHostTokenMock.mockReturnValue('host-token-123');
+    isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('liefert Freitextantworten der aktuell aktiven FREETEXT-Frage', async () => {

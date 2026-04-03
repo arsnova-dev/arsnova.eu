@@ -1,14 +1,16 @@
 /**
  * tRPC-Initialisierung (Story 0.5: Context mit req für Rate-Limit-IP).
  */
-import { initTRPC } from '@trpc/server';
-import type { IncomingMessage } from 'http';
-import { TRPCError } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
+import type { IncomingMessage } from 'node:http';
 import { extractAdminToken, isAdminSessionTokenValid } from './lib/adminAuth';
+import { extractHostToken, isHostSessionTokenValid } from './lib/hostAuth';
 
 export type Context = {
   req?: IncomingMessage;
   adminToken?: string;
+  hostToken?: string;
+  hostSessionCode?: string;
 };
 
 const t = initTRPC.context<Context>().create();
@@ -38,6 +40,55 @@ export const adminProcedure = t.procedure.use(async ({ ctx, next }) => {
     ctx: {
       ...ctx,
       adminToken: token,
+    },
+  });
+});
+
+function extractSessionCodeFromInput(input: unknown): string | null {
+  if (!input || typeof input !== 'object') {
+    return null;
+  }
+
+  const candidate = input as Record<string, unknown>;
+  for (const key of ['code', 'sessionCode']) {
+    const raw = candidate[key];
+    if (typeof raw === 'string' && raw.trim().length > 0) {
+      return raw.trim().toUpperCase();
+    }
+  }
+
+  return null;
+}
+
+/** Host-geschützte Procedure (Token via x-host-token). */
+export const hostProcedure = t.procedure.use(async ({ ctx, getRawInput, next }) => {
+  const rawInput = await getRawInput();
+  const sessionCode = extractSessionCodeFromInput(rawInput);
+  if (!sessionCode) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Host-Authentifizierung ohne Session-Code konfiguriert.',
+    });
+  }
+
+  const token = extractHostToken(ctx.req);
+  if (!token) {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Host-Authentifizierung erforderlich.' });
+  }
+
+  const valid = await isHostSessionTokenValid(sessionCode, token);
+  if (!valid) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'Host-Session ungültig oder abgelaufen.',
+    });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      hostToken: token,
+      hostSessionCode: sessionCode,
     },
   });
 });
@@ -90,7 +141,7 @@ export function resolveClientIp(req: IncomingMessage | undefined): ResolvedClien
   }
 
   const ra = req.socket?.remoteAddress;
-  if (ra && ra.trim()) {
+  if (ra?.trim()) {
     return { ip: ra, source: 'socket' };
   }
   return { ip: '0.0.0.0', source: 'missing-req' };

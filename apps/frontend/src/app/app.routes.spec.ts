@@ -1,0 +1,112 @@
+import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, Router, type CanActivateFn, provideRouter } from '@angular/router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const { hasFeedbackHostTokenMock, normalizeFeedbackCodeMock } = vi.hoisted(() => ({
+  hasFeedbackHostTokenMock: vi.fn(),
+  normalizeFeedbackCodeMock: vi.fn((code: string) => code.trim().toUpperCase()),
+}));
+
+const { hasHostTokenMock, normalizeHostSessionCodeMock } = vi.hoisted(() => ({
+  hasHostTokenMock: vi.fn(),
+  normalizeHostSessionCodeMock: vi.fn((code: string) => code.trim().toUpperCase()),
+}));
+
+vi.mock('./core/feedback-host-token', () => ({
+  hasFeedbackHostToken: hasFeedbackHostTokenMock,
+  normalizeFeedbackCode: normalizeFeedbackCodeMock,
+}));
+
+vi.mock('./core/host-session-token', () => ({
+  getSessionEntryCommands: vi.fn((code: string) => ['join', code.trim().toUpperCase()]),
+  hasHostToken: hasHostTokenMock,
+  normalizeHostSessionCode: normalizeHostSessionCodeMock,
+}));
+
+import { routes } from './app.routes';
+
+function findRoute(path: string) {
+  const route = routes.find((candidate) => candidate.path === path);
+  if (!route) {
+    throw new Error(`Route not found: ${path}`);
+  }
+  return route;
+}
+
+function findChildRoute(parentPath: string, childPath: string) {
+  const parentRoute = routes.find(
+    (candidate) => candidate.path === parentPath && Array.isArray(candidate.children),
+  );
+  const childRoute = parentRoute?.children?.find((candidate) => candidate.path === childPath);
+  if (!childRoute) {
+    throw new Error(`Child route not found: ${parentPath}/${childPath}`);
+  }
+  return childRoute;
+}
+
+function createRouteSnapshot(code: string): ActivatedRouteSnapshot {
+  const snapshot = new ActivatedRouteSnapshot();
+  snapshot.params = { code };
+  return snapshot;
+}
+
+describe('app routes', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    TestBed.configureTestingModule({
+      providers: [provideRouter([])],
+    });
+  });
+
+  it('erlaubt die Standalone-Blitzlicht-Host-Route mit gespeichertem Host-Token', () => {
+    hasFeedbackHostTokenMock.mockReturnValue(true);
+    const guard = findRoute('feedback/:code').canActivate?.[0] as CanActivateFn;
+
+    const result = TestBed.runInInjectionContext(() =>
+      guard(createRouteSnapshot('abc123'), {} as never),
+    );
+
+    expect(normalizeFeedbackCodeMock).toHaveBeenCalledWith('abc123');
+    expect(result).toBe(true);
+  });
+
+  it('leitet die Standalone-Blitzlicht-Host-Route ohne Host-Token zur Vote-Ansicht um', () => {
+    hasFeedbackHostTokenMock.mockReturnValue(false);
+    const guard = findRoute('feedback/:code').canActivate?.[0] as CanActivateFn;
+    const router = TestBed.inject(Router);
+
+    const result = TestBed.runInInjectionContext(() =>
+      guard(createRouteSnapshot('abc123'), {} as never),
+    );
+
+    expect(normalizeFeedbackCodeMock).toHaveBeenCalledWith('abc123');
+    expect(router.serializeUrl(result as ReturnType<Router['createUrlTree']>)).toBe(
+      '/feedback/ABC123/vote',
+    );
+  });
+
+  it('erlaubt die Session-Host-Route mit gespeichertem Host-Token', () => {
+    hasHostTokenMock.mockReturnValue(true);
+    const guard = findChildRoute('session/:code', 'host').canActivate?.[0] as CanActivateFn;
+
+    const result = TestBed.runInInjectionContext(() =>
+      guard(createRouteSnapshot('abc123'), {} as never),
+    );
+
+    expect(normalizeHostSessionCodeMock).toHaveBeenCalledWith('abc123');
+    expect(result).toBe(true);
+  });
+
+  it('leitet die Session-Host-Route ohne Host-Token auf Join um', () => {
+    hasHostTokenMock.mockReturnValue(false);
+    const guard = findChildRoute('session/:code', 'host').canActivate?.[0] as CanActivateFn;
+    const router = TestBed.inject(Router);
+
+    const result = TestBed.runInInjectionContext(() =>
+      guard(createRouteSnapshot('abc123'), {} as never),
+    );
+
+    expect(normalizeHostSessionCodeMock).toHaveBeenCalledWith('abc123');
+    expect(router.serializeUrl(result as ReturnType<Router['createUrlTree']>)).toBe('/join/ABC123');
+  });
+});

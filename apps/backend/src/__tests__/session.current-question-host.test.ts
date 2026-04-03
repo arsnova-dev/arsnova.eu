@@ -1,25 +1,34 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock } = vi.hoisted(() => ({
+const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
     },
   },
+  extractHostTokenMock: vi.fn(),
+  isHostSessionTokenValidMock: vi.fn(),
 }));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
 }));
 
+vi.mock('../lib/hostAuth', () => ({
+  extractHostToken: extractHostTokenMock,
+  isHostSessionTokenValid: isHostSessionTokenValidMock,
+}));
+
 import { sessionRouter } from '../routers/session';
 
-const caller = sessionRouter.createCaller({ req: undefined });
+const caller = sessionRouter.createCaller({ req: {} as never });
 const CODE = 'ABC123';
 
 describe('session.getCurrentQuestionForHost (Story 2.3)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    extractHostTokenMock.mockReturnValue('host-token-123');
+    isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('liefert aktuelle Frage mit Antwortoptionen und isCorrect', async () => {
@@ -95,5 +104,14 @@ describe('session.getCurrentQuestionForHost (Story 2.3)', () => {
     const result = await caller.getCurrentQuestionForHost({ code: CODE });
 
     expect(result).toBeNull();
+  });
+
+  it('lehnt die Host-Abfrage ohne gültigen Token ab', async () => {
+    isHostSessionTokenValidMock.mockResolvedValue(false);
+
+    await expect(caller.getCurrentQuestionForHost({ code: CODE })).rejects.toMatchObject({
+      code: 'UNAUTHORIZED',
+      message: 'Host-Session ungültig oder abgelaufen.',
+    });
   });
 });

@@ -1693,8 +1693,10 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       return;
     }
     try {
-      const payload = await trpc.session.getParticipants.query({ code: this.code });
-      const me = payload.participants.find((participant) => participant.id === pid) ?? null;
+      const me = await trpc.session.getParticipantSelf.query({
+        code: this.code,
+        participantId: pid,
+      });
       this.participantTeam.set(me);
       if (me?.nickname && !this.playerNickname()) {
         this.playerNickname.set(me.nickname);

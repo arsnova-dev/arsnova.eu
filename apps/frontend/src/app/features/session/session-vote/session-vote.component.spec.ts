@@ -10,7 +10,7 @@ const {
   statusChangedSubscribeMock,
   currentQuestionQueryMock,
   quickFeedbackResultsQueryMock,
-  getParticipantsQueryMock,
+  getParticipantSelfQueryMock,
   getTeamsQueryMock,
   getTeamLeaderboardQueryMock,
   getPersonalResultQueryMock,
@@ -27,7 +27,7 @@ const {
   statusChangedSubscribeMock: vi.fn(),
   currentQuestionQueryMock: vi.fn(),
   quickFeedbackResultsQueryMock: vi.fn(),
-  getParticipantsQueryMock: vi.fn(),
+  getParticipantSelfQueryMock: vi.fn(),
   getTeamsQueryMock: vi.fn(),
   getTeamLeaderboardQueryMock: vi.fn(),
   getPersonalResultQueryMock: vi.fn(),
@@ -47,7 +47,7 @@ vi.mock('../../../core/trpc.client', () => ({
       getInfo: { query: getInfoQueryMock },
       onStatusChanged: { subscribe: statusChangedSubscribeMock },
       getCurrentQuestionForStudent: { query: currentQuestionQueryMock },
-      getParticipants: { query: getParticipantsQueryMock },
+      getParticipantSelf: { query: getParticipantSelfQueryMock },
       getTeams: { query: getTeamsQueryMock },
       getTeamLeaderboard: { query: getTeamLeaderboardQueryMock },
       getPersonalResult: { query: getPersonalResultQueryMock },
@@ -75,16 +75,11 @@ describe('SessionVoteComponent', () => {
     localStorage.setItem('arsnova-participant-ABC123', '11111111-1111-4111-8111-111111111111');
 
     statusChangedSubscribeMock.mockReturnValue({ unsubscribe: vi.fn() });
-    getParticipantsQueryMock.mockResolvedValue({
-      participantCount: 2,
-      participants: [
-        {
-          id: '11111111-1111-4111-8111-111111111111',
-          nickname: 'Ada',
-          teamId: '22222222-2222-4222-8222-222222222222',
-          teamName: 'Rot',
-        },
-      ],
+    getParticipantSelfQueryMock.mockResolvedValue({
+      id: '11111111-1111-4111-8111-111111111111',
+      nickname: 'Ada',
+      teamId: '22222222-2222-4222-8222-222222222222',
+      teamName: 'Rot',
     });
     getTeamsQueryMock.mockResolvedValue({ teams: [], teamCount: 0 });
     getTeamLeaderboardQueryMock.mockResolvedValue([

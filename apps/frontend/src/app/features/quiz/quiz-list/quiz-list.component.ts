@@ -17,6 +17,7 @@ import {
   PresetStorageEntrySchema,
   DEFAULT_BONUS_TOKEN_COUNT,
   DEFAULT_TIMER_SECONDS,
+  type CreateSessionOutput,
   type QuizPreset,
   type TeamAssignment,
 } from '@arsnova/shared-types';
@@ -29,7 +30,12 @@ import {
   type QuizSettings,
   type QuizSummary,
 } from '../data/quiz-store.service';
-import { trpc } from '../../../core/trpc.client';
+import {
+  clearPendingHostSessionCode,
+  setHostToken,
+  setPendingHostSessionCode,
+  trpc,
+} from '../../../core/trpc.client';
 import { buildKiQuizSystemPrompt } from '../../../shared/ki-quiz-prompt';
 import {
   renderMarkdownWithKatex,
@@ -719,7 +725,7 @@ export class QuizListComponent implements OnInit {
     this.actionInfo.set(null);
     this.liveStartPending.set(true);
     try {
-      let result: { code: string };
+      let result: CreateSessionOutput;
 
       if (options.includeQuiz) {
         let payload = this.quizStore.getUploadPayload(options.quizId);
@@ -790,14 +796,20 @@ export class QuizListComponent implements OnInit {
         });
       }
 
-      if (options.startWithQa) {
-        await trpc.session.startQa.mutate({ code: result.code });
-      }
+      setHostToken(result.code, result.hostToken);
+      setPendingHostSessionCode(result.code);
+      try {
+        if (options.startWithQa) {
+          await trpc.session.startQa.mutate({ code: result.code });
+        }
 
-      this.actionInfo.set($localize`Session ${result.code} gestartet.`);
-      await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
-        queryParams: options.initialTab === 'quiz' ? undefined : { tab: options.initialTab },
-      });
+        this.actionInfo.set($localize`Session ${result.code} gestartet.`);
+        await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
+          queryParams: options.initialTab === 'quiz' ? undefined : { tab: options.initialTab },
+        });
+      } finally {
+        clearPendingHostSessionCode();
+      }
     } catch (error) {
       const msg =
         error && typeof error === 'object' && 'message' in error

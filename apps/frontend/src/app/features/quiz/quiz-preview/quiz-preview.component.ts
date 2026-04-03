@@ -19,11 +19,17 @@ import {
   PresetStorageEntrySchema,
   DEFAULT_BONUS_TOKEN_COUNT,
   DEFAULT_TIMER_SECONDS,
+  type CreateSessionOutput,
   type Difficulty,
 } from '@arsnova/shared-types';
 import { firstValueFrom } from 'rxjs';
 import { homePresetOptionsKeyForQuizPreset } from '../../../core/home-preset-storage';
-import { trpc } from '../../../core/trpc.client';
+import {
+  clearPendingHostSessionCode,
+  setHostToken,
+  setPendingHostSessionCode,
+  trpc,
+} from '../../../core/trpc.client';
 import {
   DEMO_QUIZ_ID,
   QuizStoreService,
@@ -549,7 +555,7 @@ export class QuizPreviewComponent implements OnDestroy {
     this.liveStartError.set(null);
     this.liveStartPending.set(true);
     try {
-      let result: { code: string };
+      let result: CreateSessionOutput;
 
       if (options.includeQuiz) {
         let payload = this.quizStore.getUploadPayload(this.id);
@@ -621,13 +627,19 @@ export class QuizPreviewComponent implements OnDestroy {
         });
       }
 
-      if (options.startWithQa) {
-        await trpc.session.startQa.mutate({ code: result.code });
-      }
+      setHostToken(result.code, result.hostToken);
+      setPendingHostSessionCode(result.code);
+      try {
+        if (options.startWithQa) {
+          await trpc.session.startQa.mutate({ code: result.code });
+        }
 
-      await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
-        queryParams: options.initialTab === 'quiz' ? undefined : { tab: options.initialTab },
-      });
+        await this.router.navigate(localizeCommands(['session', result.code, 'host']), {
+          queryParams: options.initialTab === 'quiz' ? undefined : { tab: options.initialTab },
+        });
+      } finally {
+        clearPendingHostSessionCode();
+      }
     } catch {
       this.liveStartError.set($localize`Veranstaltung konnte nicht gestartet werden.`);
     } finally {

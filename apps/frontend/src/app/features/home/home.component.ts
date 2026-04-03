@@ -27,6 +27,7 @@ import {
 } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { setFeedbackHostToken } from '../../core/feedback-host-token';
 import { trpc } from '../../core/trpc.client';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { PresetSnackbarFocusService } from '../../core/preset-snackbar-focus.service';
@@ -420,6 +421,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         theme: this.themePreset.theme(),
         preset: this.themePreset.preset(),
       });
+      if (result.hostToken) {
+        setFeedbackHostToken(result.sessionCode, result.hostToken);
+      }
       await this.router.navigate(this.localizedCommands(['feedback', result.sessionCode]));
     } catch {
       this.quickFeedbackError.set(

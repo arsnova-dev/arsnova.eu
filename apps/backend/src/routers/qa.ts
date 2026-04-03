@@ -13,7 +13,7 @@ import {
   UpvoteQaQuestionInputSchema,
 } from '@arsnova/shared-types';
 import { prisma } from '../db';
-import { publicProcedure, router } from '../trpc';
+import { hostProcedure, publicProcedure, router } from '../trpc';
 
 const QA_SUBSCRIPTION_POLL_MS = 1000;
 
@@ -126,7 +126,7 @@ export const qaRouter = router({
       );
     }),
 
-  moderate: publicProcedure
+  moderate: hostProcedure
     .input(ModerateQaQuestionInputSchema)
     .output(QaQuestionDTOSchema)
     .mutation(async ({ input }) => {
@@ -549,7 +549,7 @@ export const qaRouter = router({
       };
     }),
 
-  toggleModeration: publicProcedure
+  toggleModeration: hostProcedure
     .input(ToggleQaModerationInputSchema)
     .output(z.object({ enabled: z.boolean() }))
     .mutation(async ({ input }) => {

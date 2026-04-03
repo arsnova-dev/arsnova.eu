@@ -8,6 +8,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HomeComponent } from './home.component';
 import { QuizStoreService } from '../quiz/data/quiz-store.service';
 
+const { setFeedbackHostTokenMock } = vi.hoisted(() => ({
+  setFeedbackHostTokenMock: vi.fn(),
+}));
+
+vi.mock('../../core/feedback-host-token', () => ({
+  setFeedbackHostToken: setFeedbackHostTokenMock,
+}));
+
 vi.mock('../../core/trpc.client', () => ({
   trpc: {
     health: {
@@ -236,6 +244,7 @@ describe('HomeComponent', () => {
       vi.mocked(trpc.quickFeedback.create.mutate).mockResolvedValueOnce({
         feedbackId: 'qf:ABC123',
         sessionCode: 'ABC123',
+        hostToken: 'feedback-owner-token',
       });
 
       const comp = createHomeComponent();
@@ -249,6 +258,7 @@ describe('HomeComponent', () => {
         theme: comp.themePreset.theme(),
         preset: comp.themePreset.preset(),
       });
+      expect(setFeedbackHostTokenMock).toHaveBeenCalledWith('ABC123', 'feedback-owner-token');
       expect(navSpy).toHaveBeenCalledWith(['feedback', 'ABC123']);
       expect(comp.quickFeedbackError()).toBeNull();
     });

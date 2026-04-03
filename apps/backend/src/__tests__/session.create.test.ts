@@ -1,21 +1,25 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock, checkSessionCreateRateMock, shouldBypassSessionCreateRateMock } = vi.hoisted(
-  () => ({
-    prismaMock: {
-      session: {
-        findUnique: vi.fn(),
-        create: vi.fn(),
-      },
-      team: {
-        findMany: vi.fn(),
-        createMany: vi.fn(),
-      },
+const {
+  prismaMock,
+  checkSessionCreateRateMock,
+  shouldBypassSessionCreateRateMock,
+  createHostSessionTokenMock,
+} = vi.hoisted(() => ({
+  prismaMock: {
+    session: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
     },
-    checkSessionCreateRateMock: vi.fn(),
-    shouldBypassSessionCreateRateMock: vi.fn(),
-  }),
-);
+    team: {
+      findMany: vi.fn(),
+      createMany: vi.fn(),
+    },
+  },
+  checkSessionCreateRateMock: vi.fn(),
+  shouldBypassSessionCreateRateMock: vi.fn(),
+  createHostSessionTokenMock: vi.fn(),
+}));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
@@ -26,18 +30,24 @@ vi.mock('../lib/rateLimit', () => ({
   shouldBypassSessionCreateRate: shouldBypassSessionCreateRateMock,
 }));
 
+vi.mock('../lib/hostAuth', () => ({
+  createHostSessionToken: createHostSessionTokenMock,
+}));
+
 import { sessionRouter } from '../routers/session';
 
 const caller = sessionRouter.createCaller({ req: undefined });
 const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 const QUIZ_ID = '11111111-1111-4111-8111-111111111111';
 const CODE = 'ABC123';
+const HOST_TOKEN = 'host-token-123';
 
 describe('session.create (Story 2.1a)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     checkSessionCreateRateMock.mockResolvedValue({ allowed: true });
     shouldBypassSessionCreateRateMock.mockReturnValue(false);
+    createHostSessionTokenMock.mockResolvedValue(HOST_TOKEN);
     prismaMock.session.findUnique.mockResolvedValue(null);
     prismaMock.session.create.mockResolvedValue({
       id: SESSION_ID,
@@ -60,6 +70,7 @@ describe('session.create (Story 2.1a)', () => {
     expect(result.code).toBe(CODE);
     expect(result.status).toBe('LOBBY');
     expect(result.quizName).toBe('Mein Quiz');
+    expect(result.hostToken).toBe(HOST_TOKEN);
     expect(prismaMock.session.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -163,6 +174,7 @@ describe('session.create (Story 2.1a)', () => {
       code: CODE,
       status: 'LOBBY',
       quizName: null,
+      hostToken: HOST_TOKEN,
     });
     expect(prismaMock.session.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -205,6 +217,7 @@ describe('session.create (Story 2.1a)', () => {
       code: CODE,
       status: 'LOBBY',
       quizName: null,
+      hostToken: HOST_TOKEN,
     });
     expect(prismaMock.session.create).toHaveBeenCalledWith(
       expect.objectContaining({
