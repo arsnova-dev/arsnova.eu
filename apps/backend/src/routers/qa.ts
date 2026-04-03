@@ -12,6 +12,7 @@ import {
   ToggleQaUpvoteOutputSchema,
   UpvoteQaQuestionInputSchema,
 } from '@arsnova/shared-types';
+import { assertHostSessionAccessFromContext } from '../lib/hostAuth';
 import { prisma } from '../db';
 import { hostProcedure, publicProcedure, router } from '../trpc';
 
@@ -80,11 +81,12 @@ export const qaRouter = router({
   list: publicProcedure
     .input(GetQaQuestionsInputSchema)
     .output(QaQuestionsListDTOSchema)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const session = await prisma.session.findUnique({
         where: { id: input.sessionId },
         select: {
           id: true,
+          code: true,
           type: true,
           qaEnabled: true,
           qaModerationMode: true,
@@ -95,6 +97,9 @@ export const qaRouter = router({
       }
       if (session.type !== 'Q_AND_A' && session.qaEnabled !== true) {
         return [];
+      }
+      if (input.moderatorView) {
+        await assertHostSessionAccessFromContext(ctx, session.code);
       }
 
       const questions = await prisma.qaQuestion.findMany({
@@ -571,8 +576,23 @@ export const qaRouter = router({
 
   onQuestionsUpdated: publicProcedure
     .input(GetQaQuestionsInputSchema)
-    .subscription(async function* ({ input }) {
+    .subscription(async function* ({ input, ctx }) {
       let lastJson = '';
+
+      const gateSession = await prisma.session.findUnique({
+        where: { id: input.sessionId },
+        select: { id: true, code: true, type: true, qaEnabled: true },
+      });
+      if (!gateSession) {
+        return;
+      }
+      if (gateSession.type !== 'Q_AND_A' && gateSession.qaEnabled !== true) {
+        yield [];
+        return;
+      }
+      if (input.moderatorView) {
+        await assertHostSessionAccessFromContext(ctx, gateSession.code);
+      }
 
       while (true) {
         const session = await prisma.session.findUnique({

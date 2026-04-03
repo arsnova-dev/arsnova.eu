@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
+const { prismaMock, hostAuthMocks } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
-  extractHostTokenMock: vi.fn(),
-  isHostSessionTokenValidMock: vi.fn(),
+  hostAuthMocks: {
+    extractHostTokenMock: vi.fn(),
+    extractHostTokenFromConnectionParamsMock: vi.fn(() => null as string | null),
+    isHostSessionTokenValidMock: vi.fn(),
+  },
 }));
 
 vi.mock('../db', () => ({
@@ -21,10 +24,14 @@ vi.mock('../lib/rateLimit', () => ({
   recordFailedSessionCodeAttempt: vi.fn(),
 }));
 
-vi.mock('../lib/hostAuth', () => ({
-  extractHostToken: extractHostTokenMock,
-  isHostSessionTokenValid: isHostSessionTokenValidMock,
-}));
+vi.mock('../lib/hostAuth', async () => {
+  const { buildHostAuthTestMock } = await import('./lib/hostAuth-vitest-mock');
+  return buildHostAuthTestMock({
+    extractHostToken: hostAuthMocks.extractHostTokenMock,
+    extractHostTokenFromConnectionParams: hostAuthMocks.extractHostTokenFromConnectionParamsMock,
+    isHostSessionTokenValid: hostAuthMocks.isHostSessionTokenValidMock,
+  });
+});
 
 import { sessionRouter } from '../routers/session';
 
@@ -34,8 +41,9 @@ const SESSION_ID = '6a8edced-5f8f-4cfa-9176-454fac9570ad';
 describe('session.startQa (Story 8.1)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    extractHostTokenMock.mockReturnValue('host-token-123');
-    isHostSessionTokenValidMock.mockResolvedValue(true);
+    hostAuthMocks.extractHostTokenMock.mockReturnValue('host-token-123');
+    hostAuthMocks.extractHostTokenFromConnectionParamsMock.mockReturnValue(null);
+    hostAuthMocks.isHostSessionTokenValidMock.mockResolvedValue(true);
     prismaMock.session.update.mockResolvedValue({
       id: SESSION_ID,
       status: 'ACTIVE',

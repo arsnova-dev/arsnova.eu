@@ -34,7 +34,7 @@
 - **Wer ist Host?** Nur, wer `session.create` erfolgreich aufruft, erhält ein **Host-Token**.
 - **Token-Speicherung:** Host-Tokens liegen pro Session-Code in `sessionStorage`; Standalone-Blitzlicht nutzt separat gespeicherte Feedback-Host-Tokens.
 - **Host-Route aufrufen:** `/session/:code/host` und `/session/:code/present` sind clientseitig tokengebunden; ohne Token Redirect auf `/join/:code` oder Zugriff verweigert.
-- **Backend-Schutz:** Zentrale Session-Steuerung, Export, Bonus-Liste, Q&A-Moderation und session-gebundenes Blitzlicht laufen serverseitig über `hostProcedure` bzw. rollenbezogene Token-Prüfung.
+- **Backend-Schutz:** Zentrale Session-Steuerung, Export, Bonus-Liste, Q&A-Moderation und session-gebundenes Blitzlicht laufen serverseitig über `hostProcedure` bzw. rollenbezogene Token-Prüfung. Fuer Q&A gilt das auch auf Lesepfaden: `qa.list` und `qa.onQuestionsUpdated` mit `moderatorView: true` verlangen serverseitig gueltige Host-Authentifizierung.
 - **Fazit:** Die **URL-Struktur** trennt Ansichten, die **Rechte** kommen aus Token-Prüfung und nicht aus der Route.
 
 Zusätzliche Details und die besitzgebundene Absicherung der Quiz-Sammlung stehen in [ADR-0019](../architecture/decisions/0019-host-hardening-and-owner-bound-session-access.md).

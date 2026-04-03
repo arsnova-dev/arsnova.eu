@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createQuizHistoryAccessProof } from '@arsnova/shared-types';
 
-const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
+const { prismaMock, hostAuthMocks } = vi.hoisted(() => ({
   prismaMock: {
     quiz: {
       findMany: vi.fn(),
@@ -14,18 +14,25 @@ const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoi
       findMany: vi.fn(),
     },
   },
-  extractHostTokenMock: vi.fn(),
-  isHostSessionTokenValidMock: vi.fn(),
+  hostAuthMocks: {
+    extractHostTokenMock: vi.fn(),
+    extractHostTokenFromConnectionParamsMock: vi.fn(() => null as string | null),
+    isHostSessionTokenValidMock: vi.fn(),
+  },
 }));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
 }));
 
-vi.mock('../lib/hostAuth', () => ({
-  extractHostToken: extractHostTokenMock,
-  isHostSessionTokenValid: isHostSessionTokenValidMock,
-}));
+vi.mock('../lib/hostAuth', async () => {
+  const { buildHostAuthTestMock } = await import('./lib/hostAuth-vitest-mock');
+  return buildHostAuthTestMock({
+    extractHostToken: hostAuthMocks.extractHostTokenMock,
+    extractHostTokenFromConnectionParams: hostAuthMocks.extractHostTokenFromConnectionParamsMock,
+    isHostSessionTokenValid: hostAuthMocks.isHostSessionTokenValidMock,
+  });
+});
 
 import { sessionRouter } from '../routers/session';
 
@@ -81,8 +88,9 @@ const QUIZ_INPUT = {
 describe('session.getLiveFreetext', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    extractHostTokenMock.mockReturnValue('host-token-123');
-    isHostSessionTokenValidMock.mockResolvedValue(true);
+    hostAuthMocks.extractHostTokenMock.mockReturnValue('host-token-123');
+    hostAuthMocks.extractHostTokenFromConnectionParamsMock.mockReturnValue(null);
+    hostAuthMocks.isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('liefert Freitextantworten der aktuell aktiven FREETEXT-Frage', async () => {
@@ -139,7 +147,8 @@ describe('session.getLiveFreetext', () => {
   });
 
   it('akzeptiert Host-Tokens aus WebSocket-Connection-Params', async () => {
-    extractHostTokenMock.mockReturnValue(null);
+    hostAuthMocks.extractHostTokenMock.mockReturnValue(null);
+    hostAuthMocks.extractHostTokenFromConnectionParamsMock.mockReturnValue('host-token-123');
     prismaMock.session.findUnique.mockResolvedValue({
       id: SESSION_ID,
       currentQuestion: 1,
@@ -159,7 +168,10 @@ describe('session.getLiveFreetext', () => {
     const result = await wsCaller.getLiveFreetext({ code: 'ABC123' });
 
     expect(result.responses).toEqual(['Live ueber WS']);
-    expect(isHostSessionTokenValidMock).toHaveBeenCalledWith('ABC123', 'host-token-123');
+    expect(hostAuthMocks.isHostSessionTokenValidMock).toHaveBeenCalledWith(
+      'ABC123',
+      'host-token-123',
+    );
   });
 });
 
@@ -211,8 +223,9 @@ describe('session.getActiveQuizIds', () => {
 describe('session.getFreetextSessionExport', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    extractHostTokenMock.mockReturnValue('host-token-123');
-    isHostSessionTokenValidMock.mockResolvedValue(true);
+    hostAuthMocks.extractHostTokenMock.mockReturnValue('host-token-123');
+    hostAuthMocks.extractHostTokenFromConnectionParamsMock.mockReturnValue(null);
+    hostAuthMocks.isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('aggregiert Freitextantworten pro Frage für Session-Export', async () => {

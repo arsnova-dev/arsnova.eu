@@ -43,6 +43,53 @@ export function extractHostToken(req?: IncomingMessage): string | null {
   return match[1].trim();
 }
 
+function readConnectionParam(connectionParams: unknown, key: string): string | null {
+  if (!connectionParams || typeof connectionParams !== 'object') {
+    return null;
+  }
+
+  const raw = (connectionParams as Record<string, unknown>)[key];
+  if (typeof raw !== 'string' || raw.trim().length === 0) {
+    return null;
+  }
+
+  return raw.trim();
+}
+
+export function extractHostTokenFromConnectionParams(connectionParams: unknown): string | null {
+  const direct = readConnectionParam(connectionParams, 'x-host-token');
+  if (direct) {
+    return direct;
+  }
+
+  const authorization = readConnectionParam(connectionParams, 'authorization');
+  if (!authorization) {
+    return null;
+  }
+
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  if (!match?.[1]) {
+    return null;
+  }
+
+  return match[1].trim();
+}
+
+/** Kontext für Host-Token (HTTP-Upgrade und/oder tRPC-WS-connectionParams). */
+export type HostTokenContext = {
+  hostToken?: string;
+  req?: IncomingMessage;
+  connectionParams?: unknown;
+};
+
+export function extractHostTokenFromContext(ctx: HostTokenContext): string | null {
+  if (typeof ctx.hostToken === 'string' && ctx.hostToken.trim().length > 0) {
+    return ctx.hostToken.trim();
+  }
+
+  return extractHostToken(ctx.req) ?? extractHostTokenFromConnectionParams(ctx.connectionParams);
+}
+
 export async function createHostSessionToken(sessionCode: string): Promise<string> {
   const token = randomBytes(32).toString('base64url');
   const ttlSeconds = parseTtlSeconds();
@@ -69,16 +116,11 @@ export async function isHostSessionTokenValid(
   return timingSafeEqual(configured, candidate);
 }
 
-export async function invalidateHostSessionToken(sessionCode: string): Promise<void> {
-  const redis = getRedis();
-  await redis.del(buildHostSessionKey(sessionCode));
-}
-
-export async function assertHostSessionAccess(
-  req: IncomingMessage | undefined,
+export async function assertHostSessionAccessFromContext(
+  ctx: HostTokenContext,
   sessionCode: string,
 ): Promise<string> {
-  const token = extractHostToken(req);
+  const token = extractHostTokenFromContext(ctx);
   if (!token) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Host-Authentifizierung erforderlich.' });
   }
@@ -92,4 +134,17 @@ export async function assertHostSessionAccess(
   }
 
   return token;
+}
+
+export async function invalidateHostSessionToken(sessionCode: string): Promise<void> {
+  const redis = getRedis();
+  await redis.del(buildHostSessionKey(sessionCode));
+}
+
+export async function assertHostSessionAccess(
+  req: IncomingMessage | undefined,
+  sessionCode: string,
+  connectionParams?: unknown,
+): Promise<string> {
+  return assertHostSessionAccessFromContext({ req, connectionParams }, sessionCode);
 }

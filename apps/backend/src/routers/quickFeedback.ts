@@ -23,7 +23,7 @@ import {
 import { publicProcedure, router } from '../trpc';
 import { getRedis } from '../redis';
 import { prisma } from '../db';
-import { assertHostSessionAccess } from '../lib/hostAuth';
+import { assertHostSessionAccessFromContext, type HostTokenContext } from '../lib/hostAuth';
 import {
   assertFeedbackHostAccess,
   createFeedbackHostToken,
@@ -146,7 +146,7 @@ async function loadQuickFeedbackForVote(code: string): Promise<StoredQuickFeedba
 }
 
 async function loadQuickFeedbackForHost(
-  req: Parameters<typeof assertHostSessionAccess>[0],
+  ctx: HostTokenContext,
   code: string,
 ): Promise<StoredQuickFeedbackResult> {
   const redis = getRedis();
@@ -161,9 +161,9 @@ async function loadQuickFeedbackForHost(
 
   const result = parseStoredQuickFeedbackResult(raw);
   if (result.sessionBound === true) {
-    await assertHostSessionAccess(req, code);
+    await assertHostSessionAccessFromContext(ctx, code);
   } else {
-    await assertFeedbackHostAccess(req, code);
+    await assertFeedbackHostAccess(ctx.req, code);
   }
 
   return result;
@@ -178,7 +178,7 @@ export const quickFeedbackRouter = router({
       const code = input.sessionCode?.toUpperCase() ?? generateCode();
       const sessionBound = !!input.sessionCode;
       if (input.sessionCode) {
-        await assertHostSessionAccess(ctx.req, code);
+        await assertHostSessionAccessFromContext(ctx, code);
         await assertSessionQuickFeedbackEnabled(code);
       }
       const key = feedbackKey(code);
@@ -210,7 +210,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const result = await loadQuickFeedbackForHost(ctx.req, code);
+      const result = await loadQuickFeedbackForHost(ctx, code);
       result.theme = input.theme;
       result.preset = input.preset;
 
@@ -224,7 +224,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const result = await loadQuickFeedbackForHost(ctx.req, code);
+      const result = await loadQuickFeedbackForHost(ctx, code);
       result.type = input.type;
       result.theme = input.theme;
       result.preset = input.preset;
@@ -253,7 +253,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const result = await loadQuickFeedbackForHost(ctx.req, code);
+      const result = await loadQuickFeedbackForHost(ctx, code);
       result.totalVotes = 0;
       result.locked = false;
       result.distribution = emptyDistribution(result.type);
@@ -279,7 +279,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
 
-      await loadQuickFeedbackForHost(ctx.req, code);
+      await loadQuickFeedbackForHost(ctx, code);
 
       const multi = redis.multi();
       multi.del(feedbackKey(code));
@@ -298,7 +298,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const result = await loadQuickFeedbackForHost(ctx.req, code);
+      const result = await loadQuickFeedbackForHost(ctx, code);
       result.locked = !result.locked;
 
       await redis.set(key, JSON.stringify(result), 'EX', FEEDBACK_TTL_SECONDS);
@@ -312,7 +312,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const result = await loadQuickFeedbackForHost(ctx.req, code);
+      const result = await loadQuickFeedbackForHost(ctx, code);
       if (result.discussion) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Diskussionsphase bereits aktiv.' });
       }
@@ -345,7 +345,7 @@ export const quickFeedbackRouter = router({
       const redis = getRedis();
       const code = input.sessionCode.toUpperCase();
       const key = feedbackKey(code);
-      const result = await loadQuickFeedbackForHost(ctx.req, code);
+      const result = await loadQuickFeedbackForHost(ctx, code);
       if (!result.discussion) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Erst Diskussionsphase starten.' });
       }

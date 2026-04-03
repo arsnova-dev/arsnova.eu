@@ -68,6 +68,11 @@ Prisma-Schema lokal: `npx prisma validate` (in CI ohne DB).
 - **Backend:** `apps/backend/src/__tests__/*.test.ts`, Vitest (u. a. Session, Vote, Rate-Limit, **MOTD/Admin-MOTD** — Epic 10).
 - **Frontend:** `*.spec.ts` neben Komponenten/Services (Angular/Vitest), siehe [AGENT.md](../AGENT.md).
 
+Gezielte Regressionen fuer die aktuelle Host-Haertung:
+
+- **Q&A / moderatorView:** `npm run test -w @arsnova/backend -- src/__tests__/qa.test.ts`
+- Die Datei deckt explizit ab, dass `qa.list` und `qa.onQuestionsUpdated` mit `moderatorView: true` ohne Host-Token serverseitig abgelehnt und mit gueltigem Host-Token zugelassen werden.
+
 ---
 
 ## Verwandte Dokumente

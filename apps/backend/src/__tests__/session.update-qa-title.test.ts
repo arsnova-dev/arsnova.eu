@@ -1,24 +1,31 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { prismaMock, extractHostTokenMock, isHostSessionTokenValidMock } = vi.hoisted(() => ({
+const { prismaMock, hostAuthMocks } = vi.hoisted(() => ({
   prismaMock: {
     session: {
       findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
-  extractHostTokenMock: vi.fn(),
-  isHostSessionTokenValidMock: vi.fn(),
+  hostAuthMocks: {
+    extractHostTokenMock: vi.fn(),
+    extractHostTokenFromConnectionParamsMock: vi.fn(() => null as string | null),
+    isHostSessionTokenValidMock: vi.fn(),
+  },
 }));
 
 vi.mock('../db', () => ({
   prisma: prismaMock,
 }));
 
-vi.mock('../lib/hostAuth', () => ({
-  extractHostToken: extractHostTokenMock,
-  isHostSessionTokenValid: isHostSessionTokenValidMock,
-}));
+vi.mock('../lib/hostAuth', async () => {
+  const { buildHostAuthTestMock } = await import('./lib/hostAuth-vitest-mock');
+  return buildHostAuthTestMock({
+    extractHostToken: hostAuthMocks.extractHostTokenMock,
+    extractHostTokenFromConnectionParams: hostAuthMocks.extractHostTokenFromConnectionParamsMock,
+    isHostSessionTokenValid: hostAuthMocks.isHostSessionTokenValidMock,
+  });
+});
 
 import { sessionRouter } from '../routers/session';
 
@@ -29,8 +36,9 @@ const CODE = 'ABC123';
 describe('session.updateQaTitle', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    extractHostTokenMock.mockReturnValue('host-token-123');
-    isHostSessionTokenValidMock.mockResolvedValue(true);
+    hostAuthMocks.extractHostTokenMock.mockReturnValue('host-token-123');
+    hostAuthMocks.extractHostTokenFromConnectionParamsMock.mockReturnValue(null);
+    hostAuthMocks.isHostSessionTokenValidMock.mockResolvedValue(true);
   });
 
   it('setzt qaTitle bei Quiz-Session mit Q&A-Kanal', async () => {

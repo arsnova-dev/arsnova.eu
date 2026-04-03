@@ -36,8 +36,8 @@ vi.mock('../db', () => ({
 }));
 
 vi.mock('../lib/hostAuth', () => ({
-  assertHostSessionAccess: vi.fn(async (req, sessionCode: string) => {
-    const token = extractHostTokenMock(req);
+  assertHostSessionAccessFromContext: vi.fn(async (ctx: { req?: unknown }, sessionCode: string) => {
+    const token = extractHostTokenMock(ctx.req);
     if (!token) {
       const { TRPCError } = await import('@trpc/server');
       throw new TRPCError({
