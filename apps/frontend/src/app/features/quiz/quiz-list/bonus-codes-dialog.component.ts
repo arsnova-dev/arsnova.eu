@@ -15,6 +15,7 @@ import { trpc } from '../../../core/trpc.client';
 
 export interface BonusCodesDialogData {
   serverQuizId: string;
+  accessProof: string;
   quizName: string;
 }
 
@@ -50,6 +51,7 @@ export class BonusCodesDialogComponent implements OnInit {
     try {
       const result = await trpc.session.getBonusTokensForQuiz.query({
         quizId: this.data.serverQuizId,
+        accessProof: this.data.accessProof,
       });
       this.sessions.set(result.sessions);
     } catch {

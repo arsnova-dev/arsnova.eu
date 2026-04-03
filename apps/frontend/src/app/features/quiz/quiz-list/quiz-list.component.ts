@@ -15,6 +15,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   QUIZ_PRESETS,
   PresetStorageEntrySchema,
+  createQuizHistoryAccessProof,
   DEFAULT_BONUS_TOKEN_COUNT,
   DEFAULT_TIMER_SECONDS,
   type CreateSessionOutput,
@@ -570,27 +571,31 @@ export class QuizListComponent implements OnInit {
     });
   }
 
-  openBonusCodesDialog(quiz: QuizSummary): void {
+  async openBonusCodesDialog(quiz: QuizSummary): Promise<void> {
     const sid = quiz.lastServerQuizId;
     if (!sid) return;
+    const accessProof = await this.resolveQuizHistoryAccessProof(quiz);
+    if (!accessProof) return;
     this.dialog.open(BonusCodesDialogComponent, {
       width: 'min(35rem, calc(100vw - 1.5rem))',
       maxWidth: '100vw',
       maxHeight: 'min(90dvh, calc(100vh - 2rem))',
       autoFocus: false,
-      data: { serverQuizId: sid, quizName: quiz.name },
+      data: { serverQuizId: sid, accessProof, quizName: quiz.name },
     });
   }
 
-  openLastSessionFeedbackDialog(quiz: QuizSummary): void {
+  async openLastSessionFeedbackDialog(quiz: QuizSummary): Promise<void> {
     const sid = quiz.lastServerQuizId;
     if (!sid) return;
+    const accessProof = await this.resolveQuizHistoryAccessProof(quiz);
+    if (!accessProof) return;
     this.dialog.open(LastSessionFeedbackDialogComponent, {
       width: 'min(35rem, calc(100vw - 1.5rem))',
       maxWidth: '100vw',
       maxHeight: 'min(90dvh, calc(100vh - 2rem))',
       autoFocus: false,
-      data: { serverQuizId: sid, quizName: quiz.name },
+      data: { serverQuizId: sid, accessProof, quizName: quiz.name },
     });
   }
 
@@ -782,7 +787,11 @@ export class QuizListComponent implements OnInit {
           // Preset-Optionen nicht lesbar → Quiz-Einstellungen unverändert nutzen
         }
         const { quizId: uploadedQuizId } = await trpc.quiz.upload.mutate(payload);
-        this.quizStore.setLastServerQuizId(options.quizId, uploadedQuizId);
+        this.quizStore.setLastServerUploadAccess(
+          options.quizId,
+          uploadedQuizId,
+          await createQuizHistoryAccessProof(payload),
+        );
         result = await trpc.session.create.mutate({
           quizId: uploadedQuizId,
           type: 'QUIZ',
@@ -834,6 +843,18 @@ export class QuizListComponent implements OnInit {
         .replace(/\s+/g, '-')
         .slice(0, 80) || 'quiz';
     return `${safeName}_${date}.json`;
+  }
+
+  private async resolveQuizHistoryAccessProof(quiz: QuizSummary): Promise<string | null> {
+    if (quiz.lastServerQuizAccessProof) {
+      return quiz.lastServerQuizAccessProof;
+    }
+
+    try {
+      return await createQuizHistoryAccessProof(this.quizStore.getUploadPayload(quiz.id));
+    } catch {
+      return null;
+    }
   }
 }
 

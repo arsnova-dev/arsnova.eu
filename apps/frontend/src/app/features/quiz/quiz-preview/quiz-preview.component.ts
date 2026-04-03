@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import {
+  createQuizHistoryAccessProof,
   PresetStorageEntrySchema,
   DEFAULT_BONUS_TOKEN_COUNT,
   DEFAULT_TIMER_SECONDS,
@@ -613,7 +614,11 @@ export class QuizPreviewComponent implements OnDestroy {
         }
 
         const { quizId: uploadedQuizId } = await trpc.quiz.upload.mutate(payload);
-        this.quizStore.setLastServerQuizId(this.id, uploadedQuizId);
+        this.quizStore.setLastServerUploadAccess(
+          this.id,
+          uploadedQuizId,
+          await createQuizHistoryAccessProof(payload),
+        );
         result = await trpc.session.create.mutate({
           quizId: uploadedQuizId,
           type: 'QUIZ',

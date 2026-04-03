@@ -226,6 +226,122 @@ export const QuizUploadOutputSchema = z.object({
 });
 export type QuizUploadOutput = z.infer<typeof QuizUploadOutputSchema>;
 
+export const QuizHistoryAccessProofSchema = z.string().regex(/^[a-f0-9]{64}$/);
+export type QuizHistoryAccessProof = z.infer<typeof QuizHistoryAccessProofSchema>;
+
+type QuizHistoryAccessMaterial = {
+  name: string;
+  description: string | null;
+  motifImageUrl: string | null;
+  showLeaderboard: boolean;
+  allowCustomNicknames: boolean;
+  defaultTimer: number | null;
+  enableSoundEffects: boolean;
+  enableRewardEffects: boolean;
+  enableMotivationMessages: boolean;
+  enableEmojiReactions: boolean;
+  anonymousMode: boolean;
+  teamMode: boolean;
+  teamCount: number | null;
+  teamAssignment: TeamAssignment;
+  teamNames: string[];
+  backgroundMusic: string | null;
+  nicknameTheme: NicknameTheme;
+  bonusTokenCount: number | null;
+  readingPhaseEnabled: boolean;
+  preset: QuizPreset;
+  questions: Array<{
+    text: string;
+    type: QuestionType;
+    timer: number | null;
+    difficulty: Difficulty;
+    order: number;
+    ratingMin: number | null;
+    ratingMax: number | null;
+    ratingLabelMin: string | null;
+    ratingLabelMax: string | null;
+    answers: Array<{
+      text: string;
+      isCorrect: boolean;
+    }>;
+  }>;
+};
+
+function compareQuizHistoryStrings(left: string, right: string): number {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+}
+
+function buildQuizHistoryAccessMaterial(input: QuizUploadInput): QuizHistoryAccessMaterial {
+  const parsed = QuizUploadInputSchema.parse(input);
+
+  return {
+    name: parsed.name,
+    description: parsed.description ?? null,
+    motifImageUrl: parsed.motifImageUrl ?? null,
+    showLeaderboard: parsed.showLeaderboard,
+    allowCustomNicknames: parsed.allowCustomNicknames,
+    defaultTimer: parsed.defaultTimer ?? null,
+    enableSoundEffects: parsed.enableSoundEffects,
+    enableRewardEffects: parsed.enableRewardEffects,
+    enableMotivationMessages: parsed.enableMotivationMessages,
+    enableEmojiReactions: parsed.enableEmojiReactions,
+    anonymousMode: parsed.anonymousMode,
+    teamMode: parsed.teamMode,
+    teamCount: parsed.teamCount ?? null,
+    teamAssignment: parsed.teamAssignment ?? 'AUTO',
+    teamNames: [...(parsed.teamNames ?? [])],
+    backgroundMusic: parsed.backgroundMusic ?? null,
+    nicknameTheme: parsed.nicknameTheme,
+    bonusTokenCount: parsed.bonusTokenCount ?? null,
+    readingPhaseEnabled: parsed.readingPhaseEnabled ?? true,
+    preset: parsed.preset ?? 'PLAYFUL',
+    questions: [...parsed.questions]
+      .sort((left, right) => left.order - right.order)
+      .map((question) => ({
+        text: question.text,
+        type: question.type,
+        timer: question.timer ?? null,
+        difficulty: question.difficulty,
+        order: question.order,
+        ratingMin: question.ratingMin ?? null,
+        ratingMax: question.ratingMax ?? null,
+        ratingLabelMin: question.ratingLabelMin ?? null,
+        ratingLabelMax: question.ratingLabelMax ?? null,
+        answers: [...question.answers]
+          .map((answer) => ({ text: answer.text, isCorrect: answer.isCorrect }))
+          .sort(
+            (left, right) =>
+              compareQuizHistoryStrings(left.text, right.text) ||
+              Number(left.isCorrect) - Number(right.isCorrect),
+          ),
+      })),
+  };
+}
+
+export function serializeQuizHistoryAccessMaterial(input: QuizUploadInput): string {
+  return JSON.stringify(buildQuizHistoryAccessMaterial(input));
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const subtle = globalThis.crypto?.subtle;
+  if (!subtle) {
+    throw new Error('Web Crypto API nicht verfügbar.');
+  }
+
+  const digest = await subtle.digest('SHA-256', new TextEncoder().encode(input));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+export async function createQuizHistoryAccessProof(
+  input: QuizUploadInput,
+): Promise<QuizHistoryAccessProof> {
+  return QuizHistoryAccessProofSchema.parse(
+    await sha256Hex(serializeQuizHistoryAccessMaterial(input)),
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Session-Schemas (Story 2.1–2.3)
 // ---------------------------------------------------------------------------
@@ -851,6 +967,7 @@ export type BonusTokenListWithSessionMetaDTO = z.infer<
 
 export const GetBonusTokensForQuizInputSchema = z.object({
   quizId: z.string().uuid(),
+  accessProof: QuizHistoryAccessProofSchema,
 });
 export type GetBonusTokensForQuizInput = z.infer<typeof GetBonusTokensForQuizInputSchema>;
 

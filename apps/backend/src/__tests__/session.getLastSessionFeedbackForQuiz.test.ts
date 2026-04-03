@@ -7,6 +7,9 @@ const { prismaMock } = vi.hoisted(() => ({
       findUnique: vi.fn(),
     },
     session: {
+      findFirst: vi.fn(),
+    },
+    sessionFeedback: {
       findMany: vi.fn(),
     },
   },
@@ -60,7 +63,7 @@ const QUIZ_INPUT = {
   ],
 };
 
-describe('session.getBonusTokensForQuiz', () => {
+describe('session.getLastSessionFeedbackForQuiz', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     prismaMock.quiz.findUnique.mockResolvedValue({
@@ -78,49 +81,36 @@ describe('session.getBonusTokensForQuiz', () => {
     });
   });
 
-  it('liefert beendete Sessions mit Bonus-Tokens zur Server-Quiz-ID', async () => {
-    const endedAt = new Date('2026-03-10T12:00:00.000Z');
-    const generatedAt = new Date('2026-03-10T12:05:00.000Z');
+  it('liefert aggregiertes Feedback fuer den letzten passenden Durchlauf', async () => {
     const accessProof = await createQuizHistoryAccessProof(QUIZ_INPUT);
-    prismaMock.session.findMany.mockResolvedValue([
-      {
-        id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
-        code: 'ABCDEF',
-        endedAt,
-        startedAt: new Date('2026-03-10T11:00:00.000Z'),
-        quiz: { name: 'Chemie' },
-        bonusTokens: [
-          {
-            token: 'BNS-TEST-1234',
-            nickname: 'Ada',
-            quizName: 'Chemie',
-            totalScore: 42,
-            rank: 1,
-            generatedAt,
-          },
-        ],
-      },
+    prismaMock.session.findFirst.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      endedAt: new Date('2026-03-10T12:00:00.000Z'),
+    });
+    prismaMock.sessionFeedback.findMany.mockResolvedValue([
+      { overallRating: 5, questionQualityRating: 4, wouldRepeat: true },
+      { overallRating: 3, questionQualityRating: null, wouldRepeat: false },
     ]);
 
-    const result = await caller.getBonusTokensForQuiz({ quizId: QUIZ_ID, accessProof });
+    const result = await caller.getLastSessionFeedbackForQuiz({ quizId: QUIZ_ID, accessProof });
 
-    expect(prismaMock.session.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          quizId: QUIZ_ID,
-          status: 'FINISHED',
-        }),
-      }),
-    );
-    expect(result.sessions).toHaveLength(1);
-    expect(result.sessions[0]?.sessionCode).toBe('ABCDEF');
-    expect(result.sessions[0]?.endedAt).toBe(endedAt.toISOString());
-    expect(result.sessions[0]?.tokens[0]?.token).toBe('BNS-TEST-1234');
+    expect(result).toEqual({
+      endedAt: '2026-03-10T12:00:00.000Z',
+      summary: {
+        totalResponses: 2,
+        overallAverage: 4,
+        overallDistribution: { '3': 1, '5': 1 },
+        questionQualityAverage: 4,
+        questionQualityDistribution: { '4': 1 },
+        wouldRepeatYes: 1,
+        wouldRepeatNo: 1,
+      },
+    });
   });
 
   it('lehnt Zugriff mit ungueltigem Besitz-Nachweis ab', async () => {
     await expect(
-      caller.getBonusTokensForQuiz({
+      caller.getLastSessionFeedbackForQuiz({
         quizId: QUIZ_ID,
         accessProof: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
       }),
@@ -129,6 +119,6 @@ describe('session.getBonusTokensForQuiz', () => {
       message: 'Zugriff auf diese Quiz-Historie ist nicht erlaubt.',
     });
 
-    expect(prismaMock.session.findMany).not.toHaveBeenCalled();
+    expect(prismaMock.session.findFirst).not.toHaveBeenCalled();
   });
 });

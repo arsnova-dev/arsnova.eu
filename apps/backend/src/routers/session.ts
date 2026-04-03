@@ -54,6 +54,7 @@ import {
   EMOJI_REACTIONS,
   DEFAULT_TEAM_COUNT,
   NicknameThemeEnum,
+  createQuizHistoryAccessProof,
 } from '@arsnova/shared-types';
 import { questionCountsTowardsTotalQuestions, questionAffectsStreak } from '../lib/quizScoring';
 import { updateMaxParticipantsSingleSession } from '../lib/platformStatistic';
@@ -77,7 +78,7 @@ import {
   recordFailedSessionCodeAttempt,
   shouldBypassSessionCreateRate,
 } from '../lib/rateLimit';
-import { randomBytes } from 'crypto';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 import {
   buildAnswerDisplayOrderForQuiz,
   orderAnswersByDisplayMap,
@@ -176,6 +177,113 @@ function buildSessionFeedbackSummaryFromRows(
     wouldRepeatYes: repeatYes,
     wouldRepeatNo: repeatNo,
   };
+}
+
+function normalizeQuizHistoryAccessProof(proof: string): Buffer {
+  return Buffer.from(proof.trim(), 'utf8');
+}
+
+async function assertQuizHistoryAccess(quizId: string, accessProof: string): Promise<void> {
+  const quiz = await prisma.quiz.findUnique({
+    where: { id: quizId },
+    select: {
+      name: true,
+      description: true,
+      motifImageUrl: true,
+      showLeaderboard: true,
+      allowCustomNicknames: true,
+      defaultTimer: true,
+      enableSoundEffects: true,
+      enableRewardEffects: true,
+      enableMotivationMessages: true,
+      enableEmojiReactions: true,
+      anonymousMode: true,
+      teamMode: true,
+      teamCount: true,
+      teamAssignment: true,
+      teamNames: true,
+      backgroundMusic: true,
+      nicknameTheme: true,
+      bonusTokenCount: true,
+      readingPhaseEnabled: true,
+      preset: true,
+      questions: {
+        orderBy: { order: 'asc' },
+        select: {
+          text: true,
+          type: true,
+          timer: true,
+          difficulty: true,
+          order: true,
+          ratingMin: true,
+          ratingMax: true,
+          ratingLabelMin: true,
+          ratingLabelMax: true,
+          answers: {
+            select: {
+              text: true,
+              isCorrect: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!quiz) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'Quiz nicht gefunden.' });
+  }
+
+  const expectedProof = normalizeQuizHistoryAccessProof(
+    await createQuizHistoryAccessProof({
+      name: quiz.name,
+      description: quiz.description ?? undefined,
+      motifImageUrl: quiz.motifImageUrl ?? null,
+      showLeaderboard: quiz.showLeaderboard,
+      allowCustomNicknames: quiz.allowCustomNicknames,
+      defaultTimer: quiz.defaultTimer,
+      enableSoundEffects: quiz.enableSoundEffects,
+      enableRewardEffects: quiz.enableRewardEffects,
+      enableMotivationMessages: quiz.enableMotivationMessages,
+      enableEmojiReactions: quiz.enableEmojiReactions,
+      anonymousMode: quiz.anonymousMode,
+      teamMode: quiz.teamMode,
+      teamCount: quiz.teamCount ?? undefined,
+      teamAssignment: quiz.teamAssignment,
+      teamNames: quiz.teamNames,
+      backgroundMusic: quiz.backgroundMusic ?? undefined,
+      nicknameTheme: quiz.nicknameTheme,
+      bonusTokenCount: quiz.bonusTokenCount ?? undefined,
+      readingPhaseEnabled: quiz.readingPhaseEnabled,
+      preset: quiz.preset === 'SERIOUS' ? 'SERIOUS' : 'PLAYFUL',
+      questions: quiz.questions.map((question) => ({
+        text: question.text,
+        type: question.type,
+        timer: question.timer,
+        difficulty: question.difficulty,
+        order: question.order,
+        ratingMin: question.ratingMin ?? undefined,
+        ratingMax: question.ratingMax ?? undefined,
+        ratingLabelMin: question.ratingLabelMin ?? undefined,
+        ratingLabelMax: question.ratingLabelMax ?? undefined,
+        answers: question.answers.map((answer) => ({
+          text: answer.text,
+          isCorrect: answer.isCorrect,
+        })),
+      })),
+    }),
+  );
+  const providedProof = normalizeQuizHistoryAccessProof(accessProof);
+
+  if (
+    expectedProof.length !== providedProof.length ||
+    !timingSafeEqual(expectedProof, providedProof)
+  ) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'Zugriff auf diese Quiz-Historie ist nicht erlaubt.',
+    });
+  }
 }
 
 function generateSessionCode(): string {
@@ -2016,6 +2124,8 @@ export const sessionRouter = router({
     .input(GetBonusTokensForQuizInputSchema)
     .output(BonusTokensForQuizOutputSchema)
     .query(async ({ input }) => {
+      await assertQuizHistoryAccess(input.quizId, input.accessProof);
+
       const sessions = await prisma.session.findMany({
         where: {
           quizId: input.quizId,
@@ -2055,6 +2165,8 @@ export const sessionRouter = router({
     .input(GetLastSessionFeedbackForQuizInputSchema)
     .output(LastSessionFeedbackForQuizOutputSchema)
     .query(async ({ input }) => {
+      await assertQuizHistoryAccess(input.quizId, input.accessProof);
+
       const session = await prisma.session.findFirst({
         where: {
           quizId: input.quizId,

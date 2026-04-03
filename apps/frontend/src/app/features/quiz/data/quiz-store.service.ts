@@ -107,6 +107,8 @@ export interface QuizDocument {
   updatedByBrowserLabel?: string | null;
   /** Letzte Server-Quiz-ID nach quiz.upload (für Bonus-Codes in der Sammlung, nicht am Live-Host). */
   lastServerQuizId?: string | null;
+  /** Besitz-Nachweis für die zuletzt hochgeladene Server-Quizkopie. */
+  lastServerQuizAccessProof?: string | null;
   settings: QuizSettings;
   questions: QuizQuestion[];
 }
@@ -122,6 +124,7 @@ export interface QuizSummary {
   hasBonus: boolean;
   /** Server-Quiz-ID nach letztem quiz.upload (Bonus-Codes in der Sammlung). */
   lastServerQuizId: string | null;
+  lastServerQuizAccessProof: string | null;
 }
 
 /**
@@ -474,6 +477,7 @@ export class QuizStoreService {
         quiz.settings.bonusTokenCount !== undefined &&
         quiz.settings.bonusTokenCount > 0,
       lastServerQuizId: quiz.lastServerQuizId ?? null,
+      lastServerQuizAccessProof: quiz.lastServerQuizAccessProof ?? null,
     })),
   );
 
@@ -537,6 +541,7 @@ export class QuizStoreService {
       updatedAt: now,
       ...this.currentQuizUpdateSource(),
       lastServerQuizId: null,
+      lastServerQuizAccessProof: null,
       settings,
       questions: [],
     };
@@ -625,6 +630,7 @@ export class QuizStoreService {
       updatedAt: now,
       ...this.currentQuizUpdateSource(),
       lastServerQuizId: null,
+      lastServerQuizAccessProof: null,
       questions: document.questions.map((question) => ({
         ...question,
         id: generateUuid(),
@@ -643,7 +649,7 @@ export class QuizStoreService {
   /**
    * Nach erfolgreichem quiz.upload: Server-Quiz-ID merken (Bonus-Codes in der Sammlung).
    */
-  setLastServerQuizId(localQuizId: string, serverQuizId: string): void {
+  setLastServerUploadAccess(localQuizId: string, serverQuizId: string, accessProof: string): void {
     if (!UUID_PATTERN.test(serverQuizId)) return;
     this.quizDocuments.update((current) =>
       current.map((quiz) =>
@@ -651,6 +657,7 @@ export class QuizStoreService {
           ? {
               ...quiz,
               lastServerQuizId: serverQuizId,
+              lastServerQuizAccessProof: accessProof,
               updatedAt: new Date().toISOString(),
               ...this.currentQuizUpdateSource(),
             }
@@ -1718,6 +1725,11 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
 
   const rawLastServer = readStringOrNull(candidate['lastServerQuizId']);
   const lastServerQuizId = rawLastServer && UUID_PATTERN.test(rawLastServer) ? rawLastServer : null;
+  const rawLastServerAccessProof = readStringOrNull(candidate['lastServerQuizAccessProof']);
+  const lastServerQuizAccessProof =
+    rawLastServerAccessProof && /^[a-f0-9]{64}$/.test(rawLastServerAccessProof)
+      ? rawLastServerAccessProof
+      : null;
 
   return {
     id,
@@ -1730,6 +1742,7 @@ function normalizeStoredQuiz(value: unknown): QuizDocument | null {
     updatedByDeviceLabel: readStringOrNull(candidate['updatedByDeviceLabel']) ?? null,
     updatedByBrowserLabel: readStringOrNull(candidate['updatedByBrowserLabel']) ?? null,
     lastServerQuizId,
+    lastServerQuizAccessProof,
     settings: normalizeStoredQuizSettings(candidate['settings']),
     questions,
   };

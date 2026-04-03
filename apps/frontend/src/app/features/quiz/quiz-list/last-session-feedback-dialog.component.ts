@@ -15,6 +15,7 @@ import { trpc } from '../../../core/trpc.client';
 
 export interface LastSessionFeedbackDialogData {
   serverQuizId: string;
+  accessProof: string;
   quizName: string;
 }
 
@@ -50,6 +51,7 @@ export class LastSessionFeedbackDialogComponent implements OnInit {
     try {
       const result = await trpc.session.getLastSessionFeedbackForQuiz.query({
         quizId: this.data.serverQuizId,
+        accessProof: this.data.accessProof,
       });
       this.payload.set(result);
     } catch {
