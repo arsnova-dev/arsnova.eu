@@ -10,7 +10,7 @@ Der Admin-Flow deckt drei Kernaufgaben ab:
 - **Story 9.2:** Sessions (inkl. ggf. unreferenziertem Quiz) final löschen, mit Audit-Log
 - **Story 9.3:** Behördenauszug als PDF (primär) oder JSON (optional) exportieren, mit Audit-Log
 
-Der Flow ist als **MVP Shared-Secret-Login** umgesetzt:
+Der Flow ist als **Shared-Secret-Login** umgesetzt:
 
 - Login per `ADMIN_SECRET`
 - danach tokenbasierter Zugriff auf `admin.*`-Prozeduren

@@ -6,7 +6,7 @@
 
 **Legende**  
 ✅ = voll umgesetzt  
-🟡 = geplant / MVP-ready (Backlog)  
+🟡 = geplant / im Backlog  
 ❌ = nicht verfügbar  
 **Fett** = klarer USP / Spitzenposition von arsnova.eu
 

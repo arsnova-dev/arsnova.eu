@@ -61,7 +61,7 @@ Zusätzliche delegierte Rollen wie **Presenter** und **Moderator** bauen auf der
 
 - **Admin** ist eine **Betreiber-Rolle** (Plattform, Support, rechtliche Verantwortung). Keine Selbstregistrierung.
 - **Credentials:** Ein **geheimer Admin-Schlüssel** wird in der **Server-Umgebung** konfiguriert (`ADMIN_SECRET`). Der **Betreiber** teilt ihn **out-of-band** nur berechtigten Admins mit.
-- **Login:** Beim Aufruf von `/admin` erscheint eine **Login-Seite**. Der Admin gibt den Schlüssel ein; Backend vergleicht mit dem konfigurierten Wert und vergibt bei Übereinstimmung ein **opakes Session-Token in Redis mit TTL**. Das Frontend speichert es in `sessionStorage` und sendet es bei jedem Admin-tRPC-Aufruf mit. Keine Admin-Benutzerdatenbank im MVP.
+- **Login:** Beim Aufruf von `/admin` erscheint eine **Login-Seite**. Der Admin gibt den Schlüssel ein; Backend vergleicht mit dem konfigurierten Wert und vergibt bei Übereinstimmung ein **opakes Session-Token in Redis mit TTL**. Das Frontend speichert es in `sessionStorage` und sendet es bei jedem Admin-tRPC-Aufruf mit. Keine Admin-Benutzerdatenbank im aktuellen Modell.
 
 ### 4. Absicherung der Admin-Route
 
@@ -96,7 +96,7 @@ Zusätzliche delegierte Rollen wie **Presenter** und **Moderator** bauen auf der
 ## Alternativen (geprüft)
 
 - **Rolle nur per URL „verstecken“:** Sicherheit durch Unkenntnis der Admin-URL – abgelehnt; Sicherheit soll auf Credentials/Token beruhen, nicht auf Geheimhaltung der Route.
-- **Account-basierte Admin-Anmeldung:** Würde eine Nutzerverwaltung für Admins erfordern; für MVP bewusst vermieden zugunsten eines einzelnen konfigurierbaren Admin-Secrets.
+- **Account-basierte Admin-Anmeldung:** Würde eine Nutzerverwaltung für Admins erfordern; vorerst bewusst vermieden zugunsten eines einzelnen konfigurierbaren Admin-Secrets.
 - **Host-Rechte über Session-Code:** Wer den 6-stelligen Code kennt, könnte Host sein – abgelehnt, da Teilnehmende den Code ebenfalls kennen; Host-Token bleibt exklusiv bei Session-Erstellung.
 
 ---

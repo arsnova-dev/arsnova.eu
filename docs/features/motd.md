@@ -37,7 +37,7 @@ Der Betreiber kann **kuratierte Hinweise** an **alle Nutzer:innen** ausspielen �
 
 ### 3.3 Templates (Vorlagen)
 
-- Wiederverwendbare **Vorlagen** (z. B. „Wartung“, „Feature-Ankündigung“, „Spende“) mit optionalen **Platzhalter-Hinweisen** im Admin-Text — **kein** Muss für technische Template-Engine im MVP; Fokus: schnelles Anlegen neuer MOTDs aus Mustern.
+- Wiederverwendbare **Vorlagen** (z. B. „Wartung“, „Feature-Ankündigung“, „Spende“) mit optionalen **Platzhalter-Hinweisen** im Admin-Text — **kein** Muss für eine technische Template-Engine im aktuellen Stand; Fokus: schnelles Anlegen neuer MOTDs aus Mustern.
 - Templates sind **Admin-only**; keine öffentliche Liste.
 - **Admin-UI:** Unter `/admin` → Meldungen: Bereich **Textvorlagen** (anlegen, bearbeiten, löschen) plus **Vorlage in Felder laden** bei der Meldung. **Beispielvorlagen:** `npm run seed:motd-templates` (Repo-Root) spielt drei idempotente Vorlagen mit Texten in **de/en/fr/es/it** ein (Wartung, neues Feature, Spendenhinweis); Details im README.
 

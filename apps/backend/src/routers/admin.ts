@@ -396,7 +396,7 @@ function buildAuthorityAggregates(
 export const adminRouter = router({
   motd: adminMotdRouter,
 
-  /** Admin-Login (MVP: Shared Secret). */
+  /** Admin-Login (Shared Secret). */
   login: publicProcedure
     .input(AdminLoginInputSchema)
     .output(AdminLoginOutputSchema)

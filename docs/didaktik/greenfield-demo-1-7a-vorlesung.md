@@ -60,7 +60,7 @@
 
 ## Nach der Vorlesung
 
-- **MOTD / Epic 10** bleibt optional **zweites** Referenzbeispiel (fertiger Code: `motd`-Router, Admin) — siehe [`docs/features/motd.md`](../features/motd.md); **nicht** Ersatz für die 1.7a-Greenfield-Demo.
+- Die **erste Vorlesungsdemo** bleibt vollständig bei **Story 1.7a / Lightbox**; andere fertige Referenzfeatures werden dafür **nicht** dazugenommen.
 - **Studierende** starten mit **Ticket 1** in [`STUDENT-STORY-REIHENFOLGE.md`](../praktikum/STUDENT-STORY-REIHENFOLGE.md) (**5.4a**), nicht mit 1.7a.
 
 ---

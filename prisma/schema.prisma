@@ -309,7 +309,7 @@ model AdminAuditLog {
   action           AdminAuditAction
   sessionId        String           // Snapshot (Session kann danach gelöscht sein)
   sessionCode      String           // 6-stelliger Code (Snapshot)
-  adminIdentifier  String?          // z. B. Token-ID oder "system" (MVP: ein gemeinsamer Schlüssel)
+  adminIdentifier  String?          // z. B. Token-ID oder "system" (aktuell: ein gemeinsamer Schlüssel)
   reason           String?          // Optionaler Löschgrund (Story 9.2)
   createdAt        DateTime         @default(now())
 

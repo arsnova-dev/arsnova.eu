@@ -199,7 +199,7 @@ Da beide Dateien als Living Documentation dienen, sollte architecture-overview.m
 | Frontend            | Routen Home, Quiz, Session, Join, Feedback, Admin, Legal, Help | `app.routes.ts` + Feature-Module                         | ✓      |
 | Shared-Types        | Zod-Schemas / DTOs in Diagramm-Validation-Box                  | `libs/shared-types`, von tRPC genutzt                    | ✓      |
 
-**Bewertung:** Die zentralen Architekturdiagramme entsprechen dem umgesetzten MVP. Bewusste Vereinfachungen: keine vollständige Auflistung aller Procedures, Utility-Dateien (z. B. Vollbild-Helfer) und feingranulare UI-Komponenten.
+**Bewertung:** Die zentralen Architekturdiagramme entsprechen dem aktuell umgesetzten Produktstand. Bewusste Vereinfachungen: keine vollständige Auflistung aller Procedures, Utility-Dateien (z. B. Vollbild-Helfer) und feingranulare UI-Komponenten.
 
 ---
 

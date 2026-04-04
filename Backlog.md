@@ -1,4 +1,4 @@
-# 📋 Product Backlog: arsnova.eu (Core Features MVP)
+# 📋 Product Backlog: arsnova.eu
 
 > **Priorisierung:** 🔴 Must · 🟡 Should · 🟢 Could
 >
@@ -1138,7 +1138,7 @@ Epic 6 bündelt **Theming, Internationalisierung, rechtliche Pflichtseiten, Mobi
 ### Admin-Credentials: Wie kommt der Admin an seinen Zugang?
 
 - **Vergabe:** Die Credentials werden **vom Betreiber der Plattform** (z. B. IT, Verantwortliche:r für den Betrieb) bereitgestellt — nicht von der App selbst. Es gibt keine Selbstregistrierung für Admins.
-- **Technik (MVP):** Ein **geheimer Admin-Schlüssel** (API-Key/Passphrase) wird in der **Server-Umgebung** konfiguriert (z. B. Umgebungsvariable `ADMIN_SECRET` oder `ADMIN_API_KEYS`). Der Betreiber legt diesen Wert beim Deployment fest und teilt ihn **außerhalb der App** nur den berechtigten Admins mit (z. B. über sicheren Kanal, Passwortmanager, interne Dokumentation).
+- **Technik (aktueller Stand):** Ein **geheimer Admin-Schlüssel** (API-Key/Passphrase) wird in der **Server-Umgebung** konfiguriert (z. B. Umgebungsvariable `ADMIN_SECRET` oder `ADMIN_API_KEYS`). Der Betreiber legt diesen Wert beim Deployment fest und teilt ihn **außerhalb der App** nur den berechtigten Admins mit (z. B. über sicheren Kanal, Passwortmanager, interne Dokumentation).
 - **Ablauf für den Admin:** Beim Aufruf von `/admin` erscheint eine **Login-Seite** (kein öffentliches Dashboard). Der Admin gibt den ihm mitgeteilten **Admin-Schlüssel** ein. Das Frontend sendet ihn an das Backend (z. B. tRPC `admin.login` oder `admin.verifySecret`); das Backend vergleicht mit dem konfigurierten Wert. Bei Übereinstimmung erhält der Admin ein **Session-Token** (z. B. kurzlebiges JWT oder opaker Token in Redis mit TTL), das im Frontend (z. B. sessionStorage) gespeichert und bei jedem Admin-tRPC-Aufruf mitgeschickt wird. So ist der Admin „eingeloggt“, ohne dass die App ein eigenes Benutzerkonto für ihn anlegt.
 - **Zusammenfassung:** Der Admin bekommt seine Credentials **vom Betreiber** (out-of-band). Technisch reicht ein gemeinsamer geheimer Schlüssel in der Server-Config; keine Datenbank für Admin-Benutzer nötig. Optional später: mehrere Schlüssel oder einfache Admin-Tabelle (Name, Hash des Passworts) für bessere Nachvollziehbarkeit im Audit-Log.
 

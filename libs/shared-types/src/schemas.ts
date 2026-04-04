@@ -1059,7 +1059,7 @@ export type SessionExportDTO = z.infer<typeof SessionExportDTOSchema>;
 // Admin (Epic 9)
 // ---------------------------------------------------------------------------
 
-/** Input: Admin-Login per Shared Secret (MVP). */
+/** Input: Admin-Login per Shared Secret. */
 export const AdminLoginInputSchema = z.object({
   secret: z.string().trim().min(1).max(512),
 });

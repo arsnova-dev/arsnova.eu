@@ -57,7 +57,7 @@ In **Fallstudie Software Engineering** (und für SQM als Beobachtungs-/Review-Ko
 
 - **Studierende** setzen **1.7a nicht** parallel als Praktikums-Ticket um; sie arbeiten **danach** an den **anderen offenen Stories** ([`docs/praktikum/STUDENT-STORY-REIHENFOLGE.md`](../praktikum/STUDENT-STORY-REIHENFOLGE.md), Abschnitt 3).
 - **SQM** begleitet die **PRs zu diesen Stories** (Reviews, Tests, DoD, Risiko, A11y).
-- **Epic 10 (MOTD)** bleibt **optional** als **zweites** Referenzbeispiel (Produktcode fertig, Spec/ADR-0018/Code lesen) — [`docs/features/motd.md`](../features/motd.md); ersetzt **nicht** die 1.7a-Greenfield-Demo.
+- Die **erste Vorlesung** bleibt vollständig auf **Story 1.7a / Lightbox** fokussiert; andere fertige Referenzfeatures wie **Epic 10 (MOTD)** sind davon getrennt und gehören höchstens in spätere Sitzungen.
 
 ---
 
