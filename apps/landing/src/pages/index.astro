@@ -2,9 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { homeMetaDescription } from '@/config/seo';
 import Hero from '../components/Hero.astro';
+import Workflow from '../components/Workflow.astro';
 import Features from '../components/Features.astro';
 import Trust from '../components/Trust.astro';
 import Comparison from '../components/Comparison.astro';
+import Faq from '../components/Faq.astro';
 import Cta from '../components/Cta.astro';
 ---
 
@@ -13,8 +15,10 @@ import Cta from '../components/Cta.astro';
   description={homeMetaDescription}
 >
   <Hero />
+  <Workflow />
   <Features />
   <Trust />
   <Comparison />
+  <Faq />
   <Cta />
 </BaseLayout>

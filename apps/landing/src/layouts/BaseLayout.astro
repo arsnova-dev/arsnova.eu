@@ -1,6 +1,7 @@
 ---
 import { GITHUB_URL } from '@/config/github';
 import { homeMetaDescription, homeMetaTitle } from '@/config/seo';
+import { SITE_URL, toAbsoluteUrl } from '@/config/site';
 
 export interface Props {
   title: string;
@@ -12,10 +13,9 @@ export interface Props {
 const { title, description, canonical, noindex = false } = Astro.props;
 /** Base path für Links (z. B. /arsnova.eu/ bei GitHub Pages) */
 const base = (typeof import.meta.env.BASE_URL === 'string' && import.meta.env.BASE_URL) || '/';
-const site = 'https://arsnova.eu';
 const fullTitle = title === 'Start' ? homeMetaTitle : `${title} · arsnova.eu`;
-const url = canonical ? new URL(canonical, site).href : site;
-const ogImage = new URL('/og.png', site).href;
+const url = canonical ? toAbsoluteUrl(canonical) : SITE_URL;
+const ogImage = toAbsoluteUrl('og.png');
 ---
 
 <!doctype html>
@@ -53,7 +53,7 @@ const ogImage = new URL('/og.png', site).href;
       '@type': 'WebApplication',
       name: 'arsnova.eu',
       description: title === 'Start' ? homeMetaDescription : description,
-      url: site,
+      url: SITE_URL,
       applicationCategory: 'EducationalApplication',
       operatingSystem: 'Web',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
@@ -76,6 +76,9 @@ const ogImage = new URL('/og.png', site).href;
     })} />
   </head>
   <body class="min-h-screen overflow-x-hidden bg-slate-900 text-slate-100 font-sans antialiased">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-slate-950">
+      Zum Inhalt springen
+    </a>
     <header class="sticky top-0 z-50 border-b border-slate-700/80 bg-slate-900/95 backdrop-blur-sm" id="main-header">
       <nav class="mx-auto max-w-6xl px-4 py-3 sm:px-6" aria-label="Hauptnavigation">
         <div class="flex items-center justify-between gap-4">
@@ -85,11 +88,12 @@ const ogImage = new URL('/og.png', site).href;
           </a>
           <!-- Desktop: Links in einer Zeile -->
           <div class="hidden items-center gap-6 md:flex">
-            <a href={`${base}#features`} class="text-sm font-medium text-slate-400 hover:text-white">Features</a>
-            <a href={`${base}#vertrauen`} class="text-sm font-medium text-slate-400 hover:text-white">Bewertungen</a>
-            <a href={`${base}#vergleich`} class="text-sm font-medium text-slate-400 hover:text-white">Vergleich</a>
+            <a href={`${base}#ablauf`} class="text-sm font-medium text-slate-400 hover:text-white">Ablauf</a>
+            <a href={`${base}#features`} class="text-sm font-medium text-slate-400 hover:text-white">Vorteile</a>
+            <a href={`${base}#vertrauen`} class="text-sm font-medium text-slate-400 hover:text-white">Vertrauen</a>
+            <a href={`${base}#faq`} class="text-sm font-medium text-slate-400 hover:text-white">FAQ</a>
             <a href={GITHUB_URL} class="text-sm font-medium text-slate-400 hover:text-white" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href={`${base}#start`} class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-500">Jetzt starten</a>
+            <a href={`${base}#start`} class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-500">Jetzt ausprobieren</a>
           </div>
           <!-- Mobile: Hamburger-Button -->
           <button
@@ -111,11 +115,12 @@ const ogImage = new URL('/og.png', site).href;
         </div>
         <!-- Mobile: ausklappbares Menü -->
         <div id="nav-menu" class="hidden flex flex-col gap-1 border-t border-slate-700 pt-4 md:hidden" role="menu">
-          <a href={`${base}#features`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">Features</a>
-          <a href={`${base}#vertrauen`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">Bewertungen</a>
-          <a href={`${base}#vergleich`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">Vergleich</a>
+          <a href={`${base}#ablauf`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">Ablauf</a>
+          <a href={`${base}#features`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">Vorteile</a>
+          <a href={`${base}#vertrauen`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">Vertrauen</a>
+          <a href={`${base}#faq`} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" role="menuitem">FAQ</a>
           <a href={GITHUB_URL} class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white" target="_blank" rel="noopener noreferrer" role="menuitem">GitHub</a>
-          <a href={`${base}#start`} class="mt-2 rounded-lg bg-brand-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-brand-500" role="menuitem">Jetzt starten</a>
+          <a href={`${base}#start`} class="mt-2 rounded-lg bg-brand-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-brand-500" role="menuitem">Jetzt ausprobieren</a>
         </div>
       </nav>
     </header>
@@ -149,7 +154,7 @@ const ogImage = new URL('/og.png', site).href;
       })();
     </script>
 
-    <main>
+    <main id="main-content">
       <slot />
     </main>
 

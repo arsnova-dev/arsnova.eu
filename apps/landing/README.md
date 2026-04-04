@@ -45,8 +45,10 @@ Output: `apps/landing/dist/`
 
 - Meta Title/Description, Open Graph, Twitter Cards
 - JSON-LD `WebApplication` für Suchmaschinen
-- Sitemap (`public/sitemap.xml`)
-- `robots.txt` in `public/`
+- generierte Sitemap unter `/sitemap.xml`
+- generierte `robots.txt` unter `/robots.txt`
+
+Für Builds auf GitHub Pages wird die öffentliche Site-URL im Workflow gesetzt. Falls die Landing über eine Custom Domain ausgeliefert wird, muss `PUBLIC_SITE_URL` auf diese Ziel-URL zeigen, damit Canonical, OG, Sitemap und `robots.txt` auf die tatsächlich gecrawlte Domain verweisen.
 
 ## Impressum & Datenschutz (DSGVO)
 

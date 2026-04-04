@@ -12,48 +12,63 @@ import { legal, site } from '../config/legal';
     <h1 class="font-display text-3xl font-bold text-white">Datenschutzerklärung</h1>
     <p class="mt-2 text-slate-500">Informationen gemäß Art. 13 und 14 DSGVO</p>
 
+    <section class="mt-6 rounded-2xl border border-slate-700 bg-slate-800/60 p-5 text-slate-300">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-400">Kurzinfo</p>
+      <ul class="mt-3 list-inside list-disc space-y-1 leading-7">
+        <li>Diese Hinweise betreffen primär die {site.landingLabel.toLowerCase()} unter {site.url}.</li>
+        <li>Die Landing setzt selbst keine Cookies und keine Analyse-Tools ein.</li>
+        <li>Für die {site.appLabel.toLowerCase()} und für Self-Hosting können ergänzende oder abweichende Hinweise gelten.</li>
+      </ul>
+    </section>
+
     <section class="mt-8 space-y-8 text-slate-300">
       <div>
         <h2 class="font-display text-lg font-semibold text-white">1. Verantwortlicher</h2>
         <p class="mt-2">
-          {legal.providerName}<br />
-          {legal.street}<br />
-          {legal.city}<br />
-          {legal.country}
+          {legal.provider.name}<br />
+          {legal.provider.address.street}<br />
+          {legal.provider.address.city}<br />
+          {legal.provider.address.country}
         </p>
         <p class="mt-2">
-          E-Mail: <a href={`mailto:${legal.privacyEmail}`} class="text-brand-400 hover:underline">{legal.privacyEmail}</a>
+          E-Mail: <a href={`mailto:${legal.privacy.email}`} class="text-brand-400 hover:underline">{legal.privacy.email}</a>
         </p>
       </div>
 
       <div>
         <h2 class="font-display text-lg font-semibold text-white">2. Geltungsbereich</h2>
         <p class="mt-2">
-          Diese Datenschutzerklärung gilt für die Website <strong>{site.url}</strong> (Informations- und Marketingseite) sowie – soweit dort darauf verwiesen wird – für die Nutzung der Anwendung arsnova.eu (Live-Quiz & Abstimmung). Bei Self-Hosting der Anwendung kann der Verantwortliche ein anderer sein (Ihre Institution); dann gelten die dort bereitgestellten Datenschutzhinweise.
+          Diese Datenschutzerklärung gilt in erster Linie für die statische {site.landingLabel.toLowerCase()} unter <strong>{site.url}</strong>. Sie erläutert insbesondere die Verarbeitung beim Aufruf dieser Seiten, beim Nutzen externer Links und beim Hosting der Landing.
+        </p>
+        <p class="mt-2">
+          Für die eigentliche {site.appLabel.toLowerCase()} sowie für selbst gehostete Installationen können ergänzende oder abweichende Datenschutzhinweise gelten. Dort ist der jeweilige Betreiber bzw. die jeweilige Institution selbst verantwortlich.
         </p>
       </div>
 
       <div>
         <h2 class="font-display text-lg font-semibold text-white">3. Daten beim Besuch dieser Website</h2>
         <p class="mt-2">
-          Beim Aufruf dieser Website werden durch den betreibenden Server bzw. den Hosting-Anbieter in der Regel automatisch Zugriffsdaten (z. B. IP-Adresse, Datum/Uhrzeit, aufgerufene Seite, übertragene Datenmenge, Browsertyp) in Server-Logs verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am Betrieb und an der Sicherheit der Website). Die Speicherdauer richtet sich nach den Vorgaben des Hosting-Anbieters; typischerweise werden Logs nach kurzer Frist gelöscht oder anonymisiert.
+          Beim Aufruf dieser Website können durch den Hosting-Anbieter technische Zugriffsdaten verarbeitet werden, insbesondere IP-Adresse, Datum und Uhrzeit des Abrufs, aufgerufene URL, Browserinformationen sowie übertragene Datenmengen. Diese Verarbeitung ist technisch erforderlich, um die Website auszuliefern und die Sicherheit sowie Stabilität des Angebots zu gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
         </p>
         <p class="mt-2">
-          Diese statische Website setzt <strong>keine Cookies</strong> und führt keine Analyse-Tools (z. B. Google Analytics) aus, sofern nicht ausdrücklich anders angegeben. Sollten Sie auf dieser Website eingebettete Inhalte Dritter (z. B. Karten, Videos) oder Links zu Drittanbietern nutzen, können dort eigene Verarbeitungen stattfinden; dazu siehe Abschnitt zu Drittanbietern.
+          Diese statische Website setzt <strong>keine Cookies</strong> und führt keine Analyse-Tools aus. Beim Aufruf der Landing werden auch keine Quiz-Inhalte, Antworten, Sessiondaten oder ähnliche Nutzungsdaten der Anwendung verarbeitet.
         </p>
       </div>
 
       <div>
         <h2 class="font-display text-lg font-semibold text-white">4. Verlinkung zu Drittanbietern</h2>
         <p class="mt-2">
-          Auf dieser Website werden Links zu externen Diensten gesetzt (z. B. GitHub). Beim Klick auf solche Links gelangen Sie auf die Seiten der jeweiligen Anbieter. Dort gelten die Datenschutzerklärungen und Nutzungsbedingungen der jeweiligen Anbieter. Wir haben keinen Einfluss auf deren Datenverarbeitung.
+          Auf dieser Website werden Links zu externen Diensten gesetzt, insbesondere zu GitHub und zur Anwendung von {site.name}. Beim Anklicken solcher Links verlassen Sie diese Landing-Seite. Ab diesem Zeitpunkt gelten die Datenschutzhinweise und Nutzungsbedingungen der jeweiligen Anbieter bzw. Betreiber.
         </p>
       </div>
 
       <div>
-        <h2 class="font-display text-lg font-semibold text-white">5. Hosting (z. B. GitHub Pages)</h2>
+        <h2 class="font-display text-lg font-semibold text-white">5. Hosting der Landing-Seite</h2>
         <p class="mt-2">
-          Wird diese Website bei einem Diensteanbieter gehostet (z. B. GitHub Pages in den USA), können Zugriffsdaten auf Servern des Anbieters verarbeitet werden. In solchen Fällen kann eine Übermittlung in Drittländer erfolgen. GitHub verarbeitet Daten gemäß seiner Datenschutzerklärung und bietet geeignete Garantien (z. B. Standardvertragsklauseln). Weitere Informationen: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" class="text-brand-400 hover:underline" target="_blank" rel="noopener noreferrer">GitHub Privacy Statement</a>.
+          Diese Landing-Seite wird über <strong>{legal.hosting.provider}</strong> bereitgestellt. Dabei kann eine Verarbeitung technischer Zugriffsdaten auf Servern des Anbieters stattfinden. Da der Anbieter in den <strong>{legal.hosting.location}</strong> ansässig ist, kann eine Übermittlung in ein Drittland nicht ausgeschlossen werden.
+        </p>
+        <p class="mt-2">
+          Weitere Informationen zur Datenverarbeitung durch den Hosting-Anbieter finden Sie in den Datenschutzhinweisen von GitHub: <a href={legal.hosting.privacyUrl} class="text-brand-400 hover:underline" target="_blank" rel="noopener noreferrer">GitHub Privacy Statement</a>.
         </p>
       </div>
 
@@ -70,21 +85,21 @@ import { legal, site } from '../config/legal';
           <li><strong>Beschwerde</strong> bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
         </ul>
         <p class="mt-2">
-          Für Auskünfte und die Ausübung Ihrer Rechte wenden Sie sich bitte an: <a href={`mailto:${legal.privacyEmail}`} class="text-brand-400 hover:underline">{legal.privacyEmail}</a>.
+          Für Auskünfte und die Ausübung Ihrer Rechte wenden Sie sich bitte an: <a href={`mailto:${legal.privacy.email}`} class="text-brand-400 hover:underline">{legal.privacy.email}</a>.
         </p>
       </div>
 
       <div>
         <h2 class="font-display text-lg font-semibold text-white">7. Bereitstellungspflicht</h2>
         <p class="mt-2">
-          Die Bereitstellung personenbezogener Daten ist weder gesetzlich noch vertraglich vorgeschrieben für den reinen Besuch dieser Informationswebsite. Ohne Ihre Angaben können wir Ihnen jedoch die Website anzeigen und technisch ausliefern; eine Kontaktaufnahme per E-Mail setzt die Angabe einer E-Mail-Adresse voraus.
+          Für den rein informatorischen Besuch dieser Landing-Seite müssen Sie uns aktiv keine personenbezogenen Daten mitteilen. Ohne die technisch erforderliche Verarbeitung bestimmter Verbindungsdaten durch den Hosting-Anbieter kann die Website jedoch nicht ausgeliefert werden. Für eine Kontaktaufnahme per E-Mail benötigen wir naturgemäß Ihre Absenderangaben.
         </p>
       </div>
 
       <div>
         <h2 class="font-display text-lg font-semibold text-white">8. Hinweis zur Anwendung arsnova.eu</h2>
         <p class="mt-2">
-          Die Anwendung arsnova.eu (Quiz, Abstimmungen, Sessions) ist datenschutzfreundlich konzipiert: Quiz-Inhalte werden lokal bzw. bei Self-Hosting auf Ihrem Server gehalten (Local-First). Welche Daten beim Betrieb der Anwendung (z. B. Session-Codes, Nicknames, Abstimmungen) verarbeitet werden, richtet sich nach dem jeweiligen Betreiber (bei Self-Hosting: Ihre Institution). Bitte beachten Sie die dort bereitgestellten Datenschutzhinweise.
+          Die Anwendung arsnova.eu ist datenschutzfreundlich konzipiert und verfolgt einen Local-First-Ansatz. Welche Daten beim Betrieb der Anwendung, bei Sessions oder bei Self-Hosting konkret verarbeitet werden, richtet sich jedoch nach dem jeweiligen Betreiber der Instanz. Bitte beachten Sie deshalb für die Live-Anwendung die dort jeweils bereitgestellten Datenschutzhinweise.
         </p>
       </div>
 
