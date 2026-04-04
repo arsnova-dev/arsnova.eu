@@ -13,10 +13,10 @@ const MUSIC_PATHS: Record<string, string> = {
   LOBBY_1: 'assets/sound/lobby/Song1.mp3',
   LOBBY_2: 'assets/sound/lobby/Song2.mp3',
   LOBBY_3: 'assets/sound/lobby/Song3.mp3',
-  CONNECTING_0: 'assets/sound/connecting/Song0.mp3',
-  COUNTDOWN_RUNNING_0: 'assets/sound/countdownRunning/Song0.mp3',
-  COUNTDOWN_RUNNING_1: 'assets/sound/countdownRunning/Song1.mp3',
-  COUNTDOWN_RUNNING_2: 'assets/sound/countdownRunning/Song2.mp3',
+  READING_0: 'assets/sound/connecting/Song0.mp3',
+  COUNTDOWN_0: 'assets/sound/countdownRunning/Song0.mp3',
+  COUNTDOWN_1: 'assets/sound/countdownRunning/Song1.mp3',
+  COUNTDOWN_2: 'assets/sound/countdownRunning/Song2.mp3',
 };
 
 /**
@@ -27,7 +27,7 @@ const MUSIC_PATHS: Record<string, string> = {
 @Injectable({ providedIn: 'root' })
 export class SoundService {
   private ctx: AudioContext | null = null;
-  private buffers = new Map<string, AudioBuffer>();
+  private readonly buffers = new Map<string, AudioBuffer>();
   private unlocked = false;
 
   /** Alle aktiven Sound-Effekt-Nodes (damit sie gestoppt werden können). */
@@ -51,7 +51,7 @@ export class SoundService {
   private previewGain: GainNode | null = null;
 
   private getContext(): AudioContext | null {
-    if (typeof window === 'undefined') return null;
+    if (globalThis.window === undefined) return null;
     if (!this.ctx) {
       try {
         this.ctx = new AudioContext();
@@ -77,8 +77,14 @@ export class SoundService {
 
   unlock(): void {
     if (this.unlocked) return;
-    void this.ensureContextRunning();
-    this.unlocked = true;
+    void this.tryUnlockContext();
+  }
+
+  private async tryUnlockContext(): Promise<void> {
+    const ctx = await this.ensureContextRunning();
+    if (ctx) {
+      this.unlocked = true;
+    }
   }
 
   async play(key: SoundKey): Promise<void> {

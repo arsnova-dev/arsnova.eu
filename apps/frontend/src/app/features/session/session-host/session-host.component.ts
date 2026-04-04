@@ -100,37 +100,53 @@ type HostMusicTrack =
   | 'LOBBY_1'
   | 'LOBBY_2'
   | 'LOBBY_3'
-  | 'CONNECTING_0'
-  | 'COUNTDOWN_RUNNING_0'
-  | 'COUNTDOWN_RUNNING_1'
-  | 'COUNTDOWN_RUNNING_2';
+  | 'READING_0'
+  | 'COUNTDOWN_0'
+  | 'COUNTDOWN_1'
+  | 'COUNTDOWN_2';
 
-type MusicPhase = 'lobby' | 'connecting' | 'running';
+type MusicPhase = 'lobby' | 'reading' | 'countdown';
 
 const PHASE_TRACK_DEFAULTS: Record<MusicPhase, HostMusicTrack> = {
   lobby: 'LOBBY_2',
-  connecting: 'CONNECTING_0',
-  running: 'COUNTDOWN_RUNNING_0',
+  reading: 'READING_0',
+  countdown: 'COUNTDOWN_0',
 };
 
 const MUSIC_PHASE_STORAGE_KEY = 'arsnova-host-phase-tracks';
 
+const LEGACY_HOST_MUSIC_TRACKS: Record<string, HostMusicTrack> = {
+  CONNECTING_0: 'READING_0',
+  COUNTDOWN_RUNNING_0: 'COUNTDOWN_0',
+  COUNTDOWN_RUNNING_1: 'COUNTDOWN_1',
+  COUNTDOWN_RUNNING_2: 'COUNTDOWN_2',
+};
+
+function normalizeStoredHostMusicTrack(value: unknown): HostMusicTrack | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const migrated = LEGACY_HOST_MUSIC_TRACKS[value] ?? value;
+  return isValidTrack(migrated) ? migrated : null;
+}
+
 function loadPhaseTracksFromStorage(): Record<MusicPhase, HostMusicTrack> {
   try {
     const raw =
-      typeof localStorage !== 'undefined' ? localStorage.getItem(MUSIC_PHASE_STORAGE_KEY) : null;
+      globalThis.localStorage === undefined
+        ? null
+        : globalThis.localStorage.getItem(MUSIC_PHASE_STORAGE_KEY);
     if (!raw) return { ...PHASE_TRACK_DEFAULTS };
     const parsed = JSON.parse(raw) as Record<string, string>;
     return {
-      lobby: isValidTrack(parsed['lobby'])
-        ? (parsed['lobby'] as HostMusicTrack)
-        : PHASE_TRACK_DEFAULTS.lobby,
-      connecting: isValidTrack(parsed['connecting'])
-        ? (parsed['connecting'] as HostMusicTrack)
-        : PHASE_TRACK_DEFAULTS.connecting,
-      running: isValidTrack(parsed['running'])
-        ? (parsed['running'] as HostMusicTrack)
-        : PHASE_TRACK_DEFAULTS.running,
+      lobby: normalizeStoredHostMusicTrack(parsed['lobby']) ?? PHASE_TRACK_DEFAULTS.lobby,
+      reading:
+        normalizeStoredHostMusicTrack(parsed['reading'] ?? parsed['connecting']) ??
+        PHASE_TRACK_DEFAULTS.reading,
+      countdown:
+        normalizeStoredHostMusicTrack(parsed['countdown'] ?? parsed['running']) ??
+        PHASE_TRACK_DEFAULTS.countdown,
     };
   } catch {
     return { ...PHASE_TRACK_DEFAULTS };
@@ -138,20 +154,44 @@ function loadPhaseTracksFromStorage(): Record<MusicPhase, HostMusicTrack> {
 }
 
 function isValidTrack(v: unknown): v is HostMusicTrack {
-  return typeof v === 'string' && ALL_MUSIC_TRACK_VALUES.includes(v as HostMusicTrack);
+  return typeof v === 'string' && ALL_MUSIC_TRACK_VALUES.has(v as HostMusicTrack);
 }
 
 const ALL_MUSIC_TRACKS: ReadonlyArray<{ value: HostMusicTrack; label: string }> = [
-  { value: 'LOBBY_0', label: 'Lobby · Warm' },
-  { value: 'LOBBY_1', label: 'Lobby · Drive' },
-  { value: 'LOBBY_2', label: 'Lobby · Smooth' },
-  { value: 'LOBBY_3', label: 'Lobby · Pulse' },
-  { value: 'CONNECTING_0', label: 'Connecting · Build' },
-  { value: 'COUNTDOWN_RUNNING_0', label: 'Running · Focus' },
-  { value: 'COUNTDOWN_RUNNING_1', label: 'Running · Push' },
-  { value: 'COUNTDOWN_RUNNING_2', label: 'Running · Intense' },
+  {
+    value: 'LOBBY_0',
+    label: $localize`:@@sessionHost.musicTrackLobbyWarm:Lobby · Warm`,
+  },
+  {
+    value: 'LOBBY_1',
+    label: $localize`:@@sessionHost.musicTrackLobbyArrival:Lobby · Ankommen`,
+  },
+  {
+    value: 'LOBBY_2',
+    label: $localize`:@@sessionHost.musicTrackLobbyCalm:Lobby · Ruhig`,
+  },
+  {
+    value: 'LOBBY_3',
+    label: $localize`:@@sessionHost.musicTrackLobbyPulse:Lobby · Puls`,
+  },
+  {
+    value: 'READING_0',
+    label: $localize`:@@sessionHost.musicTrackReadingBuild:Lesen · Aufbau`,
+  },
+  {
+    value: 'COUNTDOWN_0',
+    label: $localize`:@@sessionHost.musicTrackCountdownFocus:Countdown · Fokus`,
+  },
+  {
+    value: 'COUNTDOWN_1',
+    label: $localize`:@@sessionHost.musicTrackCountdownTempo:Countdown · Tempo`,
+  },
+  {
+    value: 'COUNTDOWN_2',
+    label: $localize`:@@sessionHost.musicTrackCountdownIntense:Countdown · Intensiv`,
+  },
 ];
-const ALL_MUSIC_TRACK_VALUES = ALL_MUSIC_TRACKS.map((t) => t.value);
+const ALL_MUSIC_TRACK_VALUES = new Set(ALL_MUSIC_TRACKS.map((t) => t.value));
 
 type HostSteeringCalloutState = {
   title: string;
@@ -165,10 +205,10 @@ function musicTracksForPhase(
   switch (phase) {
     case 'lobby':
       return ALL_MUSIC_TRACKS.filter((t) => t.value.startsWith('LOBBY_'));
-    case 'connecting':
-      return ALL_MUSIC_TRACKS.filter((t) => t.value.startsWith('CONNECTING_'));
-    case 'running':
-      return ALL_MUSIC_TRACKS.filter((t) => t.value.startsWith('COUNTDOWN_RUNNING_'));
+    case 'reading':
+      return ALL_MUSIC_TRACKS.filter((t) => t.value.startsWith('READING_'));
+    case 'countdown':
+      return ALL_MUSIC_TRACKS.filter((t) => t.value.startsWith('COUNTDOWN_'));
   }
 }
 
@@ -357,8 +397,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly isFullscreenActive = signal(false);
   readonly musicPhases: ReadonlyArray<{ id: MusicPhase; label: string }> = [
     { id: 'lobby', label: $localize`:@@sessionHost.phaseLobbyShort:Lobby` },
-    { id: 'connecting', label: $localize`:@@sessionHost.phaseConnectingShort:Beitritt` },
-    { id: 'running', label: $localize`:@@sessionHost.phaseRunningShort:Countdown` },
+    { id: 'reading', label: $localize`:@@sessionHost.phaseConnectingShort:Lesen` },
+    { id: 'countdown', label: $localize`:@@sessionHost.phaseRunningShort:Countdown` },
   ];
   /** Im Musik-Menü: welche Phase bearbeitet wird (Tracks-Liste gefiltert). */
   readonly musicMenuEditPhase = signal<MusicPhase>('lobby');
@@ -370,8 +410,8 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly currentMusicPhase = computed<MusicPhase | null>(() => {
     const status = this.effectiveStatus();
     if (status === 'LOBBY') return 'lobby';
-    if (status === 'QUESTION_OPEN') return 'connecting';
-    if (status === 'ACTIVE') return 'running';
+    if (status === 'QUESTION_OPEN') return 'reading';
+    if (status === 'ACTIVE') return 'countdown';
     return null;
   });
   readonly activeMusicTrack = computed<HostMusicTrack | null>(() => {
@@ -1144,7 +1184,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
 
   onMusicMenuPhaseToggle(ev: { value: unknown }): void {
     const v = ev.value;
-    if (v === 'lobby' || v === 'connecting' || v === 'running') {
+    if (v === 'lobby' || v === 'reading' || v === 'countdown') {
       this.musicMenuEditPhase.set(v);
     }
   }

@@ -7662,8 +7662,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="sessionHost.phaseConnectingShort" datatype="html">
-        <source>Beitritt</source>
-        <target>Acceso</target>
+        <source>Lesen</source>
+        <target>Lectura</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">359</context>
@@ -7675,6 +7675,70 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">360</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackLobbyWarm" datatype="html">
+        <source>Lobby · Warm</source>
+        <target>Lobby · Cálido</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackLobbyArrival" datatype="html">
+        <source>Lobby · Ankommen</source>
+        <target>Lobby · Llegada</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">156</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackLobbyCalm" datatype="html">
+        <source>Lobby · Ruhig</source>
+        <target>Lobby · Calma</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">160</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackLobbyPulse" datatype="html">
+        <source>Lobby · Puls</source>
+        <target>Lobby · Pulso</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">164</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackReadingBuild" datatype="html">
+        <source>Lesen · Aufbau</source>
+        <target>Lectura · Preparación</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">168</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackCountdownFocus" datatype="html">
+        <source>Countdown · Fokus</source>
+        <target>Cuenta atrás · Enfoque</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">172</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackCountdownTempo" datatype="html">
+        <source>Countdown · Tempo</source>
+        <target>Cuenta atrás · Ritmo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">176</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.musicTrackCountdownIntense" datatype="html">
+        <source>Countdown · Intensiv</source>
+        <target>Cuenta atrás · Intensidad</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">180</context>
         </context-group>
       </trans-unit>
       <trans-unit id="sessionHost.musicLabelOff" datatype="html">
