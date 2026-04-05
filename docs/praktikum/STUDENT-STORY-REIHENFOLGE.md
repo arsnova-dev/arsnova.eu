@@ -30,7 +30,6 @@ Der Einstieg beginnt mit einer **Greenfield-Demo** am Beamer: **Story 1.7a** (Ma
 - **Parallel:** Mini-Inputs **VS Code**, **Git**, **GitHub**, **Stack** (TypeScript, Angular, Monorepo — nach Terminplan).
 - **Studierende** bearbeiten **1.7a nicht** als eigene Praktikums-Story, wenn die Demo diese Story **inhaltlich vollständig abdeckt**.
 - Wenn die Demo **nicht** ausreicht, wird **1.7a** als **zusätzliches Ticket direkt vor 1.7b** in die Reihenfolge aufgenommen.
-- **Epic 10 (MOTD)** dient **optional** als **zweites** Referenzbeispiel (fertiger Full-Stack-Strang: Spec, ADR-0018, `motd`-Router) — **nicht** Ersatz für die 1.7a-Greenfield-Demo.
 
 ---
 
