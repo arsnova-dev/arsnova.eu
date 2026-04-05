@@ -11249,6 +11249,14 @@
           <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="wordCloud.description" datatype="html">
+        <source>Antworten verdichten sich live zu einem schnellen Themenbild.</source>
+        <target>Les réponses se condensent en direct en une vue thématique rapide.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="wordCloud.empty" datatype="html">
         <source>Noch keine Freitext-Antworten vorhanden.</source>
         <target>Aucune réponse en texte libre pour le moment.</target>
@@ -11263,6 +11271,54 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
           <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="wordCloud.itemPlural" datatype="html">
+        <source>Antworten</source>
+        <target>Réponses</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="wordCloud.wordSingular" datatype="html">
+        <source>Wort</source>
+        <target>Mot</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="wordCloud.wordPlural" datatype="html">
+        <source>Wörter</source>
+        <target>Mots</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="wordCloud.showResponsesSingular" datatype="html">
+        <source>Antwort anzeigen</source>
+        <target>Afficher la réponse</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="wordCloud.showResponsesPlural" datatype="html">
+        <source>Antworten anzeigen</source>
+        <target>Afficher les réponses</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="wordCloud.weightingHint" datatype="html">
+        <source>Größere Begriffe stehen für häufigere Nennungen.</source>
+        <target>Les termes plus grands représentent des mentions plus fréquentes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/word-cloud.component.ts</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="wordCloud.showStopwords" datatype="html">
@@ -11295,6 +11351,78 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
           <context context-type="linenumber">345</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionWordCloud.freetextEyebrow" datatype="html">
+        <source>Live-Freitext</source>
+        <target>Texte libre en direct</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/session-present.component.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionWordCloud.freetextDescription" datatype="html">
+        <source>Antworten verdichten sich live zu einem gemeinsamen Themenbild.</source>
+        <target>Les réponses se condensent en direct en une image thématique partagée.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/session-present.component.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionWordCloud.qaEyebrow" datatype="html">
+        <source>Publikumsfragen</source>
+        <target>Questions du public</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/session-present.component.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionWordCloud.qaDescription" datatype="html">
+        <source>Sichtbare Fragen werden als Themenraum lesbar gebündelt.</source>
+        <target>Les questions visibles sont regroupées dans un espace thématique lisible.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/session-present.component.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionWordCloud.qaHint" datatype="html">
+        <source>Größere Begriffe verbinden Häufigkeit und Upvotes.</source>
+        <target>Les termes plus grands combinent fréquence et votes positifs.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-present/session-present.component.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionQa.wordCloudCountOneWeighted" datatype="html">
+        <source>1 Frage · Upvotes gewichtet</source>
+        <target>1 question · pondérée par votes positifs</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">497</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionQa.wordCloudCountManyWeighted" datatype="html">
+        <source><x id="count" equiv-text="count"/> Fragen · Upvotes gewichtet</source>
+        <target><x id="count" equiv-text="count"/> questions · pondérées par votes positifs</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">499</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.responseCountOne" datatype="html">
+        <source>1 Antwort</source>
+        <target>1 réponse</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">742</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="sessionHost.responseCountMany" datatype="html">
+        <source><x id="count" equiv-text="count"/> Antworten</source>
+        <target><x id="count" equiv-text="count"/> réponses</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.ts</context>
+          <context context-type="linenumber">743</context>
         </context-group>
       </trans-unit>
     </body>

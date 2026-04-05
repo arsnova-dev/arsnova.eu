@@ -1525,7 +1525,7 @@
                       <span>{{ wordCloudToggleLabel() }}</span>
                     </span>
                     <span class="session-host__extra-summary-meta">
-                      {{ freetextResponses().length }} Antworten
+                      {{ responseCountLabel(freetextResponses().length) }}
                       <span aria-hidden="true">&#183;</span>
                       {{ wordCloudInfo() }}
                     </span>
@@ -1534,7 +1534,12 @@
                     @if (exportStatus()) {
                       <p class="session-host__export-status" role="status">{{ exportStatus() }}</p>
                     }
-                    <app-word-cloud [responses]="freetextResponses()" />
+                    <app-word-cloud
+                      [responses]="freetextResponses()"
+                      [eyebrow]="freetextWordCloudEyebrow"
+                      [description]="freetextWordCloudDescription"
+                      [showReleaseNote]="false"
+                    />
                   </div>
                 </details>
               }
@@ -1767,11 +1772,14 @@
                         <app-word-cloud
                           [responses]="qaWordCloudResponses()"
                           [weightedResponses]="qaWordCloudWeightedResponses()"
+                          [eyebrow]="qaWordCloudEyebrow"
+                          [description]="qaWordCloudDescription"
                           [title]="'Q&A-Word-Cloud (Upvotes gewichtet)'"
                           [itemLabelSingular]="'Frage'"
                           [itemLabelPlural]="'Fragen'"
+                          [weightingHint]="qaWordCloudWeightingHint"
                           [showResponsesPanel]="true"
-                          [showReleaseNote]="true"
+                          [showReleaseNote]="false"
                         />
                       </section>
                     </div>

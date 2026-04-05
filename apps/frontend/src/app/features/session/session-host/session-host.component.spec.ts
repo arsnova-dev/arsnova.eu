@@ -301,6 +301,8 @@ describe('SessionHostComponent', () => {
     expect(text).not.toContain('Weitere Aktionen');
     expect(text).toContain('2 Antworten');
     expect(text).toContain('Live-Freitext wird aktualisiert.');
+    expect(text).toContain('Live-Freitext');
+    expect(text).toContain('Antworten verdichten sich live zu einem gemeinsamen Themenbild.');
     fixture.destroy();
   });
 
@@ -370,6 +372,8 @@ describe('SessionHostComponent', () => {
     text = fixture.nativeElement.textContent ?? '';
     expect(text).toContain('Q&A-Word-Cloud ausblenden');
     expect(text).toContain('Q&A-Word-Cloud (Upvotes gewichtet)');
+    expect(text).toContain('Publikumsfragen');
+    expect(text).toContain('Größere Begriffe verbinden Häufigkeit und Upvotes.');
     fixture.destroy();
   });
 

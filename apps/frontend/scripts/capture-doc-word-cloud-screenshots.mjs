@@ -8,14 +8,23 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:4200/de';
 const TRPC_URL = process.env.TRPC_URL || 'http://localhost:3000/trpc';
 const HOST_TOKEN_STORAGE_PREFIX = 'arsnova-host-token:';
 const DESKTOP = { width: 1440, height: 1100 };
+const CONTEXT_VIEWPORT = { width: 1440, height: 2400 };
 const QA_SCREENSHOT =
   '/Users/kqc/arsnova.eu/docs/screenshots/QA-Word-Cloud-Stopwoerter.png';
 const QA_SCREENSHOT_WITH_STOPWORDS =
   '/Users/kqc/arsnova.eu/docs/screenshots/QA-Word-Cloud-Stopwoerter-Eingeblendet.png';
+const QA_PRESENTER_CONTEXT_SCREENSHOT =
+  '/Users/kqc/arsnova.eu/docs/screenshots/QA-Word-Cloud-Presenter-Kontext.png';
+const QA_HOST_CONTEXT_SCREENSHOT =
+  '/Users/kqc/arsnova.eu/docs/screenshots/QA-Word-Cloud-Host-Kontext.png';
 const QUIZ_SCREENSHOT =
   '/Users/kqc/arsnova.eu/docs/screenshots/Quiz-Freitext-Word-Cloud-Stopwoerter.png';
 const QUIZ_SCREENSHOT_WITH_STOPWORDS =
   '/Users/kqc/arsnova.eu/docs/screenshots/Quiz-Freitext-Word-Cloud-Stopwoerter-Eingeblendet.png';
+const QUIZ_PRESENTER_CONTEXT_SCREENSHOT =
+  '/Users/kqc/arsnova.eu/docs/screenshots/Quiz-Freitext-Word-Cloud-Presenter-Kontext.png';
+const QUIZ_HOST_CONTEXT_SCREENSHOT =
+  '/Users/kqc/arsnova.eu/docs/screenshots/Quiz-Freitext-Word-Cloud-Host-Kontext.png';
 
 const QA_PROMPTS = [
   {
@@ -177,6 +186,59 @@ async function captureWordCloudCardWithStopwords(page, url, selector, targetPath
   await card.screenshot({ path: targetPath });
 }
 
+async function capturePresenterContext(page, url, selector, targetPath, index = 0) {
+  await ensureOutput(targetPath);
+  await page.setViewportSize(CONTEXT_VIEWPORT);
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  const card = page.locator(selector).nth(index).locator('app-word-cloud .word-cloud-card');
+  await card.waitFor({ state: 'visible', timeout: 30_000 });
+  await card.evaluate((node) => node.scrollIntoView({ block: 'center', inline: 'nearest' }));
+  await page.waitForTimeout(1200);
+  await card.screenshot({ path: targetPath });
+}
+
+async function captureHostContext(page, url, selector, targetPath, summaryText) {
+  await ensureOutput(targetPath);
+  await page.setViewportSize(CONTEXT_VIEWPORT);
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+
+  const details = page.locator(selector).filter({ hasText: summaryText }).first();
+  await details.waitFor({ state: 'visible', timeout: 30_000 });
+
+  const isOpen = await details.evaluate((node) => node.hasAttribute('open'));
+  if (!isOpen) {
+    await details.locator(':scope > summary').click();
+  }
+
+  const summary = details.locator(':scope > summary');
+  const card = details.locator('.word-cloud-card');
+  await card.waitFor({ state: 'visible', timeout: 30_000 });
+  await card.evaluate((node) => node.scrollIntoView({ block: 'center', inline: 'nearest' }));
+  await page.waitForTimeout(1200);
+
+  const summaryBox = await summary.boundingBox();
+  const cardBox = await card.boundingBox();
+  if (!summaryBox || !cardBox) {
+    throw new Error(`Konnte Bounding Box fuer Host-Kontext nicht bestimmen: ${targetPath}`);
+  }
+
+  const padding = 16;
+  const clip = {
+    x: Math.max(0, Math.min(summaryBox.x, cardBox.x) - padding),
+    y: Math.max(0, Math.min(summaryBox.y, cardBox.y) - padding),
+    width:
+      Math.max(summaryBox.x + summaryBox.width, cardBox.x + cardBox.width) -
+      Math.min(summaryBox.x, cardBox.x) +
+      padding * 2,
+    height:
+      Math.max(summaryBox.y + summaryBox.height, cardBox.y + cardBox.height) -
+      Math.min(summaryBox.y, cardBox.y) +
+      padding * 2,
+  };
+
+  await page.screenshot({ path: targetPath, clip });
+}
+
 async function createQaSession(publicTrpc) {
   const { code, hostToken } = await publicTrpc.session.create.mutate({
     type: 'Q_AND_A',
@@ -292,6 +354,22 @@ async function main() {
       QA_SCREENSHOT_WITH_STOPWORDS,
       0,
     );
+    await capturePresenterContext(
+      qaPage,
+      `${BASE_URL}/session/${qaSession.code}/present`,
+      '.session-present__word-cloud-card',
+      QA_PRESENTER_CONTEXT_SCREENSHOT,
+      0,
+    );
+
+    const qaHostPage = await context.newPage();
+    await captureHostContext(
+      qaHostPage,
+      `${BASE_URL}/session/${qaSession.code}/host`,
+      '.session-host__extra',
+      QA_HOST_CONTEXT_SCREENSHOT,
+      'Q&A-Word-Cloud',
+    );
 
     const quizPage = await context.newPage();
     await captureWordCloudCard(
@@ -308,6 +386,22 @@ async function main() {
       QUIZ_SCREENSHOT_WITH_STOPWORDS,
       0,
     );
+    await capturePresenterContext(
+      quizPage,
+      `${BASE_URL}/session/${quizSession.code}/present`,
+      '.session-present__word-cloud-card',
+      QUIZ_PRESENTER_CONTEXT_SCREENSHOT,
+      0,
+    );
+
+    const quizHostPage = await context.newPage();
+    await captureHostContext(
+      quizHostPage,
+      `${BASE_URL}/session/${quizSession.code}/host`,
+      '.session-host__extra',
+      QUIZ_HOST_CONTEXT_SCREENSHOT,
+      'Word Cloud',
+    );
   } finally {
     await browser.close();
   }
@@ -317,8 +411,12 @@ async function main() {
       {
         qa: QA_SCREENSHOT,
         qaWithStopwords: QA_SCREENSHOT_WITH_STOPWORDS,
+        qaPresenterContext: QA_PRESENTER_CONTEXT_SCREENSHOT,
+        qaHostContext: QA_HOST_CONTEXT_SCREENSHOT,
         quizFreetext: QUIZ_SCREENSHOT,
         quizFreetextWithStopwords: QUIZ_SCREENSHOT_WITH_STOPWORDS,
+        quizPresenterContext: QUIZ_PRESENTER_CONTEXT_SCREENSHOT,
+        quizHostContext: QUIZ_HOST_CONTEXT_SCREENSHOT,
       },
       null,
       2,

@@ -50,6 +50,11 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
   readonly freetextResponses = signal<string[]>([]);
   readonly currentQuestionLabel = signal<string | null>(null);
   readonly presenterInfo = signal($localize`Warte auf Live-Freitextdaten …`);
+  readonly freetextWordCloudEyebrow = $localize`:@@sessionWordCloud.freetextEyebrow:Live-Freitext`;
+  readonly freetextWordCloudDescription = $localize`:@@sessionWordCloud.freetextDescription:Antworten verdichten sich live zu einem gemeinsamen Themenbild.`;
+  readonly qaWordCloudEyebrow = $localize`:@@sessionWordCloud.qaEyebrow:Publikumsfragen`;
+  readonly qaWordCloudDescription = $localize`:@@sessionWordCloud.qaDescription:Sichtbare Fragen werden als Themenraum lesbar gebündelt.`;
+  readonly qaWordCloudWeightingHint = $localize`:@@sessionWordCloud.qaHint:Größere Begriffe verbinden Häufigkeit und Upvotes.`;
   readonly isPlayfulPreset = computed(() => this.session()?.preset === 'PLAYFUL');
   readonly showPinnedQaQuestion = computed(
     () => this.pinnedQaQuestion() !== null && !this.showTeamFinish(),

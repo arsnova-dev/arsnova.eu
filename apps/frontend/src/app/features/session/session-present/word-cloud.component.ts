@@ -10,7 +10,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardSubtitle,
+  MatCardTitle,
+} from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { getEffectiveLocale, localeIdToSupported } from '../../../core/locale-from-path';
 import {
@@ -55,7 +61,15 @@ interface RoundedRectStyle {
 @Component({
   selector: 'app-word-cloud',
   standalone: true,
-  imports: [MatButton, MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatIcon],
+  imports: [
+    MatButton,
+    MatCard,
+    MatCardContent,
+    MatCardHeader,
+    MatCardSubtitle,
+    MatCardTitle,
+    MatIcon,
+  ],
   templateUrl: './word-cloud.component.html',
   styleUrl: './word-cloud.component.scss',
 })
@@ -74,13 +88,28 @@ export class WordCloudComponent {
   readonly responses = input<string[]>([]);
   readonly weightedResponses = input<WeightedWordSource[] | null>(null);
   readonly title = input($localize`:@@wordCloud.title:Word-Cloud (Freitext)`);
+  readonly eyebrow = input<string | null>(null);
+  readonly description = input<string | null>(
+    $localize`:@@wordCloud.description:Antworten verdichten sich live zu einem schnellen Themenbild.`,
+  );
   readonly emptyMessage = input(
     $localize`:@@wordCloud.empty:Noch keine Freitext-Antworten vorhanden.`,
   );
   readonly itemLabelSingular = input($localize`:@@wordCloud.itemSingular:Antwort`);
-  readonly itemLabelPlural = input($localize`Antworten`);
+  readonly itemLabelPlural = input($localize`:@@wordCloud.itemPlural:Antworten`);
+  readonly wordLabelSingular = input($localize`:@@wordCloud.wordSingular:Wort`);
+  readonly wordLabelPlural = input($localize`:@@wordCloud.wordPlural:Wörter`);
+  readonly showResponsesSingularLabel = input(
+    $localize`:@@wordCloud.showResponsesSingular:Antwort anzeigen`,
+  );
+  readonly showResponsesPluralLabel = input(
+    $localize`:@@wordCloud.showResponsesPlural:Antworten anzeigen`,
+  );
   readonly showResponsesPanel = input(true);
-  readonly showReleaseNote = input(true);
+  readonly weightingHint = input<string | null>(
+    $localize`:@@wordCloud.weightingHint:Größere Begriffe stehen für häufigere Nennungen.`,
+  );
+  readonly showReleaseNote = input(false);
   readonly selectedWord = signal<string | null>(null);
   readonly statusMessage = signal<string | null>(null);
   readonly hideStopwords = signal(true);
@@ -130,6 +159,14 @@ export class WordCloudComponent {
 
   itemLabel(count: number): string {
     return count === 1 ? this.itemLabelSingular() : this.itemLabelPlural();
+  }
+
+  wordLabel(count: number): string {
+    return count === 1 ? this.wordLabelSingular() : this.wordLabelPlural();
+  }
+
+  showResponsesLabel(count: number): string {
+    return count === 1 ? this.showResponsesSingularLabel() : this.showResponsesPluralLabel();
   }
 
   toggleWord(word: string): void {

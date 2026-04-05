@@ -290,6 +290,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly freetextResponses = signal<string[]>([]);
   readonly wordCloudExpanded = signal(false);
   readonly wordCloudInfo = signal($localize`Warte auf Live-Freitextdaten …`);
+  readonly freetextWordCloudEyebrow = $localize`:@@sessionWordCloud.freetextEyebrow:Live-Freitext`;
+  readonly freetextWordCloudDescription = $localize`:@@sessionWordCloud.freetextDescription:Antworten verdichten sich live zu einem gemeinsamen Themenbild.`;
+  readonly qaWordCloudEyebrow = $localize`:@@sessionWordCloud.qaEyebrow:Publikumsfragen`;
+  readonly qaWordCloudDescription = $localize`:@@sessionWordCloud.qaDescription:Sichtbare Fragen werden als Themenraum lesbar gebündelt.`;
+  readonly qaWordCloudWeightingHint = $localize`:@@sessionWordCloud.qaHint:Größere Begriffe verbinden Häufigkeit und Upvotes.`;
   readonly currentQuestionLabel = signal<string | null>(null);
   readonly exportStatus = signal<string | null>(null);
   readonly exportExporting = signal(false);
@@ -489,9 +494,9 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly qaWordCloudInfo = computed(() => {
     const count = this.qaWordCloudQuestions().length;
     if (count === 1) {
-      return $localize`:@@sessionQa.wordCloudCountOne:1 Frage`;
+      return $localize`:@@sessionQa.wordCloudCountOneWeighted:1 Frage · Upvotes gewichtet`;
     }
-    return $localize`:@@sessionQa.wordCloudCountMany:${count}:count: Fragen`;
+    return $localize`:@@sessionQa.wordCloudCountManyWeighted:${count}:count: Fragen · Upvotes gewichtet`;
   });
   readonly qaPinnedCount = computed(
     () => this.qaQuestions().filter((q) => q.status === 'PINNED').length,
@@ -728,6 +733,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   }
   getLetter(index: number): string {
     return String.fromCharCode(65 + index);
+  }
+
+  responseCountLabel(count: number): string {
+    return count === 1
+      ? $localize`:@@sessionHost.responseCountOne:1 Antwort`
+      : $localize`:@@sessionHost.responseCountMany:${count}:count: Antworten`;
   }
 
   ratingBarRange(q: HostCurrentQuestionDTO): number[] {

@@ -31,6 +31,17 @@ describe('WordCloudComponent', () => {
     expect(component.filteredResponses().length).toBe(2);
   });
 
+  it('nutzt Singularformen fuer genau einen Begriff und eine sichtbare Antwort', () => {
+    const fixture = TestBed.createComponent(WordCloudComponent);
+    fixture.componentRef.setInput('responses', ['Motivation']);
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('1 Wort');
+    expect(text).toContain('1 Antwort');
+    expect(text).toContain('Antwort anzeigen (1)');
+  });
+
   it('kann Stopwörter optional einblenden', () => {
     TestBed.overrideProvider(LOCALE_ID, { useValue: 'de' });
 
@@ -93,6 +104,7 @@ describe('WordCloudComponent', () => {
       'Motivation durch Teamarbeit',
       'Teamarbeit schafft Fokus',
     ]);
+    fixture.componentRef.setInput('showReleaseNote', true);
     fixture.detectChanges();
 
     const component = fixture.componentInstance;
@@ -106,6 +118,16 @@ describe('WordCloudComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('intelligente Moderationshilfe');
     expect(fixture.nativeElement.textContent).toContain('Natural Language Processing');
     expect(fixture.nativeElement.textContent).toContain('gemeinsamen Themen');
+  });
+
+  it('zeigt standardmäßig Erklärtext und Gewichtungshinweis für bessere Orientierung', () => {
+    const fixture = TestBed.createComponent(WordCloudComponent);
+    fixture.componentRef.setInput('responses', ['Motivation', 'Teamarbeit']);
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Antworten verdichten sich live zu einem schnellen Themenbild.');
+    expect(text).toContain('Größere Begriffe stehen für häufigere Nennungen.');
   });
 
   it('exportiert CSV und setzt eine Statusmeldung', () => {

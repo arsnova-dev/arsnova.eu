@@ -1,11 +1,19 @@
-<mat-card appearance="outlined">
-  <mat-card-header>
+<mat-card appearance="outlined" class="word-cloud-card">
+  <mat-card-header class="word-cloud__header">
+    @if (eyebrow()) {
+      <p class="word-cloud__eyebrow">{{ eyebrow() }}</p>
+    }
     <mat-card-title>{{ title() }}</mat-card-title>
+    @if (description()) {
+      <mat-card-subtitle class="word-cloud__description">{{ description() }}</mat-card-subtitle>
+    }
   </mat-card-header>
   <mat-card-content class="word-cloud l-stack l-stack--sm">
     <div class="word-cloud__meta">
       <p class="word-cloud__meta-line">
-        <span class="word-cloud__meta-pill">{{ words().length }} Wörter</span>
+        <span class="word-cloud__meta-pill"
+          >{{ words().length }} {{ wordLabel(words().length) }}</span
+        >
         <span class="word-cloud__meta-pill"
           >{{ responseSummary().total }} {{ itemLabel(responseSummary().total) }}</span
         >
@@ -16,6 +24,12 @@
         </p>
       }
     </div>
+    @if (weightingHint()) {
+      <div class="word-cloud__reading-hint" role="note">
+        <mat-icon aria-hidden="true">insights</mat-icon>
+        <span>{{ weightingHint() }}</span>
+      </div>
+    }
     <div #exportSurface class="word-cloud__visual-frame">
       @if (words().length === 0) {
         <p class="word-cloud__empty">{{ emptyMessage() }}</p>
@@ -41,48 +55,59 @@
       }
     </div>
     @if (words().length > 0) {
-      <div class="word-cloud__actions">
-        <button mat-button type="button" (click)="toggleStopwords()">
-          <mat-icon>filter_alt</mat-icon>
-          {{ hideStopwords() ? showStopwordsLabel : hideStopwordsLabel }}
-        </button>
-        <button mat-button type="button" (click)="exportCsv()">
-          <mat-icon>table_view</mat-icon>
-          CSV exportieren
-        </button>
-        <button mat-button type="button" (click)="exportPng()">
-          <mat-icon>image</mat-icon>
-          PNG exportieren
-        </button>
+      <div class="word-cloud__supporting">
+        <div class="word-cloud__actions-panel">
+          <div class="word-cloud__actions">
+            <button mat-button type="button" class="word-cloud__action" (click)="toggleStopwords()">
+              <mat-icon>filter_alt</mat-icon>
+              {{ hideStopwords() ? showStopwordsLabel : hideStopwordsLabel }}
+            </button>
+            <button mat-button type="button" class="word-cloud__action" (click)="exportCsv()">
+              <mat-icon>table_view</mat-icon>
+              CSV exportieren
+            </button>
+            <button mat-button type="button" class="word-cloud__action" (click)="exportPng()">
+              <mat-icon>image</mat-icon>
+              PNG exportieren
+            </button>
+          </div>
+          @if (statusMessage()) {
+            <output class="word-cloud__status">{{ statusMessage() }}</output>
+          }
+        </div>
+        @if (showResponsesPanel()) {
+          <details class="word-cloud__responses-panel" [attr.open]="showResponses() ? true : null">
+            <summary
+              class="word-cloud__responses-summary"
+              (click)="$event.preventDefault(); toggleResponses()"
+            >
+              <span
+                >{{ showResponsesLabel(responseSummary().visible) }} ({{
+                  responseSummary().visible
+                }})</span
+              >
+              <mat-icon aria-hidden="true">{{
+                showResponses() ? 'expand_less' : 'expand_more'
+              }}</mat-icon>
+            </summary>
+            <ul class="word-cloud__responses">
+              @for (response of filteredResponses(); track response + $index) {
+                <li>{{ response }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (showReleaseNote()) {
+          <p class="word-cloud__release-note">
+            Hinweis: Zum nächsten Major Release am 1. August 2026 ist Word Cloud 2.0 geplant. Dann
+            kommt ein echtes, dichteres Cloud-Layout mit ruhigerem Live-Update und stärkerer
+            Präsentationsqualität. Das Zielbild danach ist die intelligente Moderationshilfe mit NLP
+            (Natural Language Processing, also automatische Sprachverarbeitung): ähnliche Antworten
+            und Formulierungen werden zu gemeinsamen Themen gebündelt, verständlich benannt und
+            sinnvoll gewichtet, statt nur identische Wörter zu zählen.
+          </p>
+        }
       </div>
-      @if (statusMessage()) {
-        <output class="word-cloud__status">{{ statusMessage() }}</output>
-      }
-      @if (showResponsesPanel()) {
-        <details class="word-cloud__responses-panel" [attr.open]="showResponses() ? true : null">
-          <summary
-            class="word-cloud__responses-summary"
-            (click)="$event.preventDefault(); toggleResponses()"
-          >
-            {{ itemLabelPlural() }} anzeigen ({{ responseSummary().visible }})
-          </summary>
-          <ul class="word-cloud__responses">
-            @for (response of filteredResponses(); track response + $index) {
-              <li>{{ response }}</li>
-            }
-          </ul>
-        </details>
-      }
-      @if (showReleaseNote()) {
-        <p class="word-cloud__release-note">
-          Hinweis: Zum nächsten Major Release am 1. August 2026 ist Word Cloud 2.0 geplant. Dann
-          kommt ein echtes, dichteres Cloud-Layout mit ruhigerem Live-Update und stärkerer
-          Präsentationsqualität. Das Zielbild danach ist die intelligente Moderationshilfe mit NLP
-          (Natural Language Processing, also automatische Sprachverarbeitung): ähnliche Antworten
-          und Formulierungen werden zu gemeinsamen Themen gebündelt, verständlich benannt und
-          sinnvoll gewichtet, statt nur identische Wörter zu zählen.
-        </p>
-      }
     }
   </mat-card-content>
 </mat-card>

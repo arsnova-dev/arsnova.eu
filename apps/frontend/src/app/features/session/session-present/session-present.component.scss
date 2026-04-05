@@ -11,6 +11,8 @@
 
 .session-present {
   width: 100%;
+  box-sizing: border-box;
+  padding-top: clamp(0.65rem, 1.8vw, 1rem);
 }
 
 .session-present__qa-card {
@@ -121,12 +123,11 @@
   align-items: flex-start;
   padding: 0.85rem 0.95rem;
   border-radius: 1rem;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--mat-sys-surface) 94%, transparent),
-      color-mix(in srgb, var(--mat-sys-surface-container-low) 82%, var(--mat-sys-surface))
-    );
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--mat-sys-surface) 94%, transparent),
+    color-mix(in srgb, var(--mat-sys-surface-container-low) 82%, var(--mat-sys-surface))
+  );
   border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 8%, var(--mat-sys-outline-variant));
   box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, black 6%, transparent);
 }
@@ -463,12 +464,17 @@
 }
 
 .session-present__word-cloud-card {
-  padding: clamp(0.85rem, 2.8vw, 1.2rem);
+  padding: clamp(1rem, 3vw, 1.4rem);
   border-radius: var(--mat-sys-corner-extra-large, 1.25rem);
   background:
-    radial-gradient(circle at top, color-mix(in srgb, var(--mat-sys-primary) 10%, transparent), transparent 62%),
+    radial-gradient(
+      circle at top,
+      color-mix(in srgb, var(--mat-sys-primary) 10%, transparent),
+      transparent 62%
+    ),
     color-mix(in srgb, var(--mat-sys-surface-container-low) 90%, var(--mat-sys-surface));
   border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 20%, var(--mat-sys-outline-variant));
+  box-shadow: 0 1rem 2rem color-mix(in srgb, var(--mat-sys-shadow) 5%, transparent);
 }
 
 .session-present__confetti {
@@ -491,6 +497,7 @@
 @media (max-width: 700px) {
   .session-present {
     gap: var(--host-mobile-stack-gap);
+    padding-top: clamp(0.85rem, 3vw, 1.1rem);
   }
 
   .session-present__qa-card,
@@ -584,23 +591,49 @@
   }
 
   @keyframes present-winner-enter {
-    0% { opacity: 0; transform: translateY(0.5rem) scale(0.98); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
+    0% {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.98);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   @keyframes present-qa-enter {
-    0% { opacity: 0; transform: translateY(0.5rem); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes present-board-enter {
-    0% { opacity: 0; transform: translateY(0.75rem); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes present-confetti-fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-    15% { opacity: 1; }
-    100% { transform: translateY(8.5rem) rotate(320deg); opacity: 0; }
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(8.5rem) rotate(320deg);
+      opacity: 0;
+    }
   }
 }
