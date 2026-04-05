@@ -28,8 +28,6 @@ Der Einstieg beginnt mit einer **Greenfield-Demo** am Beamer: **Story 1.7a** (Ma
 
 - **Lehrperson** und **KI-Agent** zeigen **Ende-zu-Ende**: Backlog-Akzeptanzkriterien → [ADR-0015](../architecture/decisions/0015-markdown-images-url-only-and-lightbox.md) → Angular/Markdown-Pipeline → Lightbox → i18n/Tests (soweit in der Zeit reicht).
 - **Parallel:** Mini-Inputs **VS Code**, **Git**, **GitHub**, **Stack** (TypeScript, Angular, Monorepo — nach Terminplan).
-- **Studierende** bearbeiten **1.7a nicht** als eigene Praktikums-Story, wenn die Demo diese Story **inhaltlich vollständig abdeckt**.
-- Wenn die Demo **nicht** ausreicht, wird **1.7a** als **zusätzliches Ticket direkt vor 1.7b** in die Reihenfolge aufgenommen.
 
 ---
 
