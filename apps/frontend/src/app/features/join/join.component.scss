@@ -87,11 +87,23 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 0.9rem;
+    margin-bottom: 0.65rem;
+  }
+
+  &__home-link,
   &__host-link {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    margin-top: 0.75rem;
+  }
+
+  &__host-link {
+    margin-top: 0;
   }
 
   &--error .join-card__text {

@@ -132,6 +132,21 @@ describe('SessionPresentComponent', () => {
     fixture.destroy();
   });
 
+  it('zeigt im Fehlerzustand einen direkten Link zur Startseite', async () => {
+    getInfoQueryMock.mockRejectedValue(new Error('Session nicht gefunden.'));
+
+    const fixture = TestBed.createComponent(SessionPresentComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 50));
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Session nicht gefunden.');
+    expect(text).toContain('Zur Startseite');
+    fixture.destroy();
+  });
+
   it('zeigt eine angepinnte Frage prominent in der Presenter-Ansicht', async () => {
     getInfoQueryMock.mockResolvedValue({
       id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',

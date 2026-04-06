@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit, computed, inject, input, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MatFabButton } from '@angular/material/button';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import type { Unsubscribable } from '@trpc/server/observable';
 import { trpc } from '../../core/trpc.client';
+import { localizePath } from '../../core/locale-router';
 import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../core/session-code-aria';
 import { ThemePresetService } from '../../core/theme-preset.service';
 import { feedbackOptions, feedbackTitle } from './feedback.config';
@@ -40,7 +41,7 @@ function hasAlreadyVoted(code: string): boolean {
 @Component({
   selector: 'app-feedback-vote',
   standalone: true,
-  imports: [MatFabButton, MatCard, MatCardContent, MatIcon],
+  imports: [MatButton, MatFabButton, MatCard, MatCardContent, MatIcon, RouterLink],
   templateUrl: './feedback-vote.component.html',
   styleUrl: './feedback-vote.component.scss',
   host: {
@@ -49,6 +50,7 @@ function hasAlreadyVoted(code: string): boolean {
   },
 })
 export class FeedbackVoteComponent implements OnInit, OnDestroy {
+  readonly localizedPath = localizePath;
   private readonly route = inject(ActivatedRoute);
   private readonly themePreset = inject(ThemePresetService);
   private styleTimer: ReturnType<typeof setInterval> | null = null;

@@ -15,7 +15,7 @@ import {
   localizeKnownServerMessage,
   sessionNotFoundUiMessage,
 } from '../../core/localize-known-server-message';
-import { localizeCommands } from '../../core/locale-router';
+import { localizeCommands, localizePath } from '../../core/locale-router';
 import { sessionCodeAriaLabel as i18nSessionCodeAria } from '../../core/session-code-aria';
 import { getNicknameList } from './nickname-themes';
 import {
@@ -53,6 +53,7 @@ const SESSION_POLL_MS = 3000;
 })
 export class JoinComponent implements OnInit, OnDestroy {
   readonly localizedCommands = localizeCommands;
+  readonly localizedPath = localizePath;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly localeId = inject(LOCALE_ID);

@@ -130,6 +130,7 @@ describe('JoinComponent', () => {
 
     expect(comp.error()).toBe('Session nicht gefunden.');
     expect(comp.session()).toBeNull();
+    expect(fixture.nativeElement.textContent ?? '').toContain('Zur Startseite');
   });
 
   it('zeigt Fehler wenn Session FINISHED', async () => {
@@ -145,6 +146,8 @@ describe('JoinComponent', () => {
 
     expect(comp.error()).toBe('Diese Session ist bereits beendet.');
     expect(comp.session()).toBeNull();
+    expect(fixture.nativeElement.textContent ?? '').toContain('Zur Startseite');
+    expect(fixture.nativeElement.textContent ?? '').toContain('Als Host anzeigen');
   });
 
   it('stellt Nickname-Liste bereit bei QUIZ mit nicknameTheme (Story 3.2)', async () => {

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FeedbackVoteComponent } from './feedback-vote.component';
 
@@ -41,6 +41,7 @@ describe('FeedbackVoteComponent', () => {
     TestBed.configureTestingModule({
       imports: [FeedbackVoteComponent],
       providers: [
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -73,16 +74,21 @@ describe('FeedbackVoteComponent', () => {
 
   it('übernimmt einen Typwechsel per Live-Subscription sofort', async () => {
     quickFeedbackOnResultsSubscribeMock.mockImplementationOnce(
-      (_input, opts: { onData: (result: {
-        type: 'ABC';
-        theme: 'system';
-        preset: 'serious';
-        locked: false;
-        discussion: false;
-        totalVotes: 0;
-        distribution: { A: 0; B: 0; C: 0 };
-        currentRound: 1;
-      }) => void }) => {
+      (
+        _input,
+        opts: {
+          onData: (result: {
+            type: 'ABC';
+            theme: 'system';
+            preset: 'serious';
+            locked: false;
+            discussion: false;
+            totalVotes: 0;
+            distribution: { A: 0; B: 0; C: 0 };
+            currentRound: 1;
+          }) => void;
+        },
+      ) => {
         setTimeout(() => {
           opts.onData({
             type: 'ABC',
@@ -143,6 +149,22 @@ describe('FeedbackVoteComponent', () => {
     const negativeIcon = fixture.nativeElement.querySelector('.feedback-vote__mood-icon--negative');
     expect(positiveIcon?.textContent).toContain('check_circle');
     expect(negativeIcon?.textContent).toContain('cancel');
+    fixture.destroy();
+  });
+
+  it('zeigt bei abgelaufener Runde einen direkten Link zur Startseite', async () => {
+    quickFeedbackResultsQueryMock.mockRejectedValueOnce(new Error('not found'));
+
+    const fixture = TestBed.createComponent(FeedbackVoteComponent);
+    fixture.componentRef.setInput('sessionCode', 'ABC123');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent ?? '';
+    expect(text).toContain('Feedback-Runde nicht gefunden oder abgelaufen.');
+    expect(text).toContain('Zur Startseite');
     fixture.destroy();
   });
 });

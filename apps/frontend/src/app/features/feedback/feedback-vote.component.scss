@@ -221,6 +221,12 @@
   padding: 1.8rem 1.3rem;
 }
 
+.feedback-vote__home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .feedback-vote__done-text {
   font: var(--mat-sys-title-medium);
   font-weight: 600;

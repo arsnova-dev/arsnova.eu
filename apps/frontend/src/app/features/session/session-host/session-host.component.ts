@@ -94,6 +94,7 @@ const ANSWER_SHAPES = [
   '\u2BC6',
 ];
 const HOST_FALLBACK_POLL_MS = 3000;
+const SESSION_NOT_FOUND_MESSAGE = 'Session nicht gefunden.';
 type SessionChannelTab = 'quiz' | 'qa' | 'quickFeedback';
 type HostMusicTrack =
   | 'LOBBY_0'
@@ -250,6 +251,7 @@ function musicTracksForPhase(
 export class SessionHostComponent implements OnInit, OnDestroy {
   readonly localizedPath = localizePath;
   session = signal<SessionInfoDTO | null>(null);
+  readonly sessionUnavailable = signal(false);
   /** Lobby: Live-Teilnehmerliste (Story 2.2). */
   readonly participantsPayload = signal<SessionParticipantsPayload | null>(null);
   /** Live-Status für Steuerung (Story 2.3). */
@@ -828,6 +830,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     try {
       const session = await trpc.session.getInfo.query({ code: this.code.toUpperCase() });
       recordServerTimeIso(session.serverTime);
+      this.sessionUnavailable.set(false);
       this.session.set(session);
       this.syncQaTitleDraftFromSession();
       await this.refreshParticipantsPayload();
@@ -1038,7 +1041,33 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   /** Prüft, ob die Session noch läuft (nicht FINISHED und nicht null). */
   private isSessionActive(): boolean {
     const status = this.effectiveStatus();
-    return status !== null && status !== 'FINISHED';
+    return !this.sessionUnavailable() && status !== null && status !== 'FINISHED';
+  }
+
+  private isSessionNotFoundError(error: unknown): boolean {
+    return error instanceof Error && error.message.includes(SESSION_NOT_FOUND_MESSAGE);
+  }
+
+  private markSessionUnavailable(): void {
+    this.sessionUnavailable.set(true);
+    this.stopCountdown();
+    this.countdownSeconds.set(null);
+    this.currentQuestionForHost.set(null);
+    this.statusUpdate.set({
+      status: 'FINISHED',
+      currentQuestion: null,
+      activeAt: undefined,
+    });
+    this.session.update((session) => (session ? { ...session, status: 'FINISHED' } : session));
+    this.dismissHostSteeringCallout();
+    if (this.code) {
+      clearHostToken(this.code);
+    }
+  }
+
+  private async navigateHomeAfterSessionUnavailable(): Promise<void> {
+    this.markSessionUnavailable();
+    await this.router.navigateByUrl(this.localizedPath('/'), { replaceUrl: true });
   }
 
   dismissHostSteeringCallout(): void {
@@ -1074,9 +1103,12 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     try {
       await trpc.session.end.mutate({ code: this.code.toUpperCase() });
       clearHostToken(this.code);
-      await this.router.navigateByUrl(this.localizedPath('/'));
+      await this.router.navigateByUrl(this.localizedPath('/'), { replaceUrl: true });
       this.dismissHostSteeringCallout();
-    } catch {
+    } catch (error) {
+      if (this.isSessionNotFoundError(error)) {
+        await this.navigateHomeAfterSessionUnavailable();
+      }
       /* Hinweis bleibt, bis Retry klappt oder die Person schließt. */
     }
   }
@@ -1130,7 +1162,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       try {
         await trpc.session.end.mutate({ code: this.code.toUpperCase() });
         clearHostToken(this.code);
-      } catch {
+      } catch (error) {
+        if (this.isSessionNotFoundError(error)) {
+          this.markSessionUnavailable();
+          return true;
+        }
         this.openHostSteeringCalloutForSteeringFailure(
           () => void this.retryEndSessionAndNavigateHome(),
         );
@@ -2208,7 +2244,11 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.statusUpdate.set(result);
       this.currentQuestionForHost.set(null);
       this.dismissHostSteeringCallout();
-    } catch {
+    } catch (error) {
+      if (this.isSessionNotFoundError(error)) {
+        await this.navigateHomeAfterSessionUnavailable();
+        return;
+      }
       this.openHostSteeringCalloutForSteeringFailure(() => void this.endSession());
     } finally {
       this.controlPending.set(false);

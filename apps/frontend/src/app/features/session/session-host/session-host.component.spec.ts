@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
@@ -216,6 +216,39 @@ describe('SessionHostComponent', () => {
     expect(canLeave).toBe(true);
     expect(endMutateMock).toHaveBeenCalledWith({ code: 'ABC123' });
     expect(clearHostTokenMock).toHaveBeenCalledWith('ABC123');
+    fixture.destroy();
+  });
+
+  it('erlaubt das Verlassen, wenn die Session serverseitig schon gelöscht wurde', async () => {
+    getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'ACTIVE' });
+    endMutateMock.mockRejectedValueOnce(new Error('Session nicht gefunden.'));
+
+    const fixture = setup();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const canLeave = await fixture.componentInstance.canDeactivate();
+
+    expect(canLeave).toBe(true);
+    expect(clearHostTokenMock).toHaveBeenCalledWith('ABC123');
+    fixture.destroy();
+  });
+
+  it('navigiert bei verwaister Session mit Session beenden zurück nach Home', async () => {
+    getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'ACTIVE' });
+    endMutateMock.mockRejectedValueOnce(new Error('Session nicht gefunden.'));
+
+    const fixture = setup();
+    const router = TestBed.inject(Router);
+    const navigateByUrlSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.endSession();
+
+    expect(clearHostTokenMock).toHaveBeenCalledWith('ABC123');
+    expect(navigateByUrlSpy).toHaveBeenCalledWith('/', { replaceUrl: true });
+    expect(fixture.componentInstance.hostSteeringCallout()).toBeNull();
     fixture.destroy();
   });
 

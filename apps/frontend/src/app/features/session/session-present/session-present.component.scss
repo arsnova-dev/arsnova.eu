@@ -9,6 +9,13 @@
   font: var(--mat-sys-title-small);
 }
 
+.session-placeholder__home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
 .session-present {
   width: 100%;
   box-sizing: border-box;

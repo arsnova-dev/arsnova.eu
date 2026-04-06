@@ -1,10 +1,15 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { WordCloudComponent } from './word-cloud.component';
+import {
+  localizeKnownServerMessage,
+  sessionNotFoundUiMessage,
+} from '../../../core/localize-known-server-message';
 import { trpc } from '../../../core/trpc.client';
 import { renderMarkdownWithKatex } from '../../../shared/markdown-katex.util';
 import {
@@ -31,7 +36,15 @@ import { localizePath } from '../../../core/locale-router';
 @Component({
   selector: 'app-session-present',
   standalone: true,
-  imports: [DecimalPipe, MatCard, MatCardContent, MatIcon, WordCloudComponent],
+  imports: [
+    DecimalPipe,
+    MatButton,
+    MatCard,
+    MatCardContent,
+    MatIcon,
+    RouterLink,
+    WordCloudComponent,
+  ],
   templateUrl: './session-present.component.html',
   styleUrl: './session-present.component.scss',
 })
@@ -41,6 +54,7 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private readonly code = this.route.parent?.snapshot.paramMap.get('code') ?? '';
+  readonly localizedPath = localizePath;
 
   readonly session = signal<SessionInfoDTO | null>(null);
   readonly teamLeaderboard = signal<TeamLeaderboardEntryDTO[]>([]);
@@ -49,6 +63,7 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
   readonly quickFeedbackResult = signal<QuickFeedbackResult | null>(null);
   readonly freetextResponses = signal<string[]>([]);
   readonly currentQuestionLabel = signal<string | null>(null);
+  readonly showHomeCta = signal(false);
   readonly presenterInfo = signal($localize`Warte auf Live-Freitextdaten …`);
   readonly freetextWordCloudEyebrow = $localize`:@@sessionWordCloud.freetextEyebrow:Live-Freitext`;
   readonly freetextWordCloudDescription = $localize`:@@sessionWordCloud.freetextDescription:Antworten verdichten sich live zu einem gemeinsamen Themenbild.`;
@@ -117,6 +132,7 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     if (this.code.length !== 6) {
+      this.showHomeCta.set(true);
       this.presenterInfo.set($localize`Ungültiger Session-Code.`);
       return;
     }
@@ -216,14 +232,24 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
     try {
       const session = await trpc.session.getInfo.query({ code: this.code.toUpperCase() });
       recordServerTimeIso(session.serverTime);
+      this.showHomeCta.set(false);
       this.session.set(session);
       if (session.status === 'FINISHED') {
         void this.router.navigateByUrl(localizePath('/'), { replaceUrl: true });
         return;
       }
       this.teamLeaderboard.set([]);
-    } catch {
+    } catch (error: unknown) {
+      const raw =
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof (error as { message: string }).message === 'string'
+          ? (error as { message: string }).message
+          : sessionNotFoundUiMessage();
       this.session.set(null);
+      this.showHomeCta.set(true);
+      this.presenterInfo.set(localizeKnownServerMessage(raw));
       this.teamLeaderboard.set([]);
       this.pinnedQaQuestion.set(null);
       this.presenterQaQuestions.set([]);
@@ -231,6 +257,10 @@ export class SessionPresentComponent implements OnInit, OnDestroy {
   }
 
   private async refreshLiveFreetext(): Promise<void> {
+    if (!this.session()) {
+      return;
+    }
+
     try {
       const data = await trpc.session.getLiveFreetext.query({ code: this.code.toUpperCase() });
       this.freetextResponses.set(data.responses);

@@ -9,16 +9,23 @@
     <mat-card appearance="outlined" class="join-card join-card--error">
       <mat-card-content>
         <p class="join-card__text" role="alert">{{ error() }}</p>
-        @if (errorSessionFinished()) {
-          <a
-            [routerLink]="localizedCommands(['session', code, 'host'])"
-            mat-button
-            class="join-card__host-link"
-          >
-            <mat-icon>admin_panel_settings</mat-icon>
-            <span i18n="@@sessionEntry.showHostLink">Als Host anzeigen</span>
+        <div class="join-card__actions">
+          <a [routerLink]="localizedPath('/')" matButton="filled" class="join-card__home-link">
+            <mat-icon>home</mat-icon>
+            <span i18n="@@sessionVote.sessionEndGateContinue">Zur Startseite</span>
           </a>
-        } @else {
+          @if (errorSessionFinished()) {
+            <a
+              [routerLink]="localizedCommands(['session', code, 'host'])"
+              matButton="tonal"
+              class="join-card__host-link"
+            >
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span i18n="@@sessionEntry.showHostLink">Als Host anzeigen</span>
+            </a>
+          }
+        </div>
+        @if (!errorSessionFinished()) {
           <p class="join-card__hint" i18n>
             Prüfe den Code (6 Zeichen) oder scanne den QR-Code erneut.
           </p>
