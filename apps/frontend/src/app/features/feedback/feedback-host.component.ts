@@ -16,7 +16,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { OverlayModule, type ConnectedPosition } from '@angular/cdk/overlay';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { clearFeedbackHostToken, setFeedbackHostToken } from '../../core/feedback-host-token';
 import { trpc } from '../../core/trpc.client';
@@ -45,7 +44,6 @@ import type { Unsubscribable } from '@trpc/server/observable';
     MatIconButton,
     MatIcon,
     MarkdownImageLightboxDirective,
-    OverlayModule,
   ],
   templateUrl: './feedback-host.component.html',
   styleUrls: ['../../shared/styles/dialog-title-header.scss', './feedback-host.component.scss'],
@@ -79,14 +77,6 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
   private priorFeedbackQrReadyForMenu = false;
   private suppressFeedbackJoinMenuAutopen = false;
   readonly feedbackJoinPopoverOpen = signal(false);
-  readonly feedbackJoinPopoverPositions: ConnectedPosition[] = [
-    {
-      originX: 'center',
-      originY: 'bottom',
-      overlayX: 'center',
-      overlayY: 'top',
-    },
-  ];
   readonly showEmbeddedEmptyState = computed(
     () => this.embeddedInSession() && this.result() === null,
   );
@@ -165,6 +155,28 @@ export class FeedbackHostComponent implements OnInit, OnDestroy {
 
   closeFeedbackJoinPopover(): void {
     this.feedbackJoinPopoverOpen.set(false);
+  }
+
+  /** Wie Session-Host Kanal Blitzlicht: Beitritts-URL (hier Vote-Link) kopieren. */
+  async copyJoinLinkToClipboard(event?: Event): Promise<void> {
+    event?.stopPropagation();
+    const url = this.joinUrl;
+    const clipboard = this.document.defaultView?.navigator.clipboard;
+    try {
+      if (!clipboard) {
+        throw new Error('clipboard unavailable');
+      }
+      await clipboard.writeText(url);
+      this.snackBar.open($localize`:@@sessionHost.copyJoinLinkSuccess:Session-Link kopiert.`, '', {
+        duration: 2500,
+      });
+    } catch {
+      this.snackBar.open(
+        $localize`:@@sessionHost.copyJoinLinkFailed:Kopieren fehlgeschlagen. Bitte versuche es noch einmal.`,
+        '',
+        { duration: 4000 },
+      );
+    }
   }
 
   @HostListener('document:keydown', ['$event'])

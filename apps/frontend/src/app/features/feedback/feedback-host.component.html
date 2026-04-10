@@ -198,14 +198,12 @@
               <div class="feedback-host__standalone-live-main">
                 <div class="feedback-host__standalone-live-access">
                   <button
-                    #feedbackJoinPopoverOrigin="cdkOverlayOrigin"
-                    cdkOverlayOrigin
                     mat-icon-button
                     type="button"
                     class="feedback-host__standalone-join-control"
                     (click)="toggleFeedbackJoinPopover()"
                     [attr.aria-expanded]="feedbackJoinPopoverOpen()"
-                    aria-haspopup="true"
+                    aria-haspopup="dialog"
                     aria-controls="feedback-host-join-info"
                     i18n-aria-label="@@sessionHost.joinControlAria"
                     aria-label="Beitrittsinformationen öffnen"
@@ -223,25 +221,32 @@
                   </div>
                 </div>
               </div>
-              <ng-template
-                cdkConnectedOverlay
-                [cdkConnectedOverlayOrigin]="feedbackJoinPopoverOrigin"
-                [cdkConnectedOverlayOpen]="feedbackJoinPopoverOpen()"
-                [cdkConnectedOverlayPositions]="feedbackJoinPopoverPositions"
-                [cdkConnectedOverlayHasBackdrop]="true"
-                [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
-                [cdkConnectedOverlayPanelClass]="'feedback-host__join-popover-pane'"
-                (backdropClick)="closeFeedbackJoinPopover()"
-                (detach)="closeFeedbackJoinPopover()"
+            </section>
+            @if (feedbackJoinPopoverOpen()) {
+              <div
+                class="feedback-host__join-viewport-overlay"
+                role="presentation"
+                (click)="closeFeedbackJoinPopover()"
               >
                 <div
-                  class="feedback-host__join-menu-panel"
-                  role="region"
-                  id="feedback-host-join-info"
+                  class="feedback-host__join-viewport-overlay__surface feedback-host__join-menu-panel"
+                  role="dialog"
+                  aria-modal="true"
                   aria-labelledby="feedback-host-join-lead feedback-host-join-origin"
+                  id="feedback-host-join-info"
                   tabindex="-1"
                   (click)="$event.stopPropagation()"
                 >
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="feedback-host__join-viewport-overlay__close"
+                    (click)="closeFeedbackJoinPopover()"
+                    i18n-aria-label="@@sessionHost.joinOverlayCloseAria"
+                    aria-label="Beitrittsinformationen schließen"
+                  >
+                    <mat-icon aria-hidden="true">close</mat-icon>
+                  </button>
                   <div
                     class="feedback-host__join-menu-head dialog-title-header feedback-host__join-menu-title-header"
                   >
@@ -249,7 +254,6 @@
                       <mat-icon>qr_code_2</mat-icon>
                     </span>
                     <div class="dialog-title-header__copy feedback-host__join-menu-title-copy">
-                      <!-- prettier-ignore -->
                       <p
                         id="feedback-host-join-lead"
                         class="feedback-host__join-menu-lead"
@@ -263,18 +267,36 @@
                     </div>
                   </div>
                   @if (qrDataUrl()) {
+                    <p
+                      class="feedback-host__join-menu-qr-hint"
+                      i18n="@@sessionHost.joinMenuFullscreenHint"
+                    >
+                      Wenn etwas abgeschnitten wirkt: Hier nach unten scrollen. Für eine größere
+                      Ansicht reicht ein Klick auf den QR-Code.
+                    </p>
                     <div class="feedback-host__join-menu-qr-wrap">
                       <img
                         appMarkdownImageLightbox
                         [src]="qrDataUrl()"
                         alt="QR-Code: Beitritts-Link {{ joinUrl }}"
                         data-markdown-image-lightbox="true"
-                        class="feedback-host__join-menu-qr app-qr-image"
+                        class="feedback-host__join-menu-qr feedback-host__join-menu-qr--viewport-overlay app-qr-image"
                         width="320"
                         height="320"
                       />
                     </div>
                   }
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    class="feedback-host__join-menu-copy-link"
+                    (click)="copyJoinLinkToClipboard($event)"
+                    i18n-aria-label="@@sessionHost.copyJoinLinkAria"
+                    aria-label="Session-Link kopieren"
+                  >
+                    <mat-icon aria-hidden="true">content_copy</mat-icon>
+                    <span i18n="@@sessionHost.copyJoinLinkButton">Session-Link kopieren</span>
+                  </button>
                   <p
                     class="feedback-host__join-menu-origin feedback-host__join-menu-origin--code"
                     [attr.aria-label]="sessionCodeDisplayAria(code())"
@@ -282,8 +304,8 @@
                     {{ code() }}
                   </p>
                 </div>
-              </ng-template>
-            </section>
+              </div>
+            }
             <ng-container *ngTemplateOutlet="feedbackHostJoinActions" />
           </div>
         } @else {

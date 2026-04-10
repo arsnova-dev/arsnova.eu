@@ -716,9 +716,9 @@ img[data-markdown-image-lightbox='true'] {
   border-block-start: 1px solid var(--mat-sys-outline-variant);
 }
 
-/* Session-Host: QR-Dialog mittig (Viewport-Overlay); Feedback-Host: CDK-Overlay */
-.cdk-overlay-pane.feedback-host__join-popover-pane,
-.session-host__join-viewport-overlay__surface {
+/* Session-Host & Feedback-Host (Standalone): gleiche Karten-Optik im Viewport-QR-Overlay */
+.feedback-host__join-viewport-overlay__surface.feedback-host__join-menu-panel,
+.session-host__join-viewport-overlay__surface.session-host__join-menu-panel {
   max-width: min(26rem, calc(100vw - 1.25rem));
   max-height: min(calc(100dvh - 1rem), 40rem) !important;
   min-width: 0;
@@ -736,23 +736,10 @@ img[data-markdown-image-lightbox='true'] {
       transparent 58%
     ),
     var(--mat-sys-surface-container-high);
-}
-
-.cdk-overlay-pane.feedback-host__join-popover-pane .feedback-host__join-menu-panel,
-.session-host__join-viewport-overlay__surface.session-host__join-menu-panel {
-  max-height: inherit;
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background: transparent;
-}
-
-/* Standalone-Blitzlicht: QR-Popover horizontal zur Viewport-Mitte (nicht am Trigger ausrichten) */
-.cdk-overlay-pane.feedback-host__join-popover-pane {
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
 }
 
 // ---------------------------------------------------------------------------
