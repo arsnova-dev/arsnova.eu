@@ -125,6 +125,36 @@ describe('session.getInfo (ADR-0009)', () => {
     expect(result.allowCustomNicknames).toBe(false);
   });
 
+  it('schaltet den Quiz-Kanal aus bei QUIZ-Session ohne quizId (nur Blitzlicht)', async () => {
+    prismaMock.session.findUnique.mockResolvedValue({
+      id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',
+      code: 'ONLYQF',
+      type: 'QUIZ',
+      status: 'LOBBY',
+      title: null,
+      quizId: null,
+      qaEnabled: false,
+      qaTitle: null,
+      qaModerationMode: true,
+      quickFeedbackEnabled: true,
+      _count: { participants: 0 },
+    });
+    prismaMock.quiz.findUnique.mockResolvedValue(null);
+
+    const result = await caller.getInfo({ code: 'onlyqf' });
+
+    expect(result.channels).toEqual({
+      quiz: { enabled: false },
+      qa: {
+        enabled: false,
+        title: null,
+        moderationMode: false,
+      },
+      quickFeedback: { enabled: true },
+    });
+    expect(result.quizName).toBeNull();
+  });
+
   it('mappt eine bestehende Q&A-Only-Session kompatibel auf die neuen Kanalinfos', async () => {
     prismaMock.session.findUnique.mockResolvedValue({
       id: '6a8edced-5f8f-4cfa-9176-454fac9570ad',

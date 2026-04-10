@@ -486,8 +486,8 @@ function buildSessionChannels(session: {
 
   return {
     quiz: {
-      enabled:
-        session.type !== 'Q_AND_A' && (typeof session.quizId === 'string' || session.quiz !== null),
+      /** Nur bei echtem Quiz (quizId); nicht `session.quiz !== null` — bei getInfo fehlt `include: { quiz }`, dann ist `quiz` undefined und `undefined !== null` wäre true. */
+      enabled: session.type !== 'Q_AND_A' && typeof session.quizId === 'string',
     },
     qa: {
       enabled: qaEnabled,

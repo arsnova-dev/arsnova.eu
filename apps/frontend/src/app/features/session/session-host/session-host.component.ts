@@ -359,10 +359,18 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly teamScoreboardHasPoints = computed(() => this.teamLeaderboardTopScore() > 0);
   readonly channels = computed(() => {
     const session = this.session();
+    const ch = session?.channels;
+    if (ch) {
+      return {
+        quiz: ch.quiz.enabled,
+        qa: ch.qa.enabled,
+        quickFeedback: ch.quickFeedback.enabled,
+      };
+    }
     return {
-      quiz: session?.channels?.quiz.enabled ?? session?.type === 'QUIZ',
-      qa: session?.channels?.qa.enabled ?? session?.type === 'Q_AND_A',
-      quickFeedback: session?.channels?.quickFeedback.enabled ?? false,
+      quiz: session?.type === 'QUIZ',
+      qa: session?.type === 'Q_AND_A',
+      quickFeedback: false,
     };
   });
   readonly visibleChannels = computed<SessionChannelTab[]>(() => {
