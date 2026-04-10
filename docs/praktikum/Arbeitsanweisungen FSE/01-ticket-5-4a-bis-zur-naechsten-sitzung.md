@@ -1,0 +1,34 @@
+# Arbeitsanweisung 01 - FSE
+
+## Auftrag
+
+Bearbeite bis zur nächsten Sitzung die Story **5.4a - Foyer-Einflug im Preset Spielerisch** vollständig und selbstständig.
+
+## Verbindlicher Rahmen
+
+- Das ist das **erste Ticket** der verbindlichen studentischen Reihenfolge: [STUDENT-STORY-REIHENFOLGE.md](../STUDENT-STORY-REIHENFOLGE.md).
+- Maßgeblich sind **alle Akzeptanzkriterien** der Story in [Backlog.md](../../../Backlog.md).
+- Zusätzlich gilt die allgemeine **Definition of Done** aus [Backlog.md](../../../Backlog.md).
+- Arbeite nach den Regeln in [AGENT.md](../../../AGENT.md) und [CONTRIBUTING.md](../../../CONTRIBUTING.md).
+
+## Was bis zur nächsten Sitzung vorliegen muss
+
+- Ein lokal lauffähiger und selbstständig erarbeiteter Umsetzungsstand für Story 5.4a.
+- Eine Umsetzung, die die Story nicht nur andeutet, sondern die Akzeptanzkriterien fachlich abdeckt.
+- Nachweise für deine Prüfung der Story, insbesondere für UI-Verhalten, Bewegungsreduktion, Lesbarkeit in der Lobby und die relevanten Tests oder Checks.
+- Ein kurzer Überblick, welche Dateien du geändert hast und wie du die Story verifiziert hast.
+
+## Wichtige Hinweise
+
+- Die Story ist vollständig zu bearbeiten; offene Restpunkte zählen nicht als Abschluss.
+- Selbstständigkeit ist Teil des Arbeitsauftrags.
+- Wenn du an UI, Verhalten oder Texten arbeitest, prüfe sorgfältig, ob daraus weitere DoD-Pflichten folgen.
+
+## Relevante Unterlagen
+
+- [PRAKTIKUM.md](../PRAKTIKUM.md)
+- [STUDENT-STORY-REIHENFOLGE.md](../STUDENT-STORY-REIHENFOLGE.md)
+- [Backlog.md](../../../Backlog.md)
+- [onboarding.md](../../onboarding.md)
+- [AGENT.md](../../../AGENT.md)
+- [CONTRIBUTING.md](../../../CONTRIBUTING.md)
