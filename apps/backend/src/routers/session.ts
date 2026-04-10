@@ -63,13 +63,14 @@ import { updateMaxParticipantsSingleSession } from '../lib/platformStatistic';
 
 /**
  * In-Memory-Store für Emoji-Reaktionen (Story 5.8).
- * Key: `sessionId:questionId`, Value: Map<participantId, emoji>.
+ * Key: `sessionId:questionId:r{round}` (Peer Instruction: Runde 1 und 2 getrennt).
  * Flüchtig – kein Redis/DB nötig.
  */
 const emojiStore = new Map<string, Map<string, string>>();
 
-function getEmojiKey(sessionId: string, questionId: string): string {
-  return `${sessionId}:${questionId}`;
+function getEmojiKey(sessionId: string, questionId: string, round: number): string {
+  const r = round >= 1 && round <= 2 ? round : 1;
+  return `${sessionId}:${questionId}:r${r}`;
 }
 import { publicProcedure, router, getClientIp, hostProcedure } from '../trpc';
 import { prisma } from '../db';
@@ -2029,7 +2030,10 @@ export const sessionRouter = router({
             message: 'Dieser Nickname ist in dieser Session bereits vergeben.',
           });
         });
-      const newParticipantCount = session._count.participants + 1;
+      // Nach Create zählen (nicht _count+1): bei gleichzeitigen Joins ist der Anfangssnapshot sonst zu niedrig — Rekord/Response falsch.
+      const newParticipantCount = await prisma.participant.count({
+        where: { sessionId: session.id },
+      });
       void updateMaxParticipantsSingleSession(newParticipantCount);
       const serverTime = new Date().toISOString();
       return {
@@ -2930,7 +2934,8 @@ export const sessionRouter = router({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Emoji-Reaktionen sind deaktiviert.' });
       }
 
-      const key = getEmojiKey(input.sessionId, input.questionId);
+      const round = input.round ?? 1;
+      const key = getEmojiKey(input.sessionId, input.questionId, round);
       let map = emojiStore.get(key);
       if (!map) {
         map = new Map();
@@ -2948,6 +2953,7 @@ export const sessionRouter = router({
       z.object({
         sessionId: z.string().uuid(),
         questionId: z.string().uuid(),
+        round: z.number().int().min(1).max(2).optional().default(1),
       }),
     )
     .output(
@@ -2957,7 +2963,8 @@ export const sessionRouter = router({
       }),
     )
     .query(({ input }) => {
-      const key = getEmojiKey(input.sessionId, input.questionId);
+      const round = input.round ?? 1;
+      const key = getEmojiKey(input.sessionId, input.questionId, round);
       const map = emojiStore.get(key);
       if (!map || map.size === 0) {
         const empty: Record<string, number> = {};

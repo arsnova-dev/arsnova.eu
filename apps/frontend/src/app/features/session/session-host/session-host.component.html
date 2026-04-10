@@ -337,6 +337,13 @@
                 </div>
               </div>
               @if (qrDataUrl()) {
+                <p
+                  class="session-host__join-menu-qr-hint"
+                  i18n="@@sessionHost.joinMenuFullscreenHint"
+                >
+                  Wenn etwas abgeschnitten wirkt: Hier nach unten scrollen. Für eine größere Ansicht
+                  reicht ein Klick auf den QR-Code.
+                </p>
                 <div class="session-host__join-menu-qr-wrap">
                   <img
                     appMarkdownImageLightbox
@@ -1317,6 +1324,7 @@
               ) {
                 <div
                   class="session-host__emoji-reactions"
+                  [class.session-host__emoji-reactions--round2]="hostQuizVoteRound() === 2"
                   aria-labelledby="emoji-reactions-heading"
                 >
                   <p class="session-host__emoji-reactions-title" id="emoji-reactions-heading">
@@ -1324,6 +1332,19 @@
                     <span i18n="@@sessionHost.emojiReactionsTitle"
                       >Reaktionen der Teilnehmenden</span
                     >
+                    @if (hostQuizVoteRound() === 2) {
+                      <span
+                        class="session-host__emoji-round-badge session-host__emoji-round-badge--round2"
+                        i18n="@@sessionHost.emojiReactionsRound2"
+                        >2. Runde</span
+                      >
+                    } @else {
+                      <span
+                        class="session-host__emoji-round-badge session-host__emoji-round-badge--round1"
+                        i18n="@@sessionHost.emojiReactionsRound1"
+                        >1. Runde</span
+                      >
+                    }
                     @if (emojiNewCount() > 0) {
                       <span
                         class="session-host__emoji-new-badge"
