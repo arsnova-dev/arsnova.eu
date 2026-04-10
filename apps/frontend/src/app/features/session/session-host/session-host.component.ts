@@ -581,6 +581,15 @@ export class SessionHostComponent implements OnInit, OnDestroy {
     return votes >= participants;
   });
 
+  shouldShowPeerInstructionSuggestion(q: HostCurrentQuestionDTO | null): boolean {
+    return (
+      this.effectiveStatus() === 'ACTIVE' &&
+      q?.currentRound === 1 &&
+      q?.peerInstructionSuggestion?.suggested === true &&
+      (this.allHaveVoted() || this.countdownEnded())
+    );
+  }
+
   private previousStatus: string | null = null;
   private priorLobbyForAutoJoinMenu = false;
   private priorQrReadyForJoinMenu = false;

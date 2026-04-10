@@ -43,6 +43,7 @@ import {
   type FreetextAggregateEntry,
   type BonusTokenEntryDTO,
   type LeaderboardEntryDTO,
+  type PeerInstructionSuggestionDTO,
   type TeamLeaderboardEntryDTO,
   type RoundComparisonDTO,
   type RoundDistributionEntry,
@@ -501,6 +502,8 @@ function buildSessionChannels(session: {
 }
 
 const PLAYFUL_FALLBACK_TIMER_SECONDS = 60;
+const PEER_INSTRUCTION_MIN_CORRECTNESS_RATIO = 0.3;
+const PEER_INSTRUCTION_MAX_CORRECTNESS_RATIO = 0.7;
 
 function resolveQuestionTimer(
   questionTimer: number | null | undefined,
@@ -514,6 +517,38 @@ function resolveQuestionTimer(
     return defaultTimer;
   }
   return preset === 'PLAYFUL' ? PLAYFUL_FALLBACK_TIMER_SECONDS : null;
+}
+
+function buildPeerInstructionSuggestion(
+  questionType: QuestionType,
+  currentRound: number,
+  correctVoterCount: number | undefined,
+  totalVotes: number,
+): PeerInstructionSuggestionDTO | undefined {
+  if (currentRound !== 1 || totalVotes <= 0) {
+    return undefined;
+  }
+
+  if (questionType !== 'SINGLE_CHOICE' && questionType !== 'MULTIPLE_CHOICE') {
+    return undefined;
+  }
+
+  if (correctVoterCount === undefined) {
+    return undefined;
+  }
+
+  const correctnessRatio = correctVoterCount / totalVotes;
+  if (
+    correctnessRatio < PEER_INSTRUCTION_MIN_CORRECTNESS_RATIO ||
+    correctnessRatio > PEER_INSTRUCTION_MAX_CORRECTNESS_RATIO
+  ) {
+    return undefined;
+  }
+
+  return {
+    suggested: true,
+    reason: 'CORRECTNESS_WINDOW',
+  };
 }
 
 async function buildRoundComparison(
@@ -1538,6 +1573,21 @@ export const sessionRouter = router({
               }).length
             : undefined;
 
+        const peerInstructionSuggestion = buildPeerInstructionSuggestion(
+          question.type as QuestionType,
+          currentRound,
+          correctVoterCount,
+          totalVotes,
+        );
+
+        if (session.status === 'ACTIVE') {
+          return {
+            ...base,
+            totalVotes,
+            peerInstructionSuggestion,
+          };
+        }
+
         const voteDistribution = answersOrdered.map((a) => ({
           id: a.id,
           text: a.text,
@@ -1556,6 +1606,7 @@ export const sessionRouter = router({
           ...base,
           totalVotes,
           correctVoterCount,
+          peerInstructionSuggestion,
           voteDistribution,
           roundComparison,
         };

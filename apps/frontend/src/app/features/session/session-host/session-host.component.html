@@ -1196,6 +1196,34 @@
                             </ul>
                           </div>
                         } @else if (q.answers.length > 0) {
+                          @if (shouldShowPeerInstructionSuggestion(q)) {
+                            <div
+                              class="session-host__peer-suggestion"
+                              role="status"
+                              aria-live="polite"
+                            >
+                              <p
+                                class="session-host__peer-suggestion-title"
+                                i18n="@@sessionHost.peerSuggestionTitle"
+                              >
+                                Peer Instruction empfohlen
+                              </p>
+                              <p
+                                class="session-host__peer-suggestion-text"
+                                i18n="@@sessionHost.peerSuggestionText"
+                              >
+                                Die Antworten liegen im passenden Korridor für eine zweite
+                                Abstimmungsrunde. Das Ergebnis von Runde 1 bleibt bis zu deiner
+                                Entscheidung verborgen.
+                              </p>
+                              <p
+                                class="session-host__peer-suggestion-next"
+                                i18n="@@sessionHost.peerSuggestionNext"
+                              >
+                                Starte jetzt die Diskussionsphase oder löse die Frage direkt auf.
+                              </p>
+                            </div>
+                          }
                           <ul class="session-host__answers" role="list">
                             @for (a of q.answers; track a.id; let i = $index) {
                               <li
@@ -1434,20 +1462,11 @@
                   effectiveStatus() === 'ACTIVE' && !isQaSession() && currentQuestionForHost();
                   as liveQ
                 ) {
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    type="button"
-                    [disabled]="controlPending()"
-                    (click)="revealResults()"
-                  >
-                    <span i18n>Ergebnis zeigen</span>
-                  </button>
-                  @if (liveQ.currentRound === 1 && (liveQ.totalVotes ?? 0) > 0) {
+                  @if (shouldShowPeerInstructionSuggestion(liveQ)) {
                     <button
-                      matButton="tonal"
+                      mat-flat-button
+                      color="primary"
                       type="button"
-                      class="session-host__btn-discussion"
                       [disabled]="controlPending()"
                       (click)="startDiscussion()"
                       i18n-aria-label
@@ -1456,6 +1475,40 @@
                       <mat-icon aria-hidden="true">groups</mat-icon>
                       <span i18n>Diskussionsphase</span>
                     </button>
+                    <button
+                      matButton="tonal"
+                      type="button"
+                      [disabled]="controlPending()"
+                      (click)="revealResults()"
+                    >
+                      <span i18n="@@sessionHost.revealResultsDespiteSuggestion"
+                        >Ergebnis trotzdem zeigen</span
+                      >
+                    </button>
+                  } @else {
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      type="button"
+                      [disabled]="controlPending()"
+                      (click)="revealResults()"
+                    >
+                      <span i18n>Ergebnis zeigen</span>
+                    </button>
+                    @if (liveQ.currentRound === 1 && (liveQ.totalVotes ?? 0) > 0) {
+                      <button
+                        matButton="tonal"
+                        type="button"
+                        class="session-host__btn-discussion"
+                        [disabled]="controlPending()"
+                        (click)="startDiscussion()"
+                        i18n-aria-label
+                        aria-label="Diskussionsphase starten – Austausch vor zweiter Abstimmung"
+                      >
+                        <mat-icon aria-hidden="true">groups</mat-icon>
+                        <span i18n>Diskussionsphase</span>
+                      </button>
+                    }
                   }
                 }
                 @if (isQuizAwaitingFirstQuestion()) {

@@ -473,6 +473,13 @@ export const RoundComparisonDTOSchema = z.object({
 });
 export type RoundComparisonDTO = z.infer<typeof RoundComparisonDTOSchema>;
 
+/** DTO: Didaktische Empfehlung fuer eine zweite Abstimmungsrunde nach Peer Instruction. */
+export const PeerInstructionSuggestionDTOSchema = z.object({
+  suggested: z.boolean(),
+  reason: z.enum(['CORRECTNESS_WINDOW']),
+});
+export type PeerInstructionSuggestionDTO = z.infer<typeof PeerInstructionSuggestionDTOSchema>;
+
 /** DTO: Aktuelle Frage für Host-Ansicht (Story 2.3, 3.5) – Text + Antwortoptionen inkl. isCorrect + Timer. */
 export const HostCurrentQuestionDTOSchema = z.object({
   questionId: z.string().uuid(),
@@ -510,6 +517,7 @@ export const HostCurrentQuestionDTOSchema = z.object({
     .optional(),
   totalVotes: z.number().int().optional(),
   correctVoterCount: z.number().int().optional(),
+  peerInstructionSuggestion: PeerInstructionSuggestionDTOSchema.optional(),
   currentRound: z.number().int().min(1).max(2).optional(),
   roundComparison: RoundComparisonDTOSchema.optional(),
 });

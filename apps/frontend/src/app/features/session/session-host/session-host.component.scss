@@ -3230,6 +3230,41 @@ button.session-host__btn-discussion {
   padding: 0.25rem 0;
 }
 
+.session-host__peer-suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--mat-sys-corner-large, 0.75rem);
+  border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 26%, var(--mat-sys-outline));
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-primary-container) 36%,
+    var(--mat-sys-surface-container-low)
+  );
+}
+
+.session-host__peer-suggestion-title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+  color: var(--mat-sys-on-surface);
+}
+
+.session-host__peer-suggestion-text,
+.session-host__peer-suggestion-next {
+  margin: 0;
+  font: var(--mat-sys-body-medium);
+  line-height: 1.5;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.session-host__peer-suggestion-next {
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+}
+
 .session-host__vote-dist-total {
   font: var(--mat-sys-title-medium);
   font-weight: 600;
