@@ -4,7 +4,7 @@
 >
 > **Abhängigkeiten (Kernpfad):** Epic 0 → Epic 1 → Epic 2 → Epic 3 → Epic 4 → Epic 5 ✅
 >
-> **Nächster Fokus (Auswahl offener Stories):** u. a. **0.7** (Last- & Performance-Tests), **6.5**/**6.6** (Barrierefreiheit / UX-Testreihen), **1.2d** (numerische Schätzfrage), **1.6c** (Sync-Sicherheit), **8.5–8.7** (Q&A-Erweiterungen) — **Epic 6** im Kern (6.1–6.4: Theme, i18n, Legal, Responsive) ist umgesetzt ✅. **Lehre:** Greenfield-Demo **1.7a** in **3×45 Min.** — [`docs/didaktik/greenfield-demo-1-7a-vorlesung.md`](docs/didaktik/greenfield-demo-1-7a-vorlesung.md).
+> **Nächster Fokus (Auswahl offener Stories):** u. a. **0.7** (Last- & Performance-Tests), **0.8** (Komplexitätsabbau / McCabe-Refactor), **6.5**/**6.6** (Barrierefreiheit / UX-Testreihen), **1.2d** (numerische Schätzfrage), **1.6c** (Sync-Sicherheit), **8.5–8.7** (Q&A-Erweiterungen) — **Epic 6** im Kern (6.1–6.4: Theme, i18n, Legal, Responsive) ist umgesetzt ✅. **Lehre:** Greenfield-Demo **1.7a** in **3×45 Min.** — [`docs/didaktik/greenfield-demo-1-7a-vorlesung.md`](docs/didaktik/greenfield-demo-1-7a-vorlesung.md).
 >
 > **Weitere Parallelpfade:** Epic 9 ✅ (Admin: Inspektion, Löschen, Auszug für Behörden) · Epic 10 ✅ (MOTD / Plattform-Kommunikation — ADR-0018, `docs/features/motd.md`)
 
@@ -21,6 +21,7 @@
 | 0    | 0.5   | Rate-Limiting & Brute-Force-Schutz                          | 🔴   | ✅ Fertig |
 | 0    | 0.6   | CI/CD-Pipeline (GitHub Actions)                             | 🔴   | ✅ Fertig |
 | 0    | 0.7   | Last- & Performance-Tests mit E2E-Szenarien                 | 🟡   | ⬜ Offen  |
+| 0    | 0.8   | Komplexitätsabbau (McCabe) & Refactor-Hotspots              | 🟡   | ⬜ Offen  |
 | 1    | 1.1   | Quiz erstellen                                              | 🔴   | ✅ Fertig |
 | 1    | 1.2a  | Fragentypen: MC & SC                                        | 🔴   | ✅ Fertig |
 | 1    | 1.2b  | Fragentypen: Freitext & Umfrage                             | 🟡   | ✅ Fertig |
@@ -113,7 +114,7 @@
 >
 > **Legende Status:** ⬜ Offen · 🔨 In Arbeit · ✅ Fertig (DoD erfüllt) · ❌ Blockiert
 >
-> **Statistik:** 🔴 Must: 29 · 🟡 Should: 54 · 🟢 Could: 11 = **94 Stories gesamt** (**80** ✅ Fertig · **14** ⬜ Offen)
+> **Statistik:** 🔴 Must: 29 · 🟡 Should: 55 · 🟢 Could: 11 = **95 Stories gesamt** (**80** ✅ Fertig · **15** ⬜ Offen)
 
 ---
 
@@ -260,6 +261,21 @@ Eine Story gilt als **fertig**, wenn **alle** folgenden Kriterien erfüllt sind:
     - Neue Performance-Erkenntnisse aus diesen Tests fliessen in Backlog, ADRs oder Optimierungsstories zurück.
     - **Architekturvorgabe:** Die Tool-Auswahl und Rollentrennung folgen ADR-0013; `k6` ist der Standard für protokollnahe Lasttests, `Artillery` für Realtime- und E2E-nahe Lastszenarien, `Playwright` bleibt funktionale Browser-Referenz und `autocannon` ist nur ein lokales Entwicklerwerkzeug für Hotspots.
   - **Abhängigkeiten:** Story 0.2 (tRPC WebSocket-Adapter), Story 0.5 (Rate-Limiting), Story 0.6 (CI/CD), Story 2.1a (Session-Start), Story 2.2 (Lobby), Story 3.1 (Join), Story 3.3b (Abstimmung), Story 4.5 (Freitext-Auswertung), Story 8.1–8.4 (Q&A), optional Story 1.6/1.6a/1.6b/1.6d (Sync), ADR-0013.
+
+- **Story 0.8 (Komplexitätsabbau / McCabe-Refactor):** 🟡 Als Entwickler möchte ich überhöhte zyklomatische Komplexität in priorisierten Hotspots systematisch reduzieren, damit Wartbarkeit, Änderbarkeit und Fehlersicherheit steigen, ohne funktionale Regressionen einzuführen.
+  - **Akzeptanzkriterien:**
+    - Es liegt ein reproduzierbarer Komplexitäts-Report (McCabe/Cyclomatic) für Backend und Frontend vor, der mindestens **Durchschnitt**, **P95**, **Maximum** und die **Top-Hotspots** ausweist.
+    - Es gibt eine priorisierte Hotspot-Liste (mindestens Top-10) mit Datei, Funktion/Block und aktuellem Komplexitätswert als Arbeitsgrundlage.
+    - Für die zuerst zu bearbeitenden Hotspots ist ein Refactor-Plan dokumentiert (Schnittstellen, Zerlegungsschritte, Risiken, benötigte Tests).
+    - Die bearbeiteten Hotspots werden verhaltensgleich in kleinere Einheiten aufgeteilt (z. B. Validierung, Mapping, Orchestrierung getrennt); öffentliche API/UX bleibt unverändert.
+    - Nach Umsetzung sind Build, Typecheck und bestehende Test-Suiten grün; kritische Flows erhalten bei Bedarf zusätzliche Regressionstests.
+    - Messbarer Effekt: **P95** und **Maximum** sinken gegenüber dem initialen Report; zusätzlich werden keine neuen Funktionen mit Komplexität > 15 eingeführt.
+    - Für künftige Änderungen existiert eine dauerhafte Leitplanke (CI-Check oder verbindlicher manueller Quality-Gate-Check), damit neue Ausreißer früh sichtbar sind.
+  - **Anker im Repo (erste Hotspots):**
+    - `apps/frontend/src/app/features/session/session-vote/session-vote.component.ts`
+    - `apps/backend/src/routers/vote.ts`
+    - `apps/backend/src/routers/session.ts`
+    - `apps/frontend/src/app/features/quiz/data/quiz-store.service.ts`
 
 ---
 
