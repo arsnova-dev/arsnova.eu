@@ -49,6 +49,15 @@ import { FeedbackVoteComponent } from '../../feedback/feedback-vote.component';
 const PARTICIPANT_STORAGE_KEY = 'arsnova-participant';
 const NICKNAME_STORAGE_KEY = 'arsnova-nickname';
 const VOTE_FALLBACK_POLL_MS = 2000;
+const VOTE_ANCHOR_TOP = 'vote-top';
+const VOTE_ANCHOR_QUESTION = 'vote-question-anchor';
+const VOTE_ANCHOR_OPTIONS_START = 'vote-options-start';
+const VOTE_ANCHOR_OPTION_0 = 'vote-option-0';
+const VOTE_ANCHOR_RESULT_SCORE = 'vote-result-score';
+const VOTE_ANCHOR_RESULT_MESSAGE = 'vote-result-message';
+const VOTE_ANCHOR_ERROR = 'vote-error';
+
+export type VoteAutoScrollPhase = 'read' | 'vote' | 'result';
 
 type CurrentQuestion = QuestionStudentDTO | QuestionPreviewDTO | QuestionRevealedDTO;
 type SessionChannelTab = 'quiz' | 'qa' | 'quickFeedback';
@@ -122,6 +131,27 @@ const MESSAGES_TIMEOUT_SERIOUS = [
 ];
 function pickRandom(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export function anchorCandidatesForPhase(
+  phase: VoteAutoScrollPhase,
+  hadReadPhase: boolean,
+): string[] {
+  if (phase === 'read') {
+    return [VOTE_ANCHOR_QUESTION, VOTE_ANCHOR_OPTIONS_START, VOTE_ANCHOR_TOP];
+  }
+  if (phase === 'vote') {
+    if (hadReadPhase) {
+      return [
+        VOTE_ANCHOR_OPTION_0,
+        VOTE_ANCHOR_OPTIONS_START,
+        VOTE_ANCHOR_QUESTION,
+        VOTE_ANCHOR_TOP,
+      ];
+    }
+    return [VOTE_ANCHOR_QUESTION, VOTE_ANCHOR_OPTIONS_START, VOTE_ANCHOR_OPTION_0, VOTE_ANCHOR_TOP];
+  }
+  return [VOTE_ANCHOR_RESULT_SCORE, VOTE_ANCHOR_RESULT_MESSAGE, VOTE_ANCHOR_TOP, VOTE_ANCHOR_ERROR];
 }
 
 /**
@@ -210,6 +240,8 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
   private reorderLockUntil = 0;
   private qaInfoTimeout: ReturnType<typeof setTimeout> | null = null;
   private qaErrorTimeout: ReturnType<typeof setTimeout> | null = null;
+  private readonly questionIdsWithReadPhase = new Set<string>();
+  private lastAutoScrollToken: string | null = null;
 
   @ViewChild('qaTextarea') qaTextareaRef?: ElementRef<HTMLTextAreaElement>;
 
@@ -1487,7 +1519,6 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       const prev = this.currentQuestion();
       const prevId = prev && 'id' in prev ? prev.id : null;
       const newId = q && 'id' in q ? q.id : null;
-      const shouldScrollToQuestionOnRender = newId !== null && newId !== prevId;
       const prevHadTimer = prev && 'timer' in prev && prev.timer;
       const newHasTimer = q && 'timer' in q && q.timer;
 
@@ -1600,19 +1631,40 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
         this.stopCountdown();
         this.countdownSeconds.set(null);
       }
-
-      if (shouldScrollToQuestionOnRender) {
-        this.scheduleScrollVoteQuestionToStart();
+      const phase = this.resolveVoteAutoScrollPhase();
+      if (newId && phase === 'read') {
+        this.questionIdsWithReadPhase.add(newId);
+      }
+      if (newId && phase) {
+        const hadReadPhase = this.questionIdsWithReadPhase.has(newId);
+        this.schedulePhaseDrivenVoteScroll(newId, phase, hadReadPhase);
       }
     } catch {
       /* noop */
     }
   }
 
-  private scheduleScrollVoteQuestionToStart(): void {
+  private resolveVoteAutoScrollPhase(): VoteAutoScrollPhase | null {
+    if (!this.showPrimaryLiveView()) return null;
+    if (this.isQuestionOpen()) return 'read';
+    if (this.isActive()) return 'vote';
+    if (this.isResults()) return 'result';
+    return null;
+  }
+
+  private schedulePhaseDrivenVoteScroll(
+    questionId: string,
+    phase: VoteAutoScrollPhase,
+    hadReadPhase: boolean,
+  ): void {
+    const token = `${questionId}:${phase}:${hadReadPhase ? 'read' : 'direct'}`;
+    if (this.lastAutoScrollToken === token) {
+      return;
+    }
+    this.lastAutoScrollToken = token;
     afterNextRender(
       () => {
-        this.scrollVoteQuestionIntoView();
+        this.scrollVoteAnchorIntoView(phase, hadReadPhase);
       },
       { injector: this.injector },
     );
@@ -1623,11 +1675,26 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
     return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
   }
 
-  private scrollVoteQuestionIntoView(): void {
+  private findFirstAvailableVoteAnchor(candidateIds: string[]): HTMLElement | null {
+    const host = this.el.nativeElement as HTMLElement;
+    for (const anchorId of candidateIds) {
+      const anchor = host.querySelector(`#${anchorId}`) as HTMLElement | null;
+      if (anchor) return anchor;
+    }
+    return null;
+  }
+
+  private ensureFocusable(element: HTMLElement): void {
+    if (element.tabIndex < 0 && !element.hasAttribute('tabindex')) {
+      element.setAttribute('tabindex', '-1');
+    }
+  }
+
+  private scrollVoteAnchorIntoView(phase: VoteAutoScrollPhase, hadReadPhase: boolean): void {
     if (!this.showPrimaryLiveView()) return;
     const host = this.el.nativeElement as HTMLElement;
     const scrollRoot = host.closest('.app-main') as HTMLElement | null;
-    const anchor = host.querySelector('#vote-quiz-question-anchor') as HTMLElement | null;
+    const anchor = this.findFirstAvailableVoteAnchor(anchorCandidatesForPhase(phase, hadReadPhase));
     if (!scrollRoot) return;
     const behavior = this.voteScrollBehavior();
     if (anchor) {
@@ -1636,6 +1703,8 @@ export class SessionVoteComponent implements OnInit, OnDestroy {
       const margin = 8;
       const y = anchorRect.top - rootRect.top + scrollRoot.scrollTop - margin;
       scrollRoot.scrollTo({ top: Math.max(0, y), behavior });
+      this.ensureFocusable(anchor);
+      anchor.focus({ preventScroll: true });
     } else {
       scrollRoot.scrollTo({ top: 0, behavior });
     }

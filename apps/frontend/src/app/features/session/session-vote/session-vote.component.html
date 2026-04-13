@@ -1,5 +1,6 @@
 @if (showSessionEndGate()) {
   <div
+    id="vote-top"
     class="vote-page vote-page--session-end-gate"
     appMarkdownImageLightbox
     role="dialog"
@@ -190,6 +191,7 @@
   </div>
 } @else {
   <div
+    id="vote-top"
     class="vote-page"
     appMarkdownImageLightbox
     [class.vote-page--with-channel-tabs]="showChannelTabs()"
@@ -682,7 +684,7 @@
         </div>
       } @else if (isQuestionOpen()) {
         @if (currentQuestion(); as q) {
-          <div class="vote-question" id="vote-quiz-question-anchor">
+          <div class="vote-question" id="vote-question-anchor">
             <p class="vote-question__label">
               <span>{{ vpc.voteQuestionLabel(isPlayfulPreset(), q.order + 1) }}</span>
               @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
@@ -703,7 +705,7 @@
         }
       } @else if (isDiscussion()) {
         @if (currentQuestion(); as q) {
-          <div class="vote-question" id="vote-quiz-question-anchor">
+          <div class="vote-question" id="vote-question-anchor">
             <p class="vote-question__label">
               <span>{{ vpc.voteQuestionLabel(isPlayfulPreset(), q.order + 1) }}</span>
               @if ($any(q).totalQuestions != null && q.order + 1 === $any(q).totalQuestions) {
@@ -727,7 +729,7 @@
         @if (currentQuestion(); as q) {
           <div
             class="vote-question"
-            id="vote-quiz-question-anchor"
+            id="vote-question-anchor"
             [class.vote-question--round2]="currentRound() === 2"
           >
             @if (currentRound() === 2 && isActive() && !voteSent()) {
@@ -767,11 +769,11 @@
           }
 
           @if (voteError()) {
-            <p class="vote-error" role="alert">{{ voteError() }}</p>
+            <p class="vote-error" id="vote-error" role="alert">{{ voteError() }}</p>
           }
 
           @if (hasAnswers()) {
-            <ul class="vote-answers">
+            <ul class="vote-answers" id="vote-options-start">
               @for (a of $any(q).answers; track a.id; let i = $index) {
                 @let isSelected = selectedAnswerIds().has(a.id);
                 @let isRevealed = isResults();
@@ -779,6 +781,7 @@
                 @let isWrong = isRevealed && isSelected && !a.isCorrect;
                 <li>
                   <button
+                    [attr.id]="i === 0 ? 'vote-option-0' : null"
                     class="vote-answer"
                     [class.vote-answer--selected]="isSelected"
                     [class.vote-answer--correct]="isCorrect"
@@ -820,6 +823,7 @@
               <button
                 mat-flat-button
                 color="primary"
+                id="vote-submit"
                 class="vote-submit-mc"
                 [class.vote-submit--pending]="voteSending()"
                 [disabled]="
@@ -844,6 +848,7 @@
               <button
                 mat-flat-button
                 color="primary"
+                id="vote-submit"
                 class="vote-freetext__submit"
                 [class.vote-submit--pending]="voteSending()"
                 [disabled]="
@@ -903,6 +908,7 @@
                 <button
                   mat-flat-button
                   color="primary"
+                  id="vote-submit"
                   class="vote-rating__submit"
                   [class.vote-submit--pending]="voteSending()"
                   [disabled]="
@@ -929,7 +935,9 @@
               <span>{{ vpc.voteSentLabel(isPlayfulPreset()) }}</span>
             </div>
             @if (motivationMessage()) {
-              <p class="vote-motivation" aria-live="polite">{{ motivationMessage() }}</p>
+              <p class="vote-motivation" id="vote-result-message" aria-live="polite">
+                {{ motivationMessage() }}
+              </p>
             }
           }
           @if (showRewardEffect()) {
@@ -940,6 +948,7 @@
 
           @if (scorecard(); as sc) {
             <div
+              id="vote-result-score"
               class="vote-scorecard"
               role="region"
               aria-labelledby="scorecard-heading"

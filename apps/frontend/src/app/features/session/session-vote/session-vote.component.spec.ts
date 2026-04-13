@@ -3,7 +3,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angul
 import { MatSnackBar } from '@angular/material/snack-bar';
 import type { QaQuestionDTO } from '@arsnova/shared-types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { SessionVoteComponent } from './session-vote.component';
+import { anchorCandidatesForPhase, SessionVoteComponent } from './session-vote.component';
 
 const {
   getInfoQueryMock,
@@ -70,6 +70,32 @@ vi.mock('../../../core/trpc.client', () => ({
 const MOCK_SERVER_TIME = '2026-03-24T12:00:00.000Z';
 
 describe('SessionVoteComponent', () => {
+  it('liefert phasenabhängige Einsprung-Anker mit korrekten Fallbacks', () => {
+    expect(anchorCandidatesForPhase('read', false)).toEqual([
+      'vote-question-anchor',
+      'vote-options-start',
+      'vote-top',
+    ]);
+    expect(anchorCandidatesForPhase('vote', true)).toEqual([
+      'vote-option-0',
+      'vote-options-start',
+      'vote-question-anchor',
+      'vote-top',
+    ]);
+    expect(anchorCandidatesForPhase('vote', false)).toEqual([
+      'vote-question-anchor',
+      'vote-options-start',
+      'vote-option-0',
+      'vote-top',
+    ]);
+    expect(anchorCandidatesForPhase('result', false)).toEqual([
+      'vote-result-score',
+      'vote-result-message',
+      'vote-top',
+      'vote-error',
+    ]);
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.setItem('arsnova-participant-ABC123', '11111111-1111-4111-8111-111111111111');

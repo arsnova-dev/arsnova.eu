@@ -769,7 +769,7 @@ describe('SessionHostComponent', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.textContent).toContain('Lies die Frage zuerst.');
     expect(el.textContent).toContain('Lesephase');
-    expect(el.textContent).toContain('Antworten freigeben');
+    expect(el.textContent).toContain('Antwortoptionen freigeben');
     expect(el.querySelector('.session-host__answers')).toBeNull();
     fixture.destroy();
   });

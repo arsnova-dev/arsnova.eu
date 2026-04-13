@@ -6694,7 +6694,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7229658628762810575" datatype="html">
-        <source>Antworten freigeben</source>
+        <source>Antwortoptionen freigeben</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/session/session-host/session-host.component.html</context>
           <context context-type="linenumber">1414,1415</context>
