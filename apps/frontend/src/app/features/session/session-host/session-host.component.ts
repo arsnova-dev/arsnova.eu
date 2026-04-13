@@ -439,6 +439,7 @@ export class SessionHostComponent implements OnInit, OnDestroy {
   readonly activeMusicTrack = computed<HostMusicTrack | null>(() => {
     if (this.musicMuted()) return null;
     if (this.countdownSfxPhase() || this.countdownEnded()) return null;
+    if (this.allHaveVoted()) return null;
     const phase = this.currentMusicPhase();
     if (!phase) return null;
     return this.phaseTracks()[phase];
@@ -618,11 +619,13 @@ export class SessionHostComponent implements OnInit, OnDestroy {
       this.ensureActiveChannel();
     });
     effect(() => {
-      if (this.allHaveVoted()) {
+      const allVoted = this.allHaveVoted();
+      if (allVoted) {
         this.stopCountdown();
         this.countdownSeconds.set(null);
         this.sound.stopAllSfx();
       }
+      untracked(() => this.syncMusic());
     });
     effect(() => {
       if (this.activeChannel() !== 'qa') {

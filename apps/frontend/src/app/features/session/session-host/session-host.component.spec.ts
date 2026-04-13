@@ -742,6 +742,41 @@ describe('SessionHostComponent', () => {
     fixture.destroy();
   });
 
+  it('stoppt Musik, sobald alle abgestimmt haben, und aktiviert sie wieder bei neuer Abstimmung', async () => {
+    getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'ACTIVE', preset: 'PLAYFUL' });
+    getParticipantsQueryMock.mockResolvedValue({ participantCount: 4, participants: [] });
+    getCurrentQuestionForHostQueryMock.mockResolvedValue({
+      order: 0,
+      text: 'Was ist 2+2?',
+      type: 'SINGLE_CHOICE' as const,
+      currentRound: 1,
+      totalVotes: 4,
+      answers: [
+        { id: 'aaaaaaaa-1111-4111-8111-111111111111', text: '3', isCorrect: false },
+        { id: 'bbbbbbbb-2222-4222-8222-222222222222', text: '4', isCorrect: true },
+      ],
+    });
+
+    const fixture = setup();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((r) => setTimeout(r, 50));
+
+    const component = fixture.componentInstance;
+    component.musicMuted.set(false);
+    fixture.detectChanges();
+
+    expect(component.allHaveVoted()).toBe(true);
+    expect(component.activeMusicTrack()).toBeNull();
+
+    component.currentQuestionForHost.update((q) => (q ? { ...q, totalVotes: 2 } : q));
+    fixture.detectChanges();
+
+    expect(component.allHaveVoted()).toBe(false);
+    expect(component.activeMusicTrack()).toBe('COUNTDOWN_0');
+    fixture.destroy();
+  });
+
   it('zeigt in QUESTION_OPEN Fragentext und deutlichen Lesephase-Hinweis', async () => {
     getInfoQueryMock.mockResolvedValue({ ...defaultSession, status: 'QUESTION_OPEN' });
     onStatusChangedSubscribeMock.mockImplementation(
