@@ -43,6 +43,32 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.quiz-form__preset-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.65rem;
+  align-items: center;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-medium);
+  background: var(--mat-sys-surface-container-low);
+  padding: 0.6rem 0.75rem;
+}
+
+.quiz-form__preset-note mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+.quiz-form__preset-note-text {
+  margin: 0;
+  flex: 1 1 18rem;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.quiz-form__preset-note-action {
+  margin-left: auto;
+}
+
 .quiz-form__preset-actions {
   display: flex;
   flex-wrap: wrap;

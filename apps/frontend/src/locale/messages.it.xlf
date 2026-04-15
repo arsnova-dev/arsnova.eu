@@ -6611,6 +6611,22 @@
           <context context-type="linenumber">371,374</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="quiz.new.presetOverridesHint" datatype="html">
+        <source>Für dein aktuelles Startprofil (Preset) sind lokale Startwerte gespeichert. Diese beeinflussen den Live-Start, zum Beispiel den Teammodus.</source>
+        <target>Per il tuo profilo di avvio attuale (preset) sono salvati valori di avvio locali. Questi valori influenzano l&apos;avvio live, ad esempio la modalità a squadre.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
+          <context context-type="linenumber">100,103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="quiz.new.presetOverridesHintAction" datatype="html">
+        <source>Startwerte prüfen</source>
+        <target>Controlla i valori di avvio</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-new/quiz-new.component.html</context>
+          <context context-type="linenumber">112,116</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="quizPreview.pageSubtitle" datatype="html">
         <source> Vorschau für Teilnehmende</source>
         <target>Anteprima per i partecipanti</target>

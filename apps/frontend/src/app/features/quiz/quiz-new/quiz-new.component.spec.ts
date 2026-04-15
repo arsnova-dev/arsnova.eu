@@ -11,6 +11,7 @@ describe('QuizNewComponent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     TestBed.configureTestingModule({
       imports: [QuizNewComponent],
       providers: [provideRouter([]), { provide: QuizStoreService, useValue: mockStore }],
@@ -31,7 +32,7 @@ describe('QuizNewComponent', () => {
       updatedAt: '2026-03-08T12:00:00.000Z',
       settings: {
         showLeaderboard: true,
-        allowCustomNicknames: true,
+        allowCustomNicknames: false,
         defaultTimer: null,
         enableSoundEffects: true,
         enableRewardEffects: true,
@@ -60,7 +61,7 @@ describe('QuizNewComponent', () => {
       motifImageUrl: null,
       settings: expect.objectContaining({
         showLeaderboard: true,
-        allowCustomNicknames: true,
+        allowCustomNicknames: false,
         defaultTimer: null,
         enableSoundEffects: true,
         enableRewardEffects: true,
@@ -112,6 +113,54 @@ describe('QuizNewComponent', () => {
     expect(component.form.controls.defaultTimer.value).toBeNull();
   });
 
+  it('erzwingt im PLAYFUL-Preset allowCustomNicknames auf false beim Speichern', async () => {
+    const fixture = TestBed.createComponent(QuizNewComponent);
+    const component = fixture.componentInstance;
+
+    component.form.patchValue({
+      name: 'Preset-Quiz',
+      allowCustomNicknames: true,
+    });
+
+    mockStore.createQuiz.mockReturnValue({
+      id: '928f0bb8-bfd8-442b-9f2e-a7544628a92f',
+      name: 'Preset-Quiz',
+      description: null,
+      createdAt: '2026-03-08T12:00:00.000Z',
+      updatedAt: '2026-03-08T12:00:00.000Z',
+      settings: {
+        showLeaderboard: true,
+        allowCustomNicknames: false,
+        defaultTimer: null,
+        enableSoundEffects: true,
+        enableRewardEffects: true,
+        enableMotivationMessages: true,
+        enableEmojiReactions: true,
+        anonymousMode: false,
+        teamMode: false,
+        teamCount: null,
+        teamAssignment: 'AUTO',
+        teamNames: [],
+        backgroundMusic: null,
+        nicknameTheme: 'NOBEL_LAUREATES',
+        bonusTokenCount: null,
+        readingPhaseEnabled: false,
+        preset: 'PLAYFUL',
+      },
+    });
+
+    await component.submit();
+
+    expect(mockStore.createQuiz).toHaveBeenCalledWith(
+      expect.objectContaining({
+        settings: expect.objectContaining({
+          preset: 'PLAYFUL',
+          allowCustomNicknames: false,
+        }),
+      }),
+    );
+  });
+
   it('verhindert das Erstellen bei doppelten Team-Namen', async () => {
     const fixture = TestBed.createComponent(QuizNewComponent);
     const component = fixture.componentInstance;
@@ -127,5 +176,53 @@ describe('QuizNewComponent', () => {
 
     expect(component.teamNamesTextControl.hasError('duplicateTeamNames')).toBe(true);
     expect(mockStore.createQuiz).not.toHaveBeenCalled();
+  });
+
+  it('zeigt einen Hinweis, wenn lokale Startwerte vom Preset-Standard abweichen', () => {
+    localStorage.setItem(
+      'home-preset-options-spielerisch',
+      JSON.stringify({
+        options: { teamMode: true },
+        nameMode: 'nicknameTheme',
+        nicknameThemeValue: 'NOBEL_LAUREATES',
+        teamCountValue: 2,
+      }),
+    );
+
+    const fixture = TestBed.createComponent(QuizNewComponent);
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+
+    expect(text).toContain('Startprofil');
+    expect(text).toContain('Startwerte prüfen');
+  });
+
+  it('zeigt keinen Hinweis bei gespeicherten Preset-Standardwerten', () => {
+    localStorage.setItem(
+      'home-preset-options-spielerisch',
+      JSON.stringify({
+        options: {
+          showLeaderboard: true,
+          enableRewardEffects: true,
+          enableMotivationMessages: true,
+          enableEmojiReactions: true,
+          bonusTokenCount: false,
+          defaultTimer: true,
+          readingPhaseEnabled: false,
+          teamMode: false,
+          teamAssignment: false,
+          enableSoundEffects: true,
+        },
+        nameMode: 'nicknameTheme',
+        nicknameThemeValue: 'NOBEL_LAUREATES',
+        teamCountValue: 2,
+      }),
+    );
+
+    const fixture = TestBed.createComponent(QuizNewComponent);
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+
+    expect(text).not.toContain('Startwerte prüfen');
   });
 });

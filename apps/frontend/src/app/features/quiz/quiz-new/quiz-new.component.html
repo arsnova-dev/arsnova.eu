@@ -95,6 +95,24 @@
         </button>
         <span class="quiz-form__preset-chip">{{ presetBadgeLabel() }}</span>
       </div>
+      @if (hasLocalPresetOverrides()) {
+        <div class="quiz-form__preset-note" role="note" aria-live="polite">
+          <mat-icon aria-hidden="true">info</mat-icon>
+          <p class="quiz-form__preset-note-text" i18n="@@quiz.new.presetOverridesHint">
+            Für dein aktuelles Startprofil (Preset) sind lokale Startwerte gespeichert. Diese
+            beeinflussen den Live-Start, zum Beispiel den Teammodus.
+          </p>
+          <button
+            mat-button
+            type="button"
+            class="quiz-form__preset-note-action"
+            (click)="openSettingsForPresetReview()"
+            i18n="@@quiz.new.presetOverridesHintAction"
+          >
+            Startwerte prüfen
+          </button>
+        </div>
+      }
 
       @if (showSettings()) {
         <mat-card appearance="outlined" class="quiz-form__settings-card">
