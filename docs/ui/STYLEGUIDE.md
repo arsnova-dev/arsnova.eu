@@ -121,6 +121,7 @@ Regeln:
 
 - **Text-Rhythmus:** Fuer Fliesstext in Feature-Screens `line-height` mindestens `1.5`; fuer Hint-/Error-Texte mindestens `1.4`.
 - **Formular-Abstaende:** Zwischen aufeinanderfolgenden Eingabefeldern mindestens `1rem` vertikaler Abstand; zwischen Feld und Hint/Error mindestens `0.2rem`.
+- **Widget-Luftigkeit:** Zwischen erklaerendem Text (`.admin-help`, Hint, Sicherheits-Hinweis) und folgendem interaktiven Element (Phrase-Block, `mat-form-field`, Button-Gruppe) mindestens `0.45rem` vertikaler Abstand; zwischen mehreren Widget-Bloecken in einer Aktion mindestens `0.65rem`.
 - **Card-Header-Abstaende:** Zwischen Title und Subtitle mindestens `0.15rem`; zwischen Header und erstem Inhaltselement mindestens `0.4rem`.
 - **Label-Lesbarkeit:** Feldlabels duerfen nicht abgeschnitten werden; Umbruch ist erlaubt, aber ohne Silbentrennung (`hyphens: none`).
 - **Lange Hinweise:** Lange Hint-/Tooltip-Texte muessen ohne horizontales Scrollen lesbar bleiben (mobil und desktop).

@@ -1194,6 +1194,40 @@ export const AdminDeleteSessionOutputSchema = z.object({
 });
 export type AdminDeleteSessionOutput = z.infer<typeof AdminDeleteSessionOutputSchema>;
 
+/** Input: Alle Sessions endgültig löschen (nur mit Sicherheitsphrase). */
+export const AdminDeleteAllSessionsInputSchema = z.object({
+  confirmationText: z.string().trim().min(1).max(200),
+  expectedSessionCount: z.number().int().min(0),
+  reason: z.string().trim().max(1000).optional(),
+});
+export type AdminDeleteAllSessionsInput = z.infer<typeof AdminDeleteAllSessionsInputSchema>;
+
+/** Output: Massenlöschung von Sessions bestätigt. */
+export const AdminDeleteAllSessionsOutputSchema = z.object({
+  deleted: z.literal(true),
+  deletedSessionCount: z.number().int().min(0),
+  deletedQuizCount: z.number().int().min(0),
+});
+export type AdminDeleteAllSessionsOutput = z.infer<typeof AdminDeleteAllSessionsOutputSchema>;
+
+/** Input: Rekord-Teilnehmerzahl zurücksetzen (mit Sicherheitsphrase). */
+export const AdminResetMaxParticipantsRecordInputSchema = z.object({
+  confirmationText: z.string().trim().min(1).max(200),
+});
+export type AdminResetMaxParticipantsRecordInput = z.infer<
+  typeof AdminResetMaxParticipantsRecordInputSchema
+>;
+
+/** Output: Rekord-Teilnehmerzahl wurde zurückgesetzt. */
+export const AdminResetMaxParticipantsRecordOutputSchema = z.object({
+  reset: z.literal(true),
+  previousMaxParticipantsSingleSession: z.number().int().min(0),
+  currentMaxParticipantsSingleSession: z.number().int().min(0),
+});
+export type AdminResetMaxParticipantsRecordOutput = z.infer<
+  typeof AdminResetMaxParticipantsRecordOutputSchema
+>;
+
 /** Export-Format für Behördenauszug (Story 9.3). */
 export const AdminExportFormatEnum = z.enum(['PDF', 'JSON']);
 export type AdminExportFormat = z.infer<typeof AdminExportFormatEnum>;

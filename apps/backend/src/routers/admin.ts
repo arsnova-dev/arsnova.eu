@@ -1,5 +1,9 @@
 import { TRPCError } from '@trpc/server';
 import {
+  AdminDeleteAllSessionsInputSchema,
+  AdminDeleteAllSessionsOutputSchema,
+  AdminResetMaxParticipantsRecordInputSchema,
+  AdminResetMaxParticipantsRecordOutputSchema,
   AdminDeleteSessionInputSchema,
   AdminDeleteSessionOutputSchema,
   AdminExportInputSchema,
@@ -16,6 +20,8 @@ import {
   AdminSessionSummaryDTO,
   AdminSetLegalHoldInputSchema,
   AdminWhoAmIOutputSchema,
+  QUIZ_EXPORT_VERSION,
+  QuizExportSchema,
 } from '@arsnova/shared-types';
 import { adminProcedure, publicProcedure, router } from '../trpc';
 import { createHash, randomUUID } from 'crypto';
@@ -35,6 +41,8 @@ const MIN_LEGAL_HOLD_DAYS = 1;
 const MAX_LEGAL_HOLD_DAYS = 365;
 const SESSION_RETENTION_HOURS = 24;
 const ADMIN_EXPORT_SCHEMA_VERSION = 1;
+const ADMIN_BULK_DELETE_CONFIRMATION = 'ALLE SESSIONS LOESCHEN';
+const ADMIN_RESET_RECORD_CONFIRMATION = 'REKORD RESETZEN';
 
 function resolveDefaultLegalHoldDays(): number {
   const raw = process.env['ADMIN_LEGAL_HOLD_DEFAULT_DAYS'];
@@ -707,6 +715,103 @@ export const adminRouter = router({
       };
     }),
 
+  /** Alle Sessions endgültig löschen (zusätzliche Sicherheitsphrase erforderlich). */
+  deleteAllSessions: adminProcedure
+    .input(AdminDeleteAllSessionsInputSchema)
+    .output(AdminDeleteAllSessionsOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const normalizedConfirmation = input.confirmationText.trim().toUpperCase();
+      if (normalizedConfirmation !== ADMIN_BULK_DELETE_CONFIRMATION) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Sicherheitsabfrage fehlgeschlagen.',
+        });
+      }
+
+      const existingSessionCount = await prisma.session.count();
+      if (existingSessionCount !== input.expectedSessionCount) {
+        throw new TRPCError({
+          code: 'PRECONDITION_FAILED',
+          message:
+            'Session-Liste hat sich geändert. Bitte Ansicht aktualisieren und erneut bestätigen.',
+        });
+      }
+
+      const reason = input.reason?.trim() || null;
+      const adminIdentifier = ctx.adminToken ? `token:${ctx.adminToken.slice(0, 12)}` : 'admin';
+
+      const result = await prisma.$transaction(async (tx) => {
+        const deletedSessions = await tx.session.deleteMany({});
+        const deletedQuizzes = await tx.quiz.deleteMany({
+          where: { sessions: { none: {} } },
+        });
+
+        await tx.adminAuditLog.create({
+          data: {
+            action: 'SESSION_DELETE',
+            sessionId: 'ALL',
+            sessionCode: 'ALL',
+            adminIdentifier,
+            reason: reason ? `BULK_DELETE_ALL_SESSIONS: ${reason}` : 'BULK_DELETE_ALL_SESSIONS',
+          },
+        });
+
+        return {
+          deletedSessionCount: deletedSessions.count,
+          deletedQuizCount: deletedQuizzes.count,
+        };
+      });
+
+      return {
+        deleted: true as const,
+        deletedSessionCount: result.deletedSessionCount,
+        deletedQuizCount: result.deletedQuizCount,
+      };
+    }),
+
+  /** Rekord-Teilnehmerzahl zurücksetzen (Plattformstatistik). */
+  resetMaxParticipantsRecord: adminProcedure
+    .input(AdminResetMaxParticipantsRecordInputSchema)
+    .output(AdminResetMaxParticipantsRecordOutputSchema)
+    .mutation(async ({ input }) => {
+      const normalizedConfirmation = input.confirmationText.trim().toUpperCase();
+      if (normalizedConfirmation !== ADMIN_RESET_RECORD_CONFIRMATION) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Sicherheitsabfrage fehlgeschlagen.',
+        });
+      }
+
+      const rows = await prisma.$queryRaw<Array<{ maxParticipantsSingleSession: number }>>`
+        SELECT "maxParticipantsSingleSession"
+        FROM "PlatformStatistic"
+        WHERE "id" = 'default'
+        LIMIT 1
+      `;
+      const previousMax = rows[0]?.maxParticipantsSingleSession ?? 0;
+
+      const updatedRows = await prisma.$executeRaw`
+        UPDATE "PlatformStatistic"
+        SET "maxParticipantsSingleSession" = 0
+        WHERE "id" = 'default'
+      `;
+
+      if (updatedRows === 0) {
+        await prisma.$executeRaw`
+          INSERT INTO "PlatformStatistic" ("id", "maxParticipantsSingleSession", "updatedAt")
+          VALUES ('default', 0, NOW())
+          ON CONFLICT ("id") DO UPDATE
+          SET "maxParticipantsSingleSession" = 0
+        `;
+      }
+
+      return {
+        reset: true as const,
+        previousMaxParticipantsSingleSession: previousMax,
+        currentMaxParticipantsSingleSession: 0,
+      };
+    }),
+
   /** Behördenexport (Story 9.3): PDF primär, JSON optional. */
   exportForAuthorities: adminProcedure
     .input(AdminExportInputSchema)
@@ -827,6 +932,148 @@ export const adminRouter = router({
         exportId,
         format: input.format,
         mimeType,
+        fileName,
+        contentBase64: fileBuffer.toString('base64'),
+        sha256: hashSha256(fileBuffer),
+        generatedAt,
+      };
+    }),
+
+  /** Quiz-Export aus Session: Download im Import-Format der Quiz-Bibliothek. */
+  exportSessionAsQuizImport: adminProcedure
+    .input(AdminGetSessionDetailInputSchema)
+    .output(AdminExportOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const session = await prisma.session.findUnique({
+        where: { id: input.sessionId },
+        include: {
+          quiz: {
+            select: {
+              name: true,
+              description: true,
+              motifImageUrl: true,
+              showLeaderboard: true,
+              allowCustomNicknames: true,
+              defaultTimer: true,
+              enableSoundEffects: true,
+              enableRewardEffects: true,
+              enableMotivationMessages: true,
+              enableEmojiReactions: true,
+              anonymousMode: true,
+              teamMode: true,
+              teamCount: true,
+              teamAssignment: true,
+              teamNames: true,
+              backgroundMusic: true,
+              nicknameTheme: true,
+              bonusTokenCount: true,
+              readingPhaseEnabled: true,
+              preset: true,
+              questions: {
+                orderBy: { order: 'asc' },
+                select: {
+                  text: true,
+                  type: true,
+                  timer: true,
+                  difficulty: true,
+                  order: true,
+                  ratingMin: true,
+                  ratingMax: true,
+                  ratingLabelMin: true,
+                  ratingLabelMax: true,
+                  answers: {
+                    orderBy: { id: 'asc' },
+                    select: { text: true, isCorrect: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!session) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session nicht gefunden.' });
+      }
+
+      const retention = resolveRetentionState(session);
+      if (retention.window === 'PURGED') {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Export nicht mehr möglich: Sessiondaten wurden bereinigt.',
+        });
+      }
+
+      if (!session.quiz) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Diese Session enthält kein Quiz für den Import-Export.',
+        });
+      }
+
+      const quizExportPayload = QuizExportSchema.parse({
+        exportVersion: QUIZ_EXPORT_VERSION,
+        exportedAt: new Date().toISOString(),
+        quiz: {
+          name: session.quiz.name,
+          description: session.quiz.description ?? undefined,
+          motifImageUrl: session.quiz.motifImageUrl ?? null,
+          showLeaderboard: session.quiz.showLeaderboard,
+          allowCustomNicknames: session.quiz.allowCustomNicknames,
+          defaultTimer: session.quiz.defaultTimer ?? null,
+          enableSoundEffects: session.quiz.enableSoundEffects,
+          enableRewardEffects: session.quiz.enableRewardEffects,
+          enableMotivationMessages: session.quiz.enableMotivationMessages,
+          enableEmojiReactions: session.quiz.enableEmojiReactions,
+          anonymousMode: session.quiz.anonymousMode,
+          teamMode: session.quiz.teamMode,
+          teamCount: session.quiz.teamCount ?? null,
+          teamAssignment: session.quiz.teamAssignment,
+          teamNames: session.quiz.teamNames,
+          backgroundMusic: session.quiz.backgroundMusic ?? null,
+          nicknameTheme: session.quiz.nicknameTheme,
+          bonusTokenCount: session.quiz.bonusTokenCount ?? null,
+          readingPhaseEnabled: session.quiz.readingPhaseEnabled,
+          preset: session.quiz.preset,
+          questions: session.quiz.questions.map((question, index) => ({
+            text: question.text,
+            type: question.type,
+            timer: question.timer ?? null,
+            difficulty: question.difficulty,
+            order: Number.isInteger(question.order) ? question.order : index,
+            answers: question.answers.map((answer) => ({
+              text: answer.text,
+              isCorrect: answer.isCorrect,
+            })),
+            ratingMin: question.ratingMin ?? null,
+            ratingMax: question.ratingMax ?? null,
+            ratingLabelMin: question.ratingLabelMin ?? null,
+            ratingLabelMax: question.ratingLabelMax ?? null,
+            enabled: true,
+          })),
+        },
+      });
+
+      const generatedAt = new Date().toISOString();
+      const payloadJson = JSON.stringify(quizExportPayload, null, 2);
+      const fileBuffer = Buffer.from(payloadJson, 'utf8');
+      const exportId = randomUUID();
+      const fileName = `quiz-import-${session.code}-${generatedAt.slice(0, 10)}.json`;
+      const adminIdentifier = ctx.adminToken ? `token:${ctx.adminToken.slice(0, 12)}` : 'admin';
+
+      await prisma.adminAuditLog.create({
+        data: {
+          action: 'EXPORT_FOR_AUTHORITIES',
+          sessionId: session.id,
+          sessionCode: session.code,
+          adminIdentifier,
+          reason: 'QUIZ_IMPORT_EXPORT',
+        },
+      });
+
+      return {
+        exportId,
+        format: 'JSON',
+        mimeType: 'application/json',
         fileName,
         contentBase64: fileBuffer.toString('base64'),
         sha256: hashSha256(fileBuffer),

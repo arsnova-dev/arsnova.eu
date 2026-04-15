@@ -1405,19 +1405,115 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.exportPdf" datatype="html">
-        <source> Compliance-Bericht als PDF exportieren</source>
-        <target>Esporta il rapporto di conformità in PDF</target>
+        <source> Als Compliance-Bericht (PDF) exportieren</source>
+        <target>Esporta come rapporto di conformità (PDF)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
           <context context-type="linenumber">214,215</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.exportJson" datatype="html">
-        <source> Rohdaten als JSON exportieren</source>
-        <target>Esporta i dati grezzi come JSON</target>
+        <source> Als Quiz-Importdatei (JSON) exportieren</source>
+        <target>Esporta come file di importazione quiz (JSON)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
           <context context-type="linenumber">224,225</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllSectionTitle" datatype="html">
+        <source> Alle Sessions endgültig löschen</source>
+        <target>Elimina definitivamente tutte le sessioni</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">139,140</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllHelp" datatype="html">
+        <source> Diese Aktion löscht alle Sessions inklusive zugehöriger Teilnahmen und Votes. Nicht mehr benötigte Quiz-Kopien werden ebenfalls entfernt.</source>
+        <target>Questa azione elimina tutte le sessioni, incluse le partecipazioni e i voti collegati. Anche le copie quiz non piu necessarie vengono rimosse.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">142,143</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllCountHint" datatype="html">
+        <source> Aktuell erfasste Sessions: <x id="INTERPOLATION" equiv-text="{{ sessionTotal() }}"/></source>
+        <target>Sessioni attualmente registrate: <x id="INTERPOLATION" equiv-text="{{ sessionTotal() }}"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllConfirmHint" datatype="html">
+        <source> Zur Bestätigung gib die Sicherheitsphrase ein.</source>
+        <target>Per confermare, inserisci la frase di sicurezza.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">149</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllReasonLabel" datatype="html">
+        <source>Grund (optional)</source>
+        <target>Motivo (facoltativo)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllConfirmLabel" datatype="html">
+        <source>Sicherheitsphrase zur Bestätigung</source>
+        <target>Frase di sicurezza per la conferma</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">163,164</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.deleteAllButton" datatype="html">
+        <source> Alle Sessions endgültig löschen</source>
+        <target>Elimina definitivamente tutte le sessioni</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">181,182</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.resetRecordSectionTitle" datatype="html">
+        <source> Rekord-User-Zahl zurücksetzen</source>
+        <target>Reimposta il record di utenti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">195,196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.resetRecordHelp" datatype="html">
+        <source> Diese Aktion setzt nur den Plattform-Rekord für die maximale Teilnehmendenzahl pro Session auf 0 zurück.</source>
+        <target>Questa azione reimposta solo a 0 il record della piattaforma per il numero massimo di partecipanti per sessione.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">198,199</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.resetRecordConfirmHint" datatype="html">
+        <source> Zur Bestätigung gib die Sicherheitsphrase ein.</source>
+        <target>Per confermare, inserisci la frase di sicurezza.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">202</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.resetRecordConfirmLabel" datatype="html">
+        <source>Sicherheitsphrase zur Bestätigung</source>
+        <target>Frase di sicurezza per la conferma</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">206,207</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.resetRecordButton" datatype="html">
+        <source> Rekord-User-Zahl zurücksetzen</source>
+        <target>Reimposta il record di utenti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">223,224</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.deleteSectionTitle" datatype="html">
@@ -1548,12 +1644,52 @@
           <context context-type="linenumber">252</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="admin.exportDone" datatype="html">
-        <source>Export erstellt: <x id="fileName" equiv-text="result.fileName"/></source>
-        <target>Esportazione creata: <x id="fileName" equiv-text="result.fileName"/></target>
+      <trans-unit id="admin.deleteAllDone" datatype="html">
+        <source><x id="sessionCount" equiv-text="result.deletedSessionCount"/> Sessions und <x id="quizCount" equiv-text="result.deletedQuizCount"/> Quizze wurden endgültig gelöscht.</source>
+        <target>Sono state eliminate definitivamente <x id="sessionCount" equiv-text="result.deletedSessionCount"/> sessioni e <x id="quizCount" equiv-text="result.deletedQuizCount"/> quiz.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
-          <context context-type="linenumber">294</context>
+          <context context-type="linenumber">297</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorDeleteAllSessions" datatype="html">
+        <source>Alle Sessions konnten nicht gelöscht werden.</source>
+        <target>Impossibile eliminare tutte le sessioni.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">311</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.resetRecordDone" datatype="html">
+        <source>Rekord zurückgesetzt: vorher <x id="previousValue" equiv-text="result.previousMaxParticipantsSingleSession"/>, jetzt <x id="currentValue" equiv-text="result.currentMaxParticipantsSingleSession"/>.</source>
+        <target>Record reimpostato: prima <x id="previousValue" equiv-text="result.previousMaxParticipantsSingleSession"/>, ora <x id="currentValue" equiv-text="result.currentMaxParticipantsSingleSession"/>.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">342</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.errorResetRecord" datatype="html">
+        <source>Rekord-User-Zahl konnte nicht zurückgesetzt werden.</source>
+        <target>Impossibile reimpostare il record di utenti.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">350</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.exportDoneCompliance" datatype="html">
+        <source>Compliance-Bericht erstellt: <x id="fileName" equiv-text="result.fileName"/></source>
+        <target>Rapporto di conformità creato: <x id="fileName" equiv-text="result.fileName"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">281</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.exportDoneQuizImport" datatype="html">
+        <source>Quiz-Importdatei erstellt: <x id="fileName" equiv-text="result.fileName"/></source>
+        <target>File di importazione quiz creato: <x id="fileName" equiv-text="result.fileName"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">309</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.errorExport" datatype="html">
@@ -2780,14 +2916,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/help/help.component.html</context>
           <context context-type="linenumber">290,292</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="help.statsDevDemoNote" datatype="html">
-        <source> Zahl und Zeitstempel sind Beispieldaten (nur Entwicklungsmodus, solange kein echter Rekord aus der API kommt).</source>
-        <target>Il numero e il timestamp sono dati di esempio (solo in modalità di sviluppo, a condizione che nessun record reale provenga dall&apos;API).</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/help/help.component.html</context>
-          <context context-type="linenumber">295,297</context>
         </context-group>
       </trans-unit>
       <trans-unit id="homeHero.channelQuiz" datatype="html">

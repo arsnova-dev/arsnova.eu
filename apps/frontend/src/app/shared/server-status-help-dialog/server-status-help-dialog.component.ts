@@ -1,4 +1,4 @@
-import { Component, LOCALE_ID, computed, inject, isDevMode } from '@angular/core';
+import { Component, LOCALE_ID, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -9,9 +9,6 @@ import {
 } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import type { ServerStatsDTO } from '@arsnova/shared-types';
-
-const HELP_STATS_DEV_FAKE_MAX = 184;
-const HELP_STATS_DEV_FAKE_UPDATED_AT_ISO = '2025-11-08T16:45:00.000Z';
 
 export interface ServerStatusHelpDialogData {
   connectionOk: boolean;
@@ -158,12 +155,6 @@ export interface ServerStatusHelpDialogData {
             </div>
             <div class="status-help-dialog__record-unit" i18n="@@help.statsUnit">Teilnehmende</div>
           </div>
-          @if (statsUsesDevDemoValues()) {
-            <p class="status-help-dialog__record-dev-demo" i18n="@@help.statsDevDemoNote">
-              Zahl und Zeitstempel sind Beispieldaten (nur Entwicklungsmodus, solange kein echter
-              Rekord aus der API kommt).
-            </p>
-          }
         </section>
       } @else {
         <section class="status-help-dialog__state" aria-live="polite">
@@ -241,21 +232,8 @@ export class ServerStatusHelpDialogComponent {
   readonly data = inject<ServerStatusHelpDialogData>(MAT_DIALOG_DATA);
 
   readonly effectiveStats = computed<ServerStatsDTO | null>(() => {
-    const stats = this.data.stats;
-    if (!stats) return null;
-    if (isDevMode() && stats.maxParticipantsSingleSession === 0) {
-      return {
-        ...stats,
-        maxParticipantsSingleSession: HELP_STATS_DEV_FAKE_MAX,
-        maxParticipantsStatisticUpdatedAt: HELP_STATS_DEV_FAKE_UPDATED_AT_ISO,
-      };
-    }
-    return stats;
+    return this.data.stats;
   });
-
-  readonly statsUsesDevDemoValues = computed(
-    () => !!this.data.stats && isDevMode() && this.data.stats.maxParticipantsSingleSession === 0,
-  );
 
   readonly recordUpdatedFormatted = computed(() => {
     const iso = this.effectiveStats()?.maxParticipantsStatisticUpdatedAt;

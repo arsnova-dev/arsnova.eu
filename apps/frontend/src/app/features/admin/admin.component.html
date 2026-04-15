@@ -133,6 +133,132 @@
                     }
                   </div>
                 }
+
+                <div class="admin-danger-zone">
+                  <section class="admin-delete admin-delete--bulk">
+                    <h3 class="admin-delete__title" i18n="@@admin.deleteAllSectionTitle">
+                      Alle Sessions endgültig löschen
+                    </h3>
+                    <p class="admin-help" i18n="@@admin.deleteAllHelp">
+                      Diese Aktion löscht alle Sessions inklusive zugehöriger Teilnahmen und Votes.
+                      Nicht mehr benötigte Quiz-Kopien werden ebenfalls entfernt.
+                    </p>
+                    <p class="admin-help" i18n="@@admin.deleteAllCountHint">
+                      Aktuell erfasste Sessions: {{ sessionTotal() }}
+                    </p>
+                    <p class="admin-help" i18n="@@admin.deleteAllConfirmHint">
+                      Zur Bestätigung gib die Sicherheitsphrase ein.
+                    </p>
+                    <p class="admin-delete__phrase" aria-live="polite">
+                      {{ deleteAllRequiredPhrase }}
+                    </p>
+                    <mat-form-field appearance="outline" class="admin-field">
+                      <mat-label i18n="@@admin.deleteAllReasonLabel">Grund (optional)</mat-label>
+                      <textarea
+                        matInput
+                        rows="2"
+                        maxlength="1000"
+                        [disabled]="deleteAllLoading()"
+                        [value]="deleteAllReason()"
+                        (input)="updateDeleteAllReason($any($event.target).value)"
+                      ></textarea>
+                    </mat-form-field>
+                    <mat-form-field
+                      appearance="outline"
+                      class="admin-field admin-field--danger-confirm"
+                    >
+                      <mat-label i18n="@@admin.deleteAllConfirmLabel"
+                        >Sicherheitsphrase zur Bestätigung</mat-label
+                      >
+                      <input
+                        matInput
+                        class="admin-input--code"
+                        type="text"
+                        [disabled]="deleteAllLoading()"
+                        [value]="deleteAllConfirmText()"
+                        (input)="updateDeleteAllConfirmText($any($event.target).value)"
+                        maxlength="200"
+                      />
+                    </mat-form-field>
+                    <div class="admin-actions admin-actions--delete">
+                      <button
+                        mat-flat-button
+                        type="button"
+                        class="admin-action-btn admin-btn-danger"
+                        [disabled]="!canDeleteAllSessions()"
+                        (click)="deleteAllSessions()"
+                        i18n="@@admin.deleteAllButton"
+                      >
+                        @if (deleteAllLoading()) {
+                          <mat-progress-spinner diameter="18" mode="indeterminate" />
+                        } @else {
+                          <span>Alle Sessions endgültig löschen</span>
+                        }
+                      </button>
+                    </div>
+                    @if (deleteAllError(); as deleteAllErrorText) {
+                      <p class="admin-error" role="alert">{{ deleteAllErrorText }}</p>
+                    }
+                    @if (deleteAllInfo(); as deleteAllInfoText) {
+                      <p class="admin-info" role="status">{{ deleteAllInfoText }}</p>
+                    }
+                  </section>
+
+                  <section class="admin-delete admin-delete--record">
+                    <h3 class="admin-delete__title" i18n="@@admin.resetRecordSectionTitle">
+                      Rekord-User-Zahl zurücksetzen
+                    </h3>
+                    <p class="admin-help" i18n="@@admin.resetRecordHelp">
+                      Diese Aktion setzt nur den Plattform-Rekord für die maximale Teilnehmendenzahl
+                      pro Session auf 0 zurück.
+                    </p>
+                    <p class="admin-help" i18n="@@admin.resetRecordConfirmHint">
+                      Zur Bestätigung gib die Sicherheitsphrase ein.
+                    </p>
+                    <p class="admin-delete__phrase" aria-live="polite">
+                      {{ resetRecordRequiredPhrase }}
+                    </p>
+                    <mat-form-field
+                      appearance="outline"
+                      class="admin-field admin-field--danger-confirm"
+                    >
+                      <mat-label i18n="@@admin.resetRecordConfirmLabel"
+                        >Sicherheitsphrase zur Bestätigung</mat-label
+                      >
+                      <input
+                        matInput
+                        class="admin-input--code"
+                        type="text"
+                        [disabled]="resetRecordLoading()"
+                        [value]="resetRecordConfirmText()"
+                        (input)="updateResetRecordConfirmText($any($event.target).value)"
+                        maxlength="200"
+                      />
+                    </mat-form-field>
+                    <div class="admin-actions admin-actions--delete">
+                      <button
+                        mat-flat-button
+                        type="button"
+                        class="admin-action-btn admin-btn-danger"
+                        [disabled]="!canResetRecord()"
+                        (click)="resetMaxParticipantsRecord()"
+                        i18n="@@admin.resetRecordButton"
+                      >
+                        @if (resetRecordLoading()) {
+                          <mat-progress-spinner diameter="18" mode="indeterminate" />
+                        } @else {
+                          <span>Rekord-User-Zahl zurücksetzen</span>
+                        }
+                      </button>
+                    </div>
+                    @if (resetRecordError(); as resetRecordErrorText) {
+                      <p class="admin-error" role="alert">{{ resetRecordErrorText }}</p>
+                    }
+                    @if (resetRecordInfo(); as resetRecordInfoText) {
+                      <p class="admin-info" role="status">{{ resetRecordInfoText }}</p>
+                    }
+                  </section>
+                </div>
               </mat-card-content>
             </mat-card>
 
@@ -211,17 +337,17 @@
                       (click)="exportForAuthorities('PDF')"
                       i18n="@@admin.exportPdf"
                     >
-                      Compliance-Bericht als PDF exportieren
+                      Als Compliance-Bericht (PDF) exportieren
                     </button>
                     <button
                       matButton="tonal"
                       class="admin-action-btn"
                       type="button"
                       [disabled]="exportLoading()"
-                      (click)="exportForAuthorities('JSON')"
+                      (click)="exportSessionAsQuizImport()"
                       i18n="@@admin.exportJson"
                     >
-                      Rohdaten als JSON exportieren
+                      Als Quiz-Importdatei (JSON) exportieren
                     </button>
                   </div>
                   @if (exportError(); as exportErrorText) {
@@ -231,7 +357,7 @@
                     <p class="admin-info" role="status">{{ exportInfoText }}</p>
                   }
 
-                  <section class="admin-delete">
+                  <section class="admin-delete admin-delete--single">
                     <h3 class="admin-delete__title" i18n="@@admin.deleteSectionTitle">
                       Session endgültig löschen
                     </h3>
@@ -245,11 +371,15 @@
                         matInput
                         rows="3"
                         maxlength="1000"
+                        [disabled]="deleteLoading()"
                         [value]="deleteReason()"
                         (input)="updateDeleteReason($any($event.target).value)"
                       ></textarea>
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="admin-field admin-field--code">
+                    <mat-form-field
+                      appearance="outline"
+                      class="admin-field admin-field--code admin-field--danger-confirm"
+                    >
                       <mat-label i18n="@@admin.deleteConfirmLabel"
                         >Session-Code zur Bestätigung</mat-label
                       >
@@ -257,6 +387,7 @@
                         matInput
                         class="admin-input--code"
                         type="text"
+                        [disabled]="deleteLoading()"
                         [value]="deleteConfirmCode()"
                         (input)="updateDeleteConfirmCode($any($event.target).value)"
                         maxlength="6"
@@ -271,7 +402,11 @@
                         (click)="deleteSelectedSession()"
                         i18n="@@admin.deleteButton"
                       >
-                        Session endgültig löschen
+                        @if (deleteLoading()) {
+                          <mat-progress-spinner diameter="18" mode="indeterminate" />
+                        } @else {
+                          <span>Session endgültig löschen</span>
+                        }
                       </button>
                     </div>
                     @if (deleteError(); as deleteErrorText) {

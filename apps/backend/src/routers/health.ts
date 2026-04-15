@@ -181,6 +181,65 @@ async function fetchServerStats() {
   }
 
   try {
+    const platformStatisticPromise = (async () => {
+      try {
+        const rows = await prisma.$queryRaw<
+          Array<{
+            maxParticipantsSingleSession: number | null;
+            completedSessionsTotal: number | null;
+            updatedAt: Date | null;
+          }>
+        >`
+          SELECT "maxParticipantsSingleSession", "completedSessionsTotal", "updatedAt"
+          FROM "PlatformStatistic"
+          WHERE "id" = 'default'
+          LIMIT 1
+        `;
+        const row = rows[0] ?? null;
+        return {
+          maxParticipantsSingleSession: row?.maxParticipantsSingleSession ?? 0,
+          completedSessionsTotal: row?.completedSessionsTotal ?? null,
+          updatedAtIso: row?.updatedAt?.toISOString() ?? null,
+        };
+      } catch {
+        try {
+          // DB-Drift-Fallback: ältere Schemas ohne completedSessionsTotal weiterhin unterstützen.
+          const rows = await prisma.$queryRaw<
+            Array<{
+              maxParticipantsSingleSession: number | null;
+              updatedAt: Date | null;
+            }>
+          >`
+            SELECT "maxParticipantsSingleSession", "updatedAt"
+            FROM "PlatformStatistic"
+            WHERE "id" = 'default'
+            LIMIT 1
+          `;
+          const row = rows[0] ?? null;
+          return {
+            maxParticipantsSingleSession: row?.maxParticipantsSingleSession ?? 0,
+            completedSessionsTotal: null,
+            updatedAtIso: row?.updatedAt?.toISOString() ?? null,
+          };
+        } catch {
+          // Test-/Mock-Fallback ohne Raw-SQL.
+          const row = await prisma.platformStatistic.findUnique({
+            where: { id: 'default' },
+            select: {
+              maxParticipantsSingleSession: true,
+              completedSessionsTotal: true,
+              updatedAt: true,
+            },
+          });
+          return {
+            maxParticipantsSingleSession: row?.maxParticipantsSingleSession ?? 0,
+            completedSessionsTotal: row?.completedSessionsTotal ?? null,
+            updatedAtIso: row?.updatedAt?.toISOString() ?? null,
+          };
+        }
+      }
+    })();
+
     const [
       activeSessions,
       activeSessionIds,
@@ -196,25 +255,22 @@ async function fetchServerStats() {
       }),
       // Momentan in DB vorhandene FINISHED-Sessions (kann durch Purge sinken).
       prisma.session.count({ where: { status: 'FINISHED' } }),
-      prisma.platformStatistic.findUnique({
-        where: { id: 'default' },
-        select: {
-          maxParticipantsSingleSession: true,
-          completedSessionsTotal: true,
-          updatedAt: true,
-        },
-      }),
+      platformStatisticPromise,
       readLoadSignals(),
       readSloSignals(),
     ]);
     const totalParticipants = await countActiveParticipantsForSessions(
       activeSessionIds.map((session) => session.id),
     );
-    const completedSessionsTotal = Math.max(
-      completedSessionsNow,
-      platformRow?.completedSessionsTotal ?? 0,
-    );
-    if (completedSessionsNow > (platformRow?.completedSessionsTotal ?? 0)) {
+    const persistedCompletedSessionsTotal = platformRow.completedSessionsTotal;
+    const completedSessionsTotal =
+      typeof persistedCompletedSessionsTotal === 'number'
+        ? Math.max(completedSessionsNow, persistedCompletedSessionsTotal)
+        : completedSessionsNow;
+    if (
+      typeof persistedCompletedSessionsTotal === 'number' &&
+      completedSessionsNow > persistedCompletedSessionsTotal
+    ) {
       void updateCompletedSessionsTotal(completedSessionsNow);
     }
     const loadStatus = getLoadStatus({
@@ -230,8 +286,8 @@ async function fetchServerStats() {
       totalParticipants,
       completedSessions: completedSessionsTotal,
       activeBlitzRounds,
-      maxParticipantsSingleSession: platformRow?.maxParticipantsSingleSession ?? 0,
-      maxParticipantsStatisticUpdatedAt: platformRow?.updatedAt?.toISOString() ?? null,
+      maxParticipantsSingleSession: platformRow.maxParticipantsSingleSession,
+      maxParticipantsStatisticUpdatedAt: platformRow.updatedAtIso,
       serviceStatus: getServiceStatus(loadStatus, sloSignals),
       loadStatus,
     };

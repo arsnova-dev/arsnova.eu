@@ -221,6 +221,12 @@
   gap: 0.65rem;
 }
 
+.admin-danger-zone {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.65rem;
+}
+
 .admin-list__item {
   width: 100%;
   justify-content: flex-start;
@@ -298,23 +304,55 @@
 }
 
 .admin-delete {
-  margin-top: 0.5rem;
-  padding: 0.95rem;
+  margin-top: 0.6rem;
+  padding: 1.15rem;
+  display: grid;
+  gap: 0.75rem;
   border-top: 1px solid var(--mat-sys-outline-variant);
   border-radius: var(--mat-sys-corner-medium);
   background: color-mix(in srgb, var(--mat-sys-error-container) 55%, transparent);
   outline: 1px solid color-mix(in srgb, var(--mat-sys-error) 30%, transparent);
+  border-inline-start: 0.3rem solid color-mix(in srgb, var(--mat-sys-error) 65%, transparent);
+}
+
+.admin-delete--bulk {
+  background: color-mix(in srgb, var(--mat-sys-error-container) 42%, transparent);
+}
+
+.admin-delete--record {
+  background: color-mix(in srgb, var(--mat-sys-error-container) 32%, transparent);
+}
+
+.admin-delete--single {
+  background: color-mix(in srgb, var(--mat-sys-error-container) 62%, transparent);
 }
 
 .admin-delete__title {
-  margin: 0 0 0.3rem;
+  margin: 0;
   font: var(--mat-sys-title-small);
   color: var(--mat-sys-error);
 }
 
+.admin-delete__phrase {
+  margin: 0;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--mat-sys-corner-small);
+  border: 1px dashed color-mix(in srgb, var(--mat-sys-error) 55%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-error-container) 35%, transparent);
+  color: var(--mat-sys-on-error-container);
+  font: var(--mat-sys-label-medium);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-field--danger-confirm {
+  margin-top: 0.2rem;
+}
+
 .admin-actions--delete {
   justify-content: flex-start;
-  margin-top: 0.25rem;
+  margin-top: 0.45rem;
   margin-bottom: 0;
 }
 
@@ -327,6 +365,9 @@
   background: color-mix(in srgb, var(--mat-sys-error) 90%, #000 10%);
   color: var(--mat-sys-on-error);
   box-shadow: var(--mat-sys-level1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 :host ::ng-deep .admin-card .mdc-button__label {
@@ -368,7 +409,8 @@
   }
 
   .admin-delete {
-    padding: 0.75rem;
+    padding: 0.9rem;
+    gap: 0.65rem;
   }
 
   .admin-question {

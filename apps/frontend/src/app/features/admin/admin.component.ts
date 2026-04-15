@@ -50,6 +50,7 @@ export class AdminComponent implements OnInit {
   readonly listLoading = signal(false);
   readonly listError = signal<string | null>(null);
   readonly sessions = signal<AdminSessionSummaryDTO[]>([]);
+  readonly sessionTotal = signal(0);
 
   readonly lookupCode = signal('');
   readonly lookupLoading = signal(false);
@@ -65,11 +66,23 @@ export class AdminComponent implements OnInit {
   readonly deleteInfo = signal<string | null>(null);
   readonly deleteReason = signal('');
   readonly deleteConfirmCode = signal('');
+  readonly deleteAllLoading = signal(false);
+  readonly deleteAllError = signal<string | null>(null);
+  readonly deleteAllInfo = signal<string | null>(null);
+  readonly deleteAllReason = signal('');
+  readonly deleteAllConfirmText = signal('');
+  readonly resetRecordLoading = signal(false);
+  readonly resetRecordError = signal<string | null>(null);
+  readonly resetRecordInfo = signal<string | null>(null);
+  readonly resetRecordConfirmText = signal('');
   readonly exportLoading = signal(false);
   readonly exportError = signal<string | null>(null);
   readonly exportInfo = signal<string | null>(null);
 
   readonly hasSessions = computed(() => this.sessions().length > 0);
+  readonly hasAnySessions = computed(() => this.sessionTotal() > 0);
+  readonly deleteAllRequiredPhrase = 'ALLE SESSIONS LOESCHEN';
+  readonly resetRecordRequiredPhrase = 'REKORD RESETZEN';
 
   async ngOnInit(): Promise<void> {
     if (!getAdminToken()) {
@@ -100,6 +113,18 @@ export class AdminComponent implements OnInit {
       .replace(/[^A-Z0-9]/g, '')
       .slice(0, 6);
     this.deleteConfirmCode.set(normalized);
+  }
+
+  updateDeleteAllReason(value: string): void {
+    this.deleteAllReason.set(value.slice(0, 1000));
+  }
+
+  updateDeleteAllConfirmText(value: string): void {
+    this.deleteAllConfirmText.set(value.slice(0, 200));
+  }
+
+  updateResetRecordConfirmText(value: string): void {
+    this.resetRecordConfirmText.set(value.slice(0, 200));
   }
 
   async login(): Promise<void> {
@@ -134,6 +159,7 @@ export class AdminComponent implements OnInit {
     setAdminToken(null);
     this.authenticated.set(false);
     this.sessions.set([]);
+    this.sessionTotal.set(0);
     this.selectedDetail.set(null);
     this.lookupCode.set('');
     this.lookupError.set(null);
@@ -257,6 +283,86 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  canDeleteAllSessions(): boolean {
+    if (this.deleteAllLoading() || !this.hasAnySessions()) {
+      return false;
+    }
+    return this.deleteAllConfirmText().trim().toUpperCase() === this.deleteAllRequiredPhrase;
+  }
+
+  async deleteAllSessions(): Promise<void> {
+    if (!this.canDeleteAllSessions()) {
+      return;
+    }
+
+    this.deleteAllLoading.set(true);
+    this.deleteAllError.set(null);
+    this.deleteAllInfo.set(null);
+    try {
+      const result = await trpc.admin.deleteAllSessions.mutate({
+        confirmationText: this.deleteAllConfirmText(),
+        expectedSessionCount: this.sessionTotal(),
+        reason: this.deleteAllReason().trim() || undefined,
+      });
+      this.deleteAllInfo.set(
+        $localize`:@@admin.deleteAllDone:${result.deletedSessionCount}:sessionCount: Sessions und ${result.deletedQuizCount}:quizCount: Quizze wurden endgültig gelöscht.`,
+      );
+      this.selectedDetail.set(null);
+      this.lookupCode.set('');
+      this.deleteReason.set('');
+      this.deleteConfirmCode.set('');
+      this.deleteAllReason.set('');
+      this.deleteAllConfirmText.set('');
+      this.exportError.set(null);
+      this.exportInfo.set(null);
+      await this.loadSessions();
+    } catch (error) {
+      this.deleteAllError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorDeleteAllSessions:Alle Sessions konnten nicht gelöscht werden.`,
+        ),
+      );
+    } finally {
+      this.deleteAllLoading.set(false);
+    }
+  }
+
+  canResetRecord(): boolean {
+    if (this.resetRecordLoading()) {
+      return false;
+    }
+    return this.resetRecordConfirmText().trim().toUpperCase() === this.resetRecordRequiredPhrase;
+  }
+
+  async resetMaxParticipantsRecord(): Promise<void> {
+    if (!this.canResetRecord()) {
+      return;
+    }
+
+    this.resetRecordLoading.set(true);
+    this.resetRecordError.set(null);
+    this.resetRecordInfo.set(null);
+    try {
+      const result = await trpc.admin.resetMaxParticipantsRecord.mutate({
+        confirmationText: this.resetRecordConfirmText(),
+      });
+      this.resetRecordInfo.set(
+        $localize`:@@admin.resetRecordDone:Rekord zurückgesetzt: vorher ${result.previousMaxParticipantsSingleSession}:previousValue:, jetzt ${result.currentMaxParticipantsSingleSession}:currentValue:.`,
+      );
+      this.resetRecordConfirmText.set('');
+    } catch (error) {
+      this.resetRecordError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorResetRecord:Rekord-User-Zahl konnte nicht zurückgesetzt werden.`,
+        ),
+      );
+    } finally {
+      this.resetRecordLoading.set(false);
+    }
+  }
+
   /**
    * Behörden-Export. `reason` ist ein fester Schlüssel für die API/Audit-Spur (ASCII, nicht lokalisiert).
    */
@@ -275,23 +381,38 @@ export class AdminComponent implements OnInit {
         reason: 'Behoerdenanfrage',
       });
 
-      if (typeof window !== 'undefined') {
-        const binary = atob(result.contentBase64);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) {
-          bytes[i] = binary.charCodeAt(i);
-        }
-        const blob = new Blob([bytes], { type: result.mimeType });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = result.fileName;
-        anchor.click();
-        URL.revokeObjectURL(url);
-      }
+      this.downloadBase64File(result.contentBase64, result.mimeType, result.fileName);
 
       this.exportInfo.set(
-        $localize`:@@admin.exportDone:Export erstellt: ${result.fileName}:fileName:`,
+        $localize`:@@admin.exportDoneCompliance:Compliance-Bericht erstellt: ${result.fileName}:fileName:`,
+      );
+    } catch (error) {
+      this.exportError.set(
+        this.extractErrorMessage(
+          error,
+          $localize`:@@admin.errorExport:Export konnte nicht erstellt werden.`,
+        ),
+      );
+    } finally {
+      this.exportLoading.set(false);
+    }
+  }
+
+  async exportSessionAsQuizImport(): Promise<void> {
+    const detail = this.selectedDetail();
+    if (!detail || this.exportLoading()) {
+      return;
+    }
+    this.exportLoading.set(true);
+    this.exportError.set(null);
+    this.exportInfo.set(null);
+    try {
+      const result = await trpc.admin.exportSessionAsQuizImport.mutate({
+        sessionId: detail.session.sessionId,
+      });
+      this.downloadBase64File(result.contentBase64, result.mimeType, result.fileName);
+      this.exportInfo.set(
+        $localize`:@@admin.exportDoneQuizImport:Quiz-Importdatei erstellt: ${result.fileName}:fileName:`,
       );
     } catch (error) {
       this.exportError.set(
@@ -370,6 +491,7 @@ export class AdminComponent implements OnInit {
     try {
       const result = await trpc.admin.listSessions.query({ page: 1, pageSize: 25 });
       this.sessions.set(result.sessions);
+      this.sessionTotal.set(result.total);
     } catch (error) {
       this.listError.set(
         this.extractErrorMessage(
@@ -390,5 +512,23 @@ export class AdminComponent implements OnInit {
       }
     }
     return fallback;
+  }
+
+  private downloadBase64File(contentBase64: string, mimeType: string, fileName: string): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const binary = atob(contentBase64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 }
