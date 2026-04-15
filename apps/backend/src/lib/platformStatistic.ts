@@ -14,21 +14,51 @@ export const PLATFORM_STATISTIC_ID = 'default';
 export async function updateMaxParticipantsSingleSession(participantCount: number): Promise<void> {
   if (!Number.isFinite(participantCount) || participantCount < 1) return;
   try {
-    // updatedAt nur bei echter Rekorderhöhung (sonst würde jedes Join den Zeitstempel setzen).
     await prisma.$executeRaw`
-      UPDATE "PlatformStatistic"
+      INSERT INTO "PlatformStatistic" ("id", "maxParticipantsSingleSession", "completedSessionsTotal", "updatedAt")
+      VALUES (${PLATFORM_STATISTIC_ID}, ${participantCount}, 0, NOW())
+      ON CONFLICT ("id") DO UPDATE
       SET
-        "maxParticipantsSingleSession" = GREATEST("maxParticipantsSingleSession", ${participantCount}),
+        "maxParticipantsSingleSession" = GREATEST(
+          "PlatformStatistic"."maxParticipantsSingleSession",
+          EXCLUDED."maxParticipantsSingleSession"
+        ),
         "updatedAt" = CASE
-          WHEN ${participantCount} > "maxParticipantsSingleSession" THEN NOW()
-          ELSE "updatedAt"
+          WHEN EXCLUDED."maxParticipantsSingleSession" > "PlatformStatistic"."maxParticipantsSingleSession"
+            THEN NOW()
+          ELSE "PlatformStatistic"."updatedAt"
         END
-      WHERE "id" = ${PLATFORM_STATISTIC_ID}
     `;
   } catch (e) {
     logger.warn(
       'PlatformStatistic: maxParticipantsSingleSession konnte nicht aktualisiert werden',
       e,
     );
+  }
+}
+
+/**
+ * Persistiert eine monotone Gesamtzahl beendeter Sessions (FINISHED), damit die
+ * Kennzahl in health.stats trotz Session-Purge nicht sinkt.
+ *
+ * Wichtig: `updatedAt` bleibt unverändert, da es für den Rekord-Zeitstempel
+ * (`maxParticipantsStatisticUpdatedAt`) reserviert ist.
+ */
+export async function updateCompletedSessionsTotal(completedSessions: number): Promise<void> {
+  if (!Number.isFinite(completedSessions) || completedSessions < 0) return;
+  try {
+    await prisma.$executeRaw`
+      INSERT INTO "PlatformStatistic" ("id", "maxParticipantsSingleSession", "completedSessionsTotal", "updatedAt")
+      VALUES (${PLATFORM_STATISTIC_ID}, 0, ${completedSessions}, NOW())
+      ON CONFLICT ("id") DO UPDATE
+      SET
+        "completedSessionsTotal" = GREATEST(
+          "PlatformStatistic"."completedSessionsTotal",
+          EXCLUDED."completedSessionsTotal"
+        ),
+        "updatedAt" = "PlatformStatistic"."updatedAt"
+    `;
+  } catch (e) {
+    logger.warn('PlatformStatistic: completedSessionsTotal konnte nicht aktualisiert werden', e);
   }
 }

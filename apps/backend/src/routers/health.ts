@@ -11,6 +11,8 @@ import {
 } from '@arsnova/shared-types';
 import { pingRedis, getRedis } from '../redis';
 import { prisma } from '../db';
+import { logger } from '../lib/logger';
+import { updateCompletedSessionsTotal } from '../lib/platformStatistic';
 
 const SERVER_STATUS_THRESHOLDS = {
   healthy: 50,
@@ -25,6 +27,12 @@ const ACTIVE_SESSION_STATUSES = [
   'RESULTS',
   'DISCUSSION',
 ] as const;
+/**
+ * "Live" im Footer bedeutet: Session ist in aktivem Status und wurde in den letzten 24h
+ * aktualisiert. Das entkoppelt die Anzeige von Cleanup-Ausfällen und verhindert "hängende"
+ * Kennzahlen durch verwaiste Alt-Sessions.
+ */
+const ACTIVE_SESSION_FRESH_HOURS = 24;
 
 function getServerStatus(activeSessions: number): 'healthy' | 'busy' | 'overloaded' {
   if (activeSessions < SERVER_STATUS_THRESHOLDS.healthy) return 'healthy';
@@ -79,27 +87,54 @@ async function fetchHealthCheck() {
 
 /** Server-Statistik für Startseite (Story 0.4). Bei nicht erreichbarer DB: Fallback (0 Werte), keine Prisma-Fehler. */
 async function fetchServerStats() {
+  const activeCutoff = new Date(Date.now() - ACTIVE_SESSION_FRESH_HOURS * 60 * 60 * 1000);
+  const activeStatuses = [...ACTIVE_SESSION_STATUSES];
+  const activeSessionWhere = {
+    status: { in: activeStatuses },
+    statusChangedAt: { gte: activeCutoff },
+  };
+
+  let activeBlitzRounds = 0;
   try {
-    const [activeSessions, completedSessions, totalParticipants, blitzKeys, platformRow] =
+    activeBlitzRounds = await countActiveBlitzRounds();
+  } catch (err) {
+    logger.warn(
+      'health.stats: activeBlitzRounds konnte nicht aus Redis gelesen werden, setze 0.',
+      err,
+    );
+  }
+
+  try {
+    const [activeSessions, completedSessionsNow, totalParticipants, platformRow] =
       await Promise.all([
-        prisma.session.count({ where: { status: { in: [...ACTIVE_SESSION_STATUSES] } } }),
-        // Kumulativ: Session-Zeilen mit Status FINISHED (Quiz & Q&A; nicht gelöscht).
+        prisma.session.count({ where: activeSessionWhere }),
+        // Momentan in DB vorhandene FINISHED-Sessions (kann durch Purge sinken).
         prisma.session.count({ where: { status: 'FINISHED' } }),
-        // Alle Teilnehmer-Einträge zu Sessions, die noch nicht FINISHED sind (Summe über laufende Live-Sessions).
+        // Alle Teilnehmer-Einträge zu Sessions mit aktivem Status und frischer Aktivität.
         prisma.participant.count({
-          where: { session: { status: { in: [...ACTIVE_SESSION_STATUSES] } } },
+          where: { session: activeSessionWhere },
         }),
-        countActiveBlitzRounds(),
         prisma.platformStatistic.findUnique({
           where: { id: 'default' },
-          select: { maxParticipantsSingleSession: true, updatedAt: true },
+          select: {
+            maxParticipantsSingleSession: true,
+            completedSessionsTotal: true,
+            updatedAt: true,
+          },
         }),
       ]);
+    const completedSessionsTotal = Math.max(
+      completedSessionsNow,
+      platformRow?.completedSessionsTotal ?? 0,
+    );
+    if (completedSessionsNow > (platformRow?.completedSessionsTotal ?? 0)) {
+      void updateCompletedSessionsTotal(completedSessionsNow);
+    }
     return {
       activeSessions,
       totalParticipants,
-      completedSessions,
-      activeBlitzRounds: blitzKeys,
+      completedSessions: completedSessionsTotal,
+      activeBlitzRounds,
       maxParticipantsSingleSession: platformRow?.maxParticipantsSingleSession ?? 0,
       maxParticipantsStatisticUpdatedAt: platformRow?.updatedAt?.toISOString() ?? null,
       serverStatus: getServerStatus(activeSessions),

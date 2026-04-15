@@ -20,8 +20,13 @@ vi.mock('../db', () => ({
   },
 }));
 
+vi.mock('../lib/platformStatistic', () => ({
+  updateCompletedSessionsTotal: vi.fn(),
+}));
+
 import { pingRedis, getRedis } from '../redis';
 import { prisma } from '../db';
+import { updateCompletedSessionsTotal } from '../lib/platformStatistic';
 import { healthRouter, heartbeatGenerator } from '../routers/health';
 
 const caller = healthRouter.createCaller({ req: undefined });
@@ -65,7 +70,8 @@ describe('health.footerBundle', () => {
       id: 'default',
       updatedAt: new Date(),
       maxParticipantsSingleSession: 42,
-    });
+      completedSessionsTotal: 0,
+    } as never);
 
     const result = await caller.footerBundle(undefined);
 
@@ -107,7 +113,8 @@ describe('health.stats', () => {
       id: 'default',
       updatedAt: new Date(),
       maxParticipantsSingleSession: 100,
-    });
+      completedSessionsTotal: 0,
+    } as never);
 
     const result = await caller.stats(undefined);
 
@@ -116,6 +123,25 @@ describe('health.stats', () => {
     expect(result.completedSessions).toBe(5);
     expect(result.maxParticipantsSingleSession).toBe(100);
     expect(result.serverStatus).toBe('healthy');
+    expect(prisma.session.count).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: { in: ['LOBBY', 'QUESTION_OPEN', 'ACTIVE', 'PAUSED', 'RESULTS', 'DISCUSSION'] },
+          statusChangedAt: expect.objectContaining({ gte: expect.any(Date) }),
+        }),
+      }),
+    );
+    expect(prisma.participant.count).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          session: expect.objectContaining({
+            status: { in: ['LOBBY', 'QUESTION_OPEN', 'ACTIVE', 'PAUSED', 'RESULTS', 'DISCUSSION'] },
+            statusChangedAt: expect.objectContaining({ gte: expect.any(Date) }),
+          }),
+        }),
+      }),
+    );
   });
 
   it('berechnet serverStatus "busy" bei 50–199 aktiven Sessions', async () => {
@@ -125,7 +151,8 @@ describe('health.stats', () => {
       id: 'default',
       updatedAt: new Date(),
       maxParticipantsSingleSession: 0,
-    });
+      completedSessionsTotal: 0,
+    } as never);
 
     const result = await caller.stats(undefined);
 
@@ -140,7 +167,8 @@ describe('health.stats', () => {
       id: 'default',
       updatedAt: new Date(),
       maxParticipantsSingleSession: 0,
-    });
+      completedSessionsTotal: 0,
+    } as never);
 
     const result = await caller.stats(undefined);
 
@@ -155,7 +183,8 @@ describe('health.stats', () => {
       id: 'default',
       updatedAt: new Date(),
       maxParticipantsSingleSession: 0,
-    });
+      completedSessionsTotal: 0,
+    } as never);
 
     const result = await caller.stats(undefined);
 
@@ -199,6 +228,60 @@ describe('health.stats', () => {
     const result = await caller.stats(undefined);
 
     expect(result.activeBlitzRounds).toBe(2);
+  });
+
+  it('nutzt DB-Statistiken weiter, wenn Redis-Scan fehlschlägt', async () => {
+    vi.mocked(getRedis).mockReturnValueOnce({
+      scan: vi.fn().mockRejectedValue(new Error('redis unavailable')),
+    } as unknown as Redis);
+    vi.mocked(prisma.session.count).mockResolvedValueOnce(6).mockResolvedValueOnce(11);
+    vi.mocked(prisma.participant.count).mockResolvedValue(69);
+    vi.mocked(prisma.platformStatistic.findUnique).mockResolvedValue({
+      id: 'default',
+      updatedAt: new Date(),
+      maxParticipantsSingleSession: 120,
+      completedSessionsTotal: 0,
+    } as never);
+
+    const result = await caller.stats(undefined);
+
+    expect(result.activeSessions).toBe(6);
+    expect(result.totalParticipants).toBe(69);
+    expect(result.completedSessions).toBe(11);
+    expect(result.activeBlitzRounds).toBe(0);
+    expect(result.maxParticipantsSingleSession).toBe(120);
+  });
+
+  it('nutzt monotone completedSessionsTotal auch wenn FINISHED-Zeilen sinken', async () => {
+    vi.mocked(prisma.session.count).mockResolvedValueOnce(0).mockResolvedValueOnce(11);
+    vi.mocked(prisma.participant.count).mockResolvedValue(0);
+    vi.mocked(prisma.platformStatistic.findUnique).mockResolvedValue({
+      id: 'default',
+      updatedAt: new Date(),
+      maxParticipantsSingleSession: 120,
+      completedSessionsTotal: 12,
+    } as never);
+
+    const result = await caller.stats(undefined);
+
+    expect(result.completedSessions).toBe(12);
+    expect(updateCompletedSessionsTotal).not.toHaveBeenCalled();
+  });
+
+  it('persistiert höhere FINISHED-Zahl in den monotonen Counter', async () => {
+    vi.mocked(prisma.session.count).mockResolvedValueOnce(0).mockResolvedValueOnce(13);
+    vi.mocked(prisma.participant.count).mockResolvedValue(0);
+    vi.mocked(prisma.platformStatistic.findUnique).mockResolvedValue({
+      id: 'default',
+      updatedAt: new Date(),
+      maxParticipantsSingleSession: 120,
+      completedSessionsTotal: 12,
+    } as never);
+
+    const result = await caller.stats(undefined);
+
+    expect(result.completedSessions).toBe(13);
+    expect(updateCompletedSessionsTotal).toHaveBeenCalledWith(13);
   });
 });
 

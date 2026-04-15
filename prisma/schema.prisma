@@ -128,6 +128,7 @@ model Participant {
 model PlatformStatistic {
   id                          String @id // fest: "default"
   maxParticipantsSingleSession Int   @default(0)
+  completedSessionsTotal      Int   @default(0) // Monotone Gesamtzahl beendeter Sessions (für health.stats)
   updatedAt                   DateTime @updatedAt
 }
 
