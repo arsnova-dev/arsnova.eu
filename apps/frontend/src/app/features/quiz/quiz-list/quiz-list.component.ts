@@ -189,13 +189,6 @@ export class QuizListComponent implements OnInit {
     return this.syncConnectionState() === 'connected' && this.syncPeerInfos().length > 0;
   }
 
-  syncCode(): string {
-    return this.syncRoomId()
-      .replace(/[^a-zA-Z0-9]/g, '')
-      .slice(0, 8)
-      .toUpperCase();
-  }
-
   syncPeerCountLabel(): string {
     const count = this.syncPeerInfos().length;
     if (count === 0)

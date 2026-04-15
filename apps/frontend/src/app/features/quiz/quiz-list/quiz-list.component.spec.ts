@@ -140,7 +140,7 @@ describe('QuizListComponent', () => {
     expect(text).toContain('Diese Angaben helfen nur bei der Orientierung');
     expect(text).toContain('Entscheidend bleibt der Sync-Link');
     expect(text).toContain('Verbunden');
-    expect(text).toContain('Sync-Kurzcode (Anzeigehilfe): SYNCROOM');
+    expect(text).not.toContain('Sync-Kurzcode');
     expect(text).toContain('Du arbeitest gerade auf');
     expect(text).toContain('Mac · Firefox');
     expect(text).toContain('Gerade 1 weiteres Gerät aktiv');

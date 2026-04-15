@@ -37,38 +37,6 @@
   }
 }
 
-.quiz-sync__short {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  padding: 0.65rem 0.85rem;
-  border-radius: var(--mat-sys-corner-medium);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
-}
-
-.quiz-sync__short-label {
-  flex: 0 0 auto;
-  font: var(--mat-sys-label-medium);
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.quiz-sync__short-value {
-  flex: 1 1 8rem;
-  margin: 0;
-  min-width: 0;
-  font: var(--mat-sys-title-medium);
-  font-family: monospace, system-ui;
-  letter-spacing: 0.08em;
-  color: var(--mat-sys-primary);
-}
-
-.quiz-sync__copy-short {
-  flex: 0 0 auto;
-  margin-inline-start: auto;
-}
-
 .quiz-sync__status {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);

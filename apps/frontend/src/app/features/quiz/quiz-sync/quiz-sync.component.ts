@@ -26,18 +26,18 @@ export class QuizSyncComponent {
 
   readonly docId = this.route.snapshot.paramMap.get('docId') ?? '';
   readonly syncConnectionState = this.quizStore.syncConnectionState;
+  readonly syncPeerInfos = this.quizStore.syncPeerInfos;
   readonly syncError = signal<string | null>(null);
   readonly copyStatus = signal<string | null>(null);
-  readonly syncCode = computed(() =>
-    this.docId
-      .replaceAll(/[^a-zA-Z0-9]/g, '')
-      .slice(0, 8)
-      .toUpperCase(),
+  readonly hasConnectedPeer = computed(
+    () => this.syncConnectionState() === 'connected' && this.syncPeerInfos().length > 0,
   );
   readonly syncStatusLabel = computed(() => {
     const state = this.syncConnectionState();
     if (state === 'connected') {
-      return $localize`:@@quizSync.stateConnected:Verbunden`;
+      return this.hasConnectedPeer()
+        ? $localize`:@@quizSync.stateConnected:Verbunden`
+        : $localize`:@@quizSync.stateReady:Bereit (warte auf weiteres Gerät)`;
     }
     if (state === 'connecting') {
       return $localize`:@@quizSync.stateConnecting:Verbindung wird aufgebaut`;
@@ -64,13 +64,6 @@ export class QuizSyncComponent {
     await this.copyText(
       this.syncLink(),
       $localize`:@@quizSync.copyLinkDone:Sync-Link wurde kopiert.`,
-    );
-  }
-
-  async copySyncCode(): Promise<void> {
-    await this.copyText(
-      this.syncCode(),
-      $localize`:@@quizSync.copyCodeDone:Kurzcode wurde kopiert.`,
     );
   }
 

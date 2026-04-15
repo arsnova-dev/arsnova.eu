@@ -6464,14 +6464,6 @@
           <context context-type="linenumber">243,245</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="quizList.sharedLibraryCode" datatype="html">
-        <source> Sync-Kurzcode (Anzeigehilfe): <x id="INTERPOLATION" equiv-text="{{ syncCode() }}"/></source>
-        <target>Sync short code (display aid): <x id="INTERPOLATION" equiv-text="{{ syncCode() }}"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
-          <context context-type="linenumber">247,248</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="quizList.currentDeviceLabel" datatype="html">
         <source>Du arbeitest gerade auf</source>
         <target>You are currently using</target>
@@ -7356,35 +7348,11 @@
         </context-group>
       </trans-unit>
       <trans-unit id="quizSync.intro" datatype="html">
-        <source> Verschick den Link oder den Kurzcode – damit können andere dieselbe Sammlung auf ihrem Gerät öffnen. </source>
-        <target>Send the link or short code so others can open the same library on their device.</target>
+        <source> Verschick den Link – damit können andere dieselbe Sammlung auf ihrem Gerät öffnen. </source>
+        <target>Send the link so others can open the same library on their device.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
-          <context context-type="linenumber">14,17</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="quizSync.shortGroupAria" datatype="html">
-        <source>Kurzcode</source>
-        <target>Short code</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
-          <context context-type="linenumber">27,30</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="quizSync.codeLabel" datatype="html">
-        <source>Kurzcode</source>
-        <target>Short code</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
-          <context context-type="linenumber">31,32</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="quizSync.copyCode" datatype="html">
-        <source>Kopieren</source>
-        <target>Copy</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.html</context>
-          <context context-type="linenumber">35,37</context>
+          <context context-type="linenumber">14,15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quizSync.copyLink" datatype="html">
@@ -7408,7 +7376,15 @@
         <target>Connected</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="quizSync.stateReady" datatype="html">
+        <source>Bereit (warte auf weiteres Gerät)</source>
+        <target>Ready (waiting for another device)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.ts</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quizSync.stateConnecting" datatype="html">
@@ -7433,14 +7409,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.ts</context>
           <context context-type="linenumber">64</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="quizSync.copyCodeDone" datatype="html">
-        <source>Kurzcode wurde kopiert.</source>
-        <target>Short code copied.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/quiz/quiz-sync/quiz-sync.component.ts</context>
-          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quizSync.copyFailed" datatype="html">

@@ -9,8 +9,7 @@
       </span>
     </div>
     <p class="quiz-sync__lead" i18n="@@quizSync.intro">
-      Verschick den Link oder den Kurzcode – damit können andere dieselbe Sammlung auf ihrem Gerät
-      öffnen.
+      Verschick den Link – damit können andere dieselbe Sammlung auf ihrem Gerät öffnen.
     </p>
     <div class="quiz-sync__cta">
       <button
@@ -23,25 +22,9 @@
         <span i18n="@@quizSync.copyLink">Sync-Link kopieren</span>
       </button>
     </div>
-    <div
-      class="quiz-sync__short"
-      role="group"
-      i18n-aria-label="@@quizSync.shortGroupAria"
-      aria-label="Kurzcode"
-    >
-      <span class="quiz-sync__short-label" i18n="@@quizSync.codeLabel">Kurzcode</span>
-      <code class="quiz-sync__short-value">{{ syncCode() }}</code>
-      <button mat-button type="button" class="quiz-sync__copy-short" (click)="copySyncCode()">
-        <mat-icon>content_copy</mat-icon>
-        <span i18n="@@quizSync.copyCode">Kopieren</span>
-      </button>
-    </div>
     <p class="quiz-sync__status">
       <span i18n="@@quizSync.statusPrefix">Status:</span>
-      <strong
-        class="quiz-sync__state"
-        [class.quiz-sync__state--ok]="syncConnectionState() === 'connected'"
-      >
+      <strong class="quiz-sync__state" [class.quiz-sync__state--ok]="hasConnectedPeer()">
         {{ syncStatusLabel() }}
       </strong>
     </p>
