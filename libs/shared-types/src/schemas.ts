@@ -719,9 +719,16 @@ export const LiveFreetextDTOSchema = z.object({
 });
 export type LiveFreetextDTO = z.infer<typeof LiveFreetextDTOSchema>;
 
-/** DTO: Quiz-IDs mit aktuell laufender Session (Story 1.10). */
-export const ActiveQuizIdsDTOSchema = z.array(z.uuid());
-export type ActiveQuizIdsDTO = z.infer<typeof ActiveQuizIdsDTOSchema>;
+/** DTO: Live-Zustand authorisierter Quiz-Kopien (Story 1.10). */
+export const ActiveQuizLiveStateDTOSchema = z.object({
+  quizId: z.uuid(),
+  /** Aktuell verbundene Personen inkl. Host/Dozent:in. */
+  participantCountIncludingHost: z.number().int().min(1),
+});
+export type ActiveQuizLiveStateDTO = z.infer<typeof ActiveQuizLiveStateDTOSchema>;
+
+export const ActiveQuizLiveStatesDTOSchema = z.array(ActiveQuizLiveStateDTOSchema);
+export type ActiveQuizLiveStatesDTO = z.infer<typeof ActiveQuizLiveStatesDTOSchema>;
 
 export const ActiveQuizLookupEntrySchema = z.object({
   quizId: z.uuid(),

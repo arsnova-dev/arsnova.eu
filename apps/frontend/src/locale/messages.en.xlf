@@ -1723,6 +1723,86 @@
           <context context-type="linenumber">315</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="admin.liveParticipantsChip" datatype="html">
+        <source>Live: <x id="INTERPOLATION" equiv-text="{{ liveCount }}"/></source>
+        <target>Live: <x id="INTERPOLATION" equiv-text="{{ liveCount }}"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.html</context>
+          <context context-type="linenumber">130,132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusLobby" datatype="html">
+        <source>Lobby</source>
+        <target>Lobby</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">446</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusQuestionOpen" datatype="html">
+        <source>Frage offen</source>
+        <target>Question open</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">448</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusActive" datatype="html">
+        <source>Aktiv</source>
+        <target>Active</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">450</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusPaused" datatype="html">
+        <source>Pausiert</source>
+        <target>Paused</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">452</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusResults" datatype="html">
+        <source>Ergebnisse</source>
+        <target>Results</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">454</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusDiscussion" datatype="html">
+        <source>Diskussion</source>
+        <target>Discussion</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">456</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionStatusFinished" datatype="html">
+        <source>Beendet</source>
+        <target>Finished</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">458</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionTypeQuiz" datatype="html">
+        <source>Quiz</source>
+        <target>Quiz</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">465</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.sessionTypeQa" datatype="html">
+        <source>Fragerunde</source>
+        <target>Q&amp;A</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/admin.component.ts</context>
+          <context context-type="linenumber">467</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="admin.errorListSessions" datatype="html">
         <source>Sessions konnten nicht geladen werden.</source>
         <target>Could not load sessions.</target>
@@ -6354,6 +6434,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
           <context context-type="linenumber">336,338</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="quizList.chipLiveParticipants" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ liveParticipantCount }}"/> live dabei</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ liveParticipantCount }}"/> live now</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/quiz/quiz-list/quiz-list.component.html</context>
+          <context context-type="linenumber">342,344</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quizList.questionCountLabel" datatype="html">

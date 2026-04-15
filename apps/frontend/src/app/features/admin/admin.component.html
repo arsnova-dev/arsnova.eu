@@ -123,8 +123,14 @@
                       >
                         <span class="admin-list__code">{{ session.sessionCode }}</span>
                         <span class="admin-list__meta"
-                          >{{ session.type }} · {{ session.status }}</span
+                          >{{ sessionTypeLabel(session.type) }} ·
+                          {{ sessionStatusLabel(session.status) }}</span
                         >
+                        @if (liveParticipantsIncludingHost(session); as liveCount) {
+                          <span class="admin-list__chip" i18n="@@admin.liveParticipantsChip"
+                            >Live: {{ liveCount }}</span
+                          >
+                        }
                         <span class="admin-list__meta"
                           ><span i18n="@@admin.retentionPrefix">Aufbewahrung:</span>
                           {{ retentionLabel(session.retention.window) }}</span
@@ -283,14 +289,15 @@
                     </p>
                     <p class="admin-detail__line">
                       <strong i18n="@@admin.metaStatusLabel">Status:</strong>
-                      {{ detail.session.status }}
+                      {{ sessionStatusLabel(detail.session.status) }}
                     </p>
                     <p class="admin-detail__line">
                       <strong i18n="@@admin.metaWindowLabel">Aufbewahrung:</strong>
                       {{ retentionLabel(detail.session.retention.window) }}
                     </p>
                     <p class="admin-detail__line">
-                      <strong i18n="@@admin.metaTypeLabel">Typ:</strong> {{ detail.session.type }}
+                      <strong i18n="@@admin.metaTypeLabel">Typ:</strong>
+                      {{ sessionTypeLabel(detail.session.type) }}
                     </p>
                     <p class="admin-detail__line">
                       <strong i18n="@@admin.metaParticipantsLabel">Teilnehmende:</strong>

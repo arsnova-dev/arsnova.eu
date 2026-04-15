@@ -336,6 +336,14 @@
                   i18n="@@quizList.chipLive"
                   >Live</span
                 >
+                @if (liveParticipantCountIncludingHost(quiz.id); as liveParticipantCount) {
+                  <span
+                    class="quiz-list-item__feature-chip quiz-list-item__feature-chip--live"
+                    i18n="@@quizList.chipLiveParticipants"
+                  >
+                    {{ liveParticipantCount }} live dabei
+                  </span>
+                }
               }
             </div>
             <div class="quiz-list-item__meta">

@@ -126,7 +126,7 @@ export class QuizListComponent implements OnInit {
   readonly syncPeerInfos = this.quizStore.syncPeerInfos;
   readonly actionInfo = signal<string | null>(null);
   readonly actionError = signal<string | null>(null);
-  readonly activeLiveQuizIds = signal<Set<string>>(new Set());
+  readonly activeLiveQuizParticipants = signal<Map<string, number>>(new Map());
   readonly showAiImport = signal(false);
   /** Volltext der KI-Systemvorlage im Panel (Schritt 1). */
   readonly showKiPromptPreview = signal(false);
@@ -266,12 +266,16 @@ export class QuizListComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const activeQuizIds = await trpc.session.getActiveQuizIds.query(
+      const activeQuizStates = await trpc.session.getActiveQuizIds.query(
         await this.collectActiveQuizLookupEntries(),
       );
-      this.activeLiveQuizIds.set(new Set(activeQuizIds));
+      this.activeLiveQuizParticipants.set(
+        new Map(
+          activeQuizStates.map((entry) => [entry.quizId, entry.participantCountIncludingHost]),
+        ),
+      );
     } catch {
-      this.activeLiveQuizIds.set(new Set());
+      this.activeLiveQuizParticipants.set(new Map());
     }
 
     await this.handleSyncImportNoticeIfRequested();
@@ -535,7 +539,15 @@ export class QuizListComponent implements OnInit {
 
   isQuizLive(quizId: string): boolean {
     const serverQuizId = this.quizzes().find((quiz) => quiz.id === quizId)?.lastServerQuizId;
-    return typeof serverQuizId === 'string' && this.activeLiveQuizIds().has(serverQuizId);
+    return typeof serverQuizId === 'string' && this.activeLiveQuizParticipants().has(serverQuizId);
+  }
+
+  liveParticipantCountIncludingHost(quizId: string): number | null {
+    const serverQuizId = this.quizzes().find((quiz) => quiz.id === quizId)?.lastServerQuizId;
+    if (typeof serverQuizId !== 'string') {
+      return null;
+    }
+    return this.activeLiveQuizParticipants().get(serverQuizId) ?? null;
   }
 
   async openLiveStartDialog(

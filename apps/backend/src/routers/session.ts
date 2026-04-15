@@ -12,7 +12,7 @@ import {
   JoinSessionInputSchema,
   JoinSessionOutputSchema,
   GetExportDataInputSchema,
-  ActiveQuizIdsDTOSchema,
+  ActiveQuizLiveStatesDTOSchema,
   FreetextSessionExportDTOSchema,
   LiveFreetextDTOSchema,
   SessionInfoDTOSchema,
@@ -1782,7 +1782,7 @@ export const sessionRouter = router({
   /** Quiz-IDs mit laufender Session, begrenzt auf authorisierte Quizkopien aus der Sammlung. */
   getActiveQuizIds: publicProcedure
     .input(GetActiveQuizIdsInputSchema)
-    .output(ActiveQuizIdsDTOSchema)
+    .output(ActiveQuizLiveStatesDTOSchema)
     .query(async ({ input }) => {
       const authorizedQuizIds = await collectAuthorizedQuizHistoryIds(input);
       if (authorizedQuizIds.length === 0) {
@@ -1794,13 +1794,32 @@ export const sessionRouter = router({
           status: { not: 'FINISHED' },
           quizId: { in: authorizedQuizIds },
         },
-        select: { quizId: true },
-        distinct: ['quizId'],
+        select: {
+          quizId: true,
+          _count: {
+            select: {
+              participants: true,
+            },
+          },
+        },
       });
 
-      return sessions
-        .map((session) => session.quizId)
-        .filter((quizId): quizId is string => typeof quizId === 'string');
+      const countsByQuizId = new Map<string, number>();
+      for (const session of sessions) {
+        if (!session.quizId) {
+          continue;
+        }
+        const current = countsByQuizId.get(session.quizId) ?? 0;
+        // Für die Live-Chips wird der Host explizit mitgezählt.
+        countsByQuizId.set(session.quizId, current + session._count.participants + 1);
+      }
+
+      return [...countsByQuizId.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([quizId, participantCountIncludingHost]) => ({
+          quizId,
+          participantCountIncludingHost,
+        }));
     }),
 
   /** Live-Freitextdaten der aktuell aktiven Frage (Story 1.14, polling-ready). */

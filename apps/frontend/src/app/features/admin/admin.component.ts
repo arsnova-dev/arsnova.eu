@@ -14,7 +14,12 @@ import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { trpc } from '../../core/trpc.client';
 import { AdminMotdPanelComponent } from './admin-motd-panel.component';
 import { getAdminToken, setAdminToken } from '../../core/trpc.client';
-import type { AdminSessionDetailDTO, AdminSessionSummaryDTO } from '@arsnova/shared-types';
+import type {
+  AdminSessionDetailDTO,
+  AdminSessionSummaryDTO,
+  SessionStatus,
+  SessionType,
+} from '@arsnova/shared-types';
 
 /**
  * Admin-Dashboard (Epic 9). Ohne gültige Admin-Auth nur Login/Platzhalter.
@@ -434,6 +439,41 @@ export class AdminComponent implements OnInit {
         return $localize`:@@admin.retentionPost:Nachlauf`;
       case 'PURGED':
         return $localize`:@@admin.retentionPurged:Bereinigt`;
+    }
+  }
+
+  liveParticipantsIncludingHost(session: AdminSessionSummaryDTO): number | null {
+    if (session.status === 'FINISHED') {
+      return null;
+    }
+    return session.participantCount + 1;
+  }
+
+  sessionStatusLabel(status: SessionStatus): string {
+    switch (status) {
+      case 'LOBBY':
+        return $localize`:@@admin.sessionStatusLobby:Lobby`;
+      case 'QUESTION_OPEN':
+        return $localize`:@@admin.sessionStatusQuestionOpen:Frage offen`;
+      case 'ACTIVE':
+        return $localize`:@@admin.sessionStatusActive:Aktiv`;
+      case 'PAUSED':
+        return $localize`:@@admin.sessionStatusPaused:Pausiert`;
+      case 'RESULTS':
+        return $localize`:@@admin.sessionStatusResults:Ergebnisse`;
+      case 'DISCUSSION':
+        return $localize`:@@admin.sessionStatusDiscussion:Diskussion`;
+      case 'FINISHED':
+        return $localize`:@@admin.sessionStatusFinished:Beendet`;
+    }
+  }
+
+  sessionTypeLabel(type: SessionType): string {
+    switch (type) {
+      case 'QUIZ':
+        return $localize`:@@admin.sessionTypeQuiz:Quiz`;
+      case 'Q_AND_A':
+        return $localize`:@@admin.sessionTypeQa:Fragerunde`;
     }
   }
 

@@ -295,7 +295,12 @@ describe('QuizListComponent', () => {
           'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
       },
     ]);
-    getActiveQuizIdsQueryMock.mockResolvedValue(['11111111-1111-4111-8111-111111111111']);
+    getActiveQuizIdsQueryMock.mockResolvedValue([
+      {
+        quizId: '11111111-1111-4111-8111-111111111111',
+        participantCountIncludingHost: 7,
+      },
+    ]);
 
     const fixture = TestBed.createComponent(QuizListComponent);
     await fixture.componentInstance.ngOnInit();
@@ -307,10 +312,15 @@ describe('QuizListComponent', () => {
       },
     ]);
 
-    fixture.componentInstance['activeLiveQuizIds'].set(
-      new Set(['11111111-1111-4111-8111-111111111111']),
+    fixture.componentInstance['activeLiveQuizParticipants'].set(
+      new Map([['11111111-1111-4111-8111-111111111111', 7]]),
     );
     expect(fixture.componentInstance.isQuizLive('e31fef3f-f7b1-4705-a739-28c8ec4486bf')).toBe(true);
+    expect(
+      fixture.componentInstance.liveParticipantCountIncludingHost(
+        'e31fef3f-f7b1-4705-a739-28c8ec4486bf',
+      ),
+    ).toBe(7);
   });
 
   it('blendet die Prompt-Vorschau in Schritt 1 ein und aus', () => {
